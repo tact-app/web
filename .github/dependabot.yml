@@ -8,7 +8,7 @@ updates:
     directory: /
     schedule:
       interval: daily
-      time: '07:00'
+      time: '06:00'
       timezone: UTC
     labels:
       - 'type: improvement'
@@ -23,7 +23,7 @@ updates:
     directory: /tools/
     schedule:
       interval: daily
-      time: '07:00'
+      time: '06:00'
       timezone: UTC
     labels:
       - 'type: improvement'
@@ -37,7 +37,7 @@ updates:
     directory: /
     schedule:
       interval: daily
-      time: '07:00'
+      time: '06:00'
       timezone: UTC
     labels:
       - 'type: improvement'
