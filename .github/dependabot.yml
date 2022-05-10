@@ -1,0 +1,18 @@
+# Dependabot. The application allows automating dependencies updates.
+# It provides information to Dependabot about used package ecosystems.
+#
+# Docs: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/about-dependabot-version-updates.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+    labels:
+      - 'type: improvement'
+      - 'scope: code'
+      - 'scope: deps'
+    commit-message:
+      prefix: 'feat'
+      prefix-development: 'chore'
+      include: 'scope'
