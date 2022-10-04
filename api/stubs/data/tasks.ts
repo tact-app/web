@@ -1,33 +1,6 @@
-import { TaskData } from '../../../components/pages/Tasks/store/types';
+import { TaskData } from '../../../components/pages/Inbox/store/types';
 
-const taskList: TaskData[] = [{
-  id: 1,
-  title: 'Task 1',
-  description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  status: 'todo',
-  priority: 'low',
-  assignee: 1,
-  createdAt: 1588888888,
-  updatedAt: 1588888888,
-}, {
-  id: 2,
-  title: 'Task 2',
-  description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  status: 'todo',
-  priority: 'low',
-  assignee: 1,
-  createdAt: 1588888888,
-  updatedAt: 1588888888,
-}, {
-  id: 3,
-  title: 'Task 3',
-  description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  status: 'todo',
-  priority: 'low',
-  assignee: 1,
-  createdAt: 1588888888,
-  updatedAt: 1588888888,
-}];
+const taskList: TaskData[] = [];
 
 const data = {
   'get': {

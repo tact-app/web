@@ -1,5 +1,5 @@
 import ApiService from '../ApiService';
-import { TaskData } from '../../components/pages/Tasks/store/types';
+import { TaskData } from '../../components/pages/Inbox/store/types';
 
 const getTasksApi = (apiService: ApiService) => ({
   getList: () => apiService.get<TaskData[]>(`/api/tasks`)

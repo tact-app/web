@@ -2,85 +2,60 @@ import Head from 'next/head';
 import {
   Box,
   Flex,
-  Text,
-  IconButton,
-  Collapse,
   useColorModeValue,
-  useBreakpointValue,
-  useDisclosure,
+  Divider
 } from '@chakra-ui/react';
 import {
-  HamburgerIcon,
-  CloseIcon,
+  EmailIcon, CalendarIcon, CheckIcon
 } from '@chakra-ui/icons';
-import { NavItem } from './components/Navbar/types';
-import { DesktopNavbar } from './components/Navbar/DesktopNavbar';
-import { MobileNavbar } from './components/Navbar/MobileNavbar';
-import UserNavbar from './components/UserNavbar';
+import { NavItem } from './components/MainMenu/types';
+import { MainMenu } from './components/MainMenu';
+import UserMenu from './components/UserNavbar';
 import { routes } from '../../routes/constants';
 import { ReactNode } from 'react';
 
 const NAV_ITEMS: Array<NavItem> = [
   {
-    label: 'Tasks',
-    href: routes.TASKS,
+    label: 'Inbox',
+    icon: <EmailIcon/>,
+    href: routes.INBOX,
+  },
+  {
+    label: 'Today',
+    icon: <CheckIcon/>,
+    href: routes.TODAY,
+  },
+  {
+    label: 'Calendar',
+    icon: <CalendarIcon/>,
+    href: routes.CALENDAR,
   },
 ];
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const { isOpen, onToggle } = useDisclosure();
-
   return (
-    <Box>
+    <Flex direction='row' h='100vh'>
       <Head>
         <title>Tact</title>
         <meta name='viewport' content='initial-scale=1.0, width=device-width'/>
       </Head>
       <Flex
+        direction='column'
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
-        minH={'60px'}
-        py={{ base: 2 }}
-        px={{ base: 4 }}
-        borderBottom={1}
-        borderStyle={'solid'}
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
-        align={'center'}>
-        <Flex
-          flex={{ base: 1, md: 'auto' }}
-          ml={{ base: -2 }}
-          display={{ base: 'flex', md: 'none' }}>
-          <IconButton
-            onClick={onToggle}
-            icon={
-              isOpen ? <CloseIcon w={3} h={3}/> : <HamburgerIcon w={5} h={5}/>
-            }
-            variant={'ghost'}
-            aria-label={'Toggle Navigation'}
-          />
-        </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <Text
-            textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-            fontFamily={'heading'}
-            color={useColorModeValue('gray.800', 'white')}>
-            Logo
-          </Text>
-
-          <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-            <DesktopNavbar items={NAV_ITEMS}/>
-          </Flex>
-        </Flex>
-
-        <UserNavbar/>
+        borderRight='1px'
+        borderColor={useColorModeValue('gray.100', 'gray.900')}
+        p={4}
+        w={72}
+      >
+        <Box p={2} pl={4} pr={4} mb={4}>
+          <UserMenu/>
+        </Box>
+        <Divider borderColor={useColorModeValue('gray.100', 'gray.800')}/>
+        <MainMenu items={NAV_ITEMS}/>
       </Flex>
-
-      <Collapse in={isOpen} animateOpacity>
-        <MobileNavbar items={NAV_ITEMS} onItemClick={onToggle}/>
-      </Collapse>
-
-      <Box p={4}>{children}</Box>
-    </Box>
+      <Box p={4} flex='1'>{children}</Box>
+    </Flex>
   );
 }
 

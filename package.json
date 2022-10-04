@@ -9,15 +9,22 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.0.4",
     "@chakra-ui/react": "^2.2.4",
+    "@chakra-ui/shared-utils": "^2.0.2",
     "@editorjs/editorjs": "^2.25.0",
+    "@editorjs/header": "^2.6.2",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "framer-motion": "^6.5.1",
+    "allotment": "^1.17.0",
+    "editorjs-undo": "^2.0.9",
+    "framer-motion": "^7.5.2",
     "mobx": "^6.0.3",
     "mobx-react-lite": "^3.4.0",
     "next": "^12.2.3",
+    "path-to-regexp": "^6.2.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-beautiful-dnd": "^13.1.1",
+    "react-dom": "^18.2.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.14.5",

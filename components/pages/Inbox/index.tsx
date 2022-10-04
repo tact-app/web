@@ -1,15 +1,11 @@
 import { observer } from 'mobx-react-lite';
-import Head from 'next/head';
-import TaskList from './components/TaskList';
 import { TasksStoreProvider } from './store';
+import { TasksView } from './view';
 
 const TasksPage = observer(function TasksPage() {
   return (
     <TasksStoreProvider>
-      <Head>
-        <title>Task list</title>
-      </Head>
-      <TaskList/>
+      <TasksView/>
     </TasksStoreProvider>
   );
 });
