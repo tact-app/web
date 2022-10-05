@@ -12,11 +12,15 @@ const TaskList = observer(function TaskList() {
   return (
     <Container maxW='container.lg'>
       <Heading size='lg' mt={2.5} mb={8} pt={4}>Today</Heading>
-      <TaskInput onCreate={store.createTask}/>
+      <TaskInput onCreate={store.createTask} onTagCreate={store.createTag} tags={store.tags}/>
       <DndList onMove={store.onOrderChange}>
         {store.items.map((task, index) => (
-          <DndItem key={task.id} item={task} index={index} mb={4} ml={4} mr={4}>
-            <TaskItem item={task}/>
+          <DndItem key={task.id} item={task} index={index}>
+            <TaskItem
+              task={task}
+              isFocused={store.focusedTask && task.id === store.focusedTask.id}
+              tags={store.tagsMap}
+            />
           </DndItem>
         ))}
       </DndList>

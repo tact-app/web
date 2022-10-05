@@ -4,7 +4,7 @@ import { createContext, useContext } from 'react';
 import UserStore from './UserStore';
 import { isClient } from '../../utils';
 import { getAPI } from '../../api';
-import MemoryStub from '../../api/stubs';
+import { IDBService } from '../../api/DataBase/IDBService';
 
 enableStaticRendering(typeof window === 'undefined');
 
@@ -13,16 +13,16 @@ export class RootStore {
     makeAutoObservable(this);
   }
 
-  isLoading = true
+  isLoading = true;
 
   user = new UserStore(this);
-  api = getAPI(new MemoryStub()) // new ApiService()
+  api = getAPI(new IDBService()); // new ApiService()
 
   init = async () => {
-    await this.user.init()
+    await this.user.init();
 
-    runInAction(() => this.isLoading = false)
-  }
+    runInAction(() => this.isLoading = false);
+  };
 }
 
 export const StoreContext = createContext<RootStore>(null);
@@ -41,7 +41,7 @@ export function RootStoreProvider({ children }) {
   const store = new RootStore();
 
   if (isClient) {
-    store.init()
+    store.init();
   }
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;

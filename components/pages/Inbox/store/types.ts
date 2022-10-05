@@ -1,17 +1,31 @@
 import { OutputData } from '@editorjs/editorjs';
 
 export enum TaskPriority {
-  NONE = 'none',
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
+  NONE = 'none',
 }
+
+export const TaskPriorityArray = [
+  TaskPriority.LOW,
+  TaskPriority.MEDIUM,
+  TaskPriority.HIGH,
+  TaskPriority.NONE,
+];
 
 export const TaskPriorityValues = {
   [TaskPriority.NONE]: '',
   [TaskPriority.LOW]: '!',
   [TaskPriority.MEDIUM]: '!!',
   [TaskPriority.HIGH]: '!!!',
+};
+
+export const TaskPriorityNames = {
+  [TaskPriority.NONE]: 'None',
+  [TaskPriority.LOW]: 'Low',
+  [TaskPriority.MEDIUM]: 'Medium',
+  [TaskPriority.HIGH]: 'High',
 };
 
 export const TaskPriorityKeys = Object.entries(TaskPriorityValues)
@@ -23,14 +37,17 @@ export const TaskPriorityKeys = Object.entries(TaskPriorityValues)
 export enum TaskStatus {
   DONE = 'done',
   WONT_DO = 'wont_do',
-  PENDING = 'pending',
+  TODO = 'todo',
 }
 
 export type TaskData = {
   id: string,
   title: string,
+  index?: number,
   tags: string[],
   description: OutputData,
   status: TaskStatus
   priority: TaskPriority,
 }
+
+export type TaskTag = { title: string, id: string };

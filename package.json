@@ -17,6 +17,7 @@
     "allotment": "^1.17.0",
     "editorjs-undo": "^2.0.9",
     "framer-motion": "^7.5.2",
+    "idb": "^7.1.0",
     "mobx": "^6.0.3",
     "mobx-react-lite": "^3.4.0",
     "next": "^12.2.3",

@@ -1,7 +1,7 @@
 import { RootStore } from '../../../../stores/RootStore';
 import { makeAutoObservable, runInAction } from 'mobx';
 import { getProvider } from '../../../../helpers/StoreProvider';
-import { TaskData } from './types';
+import { TaskData, TaskTag } from './types';
 import React from 'react';
 
 const reorder = (list, startIndex, endIndex) => {
@@ -18,6 +18,8 @@ class TasksStore {
   }
 
   items: TaskData[] = [];
+  tags: TaskTag[] = [];
+  tagsMap: Record<string, TaskTag> = {};
   focusedTask: null | TaskData = null;
   openedTask: null | TaskData = null;
 
@@ -31,6 +33,13 @@ class TasksStore {
 
   createTask = (task: TaskData) => {
     this.items.push(task);
+    this.root.api.tasks.create(task);
+  };
+
+  createTag = (tag: TaskTag) => {
+    this.tags.push(tag);
+    this.tagsMap[tag.id] = tag;
+    this.root.api.tags.create(tag);
   }
 
   onOrderChange = (result) => {
@@ -40,6 +49,8 @@ class TasksStore {
 
     const [removed] = this.items.splice(result.source.index, 1);
     this.items.splice(result.destination.index, 0, removed);
+
+    this.root.api.tasks.order({ id: removed.id, index: result.destination.index });
   };
 
   handleTaskKeyDown = (task: TaskData) => (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -68,8 +79,25 @@ class TasksStore {
     this.focusedTask = task;
   };
 
-  load = async () => {
+  loadTasks = async () => {
     this.items = await this.root.api.tasks.getList();
+  }
+
+  loadTags = async () => {
+    const tags = await this.root.api.tags.get();
+
+    runInAction(() => {
+      this.tags = tags;
+      this.tagsMap = tags.reduce((acc, tag) => {
+        acc[tag.id] = tag;
+        return acc;
+      }, {});
+    })
+  }
+
+  load = async () => {
+    this.loadTasks();
+    this.loadTags()
   };
 
   init = async () => {

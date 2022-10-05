@@ -10,13 +10,16 @@ import {
   Text, useDisclosure,
   useOutsideClick,
   chakra, Stack, HStack, InputRightAddon, Box, Button,
-  Fade
+  Fade,
 } from '@chakra-ui/react';
 import { useTaskInputStore } from './store';
 import { TaskInputWrapper } from '../TaskInputWrapper';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DotsIcon } from '../TaskIcons/DotsIcon';
 import { TaskPriorityIcon } from '../TaskIcons/TaskPriorityIcon';
+import { TaskPriority } from '../../store/types';
+import { TaskInputTagsMenu } from '../TaskInputTagsMenu';
+import { TaskInputPriorityMenu } from '../TaskInputPriorityMenu';
 
 export const TaskInputView = observer(function TaskInput() {
   const store = useTaskInputStore();
@@ -45,11 +48,18 @@ export const TaskInputView = observer(function TaskInput() {
           onKeyDown={store.handleKeyDown}
           ref={store.inputRef}
         />
+        <chakra.div position='absolute'>
+          <chakra.span visibility='hidden'>
+            {store.value.slice(0, store.value.length - store.currentTagValue.length)}
+          </chakra.span>
+          <TaskInputTagsMenu/>
+          <TaskInputPriorityMenu/>
+        </chakra.div>
         <InputRightAddon>
           <HStack>
             <AnimatePresence mode='popLayout'>
               {
-                store.tags.map(({title}, index) => (
+                store.tags.map(({ title, id }) => (
                   <motion.div
                     layout
                     key={title}
@@ -61,9 +71,9 @@ export const TaskInputView = observer(function TaskInput() {
                     <Button
                       variant='unstyled'
                       size='xs'
-                      onClick={() => store.removeTag(index, true)}
-                      ref={(el) => store.setTagRef(el, index)}
-                      onKeyDown={(e) => store.handleTagKeyDown(e, index)}
+                      onClick={() => store.removeTag(id, true)}
+                      ref={(el) => store.setTagRef(el, id)}
+                      onKeyDown={(e) => store.handleTagKeyDown(e, id)}
                     >
                       <Tag
                         bg='blue.400'
@@ -77,15 +87,18 @@ export const TaskInputView = observer(function TaskInput() {
                 ))
               }
             </AnimatePresence>
-            <IconButton aria-label='priority' variant='unstyled' size='xs'>
-              <TaskPriorityIcon priority={store.priority} />
-            </IconButton>
+            {store.priority !== TaskPriority.NONE && (
+              <IconButton aria-label='priority' variant='unstyled' size='xs'>
+                <TaskPriorityIcon priority={store.priority}/>
+              </IconButton>
+            )}
             <chakra.div visibility={store.focused ? 'visible' : 'hidden'}>
               <Menu isOpen={isOpen} onClose={onClose} onOpen={onOpen}>
-                <MenuButton as={IconButton} aria-label='Task options' variant='solid' h={6} w={6} minW={6} p={1}>
+                <MenuButton as={IconButton} aria-label='Task options' variant='outline' borderColor='white' h={6} w={6}
+                            minW={6} p={1}>
                   <DotsIcon/>
                 </MenuButton>
-                <MenuList p={0}>
+                <MenuList p={0} shadow='lg'>
                   <MenuItem fontSize='sm' lineHeight='5' fontWeight='normal' command='!' onClick={store.startPriority}>
                     Set priority
                   </MenuItem>
@@ -101,5 +114,3 @@ export const TaskInputView = observer(function TaskInput() {
     </TaskInputWrapper>
   );
 });
-
-//text-sm/lineHeight-5/font-normal
