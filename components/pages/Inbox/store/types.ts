@@ -1,11 +1,24 @@
 import { OutputData } from '@editorjs/editorjs';
 
 export enum TaskPriority {
+  NONE = 'none',
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  NONE = 'none',
 }
+
+export const TaskPriorityValues = {
+  [TaskPriority.NONE]: '',
+  [TaskPriority.LOW]: '!',
+  [TaskPriority.MEDIUM]: '!!',
+  [TaskPriority.HIGH]: '!!!',
+};
+
+export const TaskPriorityKeys = Object.entries(TaskPriorityValues)
+  .reduce((acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  }, {});
 
 export enum TaskStatus {
   DONE = 'done',

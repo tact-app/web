@@ -15,6 +15,8 @@ import {
 import { useTaskInputStore } from './store';
 import { TaskInputWrapper } from '../TaskInputWrapper';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DotsIcon } from '../TaskIcons/DotsIcon';
+import { TaskPriorityIcon } from '../TaskIcons/TaskPriorityIcon';
 
 export const TaskInputView = observer(function TaskInput() {
   const store = useTaskInputStore();
@@ -75,23 +77,16 @@ export const TaskInputView = observer(function TaskInput() {
                 ))
               }
             </AnimatePresence>
+            <IconButton aria-label='priority' variant='unstyled' size='xs'>
+              <TaskPriorityIcon priority={store.priority} />
+            </IconButton>
             <chakra.div visibility={store.focused ? 'visible' : 'hidden'}>
               <Menu isOpen={isOpen} onClose={onClose} onOpen={onOpen}>
                 <MenuButton as={IconButton} aria-label='Task options' variant='solid' h={6} w={6} minW={6} p={1}>
-                  <svg viewBox='0 0 18 4' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                    <path
-                      d='M7 2C7 3.10457 7.89543 4 9 4C10.1046 4 11 3.10457 11 2C11 0.89543 10.1046 -3.91405e-08 9 -8.74228e-08C7.89543 -1.35705e-07 7 0.89543 7 2Z'
-                      fill='#A0AEC0'/>
-                    <path
-                      d='M1.50996e-07 2C1.02714e-07 3.10457 0.89543 4 2 4C3.10457 4 4 3.10457 4 2C4 0.89543 3.10457 -3.91405e-08 2 -8.74228e-08C0.895431 -1.35705e-07 1.99278e-07 0.89543 1.50996e-07 2Z'
-                      fill='#A0AEC0'/>
-                    <path
-                      d='M14 2C14 3.10457 14.8954 4 16 4C17.1046 4 18 3.10457 18 2C18 0.89543 17.1046 -3.91405e-08 16 -8.74228e-08C14.8954 -1.35705e-07 14 0.89543 14 2Z'
-                      fill='#A0AEC0'/>
-                  </svg>
+                  <DotsIcon/>
                 </MenuButton>
                 <MenuList p={0}>
-                  <MenuItem fontSize='sm' lineHeight='5' fontWeight='normal' command='!'>
+                  <MenuItem fontSize='sm' lineHeight='5' fontWeight='normal' command='!' onClick={store.startPriority}>
                     Set priority
                   </MenuItem>
                   <MenuItem fontSize='sm' lineHeight='5' fontWeight='normal' command='#' onClick={store.startTag}>

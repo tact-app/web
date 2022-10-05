@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { SyntheticEvent } from 'react';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { TaskData, TaskPriority, TaskStatus } from '../../store/types';
+import { TaskData, TaskPriority, TaskPriorityKeys, TaskPriorityValues, TaskStatus } from '../../store/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export type TaskInputProps = {
@@ -25,6 +25,10 @@ class TaskInputStore {
   tags: { title: string, ref?: HTMLButtonElement }[] = [];
   currentTagValue: string = '';
   tagActive: boolean = false;
+
+  currentPriorityValue: string = '';
+  priority: TaskPriority = TaskPriority.NONE;
+  priorityActive: boolean = false;
 
   inputRef = (input: HTMLInputElement) => {
     this.input = input;
@@ -49,6 +53,32 @@ class TaskInputStore {
     this.currentTagValue = '#';
   };
 
+  disableTagMode = () => {
+    this.tagActive = false;
+    this.value = this.value.slice(0, this.value.length - this.currentTagValue.length);
+    this.currentTagValue = '';
+  };
+
+  activatePriorityMode = () => {
+    this.priorityActive = true;
+    this.currentPriorityValue = '!';
+    this.priority = TaskPriority.LOW;
+  };
+
+  startPriority = () => {
+    this.activatePriorityMode();
+    this.value += '!';
+    this.input.focus();
+  }
+
+  setPriority = (priority: TaskPriority) => {
+    const priorityValue = TaskPriorityValues[priority];
+
+    this.priority = priority;
+    this.currentPriorityValue = priorityValue;
+    this.value = this.value.replace(/!+$/, priorityValue);
+  }
+
   startTag = () => {
     this.activateTagMode();
     this.value += ' #';
@@ -68,7 +98,7 @@ class TaskInputStore {
     this.value = this.value.slice(0, -this.currentTagValue.length);
     this.currentTagValue = '';
     this.tagActive = false;
-  }
+  };
 
   createTask = () => {
     this.onCreate({
@@ -77,12 +107,12 @@ class TaskInputStore {
       tags: this.tags.map(({ title }) => title),
       description: { blocks: [] },
       status: TaskStatus.PENDING,
-      priority: TaskPriority.NONE,
+      priority: this.priority,
     });
     this.value = '';
     this.tags = [];
     this.focused = true;
-  }
+  };
 
   handleChange = (e: SyntheticEvent) => {
     const { value } = (e.target as HTMLInputElement);
@@ -96,12 +126,38 @@ class TaskInputStore {
 
   handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      this.createTask()
-    } else if (e.key === '#' && e.target.selectionEnd === this.value.length) {
+      this.createTask();
+    } else if (e.key === '#' && e.target.selectionEnd === this.value.length && !this.tagActive && !this.priorityActive) {
       this.activateTagMode();
-    } else if (e.key === ' ' && this.tagActive) {
-      e.preventDefault();
-      this.createTag();
+    } else if (e.key === '!' && !this.tagActive && !this.priorityActive) {
+      this.activatePriorityMode();
+    } else if (this.priorityActive) {
+      if (e.key === '!') {
+        e.preventDefault();
+
+        if (this.currentPriorityValue.length < 3) {
+          this.setPriority(TaskPriorityKeys[this.currentPriorityValue + '!']);
+        }
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        this.setPriority(TaskPriorityKeys[this.currentPriorityValue.slice(0, -1)]);
+      } if (e.key === ' ') {
+        e.preventDefault();
+        this.priorityActive = false;
+        this.value = this.value.replace(this.currentPriorityValue, '');
+        this.currentPriorityValue = '';
+      }
+    } else if (this.tagActive && !this.priorityActive) {
+      if (e.key === ' ' && this.currentTagValue.length > 1) {
+        e.preventDefault();
+        this.createTag();
+      } else if ((e.key === 'Backspace' || e.key === ' ') && this.currentTagValue.length === 1) {
+        e.preventDefault();
+        this.disableTagMode();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        this.disableTagMode();
+      }
     } else if (e.key === 'ArrowRight' && e.target.selectionEnd === this.value.length && this.tags.length) {
       this.tags[0].ref.focus();
     }
@@ -131,7 +187,7 @@ class TaskInputStore {
         nextTag.ref?.focus();
       }
     }
-  }
+  };
 
   init = ({ onCreate }) => {
     this.onCreate = onCreate;
