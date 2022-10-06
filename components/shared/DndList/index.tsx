@@ -36,10 +36,12 @@ export const DndItem = observer(function DndItem<T extends { id: any }>({
                                                                           children,
                                                                           item,
                                                                           index,
+                                                                          handleComponent: HandleComponent,
                                                                           ...rest
                                                                         }: PropsWithChildren<{
   item: T,
   index: number,
+  handleComponent: React.ComponentType,
 } & ChakraStyledOptions>) {
   return (
     <Draggable draggableId={'' + item.id} index={index}>
@@ -47,10 +49,10 @@ export const DndItem = observer(function DndItem<T extends { id: any }>({
         <chakra.div
           ref={provided.innerRef}
           {...provided.draggableProps}
-          {...provided.dragHandleProps}
           {...rest}
           style={provided.draggableProps.style}
         >
+          <HandleComponent {...provided.dragHandleProps}/>
           {children}
         </chakra.div>
       )}

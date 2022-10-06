@@ -43,7 +43,7 @@ export enum TaskStatus {
 export type TaskData = {
   id: string,
   title: string,
-  index?: number,
+  listId: string,
   tags: string[],
   description: OutputData,
   status: TaskStatus
@@ -51,3 +51,10 @@ export type TaskData = {
 }
 
 export type TaskTag = { title: string, id: string };
+
+export enum NavigationDirections {
+  UP = 'up',
+  DOWN = 'down',
+  LEFT = 'left',
+  RIGHT = 'right',
+}

@@ -1,13 +1,11 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import Head from 'next/head';
-import { Allotment } from 'allotment';
 import TaskList from './components/TaskList';
 import { TaskDescription } from './components/TaskDescription';
 
 import 'allotment/dist/style.css';
 import { useTasksStore } from './store';
-import { TaskInput } from './components/TaskInput';
 
 export const TasksView = observer(function TasksView() {
   const store = useTasksStore();

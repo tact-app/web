@@ -6,7 +6,14 @@ interface MyDB extends DBSchema {
     key: string;
     value: TaskData;
     indexes: {
-      'by-index': string;
+      'by-list-id': string;
+    }
+  };
+  tasksLists: {
+    key: string;
+    value: {
+      id: string;
+      taskIds: string[];
     }
   };
   tags: {
@@ -26,12 +33,16 @@ export async function initDb() {
       const tasksStore = db.createObjectStore('tasks', {
         keyPath: 'id',
       });
-      tasksStore.createIndex('by-index', 'index');
+      tasksStore.createIndex('by-list-id', 'listId');
 
       const tagsStore = db.createObjectStore('tags', {
         keyPath: 'id',
       });
       tagsStore.createIndex('by-title', 'title');
+
+      db.createObjectStore('tasksLists', {
+        keyPath: 'id',
+      });
     },
   });
 }

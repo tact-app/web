@@ -4,20 +4,17 @@ import { RootStoreProvider } from '../stores/RootStore';
 import Layout from '../components/Layout';
 import { TaskInputWrapperStyles } from '../components/pages/Inbox/components/TaskInputWrapper';
 
-const variantOutlined = () => ({
-  field: {
-    bg: 'gray.100',
-    _focus: {
-      borderColor: 'blue.400',
-      boxShadow: '0 0 0 2px var(--chakra-colors-blue-400)',
-      bg: 'white',
-    }
-  }
-});
-
 const theme = extendTheme({
   components: {
     ...TaskInputWrapperStyles,
+    Menu: {
+      baseStyle: {
+        list: {
+          borderWidth: '0',
+          overflow: 'hidden',
+        }
+      }
+    }
   }
 });
 

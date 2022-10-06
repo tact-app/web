@@ -3,7 +3,8 @@ import { RootStore, useRootStore } from '../stores/RootStore';
 
 export interface Store<PropsType> {
   init(props: PropsType): Promise<void> | void;
-  subscribe?(): () => void
+
+  subscribe?(): () => void;
 }
 
 export interface StoreConstructor<StoreType> {
@@ -30,15 +31,13 @@ export const getProvider = <PropsType, StoreType extends Store<PropsType>>(Store
       return res;
     }, [rootStore]);
 
-    useEffect(() => {
-      store.init(props as PropsType);
-    }, [store, props]);
+    store.init(props as PropsType);
 
     useEffect(() => {
       if (store.subscribe) {
-        return store.subscribe()
+        return store.subscribe();
       }
-    }, [store])
+    }, [store]);
 
     return <StoreContext.Provider value={store}>{props.children}</StoreContext.Provider>;
   };

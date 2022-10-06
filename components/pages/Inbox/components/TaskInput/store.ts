@@ -9,7 +9,9 @@ import { v4 as uuidv4 } from 'uuid';
 export type TaskInputProps = {
   onCreate: (task: TaskData) => void;
   onTagCreate: (tag: TaskTag) => void;
+  goToList: () => void;
   tags: TaskTag[];
+  listId: string;
 }
 
 class TaskInputStore {
@@ -20,6 +22,7 @@ class TaskInputStore {
   onCreate: TaskInputProps['onCreate'];
   onTagCreate: TaskInputProps['onTagCreate'];
 
+  listId: string;
   value: string = '';
   focused: boolean = false;
   input: HTMLInputElement | null = null;
@@ -33,6 +36,8 @@ class TaskInputStore {
   currentPriorityValue: string = '';
   priority: TaskPriority = TaskPriority.NONE;
   priorityActive: boolean = false;
+
+  goToList: () => void;
 
   get filteredAvailableTags() {
     return this.availableTags.filter(({ title }) => title.startsWith(this.currentTagValue));
@@ -165,17 +170,21 @@ class TaskInputStore {
   };
 
   createTask = () => {
-    this.onCreate({
-      title: this.value,
-      id: uuidv4(),
-      tags: this.tags.map(({ id }) => id),
-      description: { blocks: [] },
-      status: TaskStatus.TODO,
-      priority: this.priority,
-    });
-    this.value = '';
-    this.tags = [];
-    this.focused = true;
+    if (this.onCreate) {
+      this.onCreate({
+        title: this.value,
+        id: uuidv4(),
+        listId: this.listId,
+        tags: this.tags.map(({ id }) => id),
+        description: { blocks: [] },
+        status: TaskStatus.TODO,
+        priority: this.priority,
+      });
+      this.value = '';
+      this.tags = [];
+      this.focused = true;
+      this.priority = TaskPriority.NONE;
+    }
   };
 
   handleChange = (e: SyntheticEvent) => {
@@ -193,12 +202,20 @@ class TaskInputStore {
   };
 
   handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !this.tagActive && !this.priorityActive) {
-      this.createTask();
-    } else if (e.key === '#' && e.target.selectionEnd === this.value.length && !this.tagActive && !this.priorityActive) {
-      this.activateTagMode();
-    } else if (e.key === '!' && !this.tagActive && !this.priorityActive) {
-      this.activatePriorityMode();
+    if (!this.tagActive && !this.priorityActive) {
+      if (e.key === 'Enter') {
+        this.createTask();
+      } else if (e.key === '#' && e.target.selectionEnd === this.value.length) {
+        this.activateTagMode();
+      } else if (e.key === '!') {
+        this.activatePriorityMode();
+      } else if (e.key === 'ArrowDown') {
+        this.focused = false;
+        this.input.blur();
+        this.goToList();
+      } else if (e.key === 'ArrowRight' && e.target.selectionEnd === this.value.length && this.tags.length) {
+        this.tags[0].ref.focus();
+      }
     } else if (this.priorityActive) {
       if (e.key === '!') {
         e.preventDefault();
@@ -235,8 +252,6 @@ class TaskInputStore {
       } else if (e.key === 'ArrowDown') {
 
       }
-    } else if (e.key === 'ArrowRight' && e.target.selectionEnd === this.value.length && this.tags.length) {
-      this.tags[0].ref.focus();
     }
   };
 
@@ -268,10 +283,12 @@ class TaskInputStore {
     }
   };
 
-  init = ({ onCreate, onTagCreate, tags }: TaskInputProps) => {
+  init = ({ onCreate, onTagCreate, tags, listId, goToList }: TaskInputProps) => {
     this.onCreate = onCreate;
     this.onTagCreate = onTagCreate;
+    this.goToList = goToList;
     this.availableTags = tags;
+    this.listId = listId;
   };
 }
 
