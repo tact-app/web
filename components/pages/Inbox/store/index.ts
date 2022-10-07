@@ -2,20 +2,24 @@ import { RootStore } from '../../../../stores/RootStore';
 import { makeAutoObservable, runInAction } from 'mobx';
 import { getProvider } from '../../../../helpers/StoreProvider';
 import { NavigationDirections, TaskData, TaskStatus, TaskTag } from './types';
-import React, { RefObject } from 'react';
+import { ModalsController } from '../../../../helpers/ModalsController';
+import { TaskDeleteModal } from '../components/Modals/TaskDeleteModal';
+import { TaskQuickEditorStore } from '../components/TaskQuickEditor/store';
 
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
+export enum ModalsTypes {
+  DELETE_TASK,
+  WONTDO_TASK,
+}
 
 class TasksStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
   }
+
+  creator = new TaskQuickEditorStore(this.root);
+  modals = new ModalsController({
+    [ModalsTypes.DELETE_TASK]: TaskDeleteModal,
+  });
 
   listId: string = 'default';
   items: Record<string, TaskData> = {};
@@ -26,69 +30,123 @@ class TasksStore {
   editingTaskId: null | string = null;
   openedTask: null | TaskData = null;
 
+  isItemMenuOpen: boolean = false;
   isDraggingActive: boolean = false;
   isControlDraggingActive: boolean = false;
   DnDApi = null;
   dropTimeout: null | number = null;
   currentSelectTaskCursor: number = 0;
 
+  getHandler = (fn: (e) => void) => (e) => {
+    if (!this.isItemMenuOpen && !this.isDraggingActive && !this.isControlDraggingActive) {
+      fn(e);
+    }
+  };
+
   hotkeyHandlers = {
-    UP: () => this.handleNavigation(NavigationDirections.UP),
-    DOWN: () => this.handleNavigation(NavigationDirections.DOWN),
-    DONE: () => {
+    UP: this.getHandler(() => this.handleNavigation(NavigationDirections.UP)),
+    DOWN: this.getHandler(() => this.handleNavigation(NavigationDirections.DOWN)),
+    DONE: this.getHandler(() => {
       if (this.focusedTaskIds.length) {
         this.setTasksStatus(this.focusedTaskIds, TaskStatus.DONE);
       }
-    },
-    EDIT: (e) => {
+    }),
+    WONT_DO: this.getHandler(() => {
+      if (this.focusedTaskIds.length) {
+        this.setTasksStatus(this.focusedTaskIds, TaskStatus.WONT_DO);
+      }
+    }),
+    DELETE: this.getHandler(() => {
+      if (this.focusedTaskIds.length) {
+        const tasksForDelete = this.focusedTaskIds.slice();
+
+        this.modals.open({
+          type: ModalsTypes.DELETE_TASK,
+          props: {
+            onDelete: () => {
+              this.deleteTasks(tasksForDelete);
+              this.modals.close();
+            },
+            onClose: this.modals.close,
+          }
+        });
+      }
+    }),
+    FORCE_DELETE: this.getHandler(() => {
+      if (this.focusedTaskIds.length) {
+        this.deleteTasks(this.focusedTaskIds);
+      }
+    }),
+    EDIT: this.getHandler((e) => {
       e.preventDefault();
       if (this.focusedTaskIds.length) {
         this.setEditingTask(this.focusedTaskIds[this.focusedTaskIds.length - 1]);
       }
-    },
-    MOVE_UP: () => {
-      if (this.focusedTaskIds.length === 1) {
-        this.runControlsMoveAction((lift) => lift.moveUp())
+    }),
+    MOVE_UP: this.getHandler(() => {
+      if (this.focusedTaskIds.length) {
+        if (this.focusedTaskIds.length === 1) {
+          this.runControlsMoveAction((lift) => lift.moveUp());
+        } else {
+          this.controlsMultiMoveAction('up');
+        }
       }
-    },
-    MOVE_DOWN: () => {
-      if (this.focusedTaskIds.length === 1) {
-        this.runControlsMoveAction((lift) => lift.moveDown())
+    }),
+    MOVE_DOWN: this.getHandler(() => {
+      if (this.focusedTaskIds.length) {
+        if (this.focusedTaskIds.length === 1) {
+          this.runControlsMoveAction((lift) => lift.moveDown());
+        } else {
+          this.controlsMultiMoveAction('down');
+        }
       }
-    },
-    SELECT_UP: () => this.shiftSelect('up'),
-    SELECT_DOWN: () => this.shiftSelect('down'),
+    }),
+    SELECT_UP: this.getHandler(() => this.shiftSelect('up')),
+    SELECT_DOWN: this.getHandler(() => this.shiftSelect('down')),
+    ESC: this.getHandler(() => {
+      this.resetFocusedTask();
+    }),
   };
 
-  shiftSelect = (direction: 'up' | 'down') => {
+  ignoreEventsCondition = () => {
+    return this.isItemMenuOpen;
+  };
+
+  openItemMenu = () => {
+    this.isItemMenuOpen = true;
+  };
+
+  closeItemMenu = () => {
+    this.isItemMenuOpen = false;
+  };
+
+  shiftSelect = (direction: 'up' | 'down', count: number = 1) => {
     if (this.focusedTaskIds.length) {
       const isUp = direction === 'up';
 
       if (isUp ? this.currentSelectTaskCursor >= 0 : this.currentSelectTaskCursor <= 0) {
-        const focusedTaskIndex = this.order.indexOf(this.focusedTaskIds[this.focusedTaskIds.length - 1]);
-        const nextFocusedTaskId = this.order[focusedTaskIndex + (isUp ? -1 : 1)];
-        const alreadyFocusedTaskIndex = this.focusedTaskIds.indexOf(nextFocusedTaskId);
+        const focusedTaskIndex = this.order.indexOf(this.focusedTaskIds[isUp ? 0 : this.focusedTaskIds.length - 1]);
+        const nextFocusedTaskIds = this.order.slice(
+          focusedTaskIndex + (isUp ? -count : 1),
+          focusedTaskIndex + (isUp ? 0 : count + 1)
+        );
 
-        if (alreadyFocusedTaskIndex !== -1) {
-          this.focusedTaskIds.splice(alreadyFocusedTaskIndex, 1);
-        }
-
-        if (nextFocusedTaskId) {
+        if (nextFocusedTaskIds.length) {
           this.currentSelectTaskCursor += isUp ? 1 : -1;
 
-          this.addFocusedTask(nextFocusedTaskId)
+          this.addFocusedTasks(nextFocusedTaskIds);
         }
       } else {
-        this.focusedTaskIds.pop();
-
         if (this.currentSelectTaskCursor > 0) {
-          this.currentSelectTaskCursor--;
+          this.currentSelectTaskCursor -= count;
+          this.focusedTaskIds = this.focusedTaskIds.slice(count);
         } else {
-          this.currentSelectTaskCursor++;
+          this.currentSelectTaskCursor += count;
+          this.focusedTaskIds = this.focusedTaskIds.slice(0, -count);
         }
       }
     }
-  }
+  };
 
   runControlsMoveAction = (action: (lift) => void) => {
     if (this.isDraggingActive || this.isControlDraggingActive || this.dropTimeout) {
@@ -108,7 +166,21 @@ class TasksStore {
       lift.drop();
       this.dropTimeout = null;
     }, 200) as unknown as number;
-  }
+  };
+
+  controlsMultiMoveAction = (direction: 'up' | 'down') => {
+    const mainSelectedTaskId = this.focusedTaskIds[0];
+    const destinationIndex = this.order.indexOf(mainSelectedTaskId) + (direction === 'up' ? -1 : 1);
+
+    this.order = this.order.filter((id) => !this.focusedTaskIds.includes(id));
+    this.order.splice(destinationIndex, 0, ...this.focusedTaskIds);
+
+    this.root.api.tasks.order({
+      listId: this.listId,
+      taskIds: this.focusedTaskIds,
+      destination: destinationIndex,
+    });
+  };
 
   openTask = (item: TaskData) => {
     this.openedTask = item;
@@ -123,6 +195,22 @@ class TasksStore {
     this.order.push(task.id);
 
     this.root.api.tasks.create(task);
+  };
+
+  deleteTasks = (ids: string[]) => {
+    ids.forEach((id) => {
+      delete this.items[id];
+    });
+
+    this.order = this.order.filter((id) => !ids.includes(id));
+
+    this.root.api.tasks.delete(this.listId, ids);
+  };
+
+  updateTask = (task: TaskData) => {
+    Object.assign(this.items[task.id], task);
+
+    this.root.api.tasks.update({ id: task.id, fields: task });
   };
 
   createTag = (tag: TaskTag) => {
@@ -156,8 +244,8 @@ class TasksStore {
 
     this.root.api.tasks.order({
       listId: this.listId,
+      taskIds: [removed],
       destination: result.destination.index,
-      source: result.source.index
     });
   };
 
@@ -165,30 +253,40 @@ class TasksStore {
     ids.forEach((id) => {
       this.setTaskStatus(id, status);
     });
-  }
+  };
 
   setTaskStatus = (taskId: string, status: TaskStatus) => {
     const task = this.items[taskId];
 
-    task.status = status;
+    if (task.status === TaskStatus.TODO) {
+      task.status = status;
 
-    this.root.api.tasks.update({
-      id: task.id,
-      fields: { status }
-    });
+      this.root.api.tasks.update({
+        id: task.id,
+        fields: { status }
+      });
+    }
   };
 
   handleNavigation = (direction: NavigationDirections) => {
-    const focusedTaskIndex = direction === NavigationDirections.UP ? 0 :this.focusedTaskIds.length - 1
+    const focusedTaskIndex = direction === NavigationDirections.UP ? 0 : this.focusedTaskIds.length - 1;
     const index = this.focusedTaskIds.length ? this.order.indexOf(this.focusedTaskIds[focusedTaskIndex]) : -1;
 
     this.resetFocusedTask();
 
     if (index !== -1) {
-      if (direction === NavigationDirections.UP && index !== 0) {
-        this.setFocusedTask(this.order[index - 1]);
-      } else if (direction === NavigationDirections.DOWN && index !== this.order.length - 1) {
-        this.setFocusedTask(this.order[index + 1]);
+      if (direction === NavigationDirections.UP) {
+        if (index !== 0) {
+          this.setFocusedTask(this.order[index - 1]);
+        } else {
+          this.creator.setFocus(true);
+        }
+      } else if (direction === NavigationDirections.DOWN) {
+        if (index !== this.order.length - 1) {
+          this.setFocusedTask(this.order[index + 1]);
+        } else {
+          this.creator.setFocus(true);
+        }
       }
     } else {
       if (direction === NavigationDirections.DOWN) {
@@ -202,17 +300,19 @@ class TasksStore {
   resetFocusedTask = () => {
     this.focusedTaskIds = [];
     this.currentSelectTaskCursor = 0;
-  }
+  };
 
   focusFirstTask = () => {
     this.setFocusedTask(this.order[0]);
   };
 
-  setFocusedTask = (id: string, multiselect?: boolean) => {
-    if (!multiselect) {
+  setFocusedTask = (id: string, multiselect?: 'single' | 'many') => {
+    if (this.focusedTaskIds.length === 1 && this.focusedTaskIds[0] === id && this.items[id].status === TaskStatus.TODO) {
+      this.setEditingTask(id);
+    } else if (!multiselect) {
       this.resetFocusedTask();
-      this.addFocusedTask(id);
-    } else {
+      this.addFocusedTasks([id]);
+    } else if (multiselect === 'single') {
       if (this.focusedTaskIds.includes(id)) {
         this.focusedTaskIds = this.focusedTaskIds.filter((taskId) => taskId !== id);
 
@@ -224,7 +324,7 @@ class TasksStore {
           }
         }
       } else {
-        this.addFocusedTask(id);
+        this.addFocusedTasks([id]);
 
         if (this.currentSelectTaskCursor !== 0) {
           if (this.currentSelectTaskCursor < 0) {
@@ -234,15 +334,22 @@ class TasksStore {
           }
         }
       }
-    }
-  }
+    } else if (multiselect === 'many' && this.focusedTaskIds.length && !this.focusedTaskIds.includes(id)) {
+      const topFocusedTaskIndex = this.order.indexOf(this.focusedTaskIds[0]);
+      const bottomFocusedTaskIndex = this.order.indexOf(this.focusedTaskIds[this.focusedTaskIds.length - 1]);
+      const index = this.order.indexOf(id);
 
-  addFocusedTask = (taskId: string | null) => {
-    if (taskId === null) {
-      this.resetFocusedTask();
-    } else {
-      this.focusedTaskIds.push(taskId);
+      if (index > bottomFocusedTaskIndex) {
+        this.shiftSelect('down', index - bottomFocusedTaskIndex);
+      } else if (index < topFocusedTaskIndex) {
+        this.shiftSelect('up', topFocusedTaskIndex - index);
+      }
     }
+  };
+
+  addFocusedTasks = (taskIds: string[]) => {
+    this.focusedTaskIds.push(...taskIds);
+    this.focusedTaskIds.sort((a, b) => this.order.indexOf(a) - this.order.indexOf(b));
 
     this.setEditingTask(null);
   };

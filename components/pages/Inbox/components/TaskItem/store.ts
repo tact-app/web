@@ -2,23 +2,26 @@ import { makeAutoObservable } from 'mobx';
 import { NavigationDirections, TaskData, TaskStatus, TaskTag } from '../../store/types';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import React, { SyntheticEvent } from 'react';
+import React, { MouseEvent } from 'react';
+import { TaskQuickEditorStore } from '../TaskQuickEditor/store';
 
 export type TaskItemProps = {
-  task: TaskData,
+  task?: TaskData | null,
   isFocused?: boolean
   isDragging?: boolean
   isEditMode?: boolean
-  onFocus?: (taskId: string, multiselect?: boolean) => void
+  onFocus?: (taskId: string, multiselect?: 'single' | 'many') => void
   onNavigate?: (direction: NavigationDirections) => void
   onStatusChange?: (taskId: string, status: TaskStatus) => void
-  tags: Record<string, TaskTag>
+  tagsMap: Record<string, TaskTag>
 }
 
 class TaskItemStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
   }
+
+  quickEdit: TaskQuickEditorStore = new TaskQuickEditorStore(this.root);
 
   task: TaskData;
   tags: Record<string, TaskTag>;
@@ -29,46 +32,11 @@ class TaskItemStore {
   onNavigate: TaskItemProps['onNavigate'];
   onStatusChange: TaskItemProps['onStatusChange'];
 
-  isTitleChanges: boolean = false;
-
-  handleClick = (e: MouseEvent) => {
+  handleClick = (e: MouseEvent<HTMLDivElement>) => {
     if (this.onFocus) {
-      this.onFocus(this.task.id, e.metaKey);
-    }
-  };
-
-  commitTitleChanges = () => {
-    if (this.isTitleChanges) {
-      this.root.api.tasks.update({ id: this.task.id, fields: { title: this.task.title } });
-    }
-  };
-
-  handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      this.commitTitleChanges();
-    } else if (e.key === 'Escape') {
-      this.commitTitleChanges();
-
-      if (this.onFocus) {
-        this.onFocus(null);
-      }
-    } else if ((e.key === 'Backspace' && !this.task.title) || e.key === 'Delete') {
-      this.root.api.tasks.delete(this.task.id);
-    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
-      this.commitTitleChanges();
-
-      if (this.onNavigate) {
-        this.onNavigate(e.key === 'ArrowDown' ? NavigationDirections.DOWN : NavigationDirections.UP);
-      }
-    } else if (e.key === 'd' && e.ctrlKey) {
-      this.onStatusChange(this.task.id, TaskStatus.DONE);
+      this.onFocus(this.task.id, e.metaKey ? 'single' : e.shiftKey ? 'many' : undefined);
     }
-  };
-
-  handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.task.title = e.target.value;
-    this.isTitleChanges = true;
   };
 
   handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,18 +46,14 @@ class TaskItemStore {
     this.onFocus(null);
   };
 
-  init = ({ task, isFocused, onFocus, onNavigate, onStatusChange, tags, isDragging, isEditMode }: TaskItemProps) => {
+  init = ({ task, isFocused, onFocus, onNavigate, onStatusChange, tagsMap, isDragging, isEditMode }: TaskItemProps) => {
     this.task = task;
     this.isFocused = isFocused;
     this.onFocus = onFocus;
-    this.tags = tags;
+    this.tags = tagsMap;
     this.isDragging = isDragging;
     this.onStatusChange = onStatusChange;
     this.onNavigate = onNavigate;
-
-    if (this.isEditMode && !isEditMode) {
-      this.commitTitleChanges();
-    }
 
     this.isEditMode = isEditMode;
   };

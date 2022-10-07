@@ -1,4 +1,4 @@
-import { TaskData, TaskStatus } from '../../../components/pages/Inbox/store/types';
+import { TaskData } from '../../../components/pages/Inbox/store/types';
 import { DB } from '../index';
 
 const data = {
@@ -38,13 +38,24 @@ const data = {
         await db.put('tasksLists', tasksLists);
       }
     },
-    '/api/tasks/delete': (db: DB, { id }: { id: string }) => db.delete('tasks', id),
-    '/api/tasks/order': async (db: DB, data: { listId: string, source: number, destination: number }) => {
+    '/api/tasks/delete': async (db: DB, { ids, listId }: { ids: string[], listId: string }) => {
+      console.log(ids)
+      await Promise.all(ids.map((id) => db.delete('tasks', id)));
+
+      const existedList = await db.get('tasksLists', listId);
+
+      if (existedList) {
+        existedList.taskIds = existedList.taskIds.filter((id) => !ids.includes(id));
+
+        await db.put('tasksLists', existedList);
+      }
+    },
+    '/api/tasks/order': async (db: DB, data: { listId: string, taskIds: string[], destination: number }) => {
       const existedList = await db.get('tasksLists', data.listId);
 
       if (existedList) {
-        const [removed] = existedList.taskIds.splice(data.source, 1);
-        existedList.taskIds.splice(data.destination, 0, removed);
+        existedList.taskIds = existedList.taskIds.filter((id) => !data.taskIds.includes(id));
+        existedList.taskIds.splice(data.destination, 0, ...data.taskIds);
 
         await db.put('tasksLists', existedList);
       }
@@ -56,6 +67,8 @@ const data = {
         Object.entries(data.fields).forEach(([key, value]) => {
           existedTask[key] = value;
         });
+
+        console.log(data, existedTask)
         await db.put('tasks', existedTask);
       }
     },

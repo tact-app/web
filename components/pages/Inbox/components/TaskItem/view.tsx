@@ -1,15 +1,18 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Box, Checkbox, HStack, Input, Text, chakra, Tag } from '@chakra-ui/react';
+import { Box, Checkbox, HStack, Text, chakra, Tag } from '@chakra-ui/react';
 import { TaskStatus } from '../../store/types';
 import { useTaskItemStore } from './store';
 import { TaskPriorityIcon } from '../TaskIcons/TaskPriorityIcon';
 import { TaskItemMenu } from '../TaskItemMenu';
-import { useTasksStore } from '../../store';
+import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
+import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
+import { TaskQuickEditorPriority } from '../TaskQuickEditor/TaskQuickEditorPriority';
+import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
 
 export const TaskItemView = observer(function TaskItem() {
   const store = useTaskItemStore();
-  const ref = useRef(null);
+  const quickEditStore = useTaskQuickEditorStore();
   const isTodoTask = store.task.status === TaskStatus.TODO;
 
   return (
@@ -39,14 +42,7 @@ export const TaskItemView = observer(function TaskItem() {
               />
             </div>
             {store.isEditMode && isTodoTask ? (
-              <Input
-                ref={ref}
-                autoFocus={true}
-                value={store.task.title}
-                onKeyDown={store.handleKeyDown}
-                onChange={store.handleTitleChange}
-                variant='unstyled'
-              />
+              <TaskQuickEditorInput autofocus/>
             ) : (
               <Box position='relative'>
                 <Text
@@ -63,20 +59,32 @@ export const TaskItemView = observer(function TaskItem() {
               </Box>
             )}
             <chakra.div justifySelf='end' ml='auto' mr={4}>
-              <TaskPriorityIcon priority={store.task.priority}/>
+              {store.isEditMode ? (
+                <TaskQuickEditorPriority/>
+              ) : (
+                <TaskPriorityIcon priority={store.task.priority}/>
+              )}
             </chakra.div>
           </Box>
           {
-            !!store.task.tags.length && (
-              <HStack ml={9} pb={2.5}>
-                {
-                  store.task.tags.map((id) => (
-                    <Tag bg='blue.400' color='white' cursor='pointer' key={id}>
-                      {store.tags[id]?.title}
-                    </Tag>
-                  ))
-                }
-              </HStack>
+            store.isEditMode ? (
+              !!quickEditStore.tags.length && (
+                <HStack ml={9} pb={2.5} maxH='34px'>
+                  <TaskQuickEditorTags/>
+                </HStack>
+              )
+            ) : (
+              !!store.task.tags.length && (
+                <HStack ml={9} pb={2.5}>
+                  {
+                    store.task.tags.map((id) => (
+                      <Tag bg='blue.400' color='white' cursor='pointer' key={id}>
+                        {store.tags[id]?.title}
+                      </Tag>
+                    ))
+                  }
+                </HStack>
+              )
             )
           }
         </Box>

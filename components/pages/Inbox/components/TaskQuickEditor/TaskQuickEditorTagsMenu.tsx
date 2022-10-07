@@ -1,10 +1,10 @@
-import { chakra, Menu, MenuButton, MenuItem, MenuList, useMenu } from '@chakra-ui/react';
+import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { useTaskInputStore } from '../TaskInput/store';
+import { useTaskQuickEditorStore } from './store';
 
-export const TaskInputTagsMenu = observer(function TaskInputTagsMenu() {
-  const store = useTaskInputStore();
+export const TaskQuickEditorTagsMenu = observer(function TaskQuickEditorTagsMenu() {
+  const store = useTaskQuickEditorStore();
 
   return (
     <Menu isOpen={store.tagsMenuOpen} placement='bottom-start' offset={[0, 24]}>

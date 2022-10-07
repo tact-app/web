@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { Box, chakra } from '@chakra-ui/react';
 import { TaskDragIcon } from '../TaskIcons/TaskDragIcon';
 import TaskItem from '../TaskItem';
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import { TaskData } from '../../store/types';
 import { useTasksStore } from '../../store';
 
@@ -51,7 +51,12 @@ export const TaskListItem = observer(function TaskListItem({
         onFocus={store.setFocusedTask}
         onNavigate={store.handleNavigation}
         onStatusChange={store.setTaskStatus}
-        tags={store.tagsMap}
+
+        onCreate={store.updateTask}
+        onTagCreate={store.createTag}
+        tagsMap={store.tagsMap}
+        listId={store.listId}
+        goToList={store.handleNavigation}
       />
     </Box>
   );
