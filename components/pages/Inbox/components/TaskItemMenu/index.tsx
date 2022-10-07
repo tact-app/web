@@ -31,7 +31,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
         }}>Add tag</MenuItem>
         <MenuDivider m={0}/>
         <MenuItem command='D' onClick={() => tasksStore.setTaskStatus(store.task.id, TaskStatus.DONE)}>Done</MenuItem>
-        <MenuItem command='W / ⇧W' onClick={() => tasksStore.setTaskStatus(store.task.id, TaskStatus.WONT_DO)}>Won't do</MenuItem>
+        <MenuItem command='W / ⇧W' onClick={() => tasksStore.setTaskStatus(store.task.id, TaskStatus.WONT_DO)}>Won&apos;t do</MenuItem>
         <MenuDivider m={0}/>
         <MenuItem>Edit task</MenuItem>
         <MenuItem command='⌫' onClick={() => tasksStore.deleteTasks([store.task.id])}>Delete</MenuItem>

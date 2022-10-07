@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Box, Flex, Text, IconButton } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
@@ -11,7 +11,7 @@ export const TaskDescriptionView = observer(function TaskDescriptionView() {
   const tasksStore = useTasksStore();
   const ref = useRef<null | HTMLDivElement>(null);
 
-  useEffect(() => store.setRef(ref.current), [store, ref.current]);
+  store.setRef(ref.current)
 
   return (
     <Box className={styles.root}>

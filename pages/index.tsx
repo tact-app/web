@@ -1,6 +1,7 @@
-export default function Index({children}) {
-  return <div>
-    Index
-    {children}
-  </div>;
+export default function Index({ children }) {
+  return (
+    <div>
+      {children}
+    </div>
+  );
 }

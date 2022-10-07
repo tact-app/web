@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 type Props = {
   src: string,
   alt?: string,
@@ -6,7 +8,7 @@ type Props = {
 
 const ImageComponent = ({ src, alt, className }: Props) => {
   return (
-    <img className={className} src={src} alt={alt}/>
+    <Image className={className} src={src} alt={alt}/>
   );
 };
 

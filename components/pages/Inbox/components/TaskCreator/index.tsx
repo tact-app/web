@@ -3,9 +3,11 @@ import { TaskQuickEditorProps, TaskQuickEditorStoreProvider } from '../TaskQuick
 import { TaskCreatorView } from './view';
 import { useTasksStore } from '../../store';
 
+const useTasksStoreInstance = () => useTasksStore().creator;
+
 export const TaskCreator = observer(function TaskCreator(props: TaskQuickEditorProps) {
   return (
-    <TaskQuickEditorStoreProvider {...props} instance={() => useTasksStore().creator}>
+    <TaskQuickEditorStoreProvider {...props} instance={useTasksStoreInstance}>
       <TaskCreatorView/>
     </TaskQuickEditorStoreProvider>
   );

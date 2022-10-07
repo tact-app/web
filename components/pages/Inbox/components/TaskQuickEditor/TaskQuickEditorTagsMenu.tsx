@@ -17,7 +17,7 @@ export const TaskQuickEditorTagsMenu = observer(function TaskQuickEditorTagsMenu
             fontWeight='normal'
             onClick={store.createNewTag}
           >
-            Tag not found. Create new "{store.currentTagValue.slice(1)}"
+            Tag not found. Create new &quot;{store.currentTagValue.slice(1)}&quot;
           </MenuItem>
         )}
         {store.filteredAvailableTags.map(({ title, id }) => (
