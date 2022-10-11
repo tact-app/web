@@ -1,51 +1,19 @@
 import { observer } from 'mobx-react-lite';
 import { useTasksStore } from '../../store';
-import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { Container, Heading, Box, useOutsideClick } from '@chakra-ui/react';
 import { TaskCreator } from '../TaskCreator';
 import React, { PropsWithChildren, useRef } from 'react';
 import { TaskListItem } from '../TaskListItem';
-import { GlobalHotKeys } from 'react-hotkeys';
 import { ModalsSwitcher } from '../../../../../helpers/ModalsController';
+import { DraggableList } from '../../../../shared/DraggableList';
+import { GlobalHotKeys } from 'react-hotkeys';
 
 const keyMap = {
-  UP: 'up',
-  DOWN: 'down',
   DONE: 'd',
   WONT_DO: ['w', 'cmd+w'],
   EDIT: 'space',
-  MOVE_UP: ['j', 'cmd+up'],
-  MOVE_DOWN: ['k', 'cmd+down'],
-  SELECT_UP: ['shift+up'],
-  SELECT_DOWN: ['shift+down'],
-  ESC: 'esc',
-  FORCE_DELETE: ['cmd+backspace', 'cmd+delete'],
-  DELETE: ['del', 'backspace'],
+  OPEN: 'enter',
 };
-
-const TaskListWrapper = observer(function TaskListWrapper({ children }: PropsWithChildren) {
-  const store = useTasksStore();
-
-  return (
-    <DragDropContext
-      onDragStart={store.startDragging}
-      onDragEnd={store.endDragging}
-      sensors={[store.setDnDApi]}
-    >
-      <Droppable droppableId='droppable'>
-        {(provided) => (
-          <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            {children}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
-  );
-});
 
 const TaskList = observer(function TaskList() {
   const store = useTasksStore();
@@ -53,7 +21,7 @@ const TaskList = observer(function TaskList() {
 
   useOutsideClick({
     ref: ref,
-    handler: () => store.resetFocusedTask(),
+    handler: () => store.draggableList.resetFocusedItem(),
   });
 
   return (
@@ -63,9 +31,9 @@ const TaskList = observer(function TaskList() {
         <TaskCreator
           onCreate={store.createTask}
           onTagCreate={store.createTag}
+          onNavigate={store.draggableList.handleNavigation}
           tagsMap={store.tagsMap}
           listId={store.listId}
-          goToList={store.handleNavigation}
           keepFocus
         />
       </Box>
@@ -74,21 +42,8 @@ const TaskList = observer(function TaskList() {
         handlers={store.hotkeyHandlers}
       >
         <Box ref={ref}>
-          <TaskListWrapper>
-            {
-              store.order.map((taskId, index) => {
-                const task = store.items[taskId];
-
-                return (
-                  <Draggable draggableId={task.id} index={index} key={task.id}>
-                    {(provided, snapshot) => (
-                      <TaskListItem task={task} index={index} provided={provided} snapshot={snapshot}/>
-                    )}
-                  </Draggable>
-                );
-              })
-            }
-          </TaskListWrapper>
+          <DraggableList items={store.order} content={TaskListItem} callbacks={store.draggableHandlers}
+                         instance={store.draggableList}/>
         </Box>
       </GlobalHotKeys>
       <ModalsSwitcher controller={store.modals}/>

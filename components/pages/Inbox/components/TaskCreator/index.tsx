@@ -7,7 +7,7 @@ const useTasksStoreInstance = () => useTasksStore().creator;
 
 export const TaskCreator = observer(function TaskCreator(props: TaskQuickEditorProps) {
   return (
-    <TaskQuickEditorStoreProvider {...props} instance={useTasksStoreInstance}>
+    <TaskQuickEditorStoreProvider {...props} useInstance={useTasksStoreInstance}>
       <TaskCreatorView/>
     </TaskQuickEditorStoreProvider>
   );

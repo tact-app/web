@@ -6,7 +6,7 @@ import {
   HStack, InputRightAddon,
 } from '@chakra-ui/react';
 import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
-import { TaskCreatorWrapper } from '../TaskCreatorWrapper';
+import { InputWrapper } from '../../../../shared/InputWrapper';
 import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
 import { TaskQuickEditorPriority } from '../TaskQuickEditor/TaskQuickEditorPriority';
@@ -26,7 +26,7 @@ export const TaskCreatorView = observer(function TaskCreator() {
   });
 
   return (
-    <TaskCreatorWrapper
+    <InputWrapper
       variant={!store.focused ? 'primary' : 'focused'}
       size='md'
       alignItems='center'
@@ -45,6 +45,6 @@ export const TaskCreatorView = observer(function TaskCreator() {
           </HStack>
         </InputRightAddon>
       </InputGroup>
-    </TaskCreatorWrapper>
+    </InputWrapper>
   );
 });

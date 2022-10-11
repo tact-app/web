@@ -17,7 +17,7 @@ export const TasksView = observer(function TasksView() {
       </Head>
       <TaskList/>
       {
-        store.openedTask && <TaskDescription task={store.openedTask}/>
+        store.openedTask && <TaskDescription task={store.openedTaskData}/>
       }
     </>
   );
