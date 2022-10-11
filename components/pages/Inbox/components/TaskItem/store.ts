@@ -35,6 +35,7 @@ class TaskItemStore {
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
     if (this.onFocus) {
       e.preventDefault();
+      document.getSelection().removeAllRanges();
       this.onFocus(this.task.id, e.metaKey ? 'single' : e.shiftKey ? 'many' : undefined);
     }
   };

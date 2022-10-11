@@ -1,8 +1,8 @@
 import { chakra, HTMLChakraProps, ThemingProps, useStyleConfig, forwardRef } from '@chakra-ui/react';
 import { StyleConfig } from '@chakra-ui/theme-tools';
 
-export const TaskCreatorWrapperStyles: Record<string, StyleConfig> = {
-  TaskCreatorWrapper: {
+export const InputWrapperStyles: Record<string, StyleConfig> = {
+  InputWrapper: {
     baseStyle: ({ theme }) => ({
       ...theme.components.Input.baseStyle.field,
       ...theme.components.Input.variants.filled,
@@ -30,14 +30,14 @@ export const TaskCreatorWrapperStyles: Record<string, StyleConfig> = {
   }
 };
 
-interface TaskCreatorWrapperProps extends HTMLChakraProps<'div'>, ThemingProps {
+interface InputWrapperProps extends HTMLChakraProps<'div'>, ThemingProps {
   variant?: string;
   size?: string;
 }
 
-export const TaskCreatorWrapper = forwardRef<TaskCreatorWrapperProps, 'div'>((props, ref) => {
+export const InputWrapper = forwardRef<InputWrapperProps, 'div'>((props, ref) => {
   const { variant, size, ...rest } = props;
-  const styles = useStyleConfig('TaskCreatorWrapper', { variant, size });
+  const styles = useStyleConfig('InputWrapper', { variant, size });
 
   return <chakra.div ref={ref} __css={styles} {...rest} />;
 });
