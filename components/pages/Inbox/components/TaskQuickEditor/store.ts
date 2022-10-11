@@ -17,7 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 export type TaskQuickEditorProps = {
   onCreate: (task: TaskData) => void;
   onTagCreate: (tag: TaskTag) => void;
-  goToList: (direction: NavigationDirections) => void;
+  onNavigate: (direction: NavigationDirections) => void;
   tagsMap: Record<string, TaskTag>;
   listId: string;
   keepFocus?: boolean;
@@ -31,7 +31,7 @@ export class TaskQuickEditorStore {
 
   onCreate: TaskQuickEditorProps['onCreate'];
   onTagCreate: TaskQuickEditorProps['onTagCreate'];
-  goToList: TaskQuickEditorProps['goToList'];
+  onNavigate: TaskQuickEditorProps['onNavigate'];
 
   isMenuOpen: boolean = false;
   keepFocus: boolean = false;
@@ -255,57 +255,69 @@ export class TaskQuickEditorStore {
     e.stopPropagation();
 
     if (!this.tagActive && !this.priorityActive) {
-      if (e.key === 'Escape') {
-        this.removeFocus();
-      } else if (e.key === 'Enter') {
-        this.createTask();
-      } else if (e.key === '#' && e.target.selectionEnd === this.value.length) {
-        this.activateTagMode();
-      } else if (e.key === '!') {
-        this.activatePriorityMode();
-      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        this.removeFocus();
-        this.goToList(e.key === 'ArrowDown' ? NavigationDirections.DOWN : NavigationDirections.UP);
-      } else if (e.key === 'ArrowRight' && e.target.selectionEnd === this.value.length && this.tags.length) {
-        this.tags[0].ref.focus();
-      }
+      this.handleKeyDownInStdMode(e);
     } else if (this.priorityActive) {
-      if (e.key === '!') {
-        e.preventDefault();
+      this.handleKeyDownInPriorityMode(e);
+    } else if (this.tagActive) {
+      this.handleKeyDownInTagMode(e);
+    }
+  };
 
-        if (this.currentPriorityValue.length < 3) {
-          this.setPriority(TaskPriorityKeys[this.currentPriorityValue + '!']);
-        }
-      } else if (e.key === 'Backspace') {
-        e.preventDefault();
+  handleKeyDownInStdMode = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      this.removeFocus();
+    } else if (e.key === 'Enter') {
+      this.createTask();
+    } else if (e.key === '#' && e.target.selectionEnd === this.value.length) {
+      this.activateTagMode();
+    } else if (e.key === '!') {
+      this.activatePriorityMode();
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      this.removeFocus();
+      this.onNavigate(e.key === 'ArrowDown' ? NavigationDirections.DOWN : NavigationDirections.UP);
+    } else if (e.key === 'ArrowRight' && e.target.selectionEnd === this.value.length && this.tags.length) {
+      this.tags[0].ref.focus();
+    }
+  };
 
-        if (this.currentPriorityValue.length > 1) {
-          this.setPriority(TaskPriorityKeys[this.currentPriorityValue.slice(0, -1)]);
-        } else {
-          this.disablePriorityMode();
-        }
+  handleKeyDownInTagMode = (e: KeyboardEvent<HTMLInputElement>) => {
+    if ((e.key === ' ' || e.key === 'Enter') && this.currentTagValue.length > 1) {
+      e.preventDefault();
+      this.createNewTag();
+    } else if ((e.key === 'Backspace' || e.key === ' ') && this.currentTagValue.length === 1) {
+      e.preventDefault();
+      this.disableTagMode();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      this.disableTagMode();
+    } else if (e.key === 'ArrowDown') {
+
+    }
+  };
+
+  handleKeyDownInPriorityMode = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === '!') {
+      e.preventDefault();
+
+      if (this.currentPriorityValue.length < 3) {
+        this.setPriority(TaskPriorityKeys[this.currentPriorityValue + '!']);
       }
-      if (e.key === ' ' || e.key === 'Enter') {
-        e.preventDefault();
-        this.commitPriority();
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
+    } else if (e.key === 'Backspace') {
+      e.preventDefault();
+
+      if (this.currentPriorityValue.length > 1) {
+        this.setPriority(TaskPriorityKeys[this.currentPriorityValue.slice(0, -1)]);
+      } else {
         this.disablePriorityMode();
       }
-    } else if (this.tagActive && !this.priorityActive) {
-      if ((e.key === ' ' || e.key === 'Enter') && this.currentTagValue.length > 1) {
-        e.preventDefault();
-        this.createNewTag();
-      } else if ((e.key === 'Backspace' || e.key === ' ') && this.currentTagValue.length === 1) {
-        e.preventDefault();
-        this.disableTagMode();
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        this.disableTagMode();
-      } else if (e.key === 'ArrowDown') {
-
-      }
+    }
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      this.commitPriority();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      this.disablePriorityMode();
     }
   };
 
@@ -339,10 +351,10 @@ export class TaskQuickEditorStore {
     }
   };
 
-  init = ({ onCreate, onTagCreate, listId, goToList, task, tagsMap, keepFocus }: TaskQuickEditorProps) => {
+  init = ({ onCreate, onTagCreate, listId, onNavigate, task, tagsMap, keepFocus }: TaskQuickEditorProps) => {
     this.onCreate = onCreate;
     this.onTagCreate = onTagCreate;
-    this.goToList = goToList;
+    this.onNavigate = onNavigate;
     this.tagsMap = tagsMap;
     this.listId = listId;
     this.keepFocus = keepFocus;

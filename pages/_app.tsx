@@ -2,11 +2,11 @@ import { AppProps } from 'next/app';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { RootStoreProvider } from '../stores/RootStore';
 import Layout from '../components/Layout';
-import { TaskCreatorWrapperStyles } from '../components/pages/Inbox/components/TaskCreatorWrapper';
+import { InputWrapperStyles } from '../components/shared/InputWrapper';
 
 const theme = extendTheme({
   components: {
-    ...TaskCreatorWrapperStyles,
+    ...InputWrapperStyles,
     Menu: {
       baseStyle: {
         list: {
@@ -23,6 +23,18 @@ const theme = extendTheme({
             borderColor: 'gray.200',
             color: 'gray.200',
           },
+        }
+      }
+    },
+    Drawer: {
+      variants: {
+        aside: {
+          dialog: {
+            pointerEvents: 'auto'
+          },
+          dialogContainer: {
+            pointerEvents: 'none'
+          }
         }
       }
     }

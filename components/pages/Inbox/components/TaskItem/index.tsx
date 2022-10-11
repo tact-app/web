@@ -9,7 +9,7 @@ const useTasksItemStoreInstance = () => useTaskItemStore().quickEdit;
 const TaskItem = observer(function TaskItem(props: TaskItemProps & TaskQuickEditorProps) {
   return (
     <TaskItemStoreProvider {...props}>
-      <TaskQuickEditorStoreProvider {...props} instance={useTasksItemStoreInstance}>
+      <TaskQuickEditorStoreProvider {...props} useInstance={useTasksItemStoreInstance}>
         <TaskItemView/>
       </TaskQuickEditorStoreProvider>
     </TaskItemStoreProvider>

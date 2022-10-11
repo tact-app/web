@@ -21,9 +21,9 @@ const NAV_ITEMS: Array<NavItem> = [
     href: routes.INBOX,
   },
   {
-    label: 'Today',
+    label: 'Goals',
     icon: <CheckIcon/>,
-    href: routes.TODAY,
+    href: routes.GOALS,
   },
   {
     label: 'Calendar',
