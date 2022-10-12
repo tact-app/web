@@ -61,15 +61,17 @@ export class DraggableListStore {
         const itemsForDelete = this.focusedItemIds.slice();
 
         this.callbacks.onVerifyDelete?.(itemsForDelete, () => {
+          this.focusNextItem(itemsForDelete);
           this.deleteItems(itemsForDelete);
-          this.focusedItemIds = [];
         });
       }
     }),
     FORCE_DELETE: this.getHandler(() => {
       if (this.focusedItemIds.length) {
-        this.deleteItems(this.focusedItemIds);
-        this.focusedItemIds = [];
+        const itemsForDelete = this.focusedItemIds.slice();
+
+        this.focusNextItem(itemsForDelete);
+        this.deleteItems(itemsForDelete);
       }
     }),
     MOVE_UP: this.getHandler(() => {
@@ -186,7 +188,6 @@ export class DraggableListStore {
 
   deleteItems = (ids: string[]) => {
     this.items = this.items.filter((id) => !ids.includes(id));
-
     this.callbacks.onItemsRemove?.(this.items, ids);
   };
 
@@ -229,9 +230,18 @@ export class DraggableListStore {
     this.setFocusedItem(this.items[0]);
   };
 
+  focusNextItem = (ids: string[]) => {
+    const itemIndex = ids.length === 1 ? this.items.indexOf(ids[0]) : -1;
+    const nextItemId = itemIndex !== -1 && itemIndex !== this.items.length - 1 ? this.items[itemIndex + 1] : null;
+
+    if (nextItemId !== null) {
+      this.setFocusedItem(nextItemId);
+    }
+  }
+
   setFocusedItem = (id: string, mode?: 'single' | 'many') => {
     if (this.focusedItemIds.length === 1 && this.focusedItemIds[0] === id) {
-      this.callbacks.onItemSecondClick(id);
+      this.callbacks.onItemSecondClick?.(id);
     } else if (!mode) {
       this.resetFocusedItem();
       this.addFocusedItems([id]);

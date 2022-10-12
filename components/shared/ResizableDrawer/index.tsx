@@ -45,7 +45,7 @@ export const ResizableDrawer = observer(function ResizableDrawer({
     let offsetRight = document.body.offsetWidth - (e.clientX - document.body.offsetLeft);
 
     setNewWidth(Math.min(Math.max(offsetRight, minWidthPx), maxWidthPx));
-  }, [isResizing]);
+  }, [isResizing, minWidthPx, maxWidthPx]);
 
   const handleMouseUp = useCallback((e) => {
     setIsResizing(false);
@@ -59,7 +59,7 @@ export const ResizableDrawer = observer(function ResizableDrawer({
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isResizing]);
+  }, [isResizing, handleMouseUp, handleMouseMove]);
 
   return (
     <Drawer
