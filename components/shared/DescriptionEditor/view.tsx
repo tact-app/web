@@ -1,29 +1,43 @@
 import { observer } from 'mobx-react-lite';
-import { Box, chakra, IconButton } from '@chakra-ui/react';
-import React, { PropsWithChildren } from 'react';
+import { Box, Container, IconButton } from '@chakra-ui/react';
+import React from 'react';
 import { useDescriptionEditorStore } from './store';
-import { PlusSquareIcon } from '@chakra-ui/icons';
 import { DraggableListStoreProvider } from '../DraggableList/store';
 import { DraggableListView } from '../DraggableList/view';
+import { DescriptionEditorBlock } from './components/DescriptionEditorBlock';
+import { PlusIcon } from '../../pages/Inbox/components/TaskIcons/PlusIcon';
+import { DescriptionEditorCreateMenu } from './components/DescriptionEditorCreateMenu';
+import { BlockTypesOptions } from './types';
 
-const DescriptionEditorPlusButton = observer(function DescriptionEditorPlusButton() {
+const DescriptionEditorPlusButton = observer(function DescriptionEditorPlusButton({
+                                                                                    id,
+                                                                                    snapshot
+                                                                                  }: { id: string, snapshot: any }) {
   const store = useDescriptionEditorStore();
 
   return (
-    <IconButton aria-label={'Add new item'} icon={<PlusSquareIcon/>} onClick={store.addDefaultBlock}/>
-  );
-});
-
-const DescriptionEditorContent = observer(function DescriptionEditorContent({
-                                                                              id,
-                                                                              isFocused
-                                                                            }: { id: string, isFocused: boolean }) {
-  const store = useDescriptionEditorStore();
-
-  return (
-    <chakra.div onClick={() => store.draggableList.setFocusedItem(id)} bg={isFocused ? 'red' : 'white'}>
-      {store.blocks[id].content}
-    </chakra.div>
+    <Box flexDirection='column' justifyContent='start' display='flex'>
+      <IconButton
+        size='xs'
+        aria-label='Add new item'
+        icon={<PlusIcon/>}
+        onClick={() => store.openBlocksMenu(id)}
+        variant='unstyled'
+        visibility={snapshot.isDragging && !store.draggableList.isControlDraggingActive ? 'visible' : 'hidden'}
+        _groupHover={{
+          visibility: !store.draggableList.isDraggingActive ? 'visible' : 'hidden',
+        }}
+      />
+      {store.openedBlocksMenuId === id && (
+        <Box position='absolute' zIndex={1000} top='12'>
+          <DescriptionEditorCreateMenu
+            onSelect={({ value, config }) => store.addBlock(id, value, config)}
+            onClose={() => store.closeBlocksMenu()}
+            items={BlockTypesOptions}
+          />
+        </Box>
+      )}
+    </Box>
   );
 });
 
@@ -31,13 +45,17 @@ export const DescriptionEditorView = observer(function DescriptionEditorView() {
   const store = useDescriptionEditorStore();
 
   return (
-    <Box>
-      <DraggableListStoreProvider instance={store.draggableList} items={store.order}>
+    <Container maxW='container.md'>
+      <DraggableListStoreProvider
+        instance={store.draggableList}
+        items={store.order}
+        callbacks={store.draggableCallbacks}
+      >
         <DraggableListView
           prefix={DescriptionEditorPlusButton}
-          content={DescriptionEditorContent}
+          content={DescriptionEditorBlock}
         />
       </DraggableListStoreProvider>
-    </Box>
+    </Container>
   );
 });

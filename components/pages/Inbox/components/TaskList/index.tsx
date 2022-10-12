@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite';
 import { useTasksStore } from '../../store';
-import { Container, Heading, Box, useOutsideClick } from '@chakra-ui/react';
+import { Container, Heading, Box } from '@chakra-ui/react';
 import { TaskCreator } from '../TaskCreator';
-import React, { PropsWithChildren, useRef } from 'react';
+import React from 'react';
 import { TaskListItem } from '../TaskListItem';
 import { ModalsSwitcher } from '../../../../../helpers/ModalsController';
 import { DraggableList } from '../../../../shared/DraggableList';
@@ -17,12 +17,6 @@ const keyMap = {
 
 const TaskList = observer(function TaskList() {
   const store = useTasksStore();
-  const ref = useRef(null);
-
-  useOutsideClick({
-    ref: ref,
-    handler: () => store.draggableList.resetFocusedItem(),
-  });
 
   return (
     <Container maxW='container.lg' p={0}>
@@ -41,10 +35,12 @@ const TaskList = observer(function TaskList() {
         keyMap={keyMap}
         handlers={store.hotkeyHandlers}
       >
-        <Box ref={ref}>
-          <DraggableList items={store.order} content={TaskListItem} callbacks={store.draggableHandlers}
-                         instance={store.draggableList}/>
-        </Box>
+        <DraggableList
+          items={store.order}
+          content={TaskListItem}
+          callbacks={store.draggableHandlers}
+                       instance={store.draggableList}
+        />
       </GlobalHotKeys>
       <ModalsSwitcher controller={store.modals}/>
     </Container>
