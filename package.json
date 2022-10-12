@@ -14,6 +14,12 @@
     "@editorjs/header": "^2.6.2",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+    "@tiptap/extension-bubble-menu": "^2.0.0-beta.199",
+    "@tiptap/extension-placeholder": "^2.0.0-beta.199",
+    "@tiptap/extension-underline": "^2.0.0-beta.199",
+    "@tiptap/react": "^2.0.0-beta.199",
+    "@tiptap/starter-kit": "^2.0.0-beta.199",
+    "@tiptap/suggestion": "^2.0.0-beta.199",
     "allotment": "^1.17.0",
     "chakra-react-select": "^4.2.5",
     "editorjs-undo": "^2.0.9",
@@ -27,6 +33,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "react-hotkeys": "^2.0.0",
+    "tippy.js": "^6.3.7",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

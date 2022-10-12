@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite';
-import { Box, chakra } from '@chakra-ui/react';
-import React, { PropsWithChildren } from 'react';
+import { Box, BoxProps, IconButton, useOutsideClick } from '@chakra-ui/react';
+import React, { PropsWithChildren, useRef } from 'react';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { TaskDragIcon } from '../../pages/Inbox/components/TaskIcons/TaskDragIcon';
-import { DraggableListComponentProps, DraggableListProps, useDraggableListStore } from './store';
+import { DraggableListComponentProps, useDraggableListStore } from './store';
 import { GlobalHotKeys } from 'react-hotkeys';
 
 const keyMap = {
@@ -46,40 +46,74 @@ const DraggableListWrapper = observer(function TaskListWrapper({ children }: Pro
   );
 });
 
-export const DefaultDraggableListDragHandler = ({ provided, snapshot }) => {
+const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
+                                                                              prefix: Prefix,
+                                                                              dragHandler: DragHandler,
+                                                                              content: Content,
+                                                                              snapshot,
+                                                                              provided,
+                                                                              id
+                                                                            }: DraggableListComponentProps & { snapshot: any, provided: any, id: string }) {
   const store = useDraggableListStore();
 
   return (
-    <chakra.div
-      alignSelf='center'
+    <>
+      {Prefix && <Prefix id={id} snapshot={snapshot}/>}
+      <DragHandler provided={provided} snapshot={snapshot}/>
+      <Content id={id} isFocused={store.focusedItemIds.includes(id)} snapshot={snapshot}/>
+    </>
+  );
+});
+
+export const DefaultDraggableListDragHandler = observer(function DefaultDraggableListDragHandler({
+                                                                                                   provided,
+                                                                                                   snapshot
+                                                                                                 }: { snapshot: any, provided: any }) {
+  const store = useDraggableListStore();
+
+  return (
+    <Box
       display='flex'
       visibility={snapshot.isDragging && !store.isControlDraggingActive ? 'visible' : 'hidden'}
       flexDirection='column'
-      justifyContent='center'
+      justifyContent='start'
+      curso='grab'
       mr={1}
       _groupHover={{
         visibility: !store.isDraggingActive ? 'visible' : 'hidden',
       }}
       {...provided.dragHandleProps}
     >
-      <TaskDragIcon/>
-    </chakra.div>
+      <IconButton
+        size='xs'
+        aria-label='Drag'
+        icon={<TaskDragIcon/>}
+        variant='unstyled'
+      />
+    </Box>
   );
-}
+});
 
 export const DraggableListView = observer(function DraggableListView({
-                                                                       prefix: Prefix,
-                                                                       dragHandler: DragHandler = DefaultDraggableListDragHandler,
-                                                                       content: Content,
-                                                                     }: DraggableListComponentProps) {
+                                                                       prefix,
+                                                                       dragHandler = DefaultDraggableListDragHandler,
+                                                                       content,
+                                                                       boxProps,
+                                                                     }: DraggableListComponentProps & { boxProps?: BoxProps }) {
   const store = useDraggableListStore();
+  const ref = useRef(null);
+
+  useOutsideClick({
+    ref: ref,
+    handler: store.resetFocusedItem,
+  });
 
   return (
     <GlobalHotKeys
       keyMap={keyMap}
       handlers={store.hotkeyHandlers}
     >
-      <Box>
+      <Box ref={ref}>
         <DraggableListWrapper>
           {
             store.items.map((id, index) => {
@@ -88,15 +122,21 @@ export const DraggableListView = observer(function DraggableListView({
                   {(provided, snapshot) => (
                     <Box
                       ref={provided.innerRef}
-                      {...provided.draggableProps}
                       index={index}
                       role='group'
                       display='flex'
                       style={provided.draggableProps.style}
+                      {...provided.draggableProps}
+                      {...boxProps}
                     >
-                      {Prefix && <Prefix id={id} snapshot={snapshot}/>}
-                      <DragHandler provided={provided} snapshot={snapshot}/>
-                      <Content id={id} isFocused={store.focusedItemIds.includes(id)} snapshot={snapshot}/>
+                      <DraggableListItemWrapper
+                        id={id}
+                        prefix={prefix}
+                        dragHandler={dragHandler}
+                        content={content}
+                        snapshot={snapshot}
+                        provided={provided}
+                      />
                     </Box>
                   )}
                 </Draggable>

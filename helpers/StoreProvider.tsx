@@ -19,7 +19,7 @@ type StorePropsType<StoreType extends Store<unknown>,
 export const getProvider = <PropsType, StoreType extends Store<PropsType>>(StoreClass: StoreConstructor<StoreType>) => {
   const StoreContext = createContext<StoreType>({} as StoreType);
 
-  type Props = StorePropsType<StoreType> & {instance?: StoreType, useInstance?: () => StoreType};
+  type Props = StorePropsType<StoreType> & { instance?: StoreType, useInstance?: () => StoreType };
 
   const StoreProvider: FC<PropsWithChildren<Props>> = (props) => {
     const rootStore = useRootStore();
@@ -32,9 +32,7 @@ export const getProvider = <PropsType, StoreType extends Store<PropsType>>(Store
       return res;
     }, [rootStore]);
 
-    useEffect(() => {
-      store.init(props as PropsType);
-    }, [props]);
+    store.init(props as PropsType);
 
     useEffect(() => {
       if (store.subscribe) {
