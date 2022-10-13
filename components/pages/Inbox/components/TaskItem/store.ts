@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { NavigationDirections, TaskData, TaskStatus, TaskTag } from '../../store/types';
+import { NavigationDirections, TaskData, TaskStatus, TaskTag } from '../../types';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import React, { MouseEvent } from 'react';

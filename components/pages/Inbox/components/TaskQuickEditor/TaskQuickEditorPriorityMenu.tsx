@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useTaskQuickEditorStore } from './store';
-import { TaskPriority } from '../../store/types';
+import { TaskPriority } from '../../types';
 import { TaskPriorityMenu } from '../TaskPriorityMenu';
 import { IconButton } from '@chakra-ui/react';
 import React, { PropsWithChildren } from 'react';

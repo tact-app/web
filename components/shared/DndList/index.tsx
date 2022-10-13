@@ -1,8 +1,7 @@
 import React, { PropsWithChildren } from 'react';
 import { observer } from 'mobx-react-lite';
-import { chakra } from '@chakra-ui/react';
+import { chakra, ChakraStyledOptions } from '@chakra-ui/react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { ChakraStyledOptions } from '@chakra-ui/system/dist/declarations/src/system';
 
 interface DragItem {
   index: number;

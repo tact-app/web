@@ -11,7 +11,7 @@ import {
   TaskPriorityValues,
   TaskStatus,
   TaskTag
-} from '../../store/types';
+} from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 
 export type TaskQuickEditorProps = {
@@ -268,7 +268,7 @@ export class TaskQuickEditorStore {
       this.removeFocus();
     } else if (e.key === 'Enter') {
       this.createTask();
-    } else if (e.key === '#' && e.target.selectionEnd === this.value.length) {
+    } else if (e.key === '#' && (e.target as HTMLInputElement).selectionEnd === this.value.length) {
       this.activateTagMode();
     } else if (e.key === '!') {
       this.activatePriorityMode();
@@ -276,7 +276,7 @@ export class TaskQuickEditorStore {
       e.preventDefault();
       this.removeFocus();
       this.onNavigate(e.key === 'ArrowDown' ? NavigationDirections.DOWN : NavigationDirections.UP);
-    } else if (e.key === 'ArrowRight' && e.target.selectionEnd === this.value.length && this.tags.length) {
+    } else if (e.key === 'ArrowRight' && (e.target as HTMLInputElement).selectionEnd === this.value.length && this.tags.length) {
       this.tags[0].ref.focus();
     }
   };
