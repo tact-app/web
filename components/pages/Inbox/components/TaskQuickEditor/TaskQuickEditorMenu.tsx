@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { useTaskQuickEditorStore } from './store';
 import { chakra, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
-import { DotsIcon } from '../TaskIcons/DotsIcon';
+import { DotsIcon } from '../../../../shared/Icons/DotsIcon';
 import React from 'react';
 
 

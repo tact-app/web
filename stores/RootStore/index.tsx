@@ -4,7 +4,7 @@ import { createContext, useContext } from 'react';
 import UserStore from './UserStore';
 import { isClient } from '../../utils';
 import { getAPI } from '../../api';
-import { IDBService } from '../../api/DataBase/IDBService';
+import { IDBService } from '../../api/Database/IDBService';
 
 enableStaticRendering(typeof window === 'undefined');
 

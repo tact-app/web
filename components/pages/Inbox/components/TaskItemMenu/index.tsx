@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import { Menu, MenuButton, MenuDivider, MenuItem, MenuList } from '@chakra-ui/react';
-import { TaskItemMenuIcon } from '../TaskIcons/TaskItemMenuIcon';
+import { TaskItemMenuIcon } from '../../../../shared/Icons/TaskItemMenuIcon';
 import { useTaskItemStore } from '../TaskItem/store';
 import { useTasksStore } from '../../store';
 import React from 'react';
-import { TaskStatus } from '../../store/types';
+import { TaskStatus } from '../../types';
 
 export const TaskItemMenu = observer(function TaskItemMenu() {
   const store = useTaskItemStore();

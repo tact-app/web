@@ -1,7 +1,7 @@
 import { RootStore } from '../../../../../../stores/RootStore';
 import { makeAutoObservable, reaction } from 'mobx';
 import { getProvider } from '../../../../../../helpers/StoreProvider';
-import { TaskData } from '../../../store/types';
+import { TaskData } from '../../../types';
 
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
