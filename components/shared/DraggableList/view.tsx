@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { Box, BoxProps, IconButton, useOutsideClick } from '@chakra-ui/react';
 import React, { PropsWithChildren, useRef } from 'react';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { TaskDragIcon } from '../../pages/Inbox/components/TaskIcons/TaskDragIcon';
+import { TaskDragIcon } from '../Icons/TaskDragIcon';
 import { DraggableListComponentProps, useDraggableListStore } from './store';
 import { GlobalHotKeys } from 'react-hotkeys';
 

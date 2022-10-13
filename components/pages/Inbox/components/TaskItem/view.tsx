@@ -1,9 +1,9 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { Box, Checkbox, HStack, Text, chakra, Tag } from '@chakra-ui/react';
-import { TaskStatus } from '../../store/types';
+import { TaskStatus } from '../../types';
 import { useTaskItemStore } from './store';
-import { TaskPriorityIcon } from '../TaskIcons/TaskPriorityIcon';
+import { TaskPriorityIcon } from '../../../../shared/Icons/TaskPriorityIcon';
 import { TaskItemMenu } from '../TaskItemMenu';
 import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';

@@ -1,8 +1,8 @@
 import { HStack, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import React, { PropsWithChildren } from 'react';
 import { observer } from 'mobx-react-lite';
-import { TaskPriority, TaskPriorityArray, TaskPriorityNames } from '../../store/types';
-import { TaskPriorityIcon } from '../TaskIcons/TaskPriorityIcon';
+import { TaskPriority, TaskPriorityArray, TaskPriorityNames } from '../../types';
+import { TaskPriorityIcon } from '../../../../shared/Icons/TaskPriorityIcon';
 
 export const TaskPriorityMenu = observer(function TaskPriorityMenu({
                                                                      isOpen,
