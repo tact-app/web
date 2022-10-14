@@ -4,8 +4,7 @@ import { getProvider } from '../../../helpers/StoreProvider';
 import { ModalsController } from '../../../helpers/ModalsController';
 import { GoalCreationModal } from './modals/GoalCreationModal';
 import { GoalConfigurationModal } from './modals/GoalConfigurationModal';
-import { GoalData } from './types';
-import { v4 as uuidv4 } from 'uuid';
+import { GoalData, GoalDescriptionData } from './types';
 
 export enum GoalsModalsTypes {
   CREATE_GOAL,
@@ -24,6 +23,7 @@ export class GoalsStore {
 
   items: Record<string, GoalData> = {};
   order: string[] = [];
+  descriptions: Record<string, GoalDescriptionData> = {};
 
   modals = new ModalsController(GoalsModals);
 
@@ -39,29 +39,53 @@ export class GoalsStore {
     this.modals.open({
       type: GoalsModalsTypes.CREATE_GOAL,
       props: {
-        onCreate: this.createGoal,
+        onSave: this.createGoal,
         onClose: this.modals.close
       }
     });
   };
 
-  createGoal = (data: GoalData) => {
-    runInAction(() => {
-      this.items[data.id] = data;
-      this.order.push(data.id);
+  editGoal = (goalId: string) => {
+    this.modals.open({
+      type: GoalsModalsTypes.CREATE_GOAL,
+      props: {
+        onSave: this.updateGoal,
+        onClose: this.modals.close,
+        editMode: true,
+        goal: this.items[goalId]
+      }
     });
-    const { description, ...rest } = data;
+  };
 
-    this.root.api.goals.addDescription({
-      description: toJS(description),
-      id: uuidv4(),
-    });
-    this.root.api.goals.create(rest);
+  updateGoal = (goal: GoalData, description?: GoalDescriptionData) => {
+    this.items[goal.id] = goal;
+    this.root.api.goals.update({ id: goal.id, fields: goal });
+
+    if (description) {
+      this.descriptions[description.id] = description;
+      this.root.api.descriptions.update({
+        fields: { content: toJS(description.content) },
+        id: description.id,
+      });
+    }
+
     this.modals.close();
   };
 
-  handleGoalClick = () => {
+  createGoal = (goal: GoalData, description?: GoalDescriptionData) => {
+    this.items[goal.id] = goal;
+    this.order.push(goal.id);
+    this.root.api.goals.create(goal);
 
+    if (description) {
+      this.descriptions[description.id] = description;
+      this.root.api.descriptions.add({
+        content: toJS(description.content),
+        id: description.id,
+      });
+    }
+
+    this.modals.close();
   };
 
   load = async () => {

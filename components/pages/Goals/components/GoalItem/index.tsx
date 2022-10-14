@@ -9,7 +9,7 @@ export const GoalItem = observer(function GoalItem({ id }: { id: string }) {
 
   return (
     <Button
-      onClick={() => store.handleGoalClick}
+      onClick={() => store.editGoal(id)}
       variant='outline'
       borderRadius='xl'
       h={60}
@@ -38,7 +38,16 @@ export const GoalItem = observer(function GoalItem({ id }: { id: string }) {
           <Text fontSize='7xl'>{item.icon.value}</Text>
         ) : null}
       </Box>
-      <Text fontSize='lg' fontWeight='semibold' color='gray.400'>
+      <Text
+        fontSize='lg'
+        fontWeight='semibold'
+        color='gray.400'
+        width='100%'
+        flex={1}
+        textOverflow='ellipsis'
+        whiteSpace='nowrap'
+        overflow='hidden'
+      >
         {item.title}
       </Text>
     </Button>

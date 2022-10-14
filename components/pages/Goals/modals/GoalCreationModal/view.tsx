@@ -14,6 +14,7 @@ import { GoalCreationEmojiSelect } from './components/GoalCreationEmojiSelect';
 
 const keyMap = {
   CREATE: ['cmd+enter', 'cmd+s'],
+  CANCEL: ['esc'],
 };
 
 export const GoalCreationModalView = observer(function GoalCreationModal() {
@@ -57,7 +58,7 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
                     colorScheme='blue'
                     size='sm'
                     disabled={!store.isReadyForSave}
-                    onClick={store.handleCreate}
+                    onClick={store.handleSave}
                   >Save</Button>
                 </Box>
               ) : null
