@@ -1,5 +1,5 @@
 import ApiService from '../ApiService';
-import { GoalData } from '../../components/pages/Goals/types';
+import { GoalData, GoalDescriptionData } from '../../components/pages/Goals/types';
 import { JSONContent } from '@tiptap/core';
 
 const getGoalsApi = (apiService: ApiService) => ({
@@ -7,9 +7,7 @@ const getGoalsApi = (apiService: ApiService) => ({
   create: (goal: GoalData) => apiService.post<GoalData[]>(`/api/goals/create`, goal),
   delete: (listId: string, ids: string[]) => apiService.post<GoalData[]>(`/api/goals/delete`, { ids, listId }),
   order: (data: { listId: string, goalIds: string[], destination: number }) => apiService.post<GoalData[]>(`/api/goals/order`, data),
-  update: (data: { id: string, fields: Partial<GoalData> }) => apiService.post<GoalData[]>(`/api/goals/update`, data),
-  addDescription: (data: { description: JSONContent, id: string }) => apiService.post<GoalData[]>(`/api/goals/description`, data),
-  getDescription: (id: string) => apiService.post<GoalData[]>(`/api/goals/description`, { id }),
+  update: (data: { id: string, fields: Partial<GoalData> }) => apiService.put<GoalData[]>(`/api/goals`, data),
 });
 
 export default getGoalsApi;

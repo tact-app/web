@@ -1,8 +1,8 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { GoalCreationModalSteps } from './types';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { GoalData, GoalIconVariants, GoalTemplateData } from '../../types';
+import { GoalData, GoalDescriptionData, GoalIconVariants, GoalTemplateData } from '../../types';
 import { GoalCreationModalStepsOrder } from './constants';
 import { SyntheticEvent } from 'react';
 import { JSONContent } from '@tiptap/core';
@@ -11,7 +11,9 @@ import { init } from 'emoji-mart';
 
 export type GoalCreationModalProps = {
   onClose: () => void,
-  onCreate: (goal: GoalData) => void,
+  onSave: (goal: GoalData, description?: GoalDescriptionData) => void,
+  editMode?: boolean,
+  goal?: GoalData,
 }
 
 export const colors = [
@@ -42,26 +44,30 @@ export class GoalCreationModalStore {
   }
 
   hotkeyHandlers = {
-    CREATE: () => {
+    CREATE: (e) => {
+      e.preventDefault();
       if (this.isReadyForSave) {
-        this.handleCreate();
+        this.handleSave();
       }
     },
     BACK: () => {
       this.handleBack();
+    },
+    CANCEL: () => {
+      this.handleClose();
     }
   };
 
   onClose: GoalCreationModalProps['onClose'];
-  onCreate: GoalCreationModalProps['onCreate'];
+  onSave: GoalCreationModalProps['onSave'];
 
+  isDescriptionLoading: boolean = true;
+  isEditMode: boolean = false;
+  existedGoal: GoalData | null = null;
   icon: string = '';
   color = colors[0];
   title: string = '';
-  description: JSONContent = {
-    'type': 'doc',
-    'content': []
-  };
+  description?: GoalDescriptionData = undefined;
   currentTemplate: null | GoalTemplateData = null;
   templates: GoalTemplateData[] = [];
   step: GoalCreationModalSteps = GoalCreationModalSteps.SELECT_TEMPLATE;
@@ -85,7 +91,7 @@ export class GoalCreationModalStore {
   handleBack = () => {
     const currentStepIndex = GoalCreationModalStepsOrder.indexOf(this.step);
 
-    if (currentStepIndex > 0) {
+    if (currentStepIndex > 0 && !this.isEditMode) {
       this.step = GoalCreationModalStepsOrder[currentStepIndex - 1];
     } else {
       this.handleClose();
@@ -96,24 +102,31 @@ export class GoalCreationModalStore {
     this.onClose?.();
   };
 
-  handleCreate = () => {
-    this.onCreate?.({
-      id: uuidv4(),
+  handleSave = () => {
+    this.onSave?.({
+      id: this.existedGoal ? this.existedGoal.id : uuidv4(),
       listId: 'default',
       title: this.title,
-      description: this.description,
+      descriptionId: this.description.id,
       icon: {
         type: GoalIconVariants.EMOJI,
         color: this.color,
         value: this.icon,
       }
-    });
+    }, this.description);
 
     this.handleClose();
   };
 
   handleDescriptionChange = (value: JSONContent) => {
-    this.description = value;
+    if (!this.description) {
+      this.description = {
+        id: uuidv4(),
+        content: value,
+      };
+    }
+
+    this.description.content = value;
   };
 
   selectTemplate = (template: GoalTemplateData | null) => {
@@ -121,9 +134,36 @@ export class GoalCreationModalStore {
     this.step = GoalCreationModalSteps.FILL_DESCRIPTION;
   };
 
-  init = (props: GoalCreationModalProps) => {
+  init = async (props: GoalCreationModalProps) => {
     this.onClose = props.onClose;
-    this.onCreate = props.onCreate;
+    this.onSave = props.onSave;
+    this.existedGoal = props.goal;
+    this.isEditMode = props.editMode;
+
+    if (this.isEditMode) {
+      this.step = GoalCreationModalSteps.FILL_DESCRIPTION;
+    }
+
+    if (this.existedGoal) {
+      this.icon = this.existedGoal.icon.value;
+      this.color = this.existedGoal.icon.color;
+      this.title = this.existedGoal.title;
+
+      if (this.existedGoal.descriptionId) {
+        this.isDescriptionLoading = true;
+        const description = (await this.root.api.descriptions.get(this.existedGoal.descriptionId)) || undefined;
+
+        runInAction(() => {
+          console.log('init', description);
+          this.description = description;
+          this.isDescriptionLoading = false;
+        });
+      }
+    } else {
+      runInAction(() => {
+        this.isDescriptionLoading = false;
+      });
+    }
   };
 }
 

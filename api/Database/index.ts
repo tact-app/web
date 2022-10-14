@@ -42,7 +42,7 @@ interface MyDB extends DBSchema {
   descriptions: {
     key: string;
     value: {
-      description: JSONContent,
+      content: JSONContent,
       id: string,
     };
   };

@@ -29,4 +29,15 @@ export default class ApiService {
       })
       .then((response) => wrapResponse<R>(response));
   };
+
+  put = <R>(url: string, params?: Record<string, any>, options: RequestInit = {}) => {
+    return fetch(
+      resolveUrl(url),
+      {
+        ...options,
+        body: JSON.stringify(params),
+        method: 'PUT',
+      })
+      .then((response) => wrapResponse<R>(response));
+  };
 }
