@@ -1,6 +1,5 @@
 import { DB } from '../index';
-import { GoalData } from '../../../components/pages/Goals/types';
-import { JSONContent } from '@tiptap/core';
+import { GoalData, GoalDescriptionData } from '../../../components/pages/Goals/types';
 
 const data = {
   'get': {
@@ -32,8 +31,15 @@ const data = {
     },
   },
   'post': {
-    '/api/goals/description': async (db: DB, data: { description: JSONContent, id: string }) => {
+    '/api/goals/description': async (db: DB, data: GoalDescriptionData) => {
       await db.add('descriptions', data);
+    },
+    '/api/goals/description/update': async (db: DB, data: GoalDescriptionData) => {
+      const existedDescription = await db.get('descriptions', data.id);
+
+      if (existedDescription) {
+        await db.put('descriptions', existedDescription);
+      }
     },
     '/api/goals/create': async (db: DB, data: GoalData) => {
       await db.add('goals', data);
@@ -66,7 +72,9 @@ const data = {
         await db.put('goalLists', existedList);
       }
     },
-    '/api/goals/update': async (db: DB, data: { id: string, fields: Partial<GoalData> }) => {
+  },
+  'put': {
+    '/api/goals': async (db: DB, data: { id: string, fields: Partial<GoalData> }) => {
       const existedTask = await db.get('goals', data.id);
 
       if (existedTask) {

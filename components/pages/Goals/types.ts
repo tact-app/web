@@ -5,11 +5,16 @@ export enum GoalIconVariants {
   IMAGE = 'image',
 }
 
+export type GoalDescriptionData = {
+  id: string;
+  content: JSONContent;
+}
+
 export type GoalData = {
   id: string,
   title: string,
   listId: string,
-  description?: JSONContent,
+  descriptionId?: string,
   icon?: {
     type: GoalIconVariants.EMOJI,
     value: string,
@@ -17,7 +22,7 @@ export type GoalData = {
   } | {
     type: GoalIconVariants.IMAGE,
     color: string,
-    url: string,
+    value: string,
   },
 }
 
