@@ -11,6 +11,7 @@ import { GoalCreationStepsSwitcher } from './components/GoalCreationStepsSwitche
 import { GoalCreationModalSteps } from './types';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { GoalCreationEmojiSelect } from './components/GoalCreationEmojiSelect';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@chakra-ui/modal';
 
 const keyMap = {
   CREATE: ['cmd+enter', 'cmd+s'],
@@ -25,17 +26,17 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
       keyMap={keyMap}
       handlers={store.hotkeyHandlers}
     >
-      <Box
-        position='fixed'
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        bg='white'
-        p={8}
+      <Modal
+        isOpen={store.isOpen}
+        onClose={store.handleClose}
+        onCloseComplete={store.handleCloseComplete}
+        closeOnEsc={false}
+        onEsc={store.handleBack}
+        blockScrollOnMount={false}
+        size='full'
       >
-        <Box mb={10}>
-          <Box position='relative' display='flex' alignItems='center' flexDirection='row'>
+        <ModalContent>
+          <ModalHeader position='relative' display='flex' alignItems='center' flexDirection='row'>
             <Button variant='ghost' size='xs' onClick={store.handleBack} position='absolute'>
               <BackArrowIcon/>
               <Text fontSize='lg' color='gray.400'
@@ -52,7 +53,7 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
             </Center>
             {
               store.step === GoalCreationModalSteps.FILL_DESCRIPTION ? (
-                <Box display='flex' alignItems='center' position='absolute' right={0}>
+                <Box display='flex' alignItems='center' position='absolute' right={6}>
                   <Text fontSize='xs' fontWeight='normal' mr={4} color='gray.400'>Press ⌘ S </Text>
                   <Button
                     colorScheme='blue'
@@ -63,12 +64,13 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
                 </Box>
               ) : null
             }
-          </Box>
-        </Box>
-        <Box pb={6}>
-          <GoalCreationStepsSwitcher/>
-        </Box>
-      </Box>
+          </ModalHeader>
+          <ModalBody pb={6}>
+            <GoalCreationStepsSwitcher/>
+          </ModalBody>
+          <ModalFooter/>
+        </ModalContent>
+      </Modal>
     </GlobalHotKeys>
   );
 });

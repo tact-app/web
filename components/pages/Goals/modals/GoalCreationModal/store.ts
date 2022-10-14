@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction, toJS } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { GoalCreationModalSteps } from './types';
 import { getProvider } from '../../../../../helpers/StoreProvider';
@@ -31,7 +31,6 @@ export class GoalCreationModalStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
 
-
     init({
       data: async () => {
         const response = await fetch(
@@ -61,6 +60,8 @@ export class GoalCreationModalStore {
   onClose: GoalCreationModalProps['onClose'];
   onSave: GoalCreationModalProps['onSave'];
 
+  isOpen = true;
+  isEmojiPickerOpen = false;
   isDescriptionLoading: boolean = true;
   isEditMode: boolean = false;
   existedGoal: GoalData | null = null;
@@ -75,6 +76,14 @@ export class GoalCreationModalStore {
   get isReadyForSave() {
     return !!this.title;
   }
+
+  openEmojiPicker = () => {
+    this.isEmojiPickerOpen = true;
+  };
+
+  closeEmojiPicker = () => {
+    this.isEmojiPickerOpen = false;
+  };
 
   handleEmojiSelect = (emoji: { native: string }) => {
     this.icon = emoji.native;
@@ -91,16 +100,28 @@ export class GoalCreationModalStore {
   handleBack = () => {
     const currentStepIndex = GoalCreationModalStepsOrder.indexOf(this.step);
 
-    if (currentStepIndex > 0 && !this.isEditMode) {
-      this.step = GoalCreationModalStepsOrder[currentStepIndex - 1];
+    if (!this.isEmojiPickerOpen) {
+      if (currentStepIndex > 0 && !this.isEditMode) {
+        this.step = GoalCreationModalStepsOrder[currentStepIndex - 1];
+      } else {
+        this.handleClose();
+      }
     } else {
-      this.handleClose();
+      this.closeEmojiPicker();
     }
   };
 
   handleClose = () => {
-    this.onClose?.();
+    if (!this.isEmojiPickerOpen) {
+      this.isOpen = false;
+    } else {
+      this.closeEmojiPicker();
+    }
   };
+
+  handleCloseComplete = () => {
+    this.onClose?.();
+  }
 
   handleSave = () => {
     this.onSave?.({
@@ -154,7 +175,6 @@ export class GoalCreationModalStore {
         const description = (await this.root.api.descriptions.get(this.existedGoal.descriptionId)) || undefined;
 
         runInAction(() => {
-          console.log('init', description);
           this.description = description;
           this.isDescriptionLoading = false;
         });
