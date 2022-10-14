@@ -39,7 +39,6 @@ const data = {
       }
     },
     '/api/tasks/delete': async (db: DB, { ids, listId }: { ids: string[], listId: string }) => {
-      console.log(ids)
       await Promise.all(ids.map((id) => db.delete('tasks', id)));
 
       const existedList = await db.get('tasksLists', listId);
@@ -68,7 +67,6 @@ const data = {
           existedTask[key] = value;
         });
 
-        console.log(data, existedTask)
         await db.put('tasks', existedTask);
       }
     },
