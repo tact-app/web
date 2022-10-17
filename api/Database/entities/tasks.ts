@@ -13,7 +13,7 @@ const data = {
         return {
           tasks: [],
           order: [],
-        }
+        };
       }
 
       return {
@@ -29,7 +29,7 @@ const data = {
   },
   'post': {
     '/api/tasks/create': async (db: DB, data: TaskData) => {
-      await db.add('tasks', data)
+      await db.add('tasks', data);
       const tasksLists = await db.get('tasksLists', data.listId);
 
       if (tasksLists) {
@@ -49,6 +49,8 @@ const data = {
         await db.put('tasksLists', existedList);
       }
     },
+  },
+  put: {
     '/api/tasks/order': async (db: DB, data: { listId: string, taskIds: string[], destination: number }) => {
       const existedList = await db.get('tasksLists', data.listId);
 
@@ -69,6 +71,17 @@ const data = {
 
         await db.put('tasks', existedTask);
       }
+    },
+    '/api/tasks/assign-goal': async (db: DB, data: { taskIds: string[], goalId: string | null }) => {
+      await Promise.all(data.taskIds.map(async (id) => {
+        const existedTask = await db.get('tasks', id);
+
+        if (existedTask) {
+          existedTask.goalId = data.goalId;
+
+          await db.put('tasks', existedTask);
+        }
+      }));
     },
   }
 };

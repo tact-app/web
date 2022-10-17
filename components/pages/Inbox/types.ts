@@ -44,6 +44,7 @@ export type TaskData = {
   id: string,
   title: string,
   listId: string,
+  goalId?: string,
   tags: string[],
   description: OutputData,
   status: TaskStatus
