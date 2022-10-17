@@ -34,11 +34,12 @@ export const TaskItemView = observer(function TaskItem() {
         >
           <Box h={10} pl={2} display='flex' alignItems='center'>
             <div onClick={(e) => e.stopPropagation()}>
-              <Checkbox bg='white' size='lg' mr={2}
-                        isChecked={store.task.status === TaskStatus.DONE}
-                        isIndeterminate={store.task.status === TaskStatus.WONT_DO}
-                        onChange={store.handleStatusChange}
-                        name='task-status'
+              <Checkbox
+                bg='white' size='lg' mr={2}
+                isChecked={store.task.status === TaskStatus.DONE}
+                isIndeterminate={store.task.status === TaskStatus.WONT_DO}
+                onChange={store.handleStatusChange}
+                name='task-status'
               />
             </div>
             {store.isEditMode && isTodoTask ? (

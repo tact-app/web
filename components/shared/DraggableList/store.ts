@@ -35,6 +35,7 @@ export class DraggableListStore {
   focusedItemIds: string[] = [];
   items: string[] = [];
 
+  isHotkeysActive = true;
   isItemMenuOpen: boolean = false;
   isDraggingActive: boolean = false;
   isControlDraggingActive: boolean = false;
@@ -48,7 +49,7 @@ export class DraggableListStore {
   }
 
   getHandler = (fn: (e) => void) => (e) => {
-    if (!this.isItemMenuOpen && !this.isDraggingActive && !this.isControlDraggingActive) {
+    if (!this.isItemMenuOpen && !this.isDraggingActive && !this.isControlDraggingActive && this.isHotkeysActive) {
       fn(e);
     }
   };
@@ -100,6 +101,14 @@ export class DraggableListStore {
       }
     }),
   };
+
+  disableHotkeys = () => {
+    this.isHotkeysActive = false;
+  }
+
+  enableHotkeys = () => {
+    this.isHotkeysActive = true;
+  }
 
   shiftSelect = (direction: 'up' | 'down', count: number = 1) => {
     if (this.focusedItemIds.length) {

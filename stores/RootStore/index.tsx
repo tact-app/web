@@ -5,6 +5,7 @@ import UserStore from './UserStore';
 import { isClient } from '../../utils';
 import { getAPI } from '../../api';
 import { IDBService } from '../../api/Database/IDBService';
+import { MenuStore } from './MenuStore';
 
 enableStaticRendering(typeof window === 'undefined');
 
@@ -15,6 +16,7 @@ export class RootStore {
 
   isLoading = true;
 
+  menu = new MenuStore(this);
   user = new UserStore(this);
   api = getAPI(new IDBService()); // new ApiService()
 
