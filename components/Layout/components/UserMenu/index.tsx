@@ -1,16 +1,9 @@
 import {
   Avatar,
-  Button,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
   Stack,
   Spinner,
   useColorMode, Text, Flex
 } from '@chakra-ui/react';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../../../stores/RootStore';
 

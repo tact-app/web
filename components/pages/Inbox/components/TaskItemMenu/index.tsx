@@ -29,6 +29,9 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
           tasksStore.setEditingTask(store.task.id);
           setTimeout(() => store.quickEdit.startTag());
         }}>Add tag</MenuItem>
+        <MenuItem command='G' onClick={() => {
+          tasksStore.openGoalAssignModal(store.task.id);
+        }}>Assign goal</MenuItem>
         <MenuDivider m={0}/>
         <MenuItem command='D' onClick={() => tasksStore.setTaskStatus(store.task.id, TaskStatus.DONE)}>Done</MenuItem>
         <MenuItem command='W / ⇧W' onClick={() => tasksStore.setTaskStatus(store.task.id, TaskStatus.WONT_DO)}>Won&apos;t do</MenuItem>

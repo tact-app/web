@@ -1,15 +1,19 @@
 import { RootStore } from '../../../stores/RootStore';
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { NavigationDirections, TaskData, TaskStatus, TaskTag } from './types';
+import { TaskData, TaskStatus, TaskTag } from './types';
 import { ModalsController } from '../../../helpers/ModalsController';
 import { TaskDeleteModal } from './modals/TaskDeleteModal';
 import { TaskQuickEditorStore } from './components/TaskQuickEditor/store';
 import { DraggableListCallbacks, DraggableListStore } from '../../shared/DraggableList/store';
+import { GoalData } from '../Goals/types';
+import { TaskGoalAssignModal } from './modals/TaskGoalAssignModal';
+import { FocusConfiguration } from './components/FocusConfiguration';
 
 export enum ModalsTypes {
   DELETE_TASK,
   WONTDO_TASK,
+  GOAL_ASSIGN,
 }
 
 class TasksStore {
@@ -21,22 +25,39 @@ class TasksStore {
   creator = new TaskQuickEditorStore(this.root);
   modals = new ModalsController({
     [ModalsTypes.DELETE_TASK]: TaskDeleteModal,
+    [ModalsTypes.GOAL_ASSIGN]: TaskGoalAssignModal,
   });
 
   listId: string = 'default';
   items: Record<string, TaskData> = {};
   order: string[] = [];
+  goals: GoalData[] = [];
   tags: TaskTag[] = [];
   tagsMap: Record<string, TaskTag> = {};
   editingTaskId: null | string = null;
   openedTask: null | string = null;
 
+  isFocusActive: boolean = false;
   isItemMenuOpen: boolean = false;
 
   getHandler = (fn: (e) => void) => (e) => {
-    if (!this.isItemMenuOpen && !this.draggableList.isDraggingActive && !this.draggableList.isControlDraggingActive) {
+    if (
+      !this.isItemMenuOpen
+      && !this.draggableList.isDraggingActive
+      && !this.draggableList.isControlDraggingActive
+      && !this.modals.isOpen
+    ) {
       fn(e);
     }
+  };
+
+  keyMap = {
+    DONE: 'd',
+    GOAL: 'g',
+    WONT_DO: ['w', 'cmd+w'],
+    EDIT: 'space',
+    OPEN: 'enter',
+    FOCUS_MODE: 'f',
   };
 
   hotkeyHandlers = {
@@ -60,7 +81,19 @@ class TasksStore {
       if (this.draggableList.focused.length) {
         this.openTask(this.draggableList.focused[0]);
       }
-    })
+    }),
+    GOAL: this.getHandler((e) => {
+      console.log('GOAL');
+      e.preventDefault();
+      if (this.draggableList.focused.length) {
+        this.openGoalAssignModal();
+      }
+    }),
+    FOCUS_MODE: this.getHandler((e) => {
+      e.preventDefault();
+      console.log(e)
+      this.toggleFocusMode();
+    }),
   };
 
   draggableHandlers: DraggableListCallbacks = {
@@ -107,16 +140,54 @@ class TasksStore {
       if (this.openedTask) {
         this.openedTask = null;
 
-        return false
+        return false;
       }
 
       return true;
     }
-  }
+  };
 
   get openedTaskData() {
     return this.items[this.openedTask];
   }
+
+  openGoalAssignModal = (taskId?: string) => {
+    const value = taskId ? (
+      this.items[taskId].goalId
+    ) : (
+      this.draggableList.focused.length === 1 ? (
+        this.items[this.draggableList.focused[0]].goalId
+      ) : null
+    );
+
+    this.modals.open({
+      type: ModalsTypes.GOAL_ASSIGN,
+      props: {
+        onClose: this.modals.close,
+        onSelect: (goalId: string) => {
+          if (taskId) {
+            this.assignGoal([taskId], goalId);
+          } else {
+            this.assignGoal(this.draggableList.focused, goalId);
+          }
+          this.modals.close();
+        },
+        value,
+        goals: this.goals,
+      }
+    });
+  };
+
+  assignGoal = (taskIds: string[], goalId: string) => {
+    taskIds.forEach((id) => {
+      this.items[id].goalId = goalId;
+    });
+
+    this.root.api.tasks.assignGoal({
+      goalId,
+      taskIds: taskIds,
+    });
+  };
 
   openItemMenu = () => {
     this.isItemMenuOpen = true;
@@ -132,6 +203,27 @@ class TasksStore {
 
   closeTask = () => {
     this.openedTask = null;
+  };
+
+  toggleFocusMode = () => {
+    this.isFocusActive = !this.isFocusActive;
+
+    if (this.isFocusActive) {
+      this.root.menu.setReplacer(
+        FocusConfiguration,
+        {
+          goals: this.goals,
+          checked: [],
+          callbacks: {
+            onClose: this.toggleFocusMode,
+            onFocus: this.draggableList.resetFocusedItem,
+            onBlur: this.draggableList.focusFirstItem,
+          },
+        }
+      );
+    } else {
+      this.root.menu.resetReplacer();
+    }
   };
 
   createTask = (task: TaskData) => {
@@ -169,7 +261,7 @@ class TasksStore {
       taskIds: changedItemIds,
       destination: destinationIndex,
     });
-  }
+  };
 
   setTasksStatus = (ids: string[], status: TaskStatus) => {
     ids.forEach((id) => {
@@ -215,9 +307,31 @@ class TasksStore {
     });
   };
 
+  loadGoals = async () => {
+    const { goals, order } = await this.root.api.goals.list('default');
+
+    runInAction(() => {
+      this.goals = order.map((id) => goals[id]);
+    });
+  };
+
+  subscribe = () => {
+    return reaction(
+      () => this.modals.isOpen,
+      (isOpen) => {
+        if (isOpen) {
+          this.draggableList.disableHotkeys();
+        } else {
+          this.draggableList.enableHotkeys();
+        }
+      }
+    );
+  };
+
   load = async () => {
     this.loadTasks();
     this.loadTags();
+    this.loadGoals();
   };
 
   init = async () => {

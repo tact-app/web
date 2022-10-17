@@ -137,10 +137,27 @@ const theme = extendTheme({
     Checkbox: {
       baseStyle: {
         control: {
+          transitionProperty: 'common',
+          transitionDuration: 'normal',
+          bg: 'white',
           _indeterminate: {
             bg: 'white',
             borderColor: 'gray.200',
             color: 'gray.200',
+          },
+        }
+      },
+      sizes: {
+        xl: {
+          control: {
+            w: 6,
+            h: 6,
+          },
+          label: {
+            fontSize: 'lg'
+          },
+          icon: {
+            fontSize: '2xs'
           },
         }
       }

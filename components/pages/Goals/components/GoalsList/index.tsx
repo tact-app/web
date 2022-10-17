@@ -9,7 +9,7 @@ export const GoalsList = observer(function GoalsList() {
   const store = useGoalsStore();
 
   return (
-    <Box height='100%' pl={32} pr={32}>
+    <Box pl={32} pr={32}>
       <Heading size='md' mt={2.5} mb={8} pt={4}>My Goals</Heading>
       <Box>
         <GoalCreateNewButton/>
