@@ -20,7 +20,7 @@
     "idb": "^7.1.0",
     "mobx": "^6.0.3",
     "mobx-react-lite": "^3.4.0",
-    "next": "^12.2.3",
+    "next": "^12.2.4",
     "path-to-regexp": "^6.2.1",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
