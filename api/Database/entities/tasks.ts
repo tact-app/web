@@ -5,10 +5,10 @@ const data = {
   'get': {
     '/api/tasks': async (db: DB, { id }: { id: string }) => {
       const tasks = await db.getAll('tasks');
-      const tasksLists = await db.get('tasksLists', id);
+      const taskLists = await db.get('taskLists', id);
 
-      if (!tasksLists) {
-        await db.add('tasksLists', { id, taskIds: [] });
+      if (!taskLists) {
+        await db.add('taskLists', { id, taskIds: [] });
 
         return {
           tasks: [],
@@ -23,42 +23,42 @@ const data = {
             acc[task.id] = task;
             return acc;
           }, {}),
-        order: tasksLists.taskIds,
+        order: taskLists.taskIds,
       };
     },
   },
   'post': {
     '/api/tasks/create': async (db: DB, data: TaskData) => {
       await db.add('tasks', data);
-      const tasksLists = await db.get('tasksLists', data.listId);
+      const taskLists = await db.get('taskLists', data.listId);
 
-      if (tasksLists) {
-        tasksLists.taskIds.push(data.id);
+      if (taskLists) {
+        taskLists.taskIds.push(data.id);
 
-        await db.put('tasksLists', tasksLists);
+        await db.put('taskLists', taskLists);
       }
     },
     '/api/tasks/delete': async (db: DB, { ids, listId }: { ids: string[], listId: string }) => {
       await Promise.all(ids.map((id) => db.delete('tasks', id)));
 
-      const existedList = await db.get('tasksLists', listId);
+      const existedList = await db.get('taskLists', listId);
 
       if (existedList) {
         existedList.taskIds = existedList.taskIds.filter((id) => !ids.includes(id));
 
-        await db.put('tasksLists', existedList);
+        await db.put('taskLists', existedList);
       }
     },
   },
   put: {
     '/api/tasks/order': async (db: DB, data: { listId: string, taskIds: string[], destination: number }) => {
-      const existedList = await db.get('tasksLists', data.listId);
+      const existedList = await db.get('taskLists', data.listId);
 
       if (existedList) {
         existedList.taskIds = existedList.taskIds.filter((id) => !data.taskIds.includes(id));
         existedList.taskIds.splice(data.destination, 0, ...data.taskIds);
 
-        await db.put('tasksLists', existedList);
+        await db.put('taskLists', existedList);
       }
     },
     '/api/tasks/update': async (db: DB, data: { id: string, fields: Partial<TaskData> }) => {

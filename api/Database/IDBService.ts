@@ -3,6 +3,7 @@ import tasksStub from './entities/tasks';
 import tagsStub from './entities/tags';
 import goalsStub from './entities/goals';
 import descriptions from './entities/descriptions';
+import focusConfigurations from './entities/focusConfigurations';
 import ApiService from '../ApiService';
 import type { DB } from './index';
 import { isClient } from '../../utils';
@@ -17,6 +18,7 @@ const stubs: {
   tagsStub,
   goalsStub,
   descriptions,
+  focusConfigurations,
 ];
 
 export class IDBService extends ApiService {

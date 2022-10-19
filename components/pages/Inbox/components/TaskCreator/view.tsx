@@ -30,7 +30,7 @@ export const TaskCreatorView = observer(function TaskCreator() {
       variant={!store.focused ? 'primary' : 'focused'}
       size='md'
       alignItems='center'
-      mb={6}
+      mb={7}
       display='flex'
     >
       <InputGroup size='md' ref={ref} variant='unstyled'>

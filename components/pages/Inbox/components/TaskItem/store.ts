@@ -7,6 +7,8 @@ import { TaskQuickEditorStore } from '../TaskQuickEditor/store';
 
 export type TaskItemProps = {
   task?: TaskData | null,
+  isFocusModeActive?: boolean,
+  isDisabled?: boolean,
   isFocused?: boolean
   isDragging?: boolean
   isEditMode?: boolean
@@ -25,6 +27,7 @@ class TaskItemStore {
 
   task: TaskData;
   tags: Record<string, TaskTag>;
+  isDisabled: boolean = false;
   isFocused: boolean = false;
   isEditMode: boolean = false;
   isDragging: boolean = false;
@@ -33,7 +36,7 @@ class TaskItemStore {
   onStatusChange: TaskItemProps['onStatusChange'];
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    if (this.onFocus) {
+    if (this.onFocus && !this.isDisabled) {
       e.preventDefault();
       document.getSelection().removeAllRanges();
       this.onFocus(this.task.id, e.metaKey ? 'single' : e.shiftKey ? 'many' : undefined);
@@ -47,15 +50,26 @@ class TaskItemStore {
     this.onFocus(null);
   };
 
-  init = ({ task, isFocused, onFocus, onNavigate, onStatusChange, tagsMap, isDragging, isEditMode }: TaskItemProps) => {
+  init = ({
+            task,
+            onFocus,
+            onNavigate,
+            onStatusChange,
+            tagsMap,
+            isFocused,
+            isDisabled,
+            isDragging,
+            isEditMode
+  }: TaskItemProps) => {
     this.task = task;
-    this.isFocused = isFocused;
     this.onFocus = onFocus;
     this.tags = tagsMap;
-    this.isDragging = isDragging;
     this.onStatusChange = onStatusChange;
     this.onNavigate = onNavigate;
 
+    this.isDisabled = isDisabled;
+    this.isFocused = isFocused;
+    this.isDragging = isDragging;
     this.isEditMode = isEditMode;
   };
 }

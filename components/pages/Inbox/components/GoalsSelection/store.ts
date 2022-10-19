@@ -43,6 +43,10 @@ export class GoalsSelectionStore {
     }
   };
 
+  get checked() {
+    return Object.keys(this.checkedGoals);
+  }
+
   handleFocus = (index) => () => {
     this.isFocused = true;
     this.callbacks.onFocus?.(this.goals[index].id);
@@ -74,12 +78,12 @@ export class GoalsSelectionStore {
       }
     }
 
-    this.callbacks.onSelect?.(Object.keys(this.checkedGoals));
+    this.callbacks.onSelect?.(this.checked);
   };
 
   uncheckAll = () => {
     this.checkedGoals = {};
-    this.callbacks.onSelect?.(Object.keys(this.checkedGoals));
+    this.callbacks.onSelect?.(this.checked);
   }
 
   focusFirst = () => {

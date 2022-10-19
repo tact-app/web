@@ -1,7 +1,7 @@
 import { RootStore } from '../../../stores/RootStore';
 import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { TaskData, TaskStatus, TaskTag } from './types';
+import { TaskData, TaskPriority, TaskStatus, TaskTag } from './types';
 import { ModalsController } from '../../../helpers/ModalsController';
 import { TaskDeleteModal } from './modals/TaskDeleteModal';
 import { TaskQuickEditorStore } from './components/TaskQuickEditor/store';
@@ -9,6 +9,7 @@ import { DraggableListCallbacks, DraggableListStore } from '../../shared/Draggab
 import { GoalData } from '../Goals/types';
 import { TaskGoalAssignModal } from './modals/TaskGoalAssignModal';
 import { FocusConfiguration } from './components/FocusConfiguration';
+import { FocusConfigurationData } from './components/FocusConfiguration/store';
 
 export enum ModalsTypes {
   DELETE_TASK,
@@ -36,8 +37,13 @@ class TasksStore {
   tagsMap: Record<string, TaskTag> = {};
   editingTaskId: null | string = null;
   openedTask: null | string = null;
+  focusModeConfiguration: FocusConfigurationData = {
+    id: 'default',
+    goals: [],
+    showImportant: false,
+  };
 
-  isFocusActive: boolean = false;
+  isFocusModeActive: boolean = false;
   isItemMenuOpen: boolean = false;
 
   getHandler = (fn: (e) => void) => (e) => {
@@ -58,6 +64,7 @@ class TasksStore {
     EDIT: 'space',
     OPEN: 'enter',
     FOCUS_MODE: 'f',
+    SILENT_FOCUS_MODE: 'shift+f',
   };
 
   hotkeyHandlers = {
@@ -91,9 +98,13 @@ class TasksStore {
     }),
     FOCUS_MODE: this.getHandler((e) => {
       e.preventDefault();
-      console.log(e)
+      console.log(e);
       this.toggleFocusMode();
     }),
+    SILENT_FOCUS_MODE: this.getHandler((e) => {
+      e.preventDefault();
+      this.toggleFocusMode(true);
+    })
   };
 
   draggableHandlers: DraggableListCallbacks = {
@@ -151,6 +162,31 @@ class TasksStore {
     return this.items[this.openedTask];
   }
 
+  checkFocusModeMatch = (taskId: string) => {
+    const { goals, showImportant } = this.focusModeConfiguration;
+
+    if (this.isFocusModeActive) {
+      const task = this.items[taskId];
+
+      if (task && task.status === TaskStatus.TODO) {
+        const priorityMatch = showImportant ? task.priority === TaskPriority.HIGH : true;
+        const goalMatch = goals.length ? goals.includes(task.goalId) : false;
+
+        if (showImportant && goals.length) {
+          return priorityMatch && goalMatch;
+        } else if (showImportant) {
+          return priorityMatch;
+        } else if (goals.length) {
+          return goalMatch;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  };
+
   openGoalAssignModal = (taskId?: string) => {
     const value = taskId ? (
       this.items[taskId].goalId
@@ -205,25 +241,46 @@ class TasksStore {
     this.openedTask = null;
   };
 
-  toggleFocusMode = () => {
-    this.isFocusActive = !this.isFocusActive;
-
-    if (this.isFocusActive) {
-      this.root.menu.setReplacer(
-        FocusConfiguration,
-        {
-          goals: this.goals,
-          checked: [],
-          callbacks: {
-            onClose: this.toggleFocusMode,
-            onFocus: this.draggableList.resetFocusedItem,
-            onBlur: this.draggableList.focusFirstItem,
-          },
-        }
-      );
-    } else {
-      this.root.menu.resetReplacer();
+  toggleFocusMode = (silent?: boolean) => {
+    if (!this.isFocusModeActive) {
+      this.draggableList.resetFocusedItem();
     }
+
+    this.isFocusModeActive = !this.isFocusModeActive;
+
+    if (silent) {
+      this.loadFocusModeConfiguration();
+    } else {
+      if (this.isFocusModeActive) {
+        this.root.menu.setReplacer(
+          FocusConfiguration,
+          {
+            goals: this.goals,
+            getItemsCount: () => this.draggableList.activeItems.length,
+            callbacks: {
+              onChange: this.setFocusModeConfiguration,
+              onClose: this.toggleFocusMode,
+              onFocus: this.draggableList.resetFocusedItem,
+              onBlur: this.draggableList.focusFirstItem,
+            },
+          }
+        );
+      } else {
+        this.root.menu.resetReplacer();
+      }
+    }
+  };
+
+  handleToggleFocusMode = () => {
+    this.toggleFocusMode();
+  }
+
+  loadFocusModeConfiguration = async () => {
+    this.focusModeConfiguration = await this.root.api.focusConfigurations.get('default');
+  }
+
+  setFocusModeConfiguration = (data: FocusConfigurationData) => {
+    this.focusModeConfiguration = data;
   };
 
   createTask = (task: TaskData) => {
@@ -317,7 +374,7 @@ class TasksStore {
 
   subscribe = () => {
     return reaction(
-      () => this.modals.isOpen,
+      () => this.modals.isOpen || this.isItemMenuOpen,
       (isOpen) => {
         if (isOpen) {
           this.draggableList.disableHotkeys();

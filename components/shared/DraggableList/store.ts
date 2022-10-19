@@ -22,6 +22,7 @@ export type DraggableListComponentProps = {
 
 export type DraggableListProps = {
   callbacks?: DraggableListCallbacks;
+  checkItemActivity?: (id: string) => boolean;
   items: string[];
 };
 
@@ -31,12 +32,12 @@ export class DraggableListStore {
   }
 
   callbacks: DraggableListCallbacks = {};
+  checkItemActivity?: (id: string) => boolean;
 
   focusedItemIds: string[] = [];
   items: string[] = [];
 
   isHotkeysActive = true;
-  isItemMenuOpen: boolean = false;
   isDraggingActive: boolean = false;
   isControlDraggingActive: boolean = false;
 
@@ -44,12 +45,20 @@ export class DraggableListStore {
   dropTimeout: null | number = null;
   currentSelectItemCursor: number = 0;
 
+  get activeItems() {
+    if (this.checkItemActivity) {
+      return this.items.filter(this.checkItemActivity);
+    } else {
+      return this.items;
+    }
+  }
+
   get focused() {
     return this.focusedItemIds;
   }
 
   getHandler = (fn: (e) => void) => (e) => {
-    if (!this.isItemMenuOpen && !this.isDraggingActive && !this.isControlDraggingActive && this.isHotkeysActive) {
+    if (!this.isDraggingActive && !this.isControlDraggingActive && this.isHotkeysActive) {
       fn(e);
     }
   };
@@ -62,7 +71,7 @@ export class DraggableListStore {
         const itemsForDelete = this.focusedItemIds.slice();
 
         this.callbacks.onVerifyDelete?.(itemsForDelete, () => {
-          this.focusNextItem(itemsForDelete);
+          this.focusAfterItems(itemsForDelete);
           this.deleteItems(itemsForDelete);
         });
       }
@@ -71,7 +80,7 @@ export class DraggableListStore {
       if (this.focusedItemIds.length) {
         const itemsForDelete = this.focusedItemIds.slice();
 
-        this.focusNextItem(itemsForDelete);
+        this.focusAfterItems(itemsForDelete);
         this.deleteItems(itemsForDelete);
       }
     }),
@@ -115,8 +124,8 @@ export class DraggableListStore {
       const isUp = direction === 'up';
 
       if (isUp ? this.currentSelectItemCursor >= 0 : this.currentSelectItemCursor <= 0) {
-        const focusedItemIndex = this.items.indexOf(this.focusedItemIds[isUp ? 0 : this.focusedItemIds.length - 1]);
-        const nextFocusedItemIds = this.items.slice(
+        const focusedItemIndex = this.activeItems.indexOf(this.focusedItemIds[isUp ? 0 : this.focusedItemIds.length - 1]);
+        const nextFocusedItemIds = this.activeItems.slice(
           focusedItemIndex + (isUp ? -count : 1),
           focusedItemIndex + (isUp ? 0 : count + 1)
         );
@@ -208,23 +217,27 @@ export class DraggableListStore {
 
     if (index !== -1) {
       if (direction === NavigationDirections.UP) {
-        if (index !== 0) {
-          this.setFocusedItem(this.items[index - 1]);
+        const prevActiveItem = this.getPrevActiveItem(this.items[index]);
+
+        if (prevActiveItem) {
+          this.setFocusedItem(prevActiveItem);
         } else {
           this.callbacks.onFocusLeave?.(NavigationDirections.UP);
         }
       } else if (direction === NavigationDirections.DOWN) {
-        if (index !== this.items.length - 1) {
-          this.setFocusedItem(this.items[index + 1]);
+        const nextActiveItem = this.getNextActiveItem(this.items[index])
+
+        if (nextActiveItem) {
+          this.setFocusedItem(nextActiveItem);
         } else {
           this.callbacks.onFocusLeave?.(NavigationDirections.DOWN);
         }
       }
     } else {
       if (direction === NavigationDirections.DOWN) {
-        this.setFocusedItem(this.items[0]);
+        this.setFocusedItem(this.getFirstActiveItem());
       } else {
-        this.setFocusedItem(this.items[this.items.length - 1]);
+        this.setFocusedItem(this.getLastActiveItem());
       }
     }
   };
@@ -235,13 +248,49 @@ export class DraggableListStore {
     this.callbacks.onFocusedItemsChange?.([]);
   };
 
+  getFirstActiveItem = () => {
+    if (this.checkItemActivity) {
+      return this.items.find((id) => this.checkItemActivity(id)) || null;
+    } else {
+      return this.items[0];
+    }
+  }
+
+  getLastActiveItem = () => {
+    if (this.checkItemActivity) {
+      return [...this.items].reverse().find((id) => this.checkItemActivity(id)) || null;
+    } else {
+      return this.items[this.items.length - 1];
+    }
+  }
+
+  getNextActiveItem = (id: string) => {
+    const index = this.items.indexOf(id);
+
+    if (this.checkItemActivity) {
+      return this.items.slice(index + 1).find((id) => this.checkItemActivity(id)) || null;
+    } else {
+      return this.items[index + 1] || null;
+    }
+  }
+
+  getPrevActiveItem = (id: string) => {
+    const index = this.items.indexOf(id);
+
+    if (this.checkItemActivity) {
+      return this.items.slice(0, index).reverse().find((id) => this.checkItemActivity(id)) || null;
+    } else {
+      return this.items[index - 1] || null;
+    }
+  }
+
   focusFirstItem = () => {
-    this.setFocusedItem(this.items[0]);
+    this.setFocusedItem(this.getFirstActiveItem());
   };
 
-  focusNextItem = (ids: string[]) => {
+  focusAfterItems = (ids: string[]) => {
     const itemIndex = ids.length === 1 ? this.items.indexOf(ids[0]) : -1;
-    const nextItemId = itemIndex !== -1 && itemIndex !== this.items.length - 1 ? this.items[itemIndex + 1] : null;
+    const nextItemId = itemIndex !== -1 && itemIndex !== this.items.length - 1 ? this.getNextActiveItem(this.items[itemIndex]) : null;
 
     if (nextItemId !== null) {
       this.setFocusedItem(nextItemId);
@@ -289,16 +338,19 @@ export class DraggableListStore {
     }
   };
 
-  addFocusedItems = (ItemIds: string[]) => {
-    this.focusedItemIds.push(...ItemIds);
+  addFocusedItems = (itemIds: string[]) => {
+    const activeItemIds = this.checkItemActivity ? itemIds.filter((id) => this.checkItemActivity(id)) : itemIds;
+
+    this.focusedItemIds.push(...activeItemIds);
     this.focusedItemIds.sort((a, b) => this.items.indexOf(a) - this.items.indexOf(b));
 
-    this.callbacks.onFocusedItemsChange?.(ItemIds);
+    this.callbacks.onFocusedItemsChange?.(activeItemIds);
   };
 
   init = (props: DraggableListProps) => {
     this.callbacks = props.callbacks || {};
     this.items = props.items;
+    this.checkItemActivity = props.checkItemActivity;
   };
 }
 
