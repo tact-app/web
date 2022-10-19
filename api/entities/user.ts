@@ -1,4 +1,4 @@
-import ApiService from '../ApiService';
+import { ApiService } from '../ApiService';
 import { UserData } from '../../stores/RootStore/UserStore';
 
 const getUserApi = (apiService: ApiService) => ({

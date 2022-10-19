@@ -1,4 +1,4 @@
-import ApiService from '../ApiService';
+import { ApiService } from '../ApiService';
 import { FocusConfigurationData } from '../../components/pages/Inbox/components/FocusConfiguration/store';
 
 const getFocusConfigurationsApi = (apiService: ApiService) => ({

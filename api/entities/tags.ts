@@ -1,4 +1,4 @@
-import ApiService from '../ApiService';
+import { ApiService } from '../ApiService';
 import { TaskTag } from '../../components/pages/Inbox/types';
 
 const getTagsApi = (apiService: ApiService) => ({
