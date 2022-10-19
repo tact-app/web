@@ -37,7 +37,6 @@ export class ModalsController<ModalsMapType extends Record<keyof ModalsMapType, 
   }
 
   open = (modalDescriptor: ModalsController<ModalsMapType>['currentModalDescriptor']) => {
-    console.log(this.modals, modalDescriptor);
     this.currentModalDescriptor = modalDescriptor;
   };
 

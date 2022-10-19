@@ -39,7 +39,6 @@ export class TaskGoalAssignModalStore {
 
   hotkeyHandlers = {
     UP: () => {
-      console.log('up')
       if (!this.goalsSelection.isFocused) {
         this.goalsSelection.focusLast();
       }
