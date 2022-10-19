@@ -53,9 +53,9 @@ export const GoalCreationEmojiSelect = observer(function GoalCreationEmojiSelect
             </HStack>
           </Box>
           <Picker autoFocus theme='light' data={async () => {
-            const module = await import('@emoji-mart/data');
+            const data = await import('@emoji-mart/data');
 
-            return module.default;
+            return data.default;
           }} onEmojiSelect={store.handleEmojiSelect}/>
         </PopoverBody>
       </PopoverContent>

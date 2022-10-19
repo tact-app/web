@@ -1,4 +1,4 @@
-import ApiService from '../ApiService';
+import { ApiService } from '../ApiService';
 import { GoalData } from '../../components/pages/Goals/types';
 
 const getGoalsApi = (apiService: ApiService) => ({
