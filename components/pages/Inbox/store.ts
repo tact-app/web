@@ -344,7 +344,7 @@ class TasksStore {
   };
 
   loadTasks = async () => {
-    const { tasks, order } = await this.root.api.tasks.getList(this.listId);
+    const { tasks, order } = await this.root.api.tasks.list(this.listId);
 
     runInAction(() => {
       this.items = tasks;
@@ -353,7 +353,7 @@ class TasksStore {
   };
 
   loadTags = async () => {
-    const tags = await this.root.api.tags.get();
+    const tags = await this.root.api.tags.list();
 
     runInAction(() => {
       this.tags = tags;
