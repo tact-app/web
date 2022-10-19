@@ -4,7 +4,7 @@ import tagsStub from './entities/tags';
 import goalsStub from './entities/goals';
 import descriptions from './entities/descriptions';
 import focusConfigurations from './entities/focusConfigurations';
-import ApiService from '../ApiService';
+import { ApiService } from '../ApiService';
 import type { DB } from './index';
 import { isClient } from '../../utils';
 
@@ -12,6 +12,7 @@ const stubs: {
   put?: Record<string, Function>
   get?: Record<string, Function>
   post?: Record<string, Function>
+  delete?: Record<string, Function>
 }[] = [
   userStub,
   tasksStub,
@@ -40,15 +41,17 @@ export class IDBService extends ApiService {
     Object.assign(acc.get, stub.get || {});
     Object.assign(acc.post, stub.post || {});
     Object.assign(acc.put, stub.put || {});
+    Object.assign(acc.delete, stub.delete || {});
 
     return acc;
   }, {
     get: {},
     post: {},
     put: {},
+    delete: {},
   });
 
-  fakeRequest = <T>(method: 'get' | 'post' | 'put', url: string, arg: any) => {
+  fakeRequest = <T>(method: 'get' | 'post' | 'put' | 'delete', url: string, arg: any) => {
     return new Promise<T>(async (resolve) => {
       const stub = this.stubs[method][url];
       const db = await this.getDB();
@@ -68,5 +71,9 @@ export class IDBService extends ApiService {
 
   put = <R>(url: string, params?: Record<string, any>) => {
     return this.fakeRequest<R>('put', url, params);
+  };
+
+  delete = <R>(url: string, params?: Record<string, any>) => {
+    return this.fakeRequest<R>('delete', url, params);
   };
 }

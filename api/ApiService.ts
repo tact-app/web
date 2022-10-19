@@ -8,7 +8,7 @@ const wrapResponse = <R>(response: Response) => {
 
 const resolveUrl = (url: string) => url;
 
-export default class ApiService {
+export class ApiService {
   get = <R>(url: string, query?: Record<string, any>, options: RequestInit = {}) => {
     return fetch(
       resolveUrl(url) + (query ? '?' + new URLSearchParams(query) : ''),
@@ -37,6 +37,17 @@ export default class ApiService {
         ...options,
         body: JSON.stringify(params),
         method: 'PUT',
+      })
+      .then((response) => wrapResponse<R>(response));
+  };
+
+  delete = <R>(url: string, params?: Record<string, any>, options: RequestInit = {}) => {
+    return fetch(
+      resolveUrl(url),
+      {
+        ...options,
+        body: JSON.stringify(params),
+        method: 'DELETE',
       })
       .then((response) => wrapResponse<R>(response));
   };
