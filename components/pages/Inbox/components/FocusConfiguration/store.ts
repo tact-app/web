@@ -65,7 +65,6 @@ export class FocusConfigurationStore {
       this.sendChanges();
     },
     FOCUS_GOAL_SELECTION: () => {
-      console.log('FOCUS_GOAL_SELECTION');
       this.goalsSelection.focusFirst();
     }
   }
