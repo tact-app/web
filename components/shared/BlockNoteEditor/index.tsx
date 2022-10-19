@@ -18,7 +18,6 @@ export const BlockNoteEditor = observer(function BlockNoteEditor(props: BlockNot
 
   const editor = useEditor({
     onUpdate: ({ editor }) => {
-      console.log('onUpdate', editor.getJSON());
       props.onChange?.(editor.getJSON());
     },
     content: props.value,

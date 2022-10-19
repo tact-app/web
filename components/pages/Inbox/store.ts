@@ -90,7 +90,6 @@ class TasksStore {
       }
     }),
     GOAL: this.getHandler((e) => {
-      console.log('GOAL');
       e.preventDefault();
       if (this.draggableList.focused.length) {
         this.openGoalAssignModal();
@@ -98,7 +97,6 @@ class TasksStore {
     }),
     FOCUS_MODE: this.getHandler((e) => {
       e.preventDefault();
-      console.log(e);
       this.toggleFocusMode();
     }),
     SILENT_FOCUS_MODE: this.getHandler((e) => {
