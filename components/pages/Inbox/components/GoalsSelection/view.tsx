@@ -59,7 +59,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
           </ListItem>
         ) : null}
         {store.goals.map(({ id, icon, title }, index) => (
-          <ListItem h={10} display='flex' alignItems='center' borderBottom='1px' borderColor='gray.100'>
+          <ListItem h={10} display='flex' alignItems='center' borderBottom='1px' borderColor='gray.100' key={id}>
             <Checkbox
               isChecked={!!store.checkedGoals[id]}
               onFocus={store.handleFocus}

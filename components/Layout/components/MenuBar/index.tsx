@@ -25,6 +25,26 @@ const NAV_ITEMS: Array<NavItem> = [
   },
 ];
 
+export const MenuBarView = observer(function MenuBarView() {
+  return (
+    <Flex
+      direction='column'
+      bg={useColorModeValue('white', 'gray.800')}
+      color={useColorModeValue('gray.600', 'white')}
+      borderRight='1px'
+      borderColor={useColorModeValue('gray.100', 'gray.900')}
+      p={4}
+      w={72}
+    >
+      <Box p={2} pl={4} pr={4} mb={4}>
+        <UserMenu/>
+      </Box>
+      <Divider borderColor={useColorModeValue('gray.100', 'gray.800')}/>
+      <MainMenu items={NAV_ITEMS}/>
+    </Flex>
+  );
+});
+
 export const MenuBar = observer(function MenuBar() {
   const store = useRootStore();
 
@@ -32,21 +52,7 @@ export const MenuBar = observer(function MenuBar() {
     store.menu.replacer ? (
       store.menu.replacer
     ) : (
-      <Flex
-        direction='column'
-        bg={useColorModeValue('white', 'gray.800')}
-        color={useColorModeValue('gray.600', 'white')}
-        borderRight='1px'
-        borderColor={useColorModeValue('gray.100', 'gray.900')}
-        p={4}
-        w={72}
-      >
-        <Box p={2} pl={4} pr={4} mb={4}>
-          <UserMenu/>
-        </Box>
-        <Divider borderColor={useColorModeValue('gray.100', 'gray.800')}/>
-        <MainMenu items={NAV_ITEMS}/>
-      </Flex>
+      <MenuBarView/>
     )
   );
 });
