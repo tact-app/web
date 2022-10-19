@@ -124,6 +124,11 @@ const theme = extendTheme({
       },
     }),
   },
+  colors: {
+    blue: {
+      '25': '#F4FBFF'
+    }
+  },
   components: {
     ...InputWrapperStyles,
     Menu: {

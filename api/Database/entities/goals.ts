@@ -75,14 +75,14 @@ const data = {
   },
   'put': {
     '/api/goals': async (db: DB, data: { id: string, fields: Partial<GoalData> }) => {
-      const existedTask = await db.get('goals', data.id);
+      const existedGoal = await db.get('goals', data.id);
 
-      if (existedTask) {
+      if (existedGoal) {
         Object.entries(data.fields).forEach(([key, value]) => {
-          existedTask[key] = value;
+          existedGoal[key] = value;
         });
 
-        await db.put('goals', existedTask);
+        await db.put('goals', existedGoal);
       }
     },
   }

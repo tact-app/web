@@ -10,7 +10,7 @@ const TaskItem = observer(function TaskItem(props: TaskItemProps & TaskQuickEdit
   return (
     <TaskItemStoreProvider {...props}>
       <TaskQuickEditorStoreProvider {...props} useInstance={useTasksItemStoreInstance}>
-        <TaskItemView/>
+        <TaskItemView {...props}/>
       </TaskQuickEditorStoreProvider>
     </TaskItemStoreProvider>
   );

@@ -59,7 +59,7 @@ const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
   return (
     <>
       {Prefix && <Prefix id={id} snapshot={snapshot}/>}
-      <DragHandler provided={provided} snapshot={snapshot}/>
+      <DragHandler provided={provided} snapshot={snapshot} id={id}/>
       <Content id={id} isFocused={store.focusedItemIds.includes(id)} snapshot={snapshot}/>
     </>
   );
@@ -67,29 +67,36 @@ const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
 
 export const DefaultDraggableListDragHandler = observer(function DefaultDraggableListDragHandler({
                                                                                                    provided,
-                                                                                                   snapshot
-                                                                                                 }: { snapshot: any, provided: any }) {
+                                                                                                   snapshot,
+                                                                                                   id
+                                                                                                 }: { snapshot: any, provided: any, id: string }) {
   const store = useDraggableListStore();
 
   return (
     <Box
+      position='absolute'
+      left={-6}
+      top={0}
+      bottom={0}
       display='flex'
-      visibility={snapshot.isDragging && !store.isControlDraggingActive ? 'visible' : 'hidden'}
+      transition='opacity 0.2s'
+      opacity={snapshot.isDragging && !store.isControlDraggingActive ? '1' : '0'}
       flexDirection='column'
-      justifyContent='start'
-      curso='grab'
-      mr={1}
+      justifyContent='center'
       _groupHover={{
-        visibility: !store.isDraggingActive ? 'visible' : 'hidden',
+        opacity: !store.isDraggingActive ? '1' : '0',
       }}
       {...provided.dragHandleProps}
     >
-      <IconButton
-        size='xs'
-        aria-label='Drag'
-        icon={<TaskDragIcon/>}
-        variant='unstyled'
-      />
+      {!store.checkItemActivity || store.checkItemActivity(id) ? (
+        <IconButton
+          cursor='grab'
+          size='xs'
+          aria-label='Drag'
+          icon={<TaskDragIcon/>}
+          variant='unstyled'
+        />
+      ) : null}
     </Box>
   );
 });
@@ -123,6 +130,7 @@ export const DraggableListView = observer(function DraggableListView({
                     <Box
                       ref={provided.innerRef}
                       index={index}
+                      position='relative'
                       role='group'
                       display='flex'
                       style={provided.draggableProps.style}
