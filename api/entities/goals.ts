@@ -1,6 +1,5 @@
 import ApiService from '../ApiService';
-import { GoalData, GoalDescriptionData } from '../../components/pages/Goals/types';
-import { JSONContent } from '@tiptap/core';
+import { GoalData } from '../../components/pages/Goals/types';
 
 const getGoalsApi = (apiService: ApiService) => ({
   list: (id: string) => apiService.get<{ goals: Record<string, GoalData>, order: string[] }>(`/api/goals`, { id }),

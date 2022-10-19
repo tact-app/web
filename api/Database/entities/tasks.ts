@@ -38,6 +38,8 @@ const data = {
         await db.put('taskLists', taskLists);
       }
     },
+  },
+  delete: {
     '/api/tasks/delete': async (db: DB, { ids, listId }: { ids: string[], listId: string }) => {
       await Promise.all(ids.map((id) => db.delete('tasks', id)));
 
