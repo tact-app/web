@@ -2,6 +2,7 @@ import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { TaskData, TaskTag } from '../../components/pages/Inbox/types';
 import { GoalData } from '../../components/pages/Goals/types';
 import { JSONContent } from '@tiptap/core';
+import { FocusConfigurationData } from '../../components/pages/Inbox/components/FocusConfiguration/store';
 
 interface MyDB extends DBSchema {
   tasks: {
@@ -11,7 +12,7 @@ interface MyDB extends DBSchema {
       'by-list-id': string;
     }
   };
-  tasksLists: {
+  taskLists: {
     key: string;
     value: {
       id: string;
@@ -46,12 +47,18 @@ interface MyDB extends DBSchema {
       id: string,
     };
   };
+  focusConfigurations: {
+    key: string;
+    value: {
+      id: string;
+    } & FocusConfigurationData
+  }
 }
 
 export type DB = IDBPDatabase<MyDB>;
 
 export async function initDb() {
-  return await openDB<MyDB>('tact-db', 3, {
+  return await openDB<MyDB>('tact-db', 4, {
     upgrade(db) {
       try {
         const tasksStore = db.createObjectStore('tasks', {
@@ -89,7 +96,7 @@ export async function initDb() {
       }
 
       try {
-        db.createObjectStore('tasksLists', {
+        db.createObjectStore('taskLists', {
           keyPath: 'id',
         });
       } catch (e) {
@@ -98,6 +105,14 @@ export async function initDb() {
 
       try {
         db.createObjectStore('goalLists', {
+          keyPath: 'id',
+        });
+      } catch (e) {
+
+      }
+
+      try {
+        db.createObjectStore('focusConfigurations', {
           keyPath: 'id',
         });
       } catch (e) {

@@ -94,7 +94,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
                 <Box
                   w={8}
                   h={8}
-                  mr={1}
+                  mr={2}
                   borderRadius='full'
                   display='inline-flex'
                   justifyContent='center'

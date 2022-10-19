@@ -1,17 +1,24 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { RootStore } from '../../../../../stores/RootStore';
 import { GoalData } from '../../../Goals/types';
 import { GoalsSelectionStore } from '../GoalsSelection/store';
 
+export type FocusConfigurationData = {
+  id: string;
+  goals: string[];
+  showImportant: boolean;
+}
+
 export type FocusConfigurationProps = {
   callbacks: {
+    onChange?: (data: FocusConfigurationData) => void;
     onClose?: () => void;
     onFocus?: () => void;
     onBlur?: () => void;
   },
+  getItemsCount: () => number;
   goals: GoalData[],
-  checked: string[],
 };
 
 export class FocusConfigurationStore {
@@ -23,6 +30,7 @@ export class FocusConfigurationStore {
 
   keyMap = {
     FOCUS: 'ArrowLeft',
+    FOCUS_GOAL_SELECTION: 'shift+g',
     BLUR: 'ArrowRight',
     NUMBER: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     CLEAR: 'shift+c',
@@ -53,20 +61,63 @@ export class FocusConfigurationStore {
       this.goalsSelection.uncheckAll();
     },
     SHOW_IMPORTANT: () => {
-      this.showImportant = !this.showImportant;
+      this.data.showImportant = !this.data.showImportant;
+      this.sendChanges();
     },
+    FOCUS_GOAL_SELECTION: () => {
+      console.log('FOCUS_GOAL_SELECTION');
+      this.goalsSelection.focusFirst();
+    }
   }
 
   callbacks: FocusConfigurationProps['callbacks'] = {};
   goals: FocusConfigurationProps['goals'] = [];
-  checkedGoals: string[] = [];
-  isFocused: boolean = false;
-  showImportant: boolean = false;
 
-  init = (props: FocusConfigurationProps) => {
+  data: FocusConfigurationData = {
+    id: 'default',
+    goals: [],
+    showImportant: false,
+  }
+
+  isFocused: boolean = false;
+
+  get hasConfiguration() {
+    return this.data.goals.length > 0 || this.data.showImportant;
+  }
+
+  handleSelectGoal = () => {
+    this.data.goals = this.goalsSelection.checked;
+    this.sendChanges();
+  }
+
+  handleShowImportantChange = (e) => {
+    this.data.showImportant = e.target.checked;
+    this.sendChanges();
+  }
+
+  sendChanges = () => {
+    this.root.api.focusConfigurations.update({
+      id: this.data.id,
+      fields: {
+        goals: toJS(this.data.goals),
+        showImportant: this.data.showImportant,
+      }
+    })
+    this.callbacks.onChange?.(this.data);
+  }
+
+  init = async (props: FocusConfigurationProps) => {
     this.callbacks = props.callbacks;
     this.goals = props.goals;
-    this.checkedGoals = props.checked;
+
+    const focusConfig = await this.root.api.focusConfigurations.get(this.data.id);
+
+    if (focusConfig) {
+      runInAction(() => this.data = focusConfig);
+      this.callbacks.onChange?.(this.data);
+    } else {
+      await this.root.api.focusConfigurations.add(toJS(this.data));
+    }
   };
 }
 
