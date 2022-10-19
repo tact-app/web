@@ -14,11 +14,16 @@ import {
 import { GoalsSelectionStoreProvider } from '../GoalsSelection/store';
 import { GoalsSelectionView } from '../GoalsSelection/view';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import { useEffect } from 'react';
 
 export const FocusConfigurationView = observer(function FocusConfigurationView(props: FocusConfigurationProps) {
   const store = useFocusConfigurationStore();
 
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
+
+  useEffect(() => {
+    store.goalsSelection.focusFirst();
+  }, []);
 
   return (
     <Box
