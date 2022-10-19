@@ -30,7 +30,7 @@
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
-    "react-hotkeys": "^2.0.0",
+    "react-hotkeys-hook": "^3.4.7",
     "tact-block-note-core": "https://gitpkg.now.sh/tact-app/BlockNote/packages/core?main",
     "tippy.js": "^6.3.7",
     "uuid": "^9.0.0"
