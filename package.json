@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.4",
-    "@chakra-ui/react": "^2.2.4",
+    "@chakra-ui/react": "^2.3.6",
     "@chakra-ui/shared-utils": "^2.0.2",
     "@editorjs/editorjs": "^2.25.0",
     "@editorjs/header": "^2.6.2",
