@@ -4,14 +4,6 @@ import { mode } from '@chakra-ui/theme-tools';
 import { RootStoreProvider } from '../stores/RootStore';
 import Layout from '../components/Layout';
 import { InputWrapperStyles } from '../components/shared/InputWrapper';
-//import 'tact-block-note-core/src/globals.css';
-
-import { configure } from 'react-hotkeys';
-
-configure({
-  ignoreTags: [],
-  ignoreEventsCondition: () => false
-});
 
 const theme = extendTheme({
   styles: {

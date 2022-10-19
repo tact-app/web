@@ -6,25 +6,22 @@ import { TaskDescription } from './components/TaskDescription';
 
 import 'allotment/dist/style.css';
 import { useTasksStore } from './store';
-import { GlobalHotKeys } from 'react-hotkeys';
+import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
 
 export const TasksView = observer(function TasksView() {
   const store = useTasksStore();
+
+  useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
   return (
     <>
       <Head>
         <title>Inbox</title>
       </Head>
-      <GlobalHotKeys
-        keyMap={store.keyMap}
-        handlers={store.hotkeyHandlers}
-      >
-        <TaskList/>
-        {
-          store.openedTask && <TaskDescription task={store.openedTaskData}/>
-        }
-      </GlobalHotKeys>
+      <TaskList/>
+      {
+        store.openedTask && <TaskDescription task={store.openedTaskData}/>
+      }
     </>
   );
 });

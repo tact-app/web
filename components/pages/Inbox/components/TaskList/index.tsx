@@ -38,7 +38,7 @@ const TaskList = observer(function TaskList() {
           instance={store.draggableList}
         />
       </Box>
-      <ModalsSwitcher controller={store.modals}/>
+      <ModalsSwitcher controller={store.modals.controller}/>
     </Container>
   );
 });

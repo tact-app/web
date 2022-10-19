@@ -8,6 +8,7 @@ export type GoalsSelectionProps = {
   callbacks?: {
     onSelect?: (goalIds: string[]) => void
     onFocus?: (goalId: string | null) => void;
+    onGoalCreateClick?: () => void;
   };
 
   multiple?: boolean;
@@ -57,7 +58,9 @@ export class GoalsSelectionStore {
     this.callbacks.onFocus?.(null);
   };
 
-  handleGoalCheck = (goalId: string | null) => {
+  handleGoalCheck = (index: number | null) => {
+    const goalId = index === null ? null : this.goals[index].id;
+
     if (this.multiple) {
       if (goalId !== null) {
         if (this.checkedGoals[goalId]) {
@@ -84,7 +87,7 @@ export class GoalsSelectionStore {
   uncheckAll = () => {
     this.checkedGoals = {};
     this.callbacks.onSelect?.(this.checked);
-  }
+  };
 
   focusFirst = () => {
     this.isFocused = true;
@@ -94,11 +97,11 @@ export class GoalsSelectionStore {
     } else {
       this.focus(0);
     }
-  }
+  };
 
   focusLast = () => {
     this.focus(this.goals.length - 1);
-  }
+  };
 
   removeFocus = () => {
     this.refs.forEach(ref => ref.blur());
@@ -108,19 +111,19 @@ export class GoalsSelectionStore {
     }
 
     this.isFocused = false;
-  }
+  };
 
   focusEmpty = () => {
     this.emptyRef.focus();
     this.isFocused = true;
-  }
+  };
 
   focus = (index: number) => {
     this.refs[index].focus();
     this.isFocused = true;
-  }
+  };
 
-  handleKeyDown = (index) => (e: KeyboardEvent<HTMLInputElement>) => {
+  handleKeyDown = (index: number | null) => (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowUp') {
       e.stopPropagation();
       e.preventDefault();
@@ -149,16 +152,16 @@ export class GoalsSelectionStore {
     if (e.key === 'Enter') {
       e.stopPropagation();
       e.preventDefault();
-      this.handleGoalCheck(index === null ? null : this.goals[index].id);
+      this.handleGoalCheck(index);
     }
   };
 
-  setRef = (index) => (ref) => {
-    this.refs[index] = ref;
-  };
-
-  setEmptyRef = (ref) => {
-    this.emptyRef = ref;
+  setRef = (index: number | null) => (ref) => {
+    if (index === null) {
+      this.emptyRef = ref;
+    } else {
+      this.refs[index] = ref;
+    }
   };
 
   init = (props: GoalsSelectionProps) => {

@@ -4,7 +4,7 @@ import React, { PropsWithChildren, useRef } from 'react';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { TaskDragIcon } from '../Icons/TaskDragIcon';
 import { DraggableListComponentProps, useDraggableListStore } from './store';
-import { GlobalHotKeys } from 'react-hotkeys';
+import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
 
 const keyMap = {
   UP: 'up',
@@ -115,11 +115,9 @@ export const DraggableListView = observer(function DraggableListView({
     handler: store.resetFocusedItem,
   });
 
+  useHotkeysHandler(keyMap, store.hotkeyHandlers)
+
   return (
-    <GlobalHotKeys
-      keyMap={keyMap}
-      handlers={store.hotkeyHandlers}
-    >
       <Box ref={ref}>
         <DraggableListWrapper>
           {
@@ -153,6 +151,5 @@ export const DraggableListView = observer(function DraggableListView({
           }
         </DraggableListWrapper>
       </Box>
-    </GlobalHotKeys>
   );
 });
