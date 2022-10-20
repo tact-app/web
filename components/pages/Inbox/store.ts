@@ -220,9 +220,15 @@ export class TasksStore {
           callbacks: {
             onChange: this.setFocusModeConfiguration,
             onClose: this.toggleFocusMode,
-            onFocus: this.draggableList.resetFocusedItem,
-            onBlur: this.draggableList.focusFirstItem,
-            onGoalCreateClick: this.modals.openGoalCreationModal,
+            onFocus: () => {
+              this.draggableList.resetFocusedItem();
+              this.draggableList.disableHotkeys();
+            },
+            onBlur: () => {
+              this.draggableList.focusFirstItem();
+              this.draggableList.enableHotkeys();
+            },
+            onGoalCreateClick: () => this.modals.openGoalCreationModal(),
           },
         });
       }

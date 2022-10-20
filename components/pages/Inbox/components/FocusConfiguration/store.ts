@@ -65,6 +65,7 @@ export class FocusConfigurationStore {
     },
     FOCUS_GOAL_SELECTION: () => {
       this.goalsSelection.focusFirst();
+      this.callbacks.onFocus?.();
     },
   };
 

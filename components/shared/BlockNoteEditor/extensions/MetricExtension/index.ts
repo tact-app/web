@@ -1,7 +1,7 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import { MetricExtensionView } from './view';
-import { insertMetric } from './command';
+import { MetricExtensionComponent } from './view';
+import { insertMetric, MetricExtensionTypes } from './command';
 
 export const MetricExtension = Node.create({
   name: 'metric',
@@ -14,6 +14,12 @@ export const MetricExtension = Node.create({
     return {
       value: {
         default: 0,
+      },
+      targetValue: {
+        default: 100,
+      },
+      type: {
+        default: MetricExtensionTypes.RING,
       },
     };
   },
@@ -30,9 +36,7 @@ export const MetricExtension = Node.create({
     return {
       Enter: ({ editor }) => {
         if (editor.isActive('metric')) {
-          editor.chain().focus().addNewBlockAsSibling().run();
-
-          insertMetric(editor, {
+          insertMetric(MetricExtensionTypes.RING)(editor, {
             from: editor.state.selection.from,
             to: editor.state.selection.to,
           });
@@ -50,6 +54,6 @@ export const MetricExtension = Node.create({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(MetricExtensionView);
+    return ReactNodeViewRenderer(MetricExtensionComponent);
   },
 });

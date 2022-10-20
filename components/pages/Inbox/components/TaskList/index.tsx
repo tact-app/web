@@ -1,6 +1,13 @@
 import { observer } from 'mobx-react-lite';
 import { useTasksStore } from '../../store';
-import { Container, Heading, Box, HStack, IconButton } from '@chakra-ui/react';
+import {
+  Container,
+  Heading,
+  Box,
+  HStack,
+  IconButton,
+  Tooltip,
+} from '@chakra-ui/react';
 import { TaskCreator } from '../TaskCreator';
 import React from 'react';
 import { TaskListItem } from '../TaskListItem';
@@ -19,14 +26,16 @@ const TaskList = observer(function TaskList() {
             Today
           </Heading>
           <HStack>
-            <IconButton
-              aria-label='focus'
-              variant='ghost'
-              onClick={store.handleToggleFocusMode}
-              stroke={store.isFocusModeActive ? 'blue.400' : 'gray.400'}
-            >
-              <FocusIcon />
-            </IconButton>
+            <Tooltip label='F / ⇧ F' hasArrow>
+              <IconButton
+                aria-label='focus'
+                variant='ghost'
+                onClick={store.handleToggleFocusMode}
+                stroke={store.isFocusModeActive ? 'blue.400' : 'gray.400'}
+              >
+                <FocusIcon />
+              </IconButton>
+            </Tooltip>
           </HStack>
         </HStack>
         <TaskCreator

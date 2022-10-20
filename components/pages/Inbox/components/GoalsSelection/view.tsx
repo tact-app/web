@@ -57,21 +57,23 @@ const GoalSelectionListItem = observer(function GoalSelectionListItem({
         position='relative'
         fontWeight='semibold'
         fontSize='lg'
-        icon={<></>}
+        icon={checkboxContent ? <></> : undefined}
       >
-        <chakra.span
-          position='absolute'
-          left={0}
-          w={6}
-          top={0}
-          bottom={0}
-          display='flex'
-          alignItems='center'
-          justifyContent='center'
-          color={store.checkedGoals[id] ? 'white' : 'gray.400'}
-        >
-          {checkboxContent}
-        </chakra.span>
+        {checkboxContent ? (
+          <chakra.span
+            position='absolute'
+            left={0}
+            w={6}
+            top={0}
+            bottom={0}
+            display='flex'
+            alignItems='center'
+            justifyContent='center'
+            color={store.checkedGoals[id] ? 'white' : 'gray.400'}
+          >
+            {checkboxContent}
+          </chakra.span>
+        ) : null}
         <chakra.span
           display='flex'
           alignItems={'center'}
@@ -125,25 +127,28 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
           index={index}
           title={title}
           icon={icon}
-          checkboxContent={index + 1}
+          checkboxContent={index < 9 ? index + 1 : null}
         />
       ))}
     </List>
   ) : (
-    <Button
-      h={36}
-      w='100%'
-      p={6}
-      fontSize='lg'
-      fontWeight='semibold'
-      color='gray.400'
-      display='flex'
-      flexDirection='column'
-      justifyContent='space-between'
-      onClick={store.callbacks.onGoalCreateClick}
-    >
-      <LargePlusIcon />
-      New goal
-    </Button>
+    <Box ref={(el) => (ref.current = el)}>
+      <Button
+        h={36}
+        w='100%'
+        p={6}
+        fontSize='lg'
+        fontWeight='semibold'
+        color='gray.400'
+        display='flex'
+        flexDirection='column'
+        justifyContent='space-between'
+        onClick={store.callbacks.onGoalCreateClick}
+        ref={store.setCreateGoalButtonRef}
+      >
+        <LargePlusIcon />
+        New goal
+      </Button>
+    </Box>
   );
 });

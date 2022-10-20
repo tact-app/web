@@ -25,6 +25,7 @@ export class GoalsSelectionStore {
 
   goals: GoalsSelectionProps['goals'];
 
+  createGoalButtonRef: HTMLButtonElement | null = null;
   emptyRef: HTMLDivElement | null = null;
   refs: HTMLDivElement[] = [];
   checkedGoals: Record<string, boolean> = {};
@@ -34,12 +35,12 @@ export class GoalsSelectionStore {
   hotkeyHandlers = {
     UP: () => {
       if (!this.isFocused) {
-        this.refs[this.refs.length - 1].focus();
+        this.focusLast();
       }
     },
     DOWN: () => {
       if (!this.isFocused) {
-        this.refs[0].focus();
+        this.focusFirst();
       }
     },
   };
@@ -92,15 +93,25 @@ export class GoalsSelectionStore {
   focusFirst = () => {
     this.isFocused = true;
 
-    if (!this.multiple) {
-      this.focusEmpty();
-    } else {
-      this.focus(0);
+    if (this.goals.length) {
+      if (!this.multiple) {
+        this.focusEmpty();
+      } else {
+        this.focus(0);
+      }
+    } else if (this.createGoalButtonRef) {
+      this.createGoalButtonRef.focus();
     }
   };
 
   focusLast = () => {
-    this.focus(this.goals.length - 1);
+    this.isFocused = true;
+
+    if (this.goals.length) {
+      this.focus(this.goals.length - 1);
+    } else if (this.createGoalButtonRef) {
+      this.createGoalButtonRef.focus();
+    }
   };
 
   removeFocus = () => {
@@ -108,6 +119,10 @@ export class GoalsSelectionStore {
 
     if (this.emptyRef) {
       this.emptyRef.blur();
+    }
+
+    if (this.createGoalButtonRef) {
+      this.createGoalButtonRef.blur();
     }
 
     this.isFocused = false;
@@ -119,8 +134,12 @@ export class GoalsSelectionStore {
   };
 
   focus = (index: number) => {
-    this.refs[index].focus();
-    this.isFocused = true;
+    const ref = this.refs[index];
+
+    if (ref) {
+      this.refs[index].focus();
+      this.isFocused = true;
+    }
   };
 
   handleKeyDown =
@@ -163,6 +182,10 @@ export class GoalsSelectionStore {
     } else {
       this.refs[index] = ref;
     }
+  };
+
+  setCreateGoalButtonRef = (ref) => {
+    this.createGoalButtonRef = ref;
   };
 
   init = (props: GoalsSelectionProps) => {
