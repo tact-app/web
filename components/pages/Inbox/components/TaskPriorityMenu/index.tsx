@@ -1,23 +1,39 @@
-import { HStack, Menu, MenuButton, MenuItem, MenuList, Portal, Text } from '@chakra-ui/react';
+import {
+  HStack,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Portal,
+  Text,
+} from '@chakra-ui/react';
 import React, { PropsWithChildren } from 'react';
 import { observer } from 'mobx-react-lite';
-import { TaskPriority, TaskPriorityArray, TaskPriorityNames } from '../../types';
+import {
+  TaskPriority,
+  TaskPriorityArray,
+  TaskPriorityNames,
+} from '../../types';
 import { TaskPriorityIcon } from '../../../../shared/Icons/TaskPriorityIcon';
 
 export const TaskPriorityMenu = observer(function TaskPriorityMenu({
-                                                                     isOpen,
-                                                                     onFocus,
-                                                                     onSelect,
-                                                                     children,
-                                                                     ...rest
-                                                                   }: PropsWithChildren<{
-  isOpen?: boolean,
-  onFocus?: () => void,
-  onSelect: (priority: TaskPriority) => void
+  isOpen,
+  onFocus,
+  onSelect,
+  children,
+  ...rest
+}: PropsWithChildren<{
+  isOpen?: boolean;
+  onFocus?: () => void;
+  onSelect: (priority: TaskPriority) => void;
 }>) {
   return (
     <Menu isOpen={isOpen} placement='bottom-start' offset={[0, 24]} {...rest}>
-      {!children ? <MenuButton visibility='hidden'/> : <MenuButton>{children}</MenuButton>}
+      {!children ? (
+        <MenuButton visibility='hidden' />
+      ) : (
+        <MenuButton>{children}</MenuButton>
+      )}
       <Portal>
         <MenuList p={0} boxShadow='lg' onFocus={onFocus} w={32} minW={32}>
           {TaskPriorityArray.map((key) => (
@@ -30,7 +46,7 @@ export const TaskPriorityMenu = observer(function TaskPriorityMenu({
             >
               <HStack justifyContent='space-between' w='100%'>
                 <Text>{TaskPriorityNames[key]}</Text>
-                <TaskPriorityIcon priority={key}/>
+                <TaskPriorityIcon priority={key} />
               </HStack>
             </MenuItem>
           ))}

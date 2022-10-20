@@ -1,1 +1,1 @@
-export const TaskWontdoModal = () => null
+export const TaskWontdoModal = () => null;

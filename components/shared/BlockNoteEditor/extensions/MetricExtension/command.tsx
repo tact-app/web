@@ -1,24 +1,27 @@
-import { SlashMenuGroups, SlashMenuItem } from 'tact-block-note-core/src/extensions/SlashMenu/SlashMenuItem';
+import {
+  SlashMenuGroups,
+  SlashMenuItem,
+} from 'tact-block-note-core/src/extensions/SlashMenu/SlashMenuItem';
 import formatKeyboardShortcut from 'tact-block-note-core/src/extensions/helpers/formatKeyboardShortcut';
 import { Range } from '@tiptap/core';
 
 export const insertMetric = (editor, range: Range) => {
   const component = editor.schema.nodeFromJSON({
-    'type': 'metric',
-    'attrs': {
-      'value': 0
+    type: 'metric',
+    attrs: {
+      value: 0,
     },
-    'content': [
+    content: [
       {
-        'type': 'text',
-        'text': 'Metric name',
-        'marks': [
+        type: 'text',
+        text: 'Metric name',
+        marks: [
           {
-            'type': 'bold'
-          }
-        ]
-      }
-    ]
+            type: 'bold',
+          },
+        ],
+      },
+    ],
   });
 
   return editor
@@ -38,5 +41,5 @@ export const metricCommands = {
     () => <>M</>,
     'Used to display a metric',
     formatKeyboardShortcut('Mod-m')
-  )
+  ),
 };

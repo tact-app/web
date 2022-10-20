@@ -5,7 +5,7 @@ import { GoalsView } from './view';
 const GoalsPage = observer(function GoalsPage() {
   return (
     <GoalsStoreProvider>
-      <GoalsView/>
+      <GoalsView />
     </GoalsStoreProvider>
   );
 });

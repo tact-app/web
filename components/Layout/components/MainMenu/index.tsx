@@ -1,9 +1,4 @@
-import {
-  Box,
-  Link,
-  Stack,
-  useColorModeValue
-} from '@chakra-ui/react';
+import { Box, Link, Stack, useColorModeValue } from '@chakra-ui/react';
 import NavLink from '../../../shared/Link';
 import { NavItem } from './types';
 import { Icon } from '@chakra-ui/icons';
@@ -17,8 +12,8 @@ export function MainMenu({ items }: { items: NavItem[] }) {
       {items.map((navItem) => (
         <Box key={navItem.label} mt={7}>
           <NavLink href={navItem.href}>
-            {
-              ({ isActive }) => <Link
+            {({ isActive }) => (
+              <Link
                 p={1}
                 fontSize={'md'}
                 fontWeight={400}
@@ -30,11 +25,14 @@ export function MainMenu({ items }: { items: NavItem[] }) {
                 _hover={{
                   textDecoration: 'none',
                   color: linkHoverColor,
-                }}>
-                <Icon mr={3} ml={4}>{navItem.icon}</Icon>
-                  {navItem.label}
+                }}
+              >
+                <Icon mr={3} ml={4}>
+                  {navItem.icon}
+                </Icon>
+                {navItem.label}
               </Link>
-            }
+            )}
           </NavLink>
         </Box>
       ))}

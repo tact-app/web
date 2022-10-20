@@ -22,7 +22,9 @@ const keyMap = {
   OPEN: 'enter',
 };
 
-const DraggableListWrapper = observer(function TaskListWrapper({ children }: PropsWithChildren) {
+const DraggableListWrapper = observer(function TaskListWrapper({
+  children,
+}: PropsWithChildren) {
   const store = useDraggableListStore();
 
   return (
@@ -33,10 +35,7 @@ const DraggableListWrapper = observer(function TaskListWrapper({ children }: Pro
     >
       <Droppable droppableId='droppable'>
         {(provided) => (
-          <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
+          <div {...provided.droppableProps} ref={provided.innerRef}>
             {children}
             {provided.placeholder}
           </div>
@@ -47,66 +46,78 @@ const DraggableListWrapper = observer(function TaskListWrapper({ children }: Pro
 });
 
 const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
-                                                                              prefix: Prefix,
-                                                                              dragHandler: DragHandler,
-                                                                              content: Content,
-                                                                              snapshot,
-                                                                              provided,
-                                                                              id
-                                                                            }: DraggableListComponentProps & { snapshot: any, provided: any, id: string }) {
+  prefix: Prefix,
+  dragHandler: DragHandler,
+  content: Content,
+  snapshot,
+  provided,
+  id,
+}: DraggableListComponentProps & { snapshot: any; provided: any; id: string }) {
   const store = useDraggableListStore();
 
   return (
     <>
-      {Prefix && <Prefix id={id} snapshot={snapshot}/>}
-      <DragHandler provided={provided} snapshot={snapshot} id={id}/>
-      <Content id={id} isFocused={store.focusedItemIds.includes(id)} snapshot={snapshot}/>
+      {Prefix && <Prefix id={id} snapshot={snapshot} />}
+      <DragHandler provided={provided} snapshot={snapshot} id={id} />
+      <Content
+        id={id}
+        isFocused={store.focusedItemIds.includes(id)}
+        snapshot={snapshot}
+      />
     </>
   );
 });
 
-export const DefaultDraggableListDragHandler = observer(function DefaultDraggableListDragHandler({
-                                                                                                   provided,
-                                                                                                   snapshot,
-                                                                                                   id
-                                                                                                 }: { snapshot: any, provided: any, id: string }) {
-  const store = useDraggableListStore();
+export const DefaultDraggableListDragHandler = observer(
+  function DefaultDraggableListDragHandler({
+    provided,
+    snapshot,
+    id,
+  }: {
+    snapshot: any;
+    provided: any;
+    id: string;
+  }) {
+    const store = useDraggableListStore();
 
-  return (
-    <Box
-      position='absolute'
-      left={-6}
-      top={0}
-      bottom={0}
-      display='flex'
-      transition='opacity 0.2s'
-      opacity={snapshot.isDragging && !store.isControlDraggingActive ? '1' : '0'}
-      flexDirection='column'
-      justifyContent='center'
-      _groupHover={{
-        opacity: !store.isDraggingActive ? '1' : '0',
-      }}
-      {...provided.dragHandleProps}
-    >
-      {!store.checkItemActivity || store.checkItemActivity(id) ? (
-        <IconButton
-          cursor='grab'
-          size='xs'
-          aria-label='Drag'
-          icon={<TaskDragIcon/>}
-          variant='unstyled'
-        />
-      ) : null}
-    </Box>
-  );
-});
+    return (
+      <Box
+        position='absolute'
+        left={-6}
+        top={0}
+        bottom={0}
+        display='flex'
+        transition='opacity 0.2s'
+        opacity={
+          snapshot.isDragging && !store.isControlDraggingActive ? '1' : '0'
+        }
+        flexDirection='column'
+        justifyContent='center'
+        _groupHover={{
+          opacity: !store.isDraggingActive ? '1' : '0',
+        }}
+        {...provided.dragHandleProps}
+      >
+        {!store.checkItemActivity || store.checkItemActivity(id) ? (
+          <IconButton
+            cursor='grab'
+            size='xs'
+            aria-label='Drag'
+            icon={<TaskDragIcon />}
+            variant='unstyled'
+          />
+        ) : null}
+      </Box>
+    );
+  }
+);
 
 export const DraggableListView = observer(function DraggableListView({
-                                                                       prefix,
-                                                                       dragHandler = DefaultDraggableListDragHandler,
-                                                                       content,
-                                                                       boxProps,
-                                                                     }: DraggableListComponentProps & { boxProps?: BoxProps }) {
+  prefix,
+  dragHandler = DefaultDraggableListDragHandler,
+  content,
+  boxProps,
+}: DraggableListComponentProps & { boxProps?: BoxProps }) {
   const store = useDraggableListStore();
   const ref = useRef(null);
 
@@ -115,41 +126,39 @@ export const DraggableListView = observer(function DraggableListView({
     handler: store.resetFocusedItem,
   });
 
-  useHotkeysHandler(keyMap, store.hotkeyHandlers)
+  useHotkeysHandler(keyMap, store.hotkeyHandlers);
 
   return (
-      <Box ref={ref}>
-        <DraggableListWrapper>
-          {
-            store.items.map((id, index) => {
-              return (
-                <Draggable draggableId={id} index={index} key={id}>
-                  {(provided, snapshot) => (
-                    <Box
-                      ref={provided.innerRef}
-                      index={index}
-                      position='relative'
-                      role='group'
-                      display='flex'
-                      style={provided.draggableProps.style}
-                      {...provided.draggableProps}
-                      {...boxProps}
-                    >
-                      <DraggableListItemWrapper
-                        id={id}
-                        prefix={prefix}
-                        dragHandler={dragHandler}
-                        content={content}
-                        snapshot={snapshot}
-                        provided={provided}
-                      />
-                    </Box>
-                  )}
-                </Draggable>
-              );
-            })
-          }
-        </DraggableListWrapper>
-      </Box>
+    <Box ref={ref}>
+      <DraggableListWrapper>
+        {store.items.map((id, index) => {
+          return (
+            <Draggable draggableId={id} index={index} key={id}>
+              {(provided, snapshot) => (
+                <Box
+                  ref={provided.innerRef}
+                  index={index}
+                  position='relative'
+                  role='group'
+                  display='flex'
+                  style={provided.draggableProps.style}
+                  {...provided.draggableProps}
+                  {...boxProps}
+                >
+                  <DraggableListItemWrapper
+                    id={id}
+                    prefix={prefix}
+                    dragHandler={dragHandler}
+                    content={content}
+                    snapshot={snapshot}
+                    provided={provided}
+                  />
+                </Box>
+              )}
+            </Draggable>
+          );
+        })}
+      </DraggableListWrapper>
+    </Box>
   );
 });

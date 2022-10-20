@@ -6,19 +6,19 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay
+  ModalOverlay,
 } from '@chakra-ui/modal';
 import { Button } from '@chakra-ui/react';
 
 export type TaskDeleteModalProps = {
-  onClose: () => void
-  onDelete: () => void
-}
+  onClose: () => void;
+  onDelete: () => void;
+};
 
 export const TaskDeleteModal = observer(function TaskDeleteModal({
-                                                                   onClose,
-                                                                   onDelete
-                                                                 }: TaskDeleteModalProps) {
+  onClose,
+  onDelete,
+}: TaskDeleteModalProps) {
   const initialRef = useRef(null);
 
   return (
@@ -28,7 +28,7 @@ export const TaskDeleteModal = observer(function TaskDeleteModal({
       isOpen={true}
       onClose={onClose}
     >
-      <ModalOverlay/>
+      <ModalOverlay />
       <ModalContent>
         <ModalHeader>Delete task</ModalHeader>
         <ModalBody pb={6}>
@@ -36,8 +36,12 @@ export const TaskDeleteModal = observer(function TaskDeleteModal({
         </ModalBody>
 
         <ModalFooter display='flex' justifyContent='flex-end'>
-          <Button mr={3} onClick={onClose}>Cancel</Button>
-          <Button colorScheme='red' onClick={onDelete} ref={initialRef}>Delete</Button>
+          <Button mr={3} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button colorScheme='red' onClick={onDelete} ref={initialRef}>
+            Delete
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

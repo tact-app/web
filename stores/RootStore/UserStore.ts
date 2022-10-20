@@ -6,7 +6,7 @@ export type UserData = {
   name: string;
   email: string;
   avatar: string;
-}
+};
 
 export default class UserStore {
   constructor(public root: RootStore) {
@@ -19,20 +19,20 @@ export default class UserStore {
   setUser = (user: UserData) => {
     this.data = user;
     this.isAuth = true;
-  }
+  };
 
   login = async () => {
     await this.init();
-  }
+  };
 
   logout = () => {
     this.data = null;
     this.isAuth = false;
-  }
+  };
 
   init = async () => {
     const userData = await this.root.api.user.get('1');
 
     this.setUser(userData);
-  }
+  };
 }

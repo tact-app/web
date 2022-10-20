@@ -5,7 +5,7 @@ import { SyntheticEvent } from 'react';
 
 export type GoalConfigurationProps = {
   goalId: string | null;
-}
+};
 
 export class GoalConfigurationStore {
   constructor(public root: RootStore) {
@@ -16,14 +16,11 @@ export class GoalConfigurationStore {
 
   value: string = '';
 
-
   handleChange = (e: SyntheticEvent) => {
     this.value = (e.target as HTMLInputElement).value;
   };
 
-  init = ({
-            goalId,
-          }: GoalConfigurationProps) => {
+  init = ({ goalId }: GoalConfigurationProps) => {
     this.goalId = goalId;
   };
 }

@@ -3,7 +3,8 @@ import { TaskTag } from '../../components/pages/Inbox/types';
 
 const getTagsApi = (apiService: ApiService) => ({
   list: () => apiService.get<TaskTag[]>(`/api/tags`),
-  create: (task: TaskTag) => apiService.post<TaskTag[]>(`/api/tags/create`, task),
+  create: (task: TaskTag) =>
+    apiService.post<TaskTag[]>(`/api/tags/create`, task),
 });
 
 export default getTagsApi;

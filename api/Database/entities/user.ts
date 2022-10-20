@@ -8,12 +8,12 @@ const user: UserData = {
 };
 
 const data = {
-  'get': {
+  get: {
     '/api/user/1': () => user,
   },
-  'post': {
-    '/api/user/1': (data: { name: string }) => user.name = data.name
-  }
+  post: {
+    '/api/user/1': (data: { name: string }) => (user.name = data.name),
+  },
 };
 
 export default data;

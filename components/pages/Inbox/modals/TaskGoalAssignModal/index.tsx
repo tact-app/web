@@ -1,12 +1,17 @@
 import { observer } from 'mobx-react-lite';
 import { TaskGoalAssignModalView } from './view';
-import { TaskGoalAssignModalProps, TaskGoalAssignModalStoreProvider } from './store';
+import {
+  TaskGoalAssignModalProps,
+  TaskGoalAssignModalStoreProvider,
+} from './store';
 import { GoalData } from '../../../Goals/types';
 
-export const TaskGoalAssignModal = observer(function TaskGoalAssignModal(props: TaskGoalAssignModalProps & { goals: GoalData[] }) {
+export const TaskGoalAssignModal = observer(function TaskGoalAssignModal(
+  props: TaskGoalAssignModalProps & { goals: GoalData[] }
+) {
   return (
     <TaskGoalAssignModalStoreProvider {...props}>
-      <TaskGoalAssignModalView {...props}/>
+      <TaskGoalAssignModalView {...props} />
     </TaskGoalAssignModalStoreProvider>
   );
 });

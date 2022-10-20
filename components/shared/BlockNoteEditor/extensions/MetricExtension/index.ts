@@ -3,7 +3,6 @@ import { ReactNodeViewRenderer } from '@tiptap/react';
 import { MetricExtensionView } from './view';
 import { insertMetric } from './command';
 
-
 export const MetricExtension = Node.create({
   name: 'metric',
 
@@ -29,7 +28,7 @@ export const MetricExtension = Node.create({
 
   addKeyboardShortcuts() {
     return {
-      'Enter': ({ editor }) => {
+      Enter: ({ editor }) => {
         if (editor.isActive('metric')) {
           editor.chain().focus().addNewBlockAsSibling().run();
 

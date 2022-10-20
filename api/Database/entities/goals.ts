@@ -1,8 +1,11 @@
 import { DB } from '../index';
-import { GoalData, GoalDescriptionData } from '../../../components/pages/Goals/types';
+import {
+  GoalData,
+  GoalDescriptionData,
+} from '../../../components/pages/Goals/types';
 
 const data = {
-  'get': {
+  get: {
     '/api/goals': async (db: DB, { id }: { id: string }) => {
       const goals = await db.getAll('goals');
       const goalList = await db.get('goalLists', id);
@@ -30,11 +33,14 @@ const data = {
       return await db.get('descriptions', data.id);
     },
   },
-  'post': {
+  post: {
     '/api/goals/description': async (db: DB, data: GoalDescriptionData) => {
       await db.add('descriptions', data);
     },
-    '/api/goals/description/update': async (db: DB, data: GoalDescriptionData) => {
+    '/api/goals/description/update': async (
+      db: DB,
+      data: GoalDescriptionData
+    ) => {
       const existedDescription = await db.get('descriptions', data.id);
 
       if (existedDescription) {
@@ -51,30 +57,43 @@ const data = {
         await db.put('goalLists', goalLists);
       }
     },
-    '/api/goals/delete': async (db: DB, { ids, listId }: { ids: string[], listId: string }) => {
+    '/api/goals/delete': async (
+      db: DB,
+      { ids, listId }: { ids: string[]; listId: string }
+    ) => {
       await Promise.all(ids.map((id) => db.delete('goals', id)));
 
       const existedList = await db.get('goalLists', listId);
 
       if (existedList) {
-        existedList.goalIds = existedList.goalIds.filter((id) => !ids.includes(id));
+        existedList.goalIds = existedList.goalIds.filter(
+          (id) => !ids.includes(id)
+        );
 
         await db.put('goalLists', existedList);
       }
     },
-    '/api/goals/order': async (db: DB, data: { listId: string, goalIds: string[], destination: number }) => {
+    '/api/goals/order': async (
+      db: DB,
+      data: { listId: string; goalIds: string[]; destination: number }
+    ) => {
       const existedList = await db.get('goalLists', data.listId);
 
       if (existedList) {
-        existedList.goalIds = existedList.goalIds.filter((id) => !data.goalIds.includes(id));
+        existedList.goalIds = existedList.goalIds.filter(
+          (id) => !data.goalIds.includes(id)
+        );
         existedList.goalIds.splice(data.destination, 0, ...data.goalIds);
 
         await db.put('goalLists', existedList);
       }
     },
   },
-  'put': {
-    '/api/goals': async (db: DB, data: { id: string, fields: Partial<GoalData> }) => {
+  put: {
+    '/api/goals': async (
+      db: DB,
+      data: { id: string; fields: Partial<GoalData> }
+    ) => {
       const existedGoal = await db.get('goals', data.id);
 
       if (existedGoal) {
@@ -85,7 +104,7 @@ const data = {
         await db.put('goals', existedGoal);
       }
     },
-  }
+  },
 };
 
 export default data;

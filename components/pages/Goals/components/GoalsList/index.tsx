@@ -10,14 +10,14 @@ export const GoalsList = observer(function GoalsList() {
 
   return (
     <Box pl={32} pr={32}>
-      <Heading size='md' mt={2.5} mb={8} pt={4}>My Goals</Heading>
+      <Heading size='md' mt={2.5} mb={8} pt={4}>
+        My Goals
+      </Heading>
       <Box>
-        <GoalCreateNewButton/>
-        {
-          store.order.map((goalId) => (
-            <GoalItem key={goalId} id={goalId}/>
-          ))
-        }
+        <GoalCreateNewButton />
+        {store.order.map((goalId) => (
+          <GoalItem key={goalId} id={goalId} />
+        ))}
       </Box>
     </Box>
   );

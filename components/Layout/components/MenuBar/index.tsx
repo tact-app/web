@@ -10,17 +10,17 @@ import { useRootStore } from '../../../../stores/RootStore';
 const NAV_ITEMS: Array<NavItem> = [
   {
     label: 'Inbox',
-    icon: <EmailIcon/>,
+    icon: <EmailIcon />,
     href: routes.INBOX,
   },
   {
     label: 'Goals',
-    icon: <CheckIcon/>,
+    icon: <CheckIcon />,
     href: routes.GOALS,
   },
   {
     label: 'Calendar',
-    icon: <CalendarIcon/>,
+    icon: <CalendarIcon />,
     href: routes.CALENDAR,
   },
 ];
@@ -37,10 +37,10 @@ export const MenuBarView = observer(function MenuBarView() {
       w={72}
     >
       <Box p={2} pl={4} pr={4} mb={4}>
-        <UserMenu/>
+        <UserMenu />
       </Box>
-      <Divider borderColor={useColorModeValue('gray.100', 'gray.800')}/>
-      <MainMenu items={NAV_ITEMS}/>
+      <Divider borderColor={useColorModeValue('gray.100', 'gray.800')} />
+      <MainMenu items={NAV_ITEMS} />
     </Flex>
   );
 });
@@ -48,11 +48,5 @@ export const MenuBarView = observer(function MenuBarView() {
 export const MenuBar = observer(function MenuBar() {
   const store = useRootStore();
 
-  return (
-    store.menu.replacer ? (
-      store.menu.replacer
-    ) : (
-      <MenuBarView/>
-    )
-  );
+  return store.menu.replacer ? store.menu.replacer : <MenuBarView />;
 });

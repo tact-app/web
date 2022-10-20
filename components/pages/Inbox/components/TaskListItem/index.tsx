@@ -4,11 +4,11 @@ import React from 'react';
 import { useTasksStore } from '../../store';
 
 export const TaskListItem = observer(function TaskListItem({
-                                                             id,
-                                                             snapshot
-                                                           }: {
-  id: string
-  snapshot: any
+  id,
+  snapshot,
+}: {
+  id: string;
+  snapshot: any;
 }) {
   const store = useTasksStore();
   const task = store.items[id];
@@ -25,7 +25,6 @@ export const TaskListItem = observer(function TaskListItem({
       onFocus={store.draggableList.setFocusedItem}
       onNavigate={store.draggableList.handleNavigation}
       onStatusChange={store.setTaskStatus}
-
       onCreate={store.updateTask}
       onTagCreate={store.createTag}
       tagsMap={store.tagsMap}
