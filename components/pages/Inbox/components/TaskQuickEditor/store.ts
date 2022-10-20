@@ -10,7 +10,7 @@ import {
   TaskPriorityKeys,
   TaskPriorityValues,
   TaskStatus,
-  TaskTag
+  TaskTag,
 } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,7 +22,7 @@ export type TaskQuickEditorProps = {
   listId: string;
   keepFocus?: boolean;
   task?: TaskData;
-}
+};
 
 export class TaskQuickEditorStore {
   constructor(public root: RootStore) {
@@ -56,15 +56,23 @@ export class TaskQuickEditorStore {
   }
 
   get filteredAvailableTags() {
-    return this.availableTags.filter(({ title }) => title.startsWith(this.currentTagValue));
+    return this.availableTags.filter(({ title }) =>
+      title.startsWith(this.currentTagValue)
+    );
   }
 
   get currentTagMatch() {
-    return this.filteredAvailableTags.some(({ title }) => title === this.currentTagValue);
+    return this.filteredAvailableTags.some(
+      ({ title }) => title === this.currentTagValue
+    );
   }
 
   get tagsMenuOpen() {
-    return Boolean(this.focused && this.tagActive && (this.currentTagValue.length > 1 || this.availableTags.length));
+    return Boolean(
+      this.focused &&
+        this.tagActive &&
+        (this.currentTagValue.length > 1 || this.availableTags.length)
+    );
   }
 
   get priorityMenuOpen() {
@@ -115,7 +123,10 @@ export class TaskQuickEditorStore {
 
   disableTagMode = () => {
     this.tagActive = false;
-    this.value = this.value.slice(0, this.value.length - this.currentTagValue.length);
+    this.value = this.value.slice(
+      0,
+      this.value.length - this.currentTagValue.length
+    );
     this.currentTagValue = '';
     this.input.focus();
   };
@@ -146,7 +157,9 @@ export class TaskQuickEditorStore {
         this.onTagCreate(newTag);
       }
     } else {
-      const tag = this.filteredAvailableTags.find(({ title }) => title === this.currentTagValue);
+      const tag = this.filteredAvailableTags.find(
+        ({ title }) => title === this.currentTagValue
+      );
 
       if (tag) {
         this.tags.push(tag);
@@ -171,7 +184,10 @@ export class TaskQuickEditorStore {
 
   disablePriorityMode = () => {
     this.priorityActive = false;
-    this.value = this.value.slice(0, this.value.length - this.currentPriorityValue.length);
+    this.value = this.value.slice(
+      0,
+      this.value.length - this.currentPriorityValue.length
+    );
     this.currentPriorityValue = '';
     this.priority = TaskPriority.NONE;
     this.input.focus();
@@ -230,7 +246,7 @@ export class TaskQuickEditorStore {
   };
 
   handleChange = (e: SyntheticEvent) => {
-    const { value } = (e.target as HTMLInputElement);
+    const { value } = e.target as HTMLInputElement;
 
     this.value = value;
 
@@ -268,31 +284,47 @@ export class TaskQuickEditorStore {
       this.removeFocus();
     } else if (e.key === 'Enter') {
       this.createTask();
-    } else if (e.key === '#' && (e.target as HTMLInputElement).selectionEnd === this.value.length) {
+    } else if (
+      e.key === '#' &&
+      (e.target as HTMLInputElement).selectionEnd === this.value.length
+    ) {
       this.activateTagMode();
     } else if (e.key === '!') {
       this.activatePriorityMode();
     } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
       this.removeFocus();
-      this.onNavigate(e.key === 'ArrowDown' ? NavigationDirections.DOWN : NavigationDirections.UP);
-    } else if (e.key === 'ArrowRight' && (e.target as HTMLInputElement).selectionEnd === this.value.length && this.tags.length) {
+      this.onNavigate(
+        e.key === 'ArrowDown'
+          ? NavigationDirections.DOWN
+          : NavigationDirections.UP
+      );
+    } else if (
+      e.key === 'ArrowRight' &&
+      (e.target as HTMLInputElement).selectionEnd === this.value.length &&
+      this.tags.length
+    ) {
       this.tags[0].ref.focus();
     }
   };
 
   handleKeyDownInTagMode = (e: KeyboardEvent<HTMLInputElement>) => {
-    if ((e.key === ' ' || e.key === 'Enter') && this.currentTagValue.length > 1) {
+    if (
+      (e.key === ' ' || e.key === 'Enter') &&
+      this.currentTagValue.length > 1
+    ) {
       e.preventDefault();
       this.createNewTag();
-    } else if ((e.key === 'Backspace' || e.key === ' ') && this.currentTagValue.length === 1) {
+    } else if (
+      (e.key === 'Backspace' || e.key === ' ') &&
+      this.currentTagValue.length === 1
+    ) {
       e.preventDefault();
       this.disableTagMode();
     } else if (e.key === 'Escape') {
       e.preventDefault();
       this.disableTagMode();
     } else if (e.key === 'ArrowDown') {
-
     }
   };
 
@@ -307,7 +339,9 @@ export class TaskQuickEditorStore {
       e.preventDefault();
 
       if (this.currentPriorityValue.length > 1) {
-        this.setPriority(TaskPriorityKeys[this.currentPriorityValue.slice(0, -1)]);
+        this.setPriority(
+          TaskPriorityKeys[this.currentPriorityValue.slice(0, -1)]
+        );
       } else {
         this.disablePriorityMode();
       }
@@ -351,7 +385,15 @@ export class TaskQuickEditorStore {
     }
   };
 
-  init = ({ onCreate, onTagCreate, listId, onNavigate, task, tagsMap, keepFocus }: TaskQuickEditorProps) => {
+  init = ({
+    onCreate,
+    onTagCreate,
+    listId,
+    onNavigate,
+    task,
+    tagsMap,
+    keepFocus,
+  }: TaskQuickEditorProps) => {
     this.onCreate = onCreate;
     this.onTagCreate = onTagCreate;
     this.onNavigate = onNavigate;
@@ -363,12 +405,15 @@ export class TaskQuickEditorStore {
       this.task = task;
       this.value = task.title;
       this.priority = task.priority;
-      this.tags = task.tags.map((tag) => ({ id: tag, title: tagsMap[tag].title }));
+      this.tags = task.tags.map((tag) => ({
+        id: tag,
+        title: tagsMap[tag].title,
+      }));
     }
   };
 }
 
 export const {
   StoreProvider: TaskQuickEditorStoreProvider,
-  useStore: useTaskQuickEditorStore
+  useStore: useTaskQuickEditorStore,
 } = getProvider(TaskQuickEditorStore);

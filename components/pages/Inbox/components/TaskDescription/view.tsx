@@ -5,19 +5,19 @@ import { useTaskDescriptionStore } from './store';
 import { useTasksStore } from '../../store';
 import { ResizableDrawer } from '../../../../shared/ResizableDrawer';
 
-
 export const TaskDescriptionView = observer(function TaskDescriptionView() {
   const store = useTaskDescriptionStore();
   const tasksStore = useTasksStore();
   const ref = useRef<null | HTMLDivElement>(null);
 
   return (
-    <ResizableDrawer isOpen={Boolean(tasksStore.openedTask)} onClose={tasksStore.closeTask}>
-      <DrawerHeader borderBottomWidth='1px'>
-        {store.data.title}
-      </DrawerHeader>
+    <ResizableDrawer
+      isOpen={Boolean(tasksStore.openedTask)}
+      onClose={tasksStore.closeTask}
+    >
+      <DrawerHeader borderBottomWidth='1px'>{store.data.title}</DrawerHeader>
       <DrawerBody>
-        <div ref={ref}/>
+        <div ref={ref} />
       </DrawerBody>
     </ResizableDrawer>
   );

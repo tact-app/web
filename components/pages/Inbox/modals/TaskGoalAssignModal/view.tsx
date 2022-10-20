@@ -13,40 +13,44 @@ import { GoalsSelectionStoreProvider } from '../../components/GoalsSelection/sto
 import { GoalsSelectionView } from '../../components/GoalsSelection/view';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 
-export const TaskGoalAssignModalView = observer(function TaskGoalAssignModalView() {
-  const store = useTaskGoalAssignModalStore();
+export const TaskGoalAssignModalView = observer(
+  function TaskGoalAssignModalView() {
+    const store = useTaskGoalAssignModalStore();
 
-  const ref = useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
+    const ref = useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
-  return (
-    <Modal
-      isCentered
-      isOpen={true}
-      onClose={store.callbacks.onClose}
-    >
-      <ModalOverlay/>
-      <ModalContent ref={(el) => ref.current = el}>
-        <ModalHeader>My goals</ModalHeader>
-        <ModalBody maxH={80} overflow='scroll'>
-          <GoalsSelectionStoreProvider
-            goals={store.goals}
-            checked={store.selectedGoalId ? [store.selectedGoalId] : []}
-            callbacks={{
-              onSelect: store.handleSelect,
-              onGoalCreateClick: store.callbacks.onGoalCreateClick,
-            }}
-            instance={store.goalsSelection}
-          >
-            <GoalsSelectionView/>
-          </GoalsSelectionStoreProvider>
-        </ModalBody>
-        <ModalFooter>
-          <Button mr={3} onClick={store.callbacks.onClose}>
-            Close
-          </Button>
-          <Button colorScheme='blue' disabled={!store.selectedGoalId} onClick={store.handleSubmit}>Save</Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-  );
-});
+    return (
+      <Modal isCentered isOpen={true} onClose={store.callbacks.onClose}>
+        <ModalOverlay />
+        <ModalContent ref={(el) => (ref.current = el)}>
+          <ModalHeader>My goals</ModalHeader>
+          <ModalBody maxH={80} overflow='scroll'>
+            <GoalsSelectionStoreProvider
+              goals={store.goals}
+              checked={store.selectedGoalId ? [store.selectedGoalId] : []}
+              callbacks={{
+                onSelect: store.handleSelect,
+                onGoalCreateClick: store.callbacks.onGoalCreateClick,
+              }}
+              instance={store.goalsSelection}
+            >
+              <GoalsSelectionView />
+            </GoalsSelectionStoreProvider>
+          </ModalBody>
+          <ModalFooter>
+            <Button mr={3} onClick={store.callbacks.onClose}>
+              Close
+            </Button>
+            <Button
+              colorScheme='blue'
+              disabled={!store.selectedGoalId}
+              onClick={store.handleSubmit}
+            >
+              Save
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    );
+  }
+);

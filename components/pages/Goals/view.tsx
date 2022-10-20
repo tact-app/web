@@ -13,8 +13,8 @@ export const GoalsView = observer(function GoalsView() {
       <Head>
         <title>Goals</title>
       </Head>
-      <GoalsList/>
-      <ModalsSwitcher controller={store.modals}/>
+      <GoalsList />
+      <ModalsSwitcher controller={store.modals} />
     </>
   );
 });

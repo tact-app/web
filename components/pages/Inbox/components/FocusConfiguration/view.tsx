@@ -16,7 +16,9 @@ import { GoalsSelectionView } from '../GoalsSelection/view';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { useEffect } from 'react';
 
-export const FocusConfigurationView = observer(function FocusConfigurationView(props: FocusConfigurationProps) {
+export const FocusConfigurationView = observer(function FocusConfigurationView(
+  props: FocusConfigurationProps
+) {
   const store = useFocusConfigurationStore();
 
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
@@ -36,15 +38,36 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(p
       justifyContent='space-between'
     >
       <Box width='100%'>
-        <HStack justifyContent='space-between' pt={4} mt={1.5} ml={4} alignItems='center'>
+        <HStack
+          justifyContent='space-between'
+          pt={4}
+          mt={1.5}
+          ml={4}
+          alignItems='center'
+        >
           <Heading size='lg'>Focus setting</Heading>
-          <CloseButton onClick={store.callbacks.onClose} color='gray.400' size='sm'/>
+          <CloseButton
+            onClick={store.callbacks.onClose}
+            color='gray.400'
+            size='sm'
+          />
         </HStack>
-        <Text pt={5} ml={4} size='sm' fontWeight='normal' color='gray.400'>Press ⇧C to clear</Text>
-        <Box p={2} borderRadius='md' bg={store.goalsSelection.isFocused ? 'gray.50' : 'white'} ml={2}>
+        <Text pt={5} ml={4} size='sm' fontWeight='normal' color='gray.400'>
+          Press ⇧C to clear
+        </Text>
+        <Box
+          p={2}
+          borderRadius='md'
+          bg={store.goalsSelection.isFocused ? 'gray.50' : 'white'}
+          ml={2}
+        >
           <HStack pb={2} alignItems='baseline'>
-            <Text fontSize='lg' fontWeight='semibold'>Goals</Text>
-            <Text fontSize='sm' fontWeight='normal' color='gray.400'>Shift + G</Text>
+            <Text fontSize='lg' fontWeight='semibold'>
+              Goals
+            </Text>
+            <Text fontSize='sm' fontWeight='normal' color='gray.400'>
+              Shift + G
+            </Text>
           </HStack>
           <GoalsSelectionStoreProvider
             multiple
@@ -56,15 +79,29 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(p
               onGoalCreateClick: store.callbacks.onGoalCreateClick,
             }}
           >
-            <GoalsSelectionView/>
+            <GoalsSelectionView />
           </GoalsSelectionStoreProvider>
         </Box>
         <FormControl display='flex' alignItems='center' ml={4} mt={7}>
-          <Switch id='important-tasks' isChecked={store.data.showImportant}
-                  onChange={store.handleShowImportantChange}/>
-          <FormLabel htmlFor='important-tasks' mb='0' ml={4} cursor='pointer' display='flex' alignItems='baseline'>
-            <Text fontSize='lg' fontWeight='semibold'>Important</Text>
-            <Text fontSize='sm' fontWeight='normal' color='gray.400' ml={2}>I</Text>
+          <Switch
+            id='important-tasks'
+            isChecked={store.data.showImportant}
+            onChange={store.handleShowImportantChange}
+          />
+          <FormLabel
+            htmlFor='important-tasks'
+            mb='0'
+            ml={4}
+            cursor='pointer'
+            display='flex'
+            alignItems='baseline'
+          >
+            <Text fontSize='lg' fontWeight='semibold'>
+              Important
+            </Text>
+            <Text fontSize='sm' fontWeight='normal' color='gray.400' ml={2}>
+              I
+            </Text>
           </FormLabel>
         </FormControl>
       </Box>
@@ -78,7 +115,9 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(p
           display='flex'
           alignItems='center'
         >
-          <Text fontSize='md' fontWeight='normal'>Total: {props.getItemsCount()} tasks</Text>
+          <Text fontSize='md' fontWeight='normal'>
+            Total: {props.getItemsCount()} tasks
+          </Text>
         </Box>
       </Fade>
     </Box>

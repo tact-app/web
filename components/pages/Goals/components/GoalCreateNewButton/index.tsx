@@ -16,9 +16,15 @@ export const GoalCreateNewButton = observer(function GoalCreateNewButton() {
       borderRadius='xl'
       h={60}
       w={56}
-      pt={6} pl={14} pr={14} pb={6} mb={10} mr={10}>
+      pt={6}
+      pl={14}
+      pr={14}
+      pb={6}
+      mb={10}
+      mr={10}
+    >
       <Box mb={6}>
-        <LargePlusIcon/>
+        <LargePlusIcon />
       </Box>
       <Text fontSize='lg' fontWeight='semibold' color='gray.400'>
         New goal

@@ -5,12 +5,16 @@ import { TaskDescriptionView } from './view';
 import { TaskData } from '../../types';
 import { useTasksStore } from '../../store';
 
-export const TaskDescription = observer(function TaskDescription({ task }: { task: TaskData }) {
-  const tasksStore = useTasksStore()
+export const TaskDescription = observer(function TaskDescription({
+  task,
+}: {
+  task: TaskData;
+}) {
+  const tasksStore = useTasksStore();
 
   return (
     <TaskDescriptionStoreProvider task={task} close={tasksStore.closeTask}>
-      <TaskDescriptionView/>
+      <TaskDescriptionView />
     </TaskDescriptionStoreProvider>
   );
 });

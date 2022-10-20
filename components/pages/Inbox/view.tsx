@@ -18,10 +18,8 @@ export const TasksView = observer(function TasksView() {
       <Head>
         <title>Inbox</title>
       </Head>
-      <TaskList/>
-      {
-        store.openedTask && <TaskDescription task={store.openedTaskData}/>
-      }
+      <TaskList />
+      {store.openedTask && <TaskDescription task={store.openedTaskData} />}
     </>
   );
 });

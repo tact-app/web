@@ -6,7 +6,7 @@ import { getProvider } from '../../../../../helpers/StoreProvider';
 
 export type GoalsSelectionProps = {
   callbacks?: {
-    onSelect?: (goalIds: string[]) => void
+    onSelect?: (goalIds: string[]) => void;
     onFocus?: (goalId: string | null) => void;
     onGoalCreateClick?: () => void;
   };
@@ -14,7 +14,7 @@ export type GoalsSelectionProps = {
   multiple?: boolean;
   goals: GoalData[];
   checked?: string[];
-}
+};
 
 export class GoalsSelectionStore {
   constructor(public root: RootStore) {
@@ -41,7 +41,7 @@ export class GoalsSelectionStore {
       if (!this.isFocused) {
         this.refs[0].focus();
       }
-    }
+    },
   };
 
   get checked() {
@@ -74,7 +74,7 @@ export class GoalsSelectionStore {
     } else {
       if (goalId !== null) {
         this.checkedGoals = {
-          [goalId]: true
+          [goalId]: true,
         };
       } else {
         this.checkedGoals = {};
@@ -104,7 +104,7 @@ export class GoalsSelectionStore {
   };
 
   removeFocus = () => {
-    this.refs.forEach(ref => ref.blur());
+    this.refs.forEach((ref) => ref.blur());
 
     if (this.emptyRef) {
       this.emptyRef.blur();
@@ -123,38 +123,39 @@ export class GoalsSelectionStore {
     this.isFocused = true;
   };
 
-  handleKeyDown = (index: number | null) => (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowUp') {
-      e.stopPropagation();
-      e.preventDefault();
+  handleKeyDown =
+    (index: number | null) => (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'ArrowUp') {
+        e.stopPropagation();
+        e.preventDefault();
 
-      if (index === 0 && !this.multiple) {
-        this.focusEmpty();
-      } else if (index > 0) {
-        this.focus(index - 1);
-      } else {
-        this.focusLast();
+        if (index === 0 && !this.multiple) {
+          this.focusEmpty();
+        } else if (index > 0) {
+          this.focus(index - 1);
+        } else {
+          this.focusLast();
+        }
       }
-    }
 
-    if (e.key === 'ArrowDown') {
-      e.stopPropagation();
-      e.preventDefault();
-      if (index === null) {
-        this.focus(0);
-      } else if (index !== this.goals.length - 1) {
-        this.focus(index + 1);
-      } else {
-        this.focusFirst();
+      if (e.key === 'ArrowDown') {
+        e.stopPropagation();
+        e.preventDefault();
+        if (index === null) {
+          this.focus(0);
+        } else if (index !== this.goals.length - 1) {
+          this.focus(index + 1);
+        } else {
+          this.focusFirst();
+        }
       }
-    }
 
-    if (e.key === 'Enter') {
-      e.stopPropagation();
-      e.preventDefault();
-      this.handleGoalCheck(index);
-    }
-  };
+      if (e.key === 'Enter') {
+        e.stopPropagation();
+        e.preventDefault();
+        this.handleGoalCheck(index);
+      }
+    };
 
   setRef = (index: number | null) => (ref) => {
     if (index === null) {
@@ -176,7 +177,7 @@ export class GoalsSelectionStore {
         });
       } else {
         this.checkedGoals = {
-          [props.checked[0]]: true
+          [props.checked[0]]: true,
         };
       }
     }

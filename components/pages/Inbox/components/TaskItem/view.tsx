@@ -28,7 +28,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
     if (!store.isDragging) {
       bg = 'white';
       hoveredBg = 'gray.100';
-      focusedBg = 'gray.200'
+      focusedBg = 'gray.200';
     }
   }
 
@@ -41,21 +41,34 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
       opacity={store.isDisabled ? 0.2 : 1}
       pointerEvents={store.isDisabled ? 'none' : 'auto'}
     >
-      <Box flex={1}
-           borderBottom='1px'
-           borderColor={props.isFocusModeActive && !store.isDisabled ? 'transparent' : 'gray.100'}
-           transition={['border-color 0.2s ease-in-out', 'background 0.2s ease-in-out']}
-           onClick={store.handleClick}
-           bg={store.isFocused ? focusedBg : bg}
-           _groupHover={{
-             bg: store.isFocused ? focusedBg : hoveredBg,
-             borderColor: props.isFocusModeActive && !store.isDisabled ? 'transparent' : 'gray.100',
-           }}
+      <Box
+        flex={1}
+        borderBottom='1px'
+        borderColor={
+          props.isFocusModeActive && !store.isDisabled
+            ? 'transparent'
+            : 'gray.100'
+        }
+        transition={[
+          'border-color 0.2s ease-in-out',
+          'background 0.2s ease-in-out',
+        ]}
+        onClick={store.handleClick}
+        bg={store.isFocused ? focusedBg : bg}
+        _groupHover={{
+          bg: store.isFocused ? focusedBg : hoveredBg,
+          borderColor:
+            props.isFocusModeActive && !store.isDisabled
+              ? 'transparent'
+              : 'gray.100',
+        }}
       >
         <Box h={10} pl={2} display='flex' alignItems='center'>
           <div onClick={(e) => e.stopPropagation()}>
             <Checkbox
-              bg='white' size='lg' mr={2}
+              bg='white'
+              size='lg'
+              mr={2}
               isChecked={store.task.status === TaskStatus.DONE}
               isIndeterminate={store.task.status === TaskStatus.WONT_DO}
               onChange={store.handleStatusChange}
@@ -63,7 +76,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
             />
           </div>
           {store.isEditMode && isTodoTask ? (
-            <TaskQuickEditorInput autofocus/>
+            <TaskQuickEditorInput autofocus />
           ) : (
             <Box position='relative'>
               <Text
@@ -72,44 +85,41 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
               >
                 {store.task.title}
               </Text>
-              <chakra.div h='1px' bg='gray.400' bottom='0.675rem'
-                          transition='width 0.2s ease-in-out'
-                          position='absolute'
-                          w={isTodoTask ? 0 : '100%'}
+              <chakra.div
+                h='1px'
+                bg='gray.400'
+                bottom='0.675rem'
+                transition='width 0.2s ease-in-out'
+                position='absolute'
+                w={isTodoTask ? 0 : '100%'}
               />
             </Box>
           )}
           <chakra.div justifySelf='end' ml='auto' mr={4}>
             {store.isEditMode ? (
-              <TaskQuickEditorPriority/>
+              <TaskQuickEditorPriority />
             ) : (
-              <TaskPriorityIcon priority={store.task.priority}/>
+              <TaskPriorityIcon priority={store.task.priority} />
             )}
           </chakra.div>
         </Box>
-        {
-          store.isEditMode ? (
-            !!quickEditStore.tags.length && (
+        {store.isEditMode
+          ? !!quickEditStore.tags.length && (
               <HStack ml={9} pb={2.5} maxH='34px'>
-                <TaskQuickEditorTags/>
+                <TaskQuickEditorTags />
               </HStack>
             )
-          ) : (
-            !!store.task.tags.length && (
+          : !!store.task.tags.length && (
               <HStack ml={9} pb={2.5}>
-                {
-                  store.task.tags.map((id) => (
-                    <Tag bg='blue.400' color='white' cursor='pointer' key={id}>
-                      {store.tags[id]?.title}
-                    </Tag>
-                  ))
-                }
+                {store.task.tags.map((id) => (
+                  <Tag bg='blue.400' color='white' cursor='pointer' key={id}>
+                    {store.tags[id]?.title}
+                  </Tag>
+                ))}
               </HStack>
-            )
-          )
-        }
+            )}
       </Box>
-      <TaskItemMenu/>
+      <TaskItemMenu />
     </Box>
   );
 });

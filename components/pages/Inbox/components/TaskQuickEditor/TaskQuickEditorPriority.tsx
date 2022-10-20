@@ -3,8 +3,10 @@ import { useTaskQuickEditorStore } from './store';
 import { TaskPriorityIcon } from '../../../../shared/Icons/TaskPriorityIcon';
 import React from 'react';
 
-export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority() {
-  const store = useTaskQuickEditorStore();
+export const TaskQuickEditorPriority = observer(
+  function TaskQuickEditPriority() {
+    const store = useTaskQuickEditorStore();
 
-  return <TaskPriorityIcon priority={store.priority}/>
-});
+    return <TaskPriorityIcon priority={store.priority} />;
+  }
+);

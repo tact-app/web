@@ -28,11 +28,13 @@ export const TaskPriorityNames = {
   [TaskPriority.HIGH]: 'High',
 };
 
-export const TaskPriorityKeys = Object.entries(TaskPriorityValues)
-  .reduce((acc, [key, value]) => {
+export const TaskPriorityKeys = Object.entries(TaskPriorityValues).reduce(
+  (acc, [key, value]) => {
     acc[value] = key;
     return acc;
-  }, {});
+  },
+  {}
+);
 
 export enum TaskStatus {
   DONE = 'done',
@@ -41,17 +43,17 @@ export enum TaskStatus {
 }
 
 export type TaskData = {
-  id: string,
-  title: string,
-  listId: string,
-  goalId?: string,
-  tags: string[],
-  description: OutputData,
-  status: TaskStatus
-  priority: TaskPriority,
-}
+  id: string;
+  title: string;
+  listId: string;
+  goalId?: string;
+  tags: string[];
+  description: OutputData;
+  status: TaskStatus;
+  priority: TaskPriority;
+};
 
-export type TaskTag = { title: string, id: string };
+export type TaskTag = { title: string; id: string };
 
 export enum NavigationDirections {
   UP = 'up',

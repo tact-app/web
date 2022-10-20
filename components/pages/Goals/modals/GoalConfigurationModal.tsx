@@ -6,19 +6,19 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay
+  ModalOverlay,
 } from '@chakra-ui/modal';
 import { GoalConfigurationProps } from '../components/GoalConfiguration/store';
 import { GoalConfiguration } from '../components/GoalConfiguration';
 
 export type GoalConfigurationModalProps = {
-  onClose: () => void
-} & GoalConfigurationProps
+  onClose: () => void;
+} & GoalConfigurationProps;
 
 export const GoalConfigurationModal = observer(function GoalConfigurationModal({
-                                                                                 onClose,
-                                                                                 ...props
-                                                                               }: GoalConfigurationModalProps) {
+  onClose,
+  ...props
+}: GoalConfigurationModalProps) {
   const initialRef = useRef(null);
 
   return (
@@ -28,15 +28,14 @@ export const GoalConfigurationModal = observer(function GoalConfigurationModal({
       isOpen={true}
       onClose={onClose}
     >
-      <ModalOverlay/>
+      <ModalOverlay />
       <ModalContent>
         <ModalHeader>Goal configuration</ModalHeader>
         <ModalBody pb={6}>
-          <GoalConfiguration {...props}/>
+          <GoalConfiguration {...props} />
         </ModalBody>
 
-        <ModalFooter display='flex' justifyContent='flex-end'>
-        </ModalFooter>
+        <ModalFooter display='flex' justifyContent='flex-end'></ModalFooter>
       </ModalContent>
     </Modal>
   );

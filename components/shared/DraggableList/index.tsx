@@ -4,13 +4,16 @@ import {
   DraggableListComponentProps,
   DraggableListProps,
   DraggableListStore,
-  DraggableListStoreProvider
+  DraggableListStoreProvider,
 } from './store';
 
-export const DraggableList = observer(function DraggableList(props: DraggableListProps & DraggableListComponentProps & { instance?: DraggableListStore }) {
+export const DraggableList = observer(function DraggableList(
+  props: DraggableListProps &
+    DraggableListComponentProps & { instance?: DraggableListStore }
+) {
   return (
     <DraggableListStoreProvider {...props}>
-      <DraggableListView {...props}/>
+      <DraggableListView {...props} />
     </DraggableListStoreProvider>
   );
 });

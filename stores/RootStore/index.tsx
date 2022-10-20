@@ -23,7 +23,7 @@ export class RootStore {
   init = async () => {
     await this.user.init();
 
-    runInAction(() => this.isLoading = false);
+    runInAction(() => (this.isLoading = false));
   };
 }
 
@@ -46,5 +46,7 @@ export function RootStoreProvider({ children }) {
     store.init();
   }
 
-  return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
+  return (
+    <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
+  );
 }

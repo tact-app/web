@@ -5,7 +5,7 @@ import { TasksView } from './view';
 const TasksPage = observer(function TasksPage() {
   return (
     <TasksStoreProvider>
-      <TasksView/>
+      <TasksView />
     </TasksStoreProvider>
   );
 });

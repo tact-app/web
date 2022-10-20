@@ -2,7 +2,9 @@ import {
   Avatar,
   Stack,
   Spinner,
-  useColorMode, Text, Flex
+  useColorMode,
+  Text,
+  Flex,
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../../../stores/RootStore';
@@ -12,7 +14,7 @@ const UserMenu = observer(function UserNavbar() {
   const store = useRootStore();
 
   if (store.isLoading) {
-    return <Spinner/>;
+    return <Spinner />;
   }
 
   return (
@@ -24,8 +26,12 @@ const UserMenu = observer(function UserNavbar() {
         }
       />
       <Flex direction='column' justifyContent='center'>
-        <Text fontSize='xl' lineHeight={7} fontWeight={700}>{store.user.data.name}</Text>
-        <Text fontSize='xs' lineHeight={4} fontWeight={400} marginTop={0}>{store.user.data.email}</Text>
+        <Text fontSize='xl' lineHeight={7} fontWeight={700}>
+          {store.user.data.name}
+        </Text>
+        <Text fontSize='xs' lineHeight={4} fontWeight={400} marginTop={0}>
+          {store.user.data.email}
+        </Text>
       </Flex>
     </Stack>
   );

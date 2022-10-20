@@ -1,4 +1,10 @@
-import { chakra, HTMLChakraProps, ThemingProps, useStyleConfig, forwardRef } from '@chakra-ui/react';
+import {
+  chakra,
+  HTMLChakraProps,
+  ThemingProps,
+  useStyleConfig,
+  forwardRef,
+} from '@chakra-ui/react';
 import { StyleConfig } from '@chakra-ui/theme-tools';
 
 export const InputWrapperStyles: Record<string, StyleConfig> = {
@@ -9,7 +15,7 @@ export const InputWrapperStyles: Record<string, StyleConfig> = {
       bg: 'gray.100',
     }),
     defaultProps: {
-      size: 'md'
+      size: 'md',
     },
     sizes: {
       sm: ({ theme }) => theme.components.Input.sizes.sm.field,
@@ -25,9 +31,9 @@ export const InputWrapperStyles: Record<string, StyleConfig> = {
       primary: ({ theme }) => {
         console.log(theme);
         return {};
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 interface InputWrapperProps extends HTMLChakraProps<'div'>, ThemingProps {
@@ -35,9 +41,11 @@ interface InputWrapperProps extends HTMLChakraProps<'div'>, ThemingProps {
   size?: string;
 }
 
-export const InputWrapper = forwardRef<InputWrapperProps, 'div'>((props, ref) => {
-  const { variant, size, ...rest } = props;
-  const styles = useStyleConfig('InputWrapper', { variant, size });
+export const InputWrapper = forwardRef<InputWrapperProps, 'div'>(
+  (props, ref) => {
+    const { variant, size, ...rest } = props;
+    const styles = useStyleConfig('InputWrapper', { variant, size });
 
-  return <chakra.div ref={ref} __css={styles} {...rest} />;
-});
+    return <chakra.div ref={ref} __css={styles} {...rest} />;
+  }
+);

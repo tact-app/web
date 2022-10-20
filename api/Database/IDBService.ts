@@ -9,10 +9,10 @@ import type { DB } from './index';
 import { isClient } from '../../utils';
 
 const stubs: {
-  put?: Record<string, Function>
-  get?: Record<string, Function>
-  post?: Record<string, Function>
-  delete?: Record<string, Function>
+  put?: Record<string, Function>;
+  get?: Record<string, Function>;
+  post?: Record<string, Function>;
+  delete?: Record<string, Function>;
 }[] = [
   userStub,
   tasksStub,
@@ -37,21 +37,28 @@ export class IDBService extends ApiService {
     return this.db;
   };
 
-  stubs = stubs.reduce((acc, stub) => {
-    Object.assign(acc.get, stub.get || {});
-    Object.assign(acc.post, stub.post || {});
-    Object.assign(acc.put, stub.put || {});
-    Object.assign(acc.delete, stub.delete || {});
+  stubs = stubs.reduce(
+    (acc, stub) => {
+      Object.assign(acc.get, stub.get || {});
+      Object.assign(acc.post, stub.post || {});
+      Object.assign(acc.put, stub.put || {});
+      Object.assign(acc.delete, stub.delete || {});
 
-    return acc;
-  }, {
-    get: {},
-    post: {},
-    put: {},
-    delete: {},
-  });
+      return acc;
+    },
+    {
+      get: {},
+      post: {},
+      put: {},
+      delete: {},
+    }
+  );
 
-  fakeRequest = <T>(method: 'get' | 'post' | 'put' | 'delete', url: string, arg: any) => {
+  fakeRequest = <T>(
+    method: 'get' | 'post' | 'put' | 'delete',
+    url: string,
+    arg: any
+  ) => {
     return new Promise<T>(async (resolve) => {
       const stub = this.stubs[method][url];
       const db = await this.getDB();

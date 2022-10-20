@@ -3,7 +3,8 @@ import { observer } from 'mobx-react-lite';
 import {
   InputGroup,
   useOutsideClick,
-  HStack, InputRightAddon,
+  HStack,
+  InputRightAddon,
 } from '@chakra-ui/react';
 import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
 import { InputWrapper } from '../../../../shared/InputWrapper';
@@ -34,14 +35,14 @@ export const TaskCreatorView = observer(function TaskCreator() {
       display='flex'
     >
       <InputGroup size='md' ref={ref} variant='unstyled'>
-        <TaskQuickEditorInput placeholder='+Add task'/>
+        <TaskQuickEditorInput placeholder='+Add task' />
         <InputRightAddon>
           <HStack>
-            <TaskQuickEditorTags/>
+            <TaskQuickEditorTags />
             <TaskQuickEditorPriorityMenu>
-              <TaskQuickEditorPriority/>
+              <TaskQuickEditorPriority />
             </TaskQuickEditorPriorityMenu>
-            <TaskQuickEditorMenu/>
+            <TaskQuickEditorMenu />
           </HStack>
         </InputRightAddon>
       </InputGroup>

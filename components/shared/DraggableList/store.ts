@@ -9,16 +9,20 @@ export type DraggableListCallbacks = {
   onFocusLeave?: (direction: NavigationDirections) => void;
   onItemSecondClick?: (id: string) => void;
   onFocusedItemsChange?: (ids: string[]) => void;
-  onOrderChange?: (items: string[], changedIds: string[], destinationIndex: number) => void;
+  onOrderChange?: (
+    items: string[],
+    changedIds: string[],
+    destinationIndex: number
+  ) => void;
   onEscape?: () => boolean;
   onVerifyDelete?: (ids: string[], cb: () => void) => void;
-}
+};
 
 export type DraggableListComponentProps = {
   prefix?: ReactComponent;
   dragHandler?: ReactComponent;
   content: ReactComponent;
-}
+};
 
 export type DraggableListProps = {
   callbacks?: DraggableListCallbacks;
@@ -58,14 +62,20 @@ export class DraggableListStore {
   }
 
   getHandler = (fn: (e) => void) => (e) => {
-    if (!this.isDraggingActive && !this.isControlDraggingActive && this.isHotkeysActive) {
+    if (
+      !this.isDraggingActive &&
+      !this.isControlDraggingActive &&
+      this.isHotkeysActive
+    ) {
       fn(e);
     }
   };
 
   hotkeyHandlers = {
     UP: this.getHandler(() => this.handleNavigation(NavigationDirections.UP)),
-    DOWN: this.getHandler(() => this.handleNavigation(NavigationDirections.DOWN)),
+    DOWN: this.getHandler(() =>
+      this.handleNavigation(NavigationDirections.DOWN)
+    ),
     DELETE: this.getHandler(() => {
       if (this.focusedItemIds.length) {
         const itemsForDelete = this.focusedItemIds.slice();
@@ -113,18 +123,24 @@ export class DraggableListStore {
 
   disableHotkeys = () => {
     this.isHotkeysActive = false;
-  }
+  };
 
   enableHotkeys = () => {
     this.isHotkeysActive = true;
-  }
+  };
 
   shiftSelect = (direction: 'up' | 'down', count: number = 1) => {
     if (this.focusedItemIds.length) {
       const isUp = direction === 'up';
 
-      if (isUp ? this.currentSelectItemCursor >= 0 : this.currentSelectItemCursor <= 0) {
-        const focusedItemIndex = this.activeItems.indexOf(this.focusedItemIds[isUp ? 0 : this.focusedItemIds.length - 1]);
+      if (
+        isUp
+          ? this.currentSelectItemCursor >= 0
+          : this.currentSelectItemCursor <= 0
+      ) {
+        const focusedItemIndex = this.activeItems.indexOf(
+          this.focusedItemIds[isUp ? 0 : this.focusedItemIds.length - 1]
+        );
         const nextFocusedItemIds = this.activeItems.slice(
           focusedItemIndex + (isUp ? -count : 1),
           focusedItemIndex + (isUp ? 0 : count + 1)
@@ -148,12 +164,15 @@ export class DraggableListStore {
   };
 
   runControlsMoveAction = (action: (lift) => void) => {
-    if (this.isDraggingActive || this.isControlDraggingActive || this.dropTimeout) {
+    if (
+      this.isDraggingActive ||
+      this.isControlDraggingActive ||
+      this.dropTimeout
+    ) {
       return null;
     }
 
-    const preDrag = this.DnDApi.tryGetLock(this.focusedItemIds[0], () => {
-    });
+    const preDrag = this.DnDApi.tryGetLock(this.focusedItemIds[0], () => {});
 
     this.isControlDraggingActive = true;
 
@@ -169,12 +188,17 @@ export class DraggableListStore {
 
   controlsMultiMoveAction = (direction: 'up' | 'down') => {
     const mainSelectedItemId = this.focusedItemIds[0];
-    const destinationIndex = this.items.indexOf(mainSelectedItemId) + (direction === 'up' ? -1 : 1);
+    const destinationIndex =
+      this.items.indexOf(mainSelectedItemId) + (direction === 'up' ? -1 : 1);
 
     this.items = this.items.filter((id) => !this.focusedItemIds.includes(id));
     this.items.splice(destinationIndex, 0, ...this.focusedItemIds);
 
-    this.callbacks.onOrderChange?.(this.items, this.focusedItemIds, destinationIndex);
+    this.callbacks.onOrderChange?.(
+      this.items,
+      this.focusedItemIds,
+      destinationIndex
+    );
   };
 
   setDnDApi = (api) => {
@@ -201,7 +225,11 @@ export class DraggableListStore {
     const [removed] = this.items.splice(result.source.index, 1);
     this.items.splice(result.destination.index, 0, removed);
 
-    this.callbacks.onOrderChange?.(this.items, [removed], result.destination.index);
+    this.callbacks.onOrderChange?.(
+      this.items,
+      [removed],
+      result.destination.index
+    );
   };
 
   deleteItems = (ids: string[]) => {
@@ -210,8 +238,13 @@ export class DraggableListStore {
   };
 
   handleNavigation = (direction: NavigationDirections) => {
-    const focusedItemIndex = direction === NavigationDirections.UP ? 0 : this.focusedItemIds.length - 1;
-    const index = this.focusedItemIds.length ? this.items.indexOf(this.focusedItemIds[focusedItemIndex]) : -1;
+    const focusedItemIndex =
+      direction === NavigationDirections.UP
+        ? 0
+        : this.focusedItemIds.length - 1;
+    const index = this.focusedItemIds.length
+      ? this.items.indexOf(this.focusedItemIds[focusedItemIndex])
+      : -1;
 
     this.resetFocusedItem();
 
@@ -225,7 +258,7 @@ export class DraggableListStore {
           this.callbacks.onFocusLeave?.(NavigationDirections.UP);
         }
       } else if (direction === NavigationDirections.DOWN) {
-        const nextActiveItem = this.getNextActiveItem(this.items[index])
+        const nextActiveItem = this.getNextActiveItem(this.items[index]);
 
         if (nextActiveItem) {
           this.setFocusedItem(nextActiveItem);
@@ -254,35 +287,46 @@ export class DraggableListStore {
     } else {
       return this.items[0];
     }
-  }
+  };
 
   getLastActiveItem = () => {
     if (this.checkItemActivity) {
-      return [...this.items].reverse().find((id) => this.checkItemActivity(id)) || null;
+      return (
+        [...this.items].reverse().find((id) => this.checkItemActivity(id)) ||
+        null
+      );
     } else {
       return this.items[this.items.length - 1];
     }
-  }
+  };
 
   getNextActiveItem = (id: string) => {
     const index = this.items.indexOf(id);
 
     if (this.checkItemActivity) {
-      return this.items.slice(index + 1).find((id) => this.checkItemActivity(id)) || null;
+      return (
+        this.items.slice(index + 1).find((id) => this.checkItemActivity(id)) ||
+        null
+      );
     } else {
       return this.items[index + 1] || null;
     }
-  }
+  };
 
   getPrevActiveItem = (id: string) => {
     const index = this.items.indexOf(id);
 
     if (this.checkItemActivity) {
-      return this.items.slice(0, index).reverse().find((id) => this.checkItemActivity(id)) || null;
+      return (
+        this.items
+          .slice(0, index)
+          .reverse()
+          .find((id) => this.checkItemActivity(id)) || null
+      );
     } else {
       return this.items[index - 1] || null;
     }
-  }
+  };
 
   focusFirstItem = () => {
     this.setFocusedItem(this.getFirstActiveItem());
@@ -290,12 +334,15 @@ export class DraggableListStore {
 
   focusAfterItems = (ids: string[]) => {
     const itemIndex = ids.length === 1 ? this.items.indexOf(ids[0]) : -1;
-    const nextItemId = itemIndex !== -1 && itemIndex !== this.items.length - 1 ? this.getNextActiveItem(this.items[itemIndex]) : null;
+    const nextItemId =
+      itemIndex !== -1 && itemIndex !== this.items.length - 1
+        ? this.getNextActiveItem(this.items[itemIndex])
+        : null;
 
     if (nextItemId !== null) {
       this.setFocusedItem(nextItemId);
     }
-  }
+  };
 
   setFocusedItem = (id: string, mode?: 'single' | 'many') => {
     if (this.focusedItemIds.length === 1 && this.focusedItemIds[0] === id) {
@@ -305,7 +352,9 @@ export class DraggableListStore {
       this.addFocusedItems([id]);
     } else if (mode === 'single') {
       if (this.focusedItemIds.includes(id)) {
-        this.focusedItemIds = this.focusedItemIds.filter((ItemId) => ItemId !== id);
+        this.focusedItemIds = this.focusedItemIds.filter(
+          (ItemId) => ItemId !== id
+        );
 
         if (this.currentSelectItemCursor !== 0) {
           if (this.currentSelectItemCursor > 0) {
@@ -325,9 +374,15 @@ export class DraggableListStore {
           }
         }
       }
-    } else if (mode === 'many' && this.focusedItemIds.length && !this.focusedItemIds.includes(id)) {
+    } else if (
+      mode === 'many' &&
+      this.focusedItemIds.length &&
+      !this.focusedItemIds.includes(id)
+    ) {
       const topFocusedItemIndex = this.items.indexOf(this.focusedItemIds[0]);
-      const bottomFocusedItemIndex = this.items.indexOf(this.focusedItemIds[this.focusedItemIds.length - 1]);
+      const bottomFocusedItemIndex = this.items.indexOf(
+        this.focusedItemIds[this.focusedItemIds.length - 1]
+      );
       const index = this.items.indexOf(id);
 
       if (index > bottomFocusedItemIndex) {
@@ -339,10 +394,14 @@ export class DraggableListStore {
   };
 
   addFocusedItems = (itemIds: string[]) => {
-    const activeItemIds = this.checkItemActivity ? itemIds.filter((id) => this.checkItemActivity(id)) : itemIds;
+    const activeItemIds = this.checkItemActivity
+      ? itemIds.filter((id) => this.checkItemActivity(id))
+      : itemIds;
 
     this.focusedItemIds.push(...activeItemIds);
-    this.focusedItemIds.sort((a, b) => this.items.indexOf(a) - this.items.indexOf(b));
+    this.focusedItemIds.sort(
+      (a, b) => this.items.indexOf(a) - this.items.indexOf(b)
+    );
 
     this.callbacks.onFocusedItemsChange?.(activeItemIds);
   };

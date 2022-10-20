@@ -8,7 +8,7 @@ export type FocusConfigurationData = {
   id: string;
   goals: string[];
   showImportant: boolean;
-}
+};
 
 export type FocusConfigurationProps = {
   callbacks: {
@@ -17,9 +17,9 @@ export type FocusConfigurationProps = {
     onFocus?: () => void;
     onBlur?: () => void;
     onGoalCreateClick?: () => void;
-  },
+  };
   getItemsCount: () => number;
-  goals: GoalData[],
+  goals: GoalData[];
 };
 
 export class FocusConfigurationStore {
@@ -36,7 +36,7 @@ export class FocusConfigurationStore {
     NUMBER: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     CLEAR: ['shift+backspace', 'shift+delete'],
     SHOW_IMPORTANT: 'i',
-  }
+  };
 
   hotkeyHandlers = {
     FOCUS: () => {
@@ -65,8 +65,8 @@ export class FocusConfigurationStore {
     },
     FOCUS_GOAL_SELECTION: () => {
       this.goalsSelection.focusFirst();
-    }
-  }
+    },
+  };
 
   callbacks: FocusConfigurationProps['callbacks'] = {};
   goals: FocusConfigurationProps['goals'] = [];
@@ -75,7 +75,7 @@ export class FocusConfigurationStore {
     id: 'default',
     goals: [],
     showImportant: false,
-  }
+  };
 
   isFocused: boolean = false;
 
@@ -86,12 +86,12 @@ export class FocusConfigurationStore {
   handleSelectGoal = () => {
     this.data.goals = this.goalsSelection.checked;
     this.sendChanges();
-  }
+  };
 
   handleShowImportantChange = (e) => {
     this.data.showImportant = e.target.checked;
     this.sendChanges();
-  }
+  };
 
   sendChanges = () => {
     this.root.api.focusConfigurations.update({
@@ -99,19 +99,21 @@ export class FocusConfigurationStore {
       fields: {
         goals: toJS(this.data.goals),
         showImportant: this.data.showImportant,
-      }
-    })
+      },
+    });
     this.callbacks.onChange?.(this.data);
-  }
+  };
 
   init = async (props: FocusConfigurationProps) => {
     this.callbacks = props.callbacks;
     this.goals = props.goals;
 
-    const focusConfig = await this.root.api.focusConfigurations.get(this.data.id);
+    const focusConfig = await this.root.api.focusConfigurations.get(
+      this.data.id
+    );
 
     if (focusConfig) {
-      runInAction(() => this.data = focusConfig);
+      runInAction(() => (this.data = focusConfig));
       this.callbacks.onChange?.(this.data);
     } else {
       await this.root.api.focusConfigurations.add(toJS(this.data));

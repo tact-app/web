@@ -11,9 +11,12 @@ export const MetricExtensionView = (props) => {
   return (
     <NodeViewWrapper className='react-component'>
       <HStack justifyContent='space-between'>
-        <NodeViewContent className='content'/>
+        <NodeViewContent className='content' />
         <chakra.div position='relative' contentEditable={false}>
-          <CircularProgress value={props.node.attrs.value} contentEditable={false}/>
+          <CircularProgress
+            value={props.node.attrs.value}
+            contentEditable={false}
+          />
           <Input
             type='number'
             value={props.node.attrs.value}

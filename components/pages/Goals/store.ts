@@ -27,21 +27,22 @@ export class GoalsStore {
 
   modals = new ModalsController(GoalsModals);
 
-  openNewGoalConfigurationModal = () => this.modals.open({
-    type: GoalsModalsTypes.CONFIGURE_GOAL,
-    props: {
-      goalId: null,
-      onClose: this.modals.close
-    }
-  });
+  openNewGoalConfigurationModal = () =>
+    this.modals.open({
+      type: GoalsModalsTypes.CONFIGURE_GOAL,
+      props: {
+        goalId: null,
+        onClose: this.modals.close,
+      },
+    });
 
   startGoalCreation = () => {
     this.modals.open({
       type: GoalsModalsTypes.CREATE_GOAL,
       props: {
         onSave: this.createGoal,
-        onClose: this.modals.close
-      }
+        onClose: this.modals.close,
+      },
     });
   };
 
@@ -52,8 +53,8 @@ export class GoalsStore {
         onSave: this.updateGoal,
         onClose: this.modals.close,
         editMode: true,
-        goal: this.items[goalId]
-      }
+        goal: this.items[goalId],
+      },
     });
   };
 
@@ -102,7 +103,5 @@ export class GoalsStore {
   };
 }
 
-export const {
-  StoreProvider: GoalsStoreProvider,
-  useStore: useGoalsStore,
-} = getProvider(GoalsStore);
+export const { StoreProvider: GoalsStoreProvider, useStore: useGoalsStore } =
+  getProvider(GoalsStore);

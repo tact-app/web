@@ -2,7 +2,12 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { GoalCreationModalSteps } from './types';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { GoalData, GoalDescriptionData, GoalIconVariants, GoalTemplateData } from '../../types';
+import {
+  GoalData,
+  GoalDescriptionData,
+  GoalIconVariants,
+  GoalTemplateData,
+} from '../../types';
 import { GoalCreationModalStepsOrder } from './constants';
 import { SyntheticEvent } from 'react';
 import { JSONContent } from '@tiptap/core';
@@ -10,11 +15,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { init } from 'emoji-mart';
 
 export type GoalCreationModalProps = {
-  onClose: () => void,
-  onSave: (goal: GoalData, description?: GoalDescriptionData) => void,
-  editMode?: boolean,
-  goal?: GoalData,
-}
+  onClose: () => void;
+  onSave: (goal: GoalData, description?: GoalDescriptionData) => void;
+  editMode?: boolean;
+  goal?: GoalData;
+};
 
 export const colors = [
   'red.200',
@@ -34,11 +39,11 @@ export class GoalCreationModalStore {
     init({
       data: async () => {
         const response = await fetch(
-          'https://cdn.jsdelivr.net/npm/@emoji-mart/data',
+          'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
         );
 
         return response.json();
-      }
+      },
     });
   }
 
@@ -54,7 +59,7 @@ export class GoalCreationModalStore {
     },
     CANCEL: () => {
       this.handleClose();
-    }
+    },
   };
 
   onClose: GoalCreationModalProps['onClose'];
@@ -121,20 +126,23 @@ export class GoalCreationModalStore {
 
   handleCloseComplete = () => {
     this.onClose?.();
-  }
+  };
 
   handleSave = () => {
-    this.onSave?.({
-      id: this.existedGoal ? this.existedGoal.id : uuidv4(),
-      listId: 'default',
-      title: this.title,
-      descriptionId: this.description.id,
-      icon: {
-        type: GoalIconVariants.EMOJI,
-        color: this.color,
-        value: this.icon,
-      }
-    }, this.description);
+    this.onSave?.(
+      {
+        id: this.existedGoal ? this.existedGoal.id : uuidv4(),
+        listId: 'default',
+        title: this.title,
+        descriptionId: this.description.id,
+        icon: {
+          type: GoalIconVariants.EMOJI,
+          color: this.color,
+          value: this.icon,
+        },
+      },
+      this.description
+    );
 
     this.handleClose();
   };
@@ -172,7 +180,10 @@ export class GoalCreationModalStore {
 
       if (this.existedGoal.descriptionId) {
         this.isDescriptionLoading = true;
-        const description = (await this.root.api.descriptions.get(this.existedGoal.descriptionId)) || undefined;
+        const description =
+          (await this.root.api.descriptions.get(
+            this.existedGoal.descriptionId
+          )) || undefined;
 
         runInAction(() => {
           this.description = description;

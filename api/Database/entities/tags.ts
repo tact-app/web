@@ -2,12 +2,12 @@ import { TaskTag } from '../../../components/pages/Inbox/types';
 import { DB } from '../index';
 
 const data = {
-  'get': {
-    '/api/tags': (db: DB) => db.getAll('tags')
+  get: {
+    '/api/tags': (db: DB) => db.getAll('tags'),
   },
-  'post': {
+  post: {
     '/api/tags/create': (db: DB, data: TaskTag) => db.add('tags', data),
-  }
+  },
 };
 
 export default data;

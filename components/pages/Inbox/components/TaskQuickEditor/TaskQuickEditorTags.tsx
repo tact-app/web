@@ -9,34 +9,28 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags() {
 
   return (
     <AnimatePresence mode='popLayout' initial={false}>
-      {
-        store.tags.map(({ title, id }) => (
-          <motion.div
-            layout
-            key={title}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ type: 'just' }}
-            exit={{ opacity: 0 }}
+      {store.tags.map(({ title, id }) => (
+        <motion.div
+          layout
+          key={title}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ type: 'just' }}
+          exit={{ opacity: 0 }}
+        >
+          <Button
+            variant='unstyled'
+            size='xs'
+            onClick={() => store.removeTag(id, true)}
+            ref={(el) => store.setTagRef(el, id)}
+            onKeyDown={(e) => store.handleTagKeyDown(e, id)}
           >
-            <Button
-              variant='unstyled'
-              size='xs'
-              onClick={() => store.removeTag(id, true)}
-              ref={(el) => store.setTagRef(el, id)}
-              onKeyDown={(e) => store.handleTagKeyDown(e, id)}
-            >
-              <Tag
-                bg='blue.400'
-                color='white'
-                cursor='pointer'
-              >
-                {title}
-              </Tag>
-            </Button>
-          </motion.div>
-        ))
-      }
+            <Tag bg='blue.400' color='white' cursor='pointer'>
+              {title}
+            </Tag>
+          </Button>
+        </motion.div>
+      ))}
     </AnimatePresence>
   );
 });

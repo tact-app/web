@@ -14,13 +14,16 @@ export class MenuStore {
     const Component = this.replacerComponent;
 
     if (Component) {
-      return <Component {...this.props}/>;
+      return <Component {...this.props} />;
     }
 
     return null;
   }
 
-  setReplacer = <C extends FC, Props extends any>(replacerComponent: C, props: C extends FC<infer Props> ? Props : never) => {
+  setReplacer = <C extends FC, Props extends any>(
+    replacerComponent: C,
+    props: C extends FC<infer Props> ? Props : never
+  ) => {
     this.replacerComponent = replacerComponent;
     this.props = props;
   };

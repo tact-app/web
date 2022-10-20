@@ -1,10 +1,13 @@
-import { Options, useHotkeys, } from 'react-hotkeys-hook';
+import { Options, useHotkeys } from 'react-hotkeys-hook';
 import { HotkeysEvent } from 'hotkeys-js';
 import { useMemo } from 'react';
 
 export const useHotkeysHandler = (
   keymap: Record<string, string[] | string>,
-  handlers: Record<string, (event: KeyboardEvent, handler: HotkeysEvent) => void>,
+  handlers: Record<
+    string,
+    (event: KeyboardEvent, handler: HotkeysEvent) => void
+  >,
   options: Options = {},
   deps: any[] = []
 ) => {
@@ -44,7 +47,9 @@ export const useHotkeysHandler = (
     };
   }, [keymap]);
 
-  return useHotkeys(keys.join(', '), (event, handler) => {
+  return useHotkeys(
+    keys.join(', '),
+    (event, handler) => {
       const matchedHandlerName = revertedKeymap[handler.key];
 
       if (matchedHandlerName) {
@@ -54,7 +59,8 @@ export const useHotkeysHandler = (
           }
         });
       }
-    }, {
+    },
+    {
       ...options,
       enableOnTags: ['INPUT', 'TEXTAREA', 'SELECT'],
     },

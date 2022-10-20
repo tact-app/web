@@ -15,10 +15,17 @@ const TaskList = observer(function TaskList() {
     <Container maxW='container.lg' p={0}>
       <Box pl={5} pr={5}>
         <HStack justifyContent='space-between'>
-          <Heading size='lg' mt={2.5} mb={8} pt={4}>Today</Heading>
+          <Heading size='lg' mt={2.5} mb={8} pt={4}>
+            Today
+          </Heading>
           <HStack>
-            <IconButton aria-label='focus' variant='ghost' onClick={store.handleToggleFocusMode} stroke={store.isFocusModeActive ? 'blue.400' : 'gray.400'}>
-              <FocusIcon/>
+            <IconButton
+              aria-label='focus'
+              variant='ghost'
+              onClick={store.handleToggleFocusMode}
+              stroke={store.isFocusModeActive ? 'blue.400' : 'gray.400'}
+            >
+              <FocusIcon />
             </IconButton>
           </HStack>
         </HStack>
@@ -38,7 +45,7 @@ const TaskList = observer(function TaskList() {
           instance={store.draggableList}
         />
       </Box>
-      <ModalsSwitcher controller={store.modals.controller}/>
+      <ModalsSwitcher controller={store.modals.controller} />
     </Container>
   );
 });

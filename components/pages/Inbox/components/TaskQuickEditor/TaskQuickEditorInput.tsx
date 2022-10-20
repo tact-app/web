@@ -6,11 +6,11 @@ import { TaskPriorityMenu } from '../TaskPriorityMenu';
 import React from 'react';
 
 export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
-                                                                           placeholder,
-                                                                           autofocus
-                                                                         }: {
-  placeholder?: string,
-  autofocus?: boolean
+  placeholder,
+  autofocus,
+}: {
+  placeholder?: string;
+  autofocus?: boolean;
 }) {
   const store = useTaskQuickEditorStore();
 
@@ -30,9 +30,12 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
       />
       <chakra.div position='absolute'>
         <chakra.span visibility='hidden'>
-          {store.value.slice(0, store.value.length - store.currentTagValue.length)}
+          {store.value.slice(
+            0,
+            store.value.length - store.currentTagValue.length
+          )}
         </chakra.span>
-        <TaskQuickEditorTagsMenu/>
+        <TaskQuickEditorTagsMenu />
         <TaskPriorityMenu
           isOpen={store.priorityMenuOpen}
           onFocus={() => store.input.focus()}

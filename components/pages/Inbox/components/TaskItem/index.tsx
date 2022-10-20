@@ -1,16 +1,28 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { TaskItemProps, TaskItemStoreProvider, useTaskItemStore } from './store';
+import {
+  TaskItemProps,
+  TaskItemStoreProvider,
+  useTaskItemStore,
+} from './store';
 import { TaskItemView } from './view';
-import { TaskQuickEditorProps, TaskQuickEditorStoreProvider } from '../TaskQuickEditor/store';
+import {
+  TaskQuickEditorProps,
+  TaskQuickEditorStoreProvider,
+} from '../TaskQuickEditor/store';
 
 const useTasksItemStoreInstance = () => useTaskItemStore().quickEdit;
 
-const TaskItem = observer(function TaskItem(props: TaskItemProps & TaskQuickEditorProps) {
+const TaskItem = observer(function TaskItem(
+  props: TaskItemProps & TaskQuickEditorProps
+) {
   return (
     <TaskItemStoreProvider {...props}>
-      <TaskQuickEditorStoreProvider {...props} useInstance={useTasksItemStoreInstance}>
-        <TaskItemView {...props}/>
+      <TaskQuickEditorStoreProvider
+        {...props}
+        useInstance={useTasksItemStoreInstance}
+      >
+        <TaskItemView {...props} />
       </TaskQuickEditorStoreProvider>
     </TaskItemStoreProvider>
   );

@@ -13,7 +13,7 @@ export type TaskGoalAssignModalProps = {
   multiple?: boolean;
   goals: GoalData[];
   value: string;
-}
+};
 
 export class TaskGoalAssignModalStore {
   constructor(public root: RootStore) {
@@ -55,7 +55,7 @@ export class TaskGoalAssignModalStore {
         this.selectedGoalId = null;
         this.goalsSelection.focusFirst();
       }
-    }
+    },
   };
 
   handleSelect = (goalIds: string[]) => {
