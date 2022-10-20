@@ -36,13 +36,16 @@ export class TasksModals {
     });
   };
 
-  openGoalCreationModal = (cb?: () => void) => {
+  openGoalCreationModal = (cb?: (goalId?: string) => void) => {
     this.controller.open({
       type: ModalsTypes.GOAL_CREATION,
       props: {
         onClose: () => {
           this.controller.close();
-          cb?.();
+
+          if (cb) {
+            cb();
+          }
         },
         onSave: (goal: GoalData, description?: GoalDescriptionData) => {
           runInAction(() => {
@@ -58,27 +61,35 @@ export class TasksModals {
           });
 
           this.controller.close();
-          cb?.();
+
+          if (cb) {
+            cb(goal.id);
+          }
         },
       },
     });
   };
 
-  openGoalAssignModal = (taskId?: string) => {
+  openGoalAssignModal = (taskId?: string, startGoalId?: string) => {
     const focused = this.parent.draggableList.focused;
-    const value = taskId
-      ? this.parent.items[taskId].goalId
-      : this.parent.draggableList.focused.length === 1
-      ? this.parent.items[this.parent.draggableList.focused[0]].goalId
-      : null;
+    const value =
+      startGoalId ||
+      (taskId
+        ? this.parent.items[taskId].goalId
+        : this.parent.draggableList.focused.length === 1
+        ? this.parent.items[this.parent.draggableList.focused[0]].goalId
+        : null);
 
     this.controller.open({
       type: ModalsTypes.GOAL_ASSIGN,
       props: {
         callbacks: {
           onClose: this.controller.close,
-          onGoalCreateClick: () =>
-            this.openGoalCreationModal(() => this.openGoalAssignModal(taskId)),
+          onGoalCreateClick: () => {
+            this.openGoalCreationModal((goalId: string) => {
+              this.openGoalAssignModal(taskId, goalId);
+            });
+          },
           onSelect: (goalId: string) => {
             if (taskId) {
               this.parent.assignGoal([taskId], goalId);

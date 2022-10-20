@@ -53,7 +53,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           />
         </HStack>
         <Text pt={5} ml={4} size='sm' fontWeight='normal' color='gray.400'>
-          Press ⇧C to clear
+          Press ⇧ C to clear
         </Text>
         <Box
           p={2}
@@ -66,7 +66,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
               Goals
             </Text>
             <Text fontSize='sm' fontWeight='normal' color='gray.400'>
-              Shift + G
+              ⇧ G
             </Text>
           </HStack>
           <GoalsSelectionStoreProvider

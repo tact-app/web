@@ -5,41 +5,74 @@ import {
 import formatKeyboardShortcut from 'tact-block-note-core/src/extensions/helpers/formatKeyboardShortcut';
 import { Range } from '@tiptap/core';
 
-export const insertMetric = (editor, range: Range) => {
-  const component = editor.schema.nodeFromJSON({
-    type: 'metric',
-    attrs: {
-      value: 0,
-    },
-    content: [
-      {
-        type: 'text',
-        text: 'Metric name',
-        marks: [
-          {
-            type: 'bold',
-          },
-        ],
-      },
-    ],
-  });
+export enum MetricExtensionTypes {
+  RING = 'ring',
+  TODO = 'todo',
+  NUMBER = 'number',
+}
 
-  return editor
-    .chain()
-    .focus()
-    .deleteRange(range)
-    .insertContent(component.toJSON())
-    .run();
-};
+export const insertMetric =
+  (type: MetricExtensionTypes) => (editor, range: Range) => {
+    const component = editor.schema.nodeFromJSON({
+      type: 'metric',
+      attrs: {
+        value: 0,
+        type,
+      },
+      content: [
+        {
+          type: 'text',
+          text: 'Metric name',
+          marks: [
+            {
+              type: 'bold',
+            },
+          ],
+        },
+      ],
+    });
+
+    return editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .insertContent(component.toJSON())
+      .run();
+  };
+
+export const getMetricCommands = ({
+  name,
+  type,
+  shortcut,
+}: {
+  name: string;
+  type: MetricExtensionTypes;
+  shortcut;
+}) =>
+  new SlashMenuItem(
+    name,
+    'Goals' as SlashMenuGroups,
+    insertMetric(type),
+    ['metric', type],
+    () => <>M</>,
+    'Used to display a metric as ' + name,
+    formatKeyboardShortcut(shortcut)
+  );
 
 export const metricCommands = {
-  metric: new SlashMenuItem(
-    'Metric',
-    'Goals' as SlashMenuGroups,
-    insertMetric,
-    ['metric'],
-    () => <>M</>,
-    'Used to display a metric',
-    formatKeyboardShortcut('Mod-m')
-  ),
+  ['metric_' + MetricExtensionTypes.RING]: getMetricCommands({
+    name: 'Percent metric',
+    type: MetricExtensionTypes.RING,
+    shortcut: 'Mod+R',
+  }),
+  ['metric_' + MetricExtensionTypes.TODO]: getMetricCommands({
+    name: 'Boolean metric',
+    type: MetricExtensionTypes.TODO,
+    shortcut: 'Mod+T',
+  }),
+  ['metric_' + MetricExtensionTypes.NUMBER]: getMetricCommands({
+    name: 'Target metric',
+    type: MetricExtensionTypes.NUMBER,
+    shortcut: 'Mod+N',
+  }),
 };
