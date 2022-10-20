@@ -1,10 +1,9 @@
 import { observer } from 'mobx-react-lite';
 import { GoalIconData, GoalIconVariants } from '../../../Goals/types';
-import { chakra, Box, Checkbox, List, ListItem, Text, Button, IconButton } from '@chakra-ui/react';
-import { GoalsSelectionProps, useGoalsSelectionStore } from './store';
+import { chakra, Box, Checkbox, List, ListItem, Text, Button } from '@chakra-ui/react';
+import { useGoalsSelectionStore } from './store';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import React from 'react';
-import { PlusIcon } from '../../../../shared/Icons/PlusIcon';
 import { LargePlusIcon } from '../../../../shared/Icons/LargePlusIcon';
 
 const keyMap = {

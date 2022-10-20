@@ -23,7 +23,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(p
 
   useEffect(() => {
     store.goalsSelection.focusFirst();
-  }, []);
+  }, [store.goalsSelection]);
 
   return (
     <Box

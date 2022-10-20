@@ -1,10 +1,10 @@
 import { RootStore } from '../../../stores/RootStore';
-import { makeAutoObservable, reaction, runInAction, toJS } from 'mobx';
+import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { TaskData, TaskPriority, TaskStatus, TaskTag } from './types';
 import { TaskQuickEditorStore } from './components/TaskQuickEditor/store';
 import { DraggableListCallbacks, DraggableListStore } from '../../shared/DraggableList/store';
-import { GoalData, GoalDescriptionData } from '../Goals/types';
+import { GoalData } from '../Goals/types';
 import { FocusConfiguration } from './components/FocusConfiguration';
 import { FocusConfigurationData } from './components/FocusConfiguration/store';
 import { TasksModals } from './modals/store';

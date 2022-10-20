@@ -1,7 +1,6 @@
-import { observer } from 'mobx-react-lite';
-import { Box, Button, Grid, Input } from '@chakra-ui/react';
-import { useGoalConfigurationStore } from './store';
-import { PlusSquareIcon } from '@chakra-ui/icons';
+import { observer } from "mobx-react-lite";
+import { Box, Input } from "@chakra-ui/react";
+import { useGoalConfigurationStore } from "./store";
 
 export const GoalConfigurationView = observer(function GoalConfigurationView() {
   const store = useGoalConfigurationStore();
@@ -9,7 +8,11 @@ export const GoalConfigurationView = observer(function GoalConfigurationView() {
   return (
     <Box>
       <form>
-        <Input value={store.value} onChange={store.handleChange} placeholder='Goal'/>
+        <Input
+          value={store.value}
+          onChange={store.handleChange}
+          placeholder="Goal"
+        />
       </form>
     </Box>
   );
