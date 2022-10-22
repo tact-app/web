@@ -7,13 +7,42 @@ import { InputWrapperStyles } from '../components/shared/InputWrapper';
 
 const theme = extendTheme({
   styles: {
-    global: props => ({
+    global: (props) => ({
       body: {
         '.clear': {
           clear: 'both',
         },
         '.ProseMirror': {
           // @see https://github.com/jesster2k10/guava-cards/blob/5d5c283eb720bf503258f4e17bce3865d35fd8d3/packages/website/src/bundles/editor/ContentEditor.tsx#L86
+          'ul[data-type="taskList"]': {
+            listStyle: 'none',
+            padding: 0,
+
+            p: {
+              margin: 0,
+            },
+
+            li: {
+              display: 'flex',
+
+              '> label': {
+                flex: '0 0 auto',
+                marginRight: '0.5rem',
+                userSelect: 'none',
+                '> input': {
+                  borderRadius: 1,
+                  border: '1px solid',
+                  borderColor: 'gray.200',
+                  width: 4,
+                  height: 4,
+                },
+              },
+
+              '> div': {
+                flex: '1 1 auto',
+              },
+            },
+          },
           'p.is-editor-empty:first-child::before': {
             content: 'attr(data-placeholder)',
             color: 'gray.500',
@@ -44,7 +73,7 @@ const theme = extendTheme({
             color: '#616161',
           },
           pre: {
-            fontFamily: 'JetBrainsMono, \'Courier New\', Courier, monospace',
+            fontFamily: "JetBrainsMono, 'Courier New', Courier, monospace",
             background: mode('gray.900', 'blue.200')(props),
             color: mode('white', 'gray.900')(props),
             padding: '0.75rem 1rem',
@@ -66,9 +95,10 @@ const theme = extendTheme({
                 color: '#F98181',
               },
 
-            '.hljs-number,  .hljs-meta, .hljs-built_in, .hljs-builtin-name, .hljs-literal,  .hljs-type, .hljs-params': {
-              color: '#FBBC88',
-            },
+            '.hljs-number,  .hljs-meta, .hljs-built_in, .hljs-builtin-name, .hljs-literal,  .hljs-type, .hljs-params':
+              {
+                color: '#FBBC88',
+              },
 
             '.hljs-string, .hljs-symbol, .hljs-bullet': {
               color: '#B9F18D',
@@ -118,8 +148,8 @@ const theme = extendTheme({
   },
   colors: {
     blue: {
-      '25': '#F4FBFF'
-    }
+      '25': '#F4FBFF',
+    },
   },
   components: {
     ...InputWrapperStyles,
@@ -128,8 +158,8 @@ const theme = extendTheme({
         list: {
           borderWidth: '0',
           overflow: 'hidden',
-        }
-      }
+        },
+      },
     },
     Checkbox: {
       baseStyle: {
@@ -142,7 +172,7 @@ const theme = extendTheme({
             borderColor: 'gray.200',
             color: 'gray.200',
           },
-        }
+        },
       },
       sizes: {
         xl: {
@@ -151,35 +181,35 @@ const theme = extendTheme({
             h: 6,
           },
           label: {
-            fontSize: 'lg'
+            fontSize: 'lg',
           },
           icon: {
-            fontSize: '2xs'
+            fontSize: '2xs',
           },
-        }
-      }
+        },
+      },
     },
     Drawer: {
       variants: {
         aside: {
           dialog: {
-            pointerEvents: 'auto'
+            pointerEvents: 'auto',
           },
           dialogContainer: {
-            pointerEvents: 'none'
-          }
-        }
-      }
+            pointerEvents: 'none',
+          },
+        },
+      },
     },
     Popover: {
       variants: {
         relative: {
           popper: {
-            position: 'relative!important'
-          }
-        }
-      }
-    }
+            position: 'relative!important',
+          },
+        },
+      },
+    },
   },
 });
 

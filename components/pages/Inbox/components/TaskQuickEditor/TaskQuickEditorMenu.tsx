@@ -1,59 +1,90 @@
+import {
+  Button,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Portal,
+  chakra,
+} from '@chakra-ui/react';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useTaskQuickEditorStore } from './store';
-import {
-  chakra,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from '@chakra-ui/react';
-import { DotsIcon } from '../../../../shared/Icons/DotsIcon';
-import React from 'react';
 
-export const TaskQuickEditorMenu = observer(function TaskQuickEditMenu() {
+export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
+  items,
+}: {
+  items: React.ReactNode[];
+}) {
   const store = useTaskQuickEditorStore();
 
+  useEffect(() => {
+    if (
+      store.suggestionsMenu.isOpen &&
+      items.length !== store.suggestionsMenu.itemsCount
+    ) {
+      store.suggestionsMenu.setCount(items.length);
+    }
+  }, [
+    items.length,
+    store.suggestionsMenu,
+    store.suggestionsMenu.isOpen,
+    store.suggestionsMenu.itemsCount,
+  ]);
+
   return (
-    <chakra.div visibility={store.focused ? 'visible' : 'hidden'}>
-      <Menu
-        isOpen={store.isMenuOpen}
-        onClose={store.closeMenu}
-        onOpen={store.openMenu}
-      >
-        <MenuButton
-          as={IconButton}
-          aria-label='Task options'
-          variant='outline'
-          borderColor='white'
-          h={6}
-          w={6}
-          minW={6}
-          p={1}
+    <Popover
+      isOpen={store.suggestionsMenu.isOpen}
+      placement='bottom-start'
+      offset={[0, 24]}
+      isLazy
+      autoFocus={false}
+    >
+      <PopoverTrigger>
+        <chakra.span />
+      </PopoverTrigger>
+      <Portal>
+        <PopoverContent
+          onClick={(e) => e.stopPropagation()}
+          onMouseUp={(e) => e.stopPropagation()}
+          p={0}
+          boxShadow='lg'
+          onFocus={store.handleFocus}
+          minW={32}
+          width='auto'
+          overflow='hidden'
         >
-          <DotsIcon />
-        </MenuButton>
-        <MenuList p={0} shadow='lg'>
-          <MenuItem
-            fontSize='sm'
-            lineHeight='5'
-            fontWeight='normal'
-            command='!'
-            onClick={store.startPriority}
-          >
-            Set priority
-          </MenuItem>
-          <MenuItem
-            fontSize='sm'
-            lineHeight='5'
-            fontWeight='normal'
-            command='#'
-            onClick={store.startTag}
-          >
-            Add tag
-          </MenuItem>
-        </MenuList>
-      </Menu>
-    </chakra.div>
+          <PopoverBody p={0}>
+            {items.map((child, index) => (
+              <Button
+                variant='ghost'
+                size='sm'
+                borderRadius={0}
+                w='100%'
+                key={index}
+                fontSize='sm'
+                lineHeight='5'
+                fontWeight='normal'
+                display='flex'
+                justifyContent='start'
+                onClick={(e) => store.suggestionsMenu.onSelect(index)}
+                bg={
+                  store.suggestionsMenu.hoveredIndex === index
+                    ? 'gray.100'
+                    : 'white'
+                }
+                ref={
+                  store.suggestionsMenu.hoveredIndex === index
+                    ? (el) => store.suggestionsMenu.setRef(el)
+                    : undefined
+                }
+              >
+                {child}
+              </Button>
+            ))}
+          </PopoverBody>
+        </PopoverContent>
+      </Portal>
+    </Popover>
   );
 });

@@ -17,11 +17,6 @@ export type GoalIconData =
       value: string;
     };
 
-export type GoalDescriptionData = {
-  id: string;
-  content: JSONContent;
-};
-
 export type GoalData = {
   id: string;
   title: string;

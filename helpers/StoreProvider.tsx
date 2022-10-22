@@ -5,8 +5,8 @@ import {
   useContext,
   useEffect,
   useMemo,
-} from "react";
-import { RootStore, useRootStore } from "../stores/RootStore";
+} from 'react';
+import { RootStore, useRootStore } from '../stores/RootStore';
 
 export interface Store<PropsType> {
   init(props: PropsType): Promise<void> | void;
@@ -24,7 +24,7 @@ type TypeOfClassMethod<T, M extends keyof T> = T[M] extends Function
 
 type StorePropsType<
   StoreType extends Store<unknown>,
-  ArgType = Parameters<TypeOfClassMethod<StoreType, "init">>[0]
+  ArgType = Parameters<TypeOfClassMethod<StoreType, 'init'>>[0]
 > = ArgType extends undefined
   ? PropsWithChildren<Record<string, any>>
   : ArgType;
@@ -54,7 +54,9 @@ export const getProvider = <PropsType, StoreType extends Store<PropsType>>(
       return res;
     }, [rootStore, existedStore]);
 
-    store.init(props as PropsType);
+    useEffect(() => {
+      store.init(props as PropsType);
+    }, [props, store]);
 
     useEffect(() => {
       if (store.subscribe) {

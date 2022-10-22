@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import Head from 'next/head';
 import TaskList from './components/TaskList';
-import { TaskDescription } from './components/TaskDescription';
+import { Task } from './components/Task';
 
 import 'allotment/dist/style.css';
 import { useTasksStore } from './store';
@@ -19,7 +19,16 @@ export const TasksView = observer(function TasksView() {
         <title>Inbox</title>
       </Head>
       <TaskList />
-      {store.openedTask && <TaskDescription task={store.openedTaskData} />}
+      {store.openedTask && (
+        <Task
+          task={store.openedTaskData}
+          callbacks={{
+            onClose: store.closeTask,
+            onPreviousItem: store.draggableList.focusPrevItem,
+            onNextItem: store.draggableList.focusNextItem,
+          }}
+        />
+      )}
     </>
   );
 });

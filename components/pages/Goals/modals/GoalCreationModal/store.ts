@@ -2,21 +2,17 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { GoalCreationModalSteps } from './types';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import {
-  GoalData,
-  GoalDescriptionData,
-  GoalIconVariants,
-  GoalTemplateData,
-} from '../../types';
+import { GoalData, GoalIconVariants, GoalTemplateData } from '../../types';
 import { GoalCreationModalStepsOrder } from './constants';
 import { SyntheticEvent } from 'react';
 import { JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
 import { init } from 'emoji-mart';
+import { DescriptionData } from '../../../../../types/description';
 
 export type GoalCreationModalProps = {
   onClose: () => void;
-  onSave: (goal: GoalData, description?: GoalDescriptionData) => void;
+  onSave: (goal: GoalData, description?: DescriptionData) => void;
   editMode?: boolean;
   goal?: GoalData;
 };
@@ -73,7 +69,7 @@ export class GoalCreationModalStore {
   icon: string = '';
   color = colors[0];
   title: string = '';
-  description?: GoalDescriptionData = undefined;
+  description?: DescriptionData = undefined;
   currentTemplate: null | GoalTemplateData = null;
   templates: GoalTemplateData[] = [];
   step: GoalCreationModalSteps = GoalCreationModalSteps.SELECT_TEMPLATE;

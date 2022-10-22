@@ -1,9 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import { useTaskQuickEditorStore } from './store';
-import { chakra, Input } from '@chakra-ui/react';
-import { TaskQuickEditorTagsMenu } from './TaskQuickEditorTagsMenu';
-import { TaskPriorityMenu } from '../TaskPriorityMenu';
+import { chakra, HStack, Input, Text } from '@chakra-ui/react';
 import React from 'react';
+import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
+import { TaskPriorityArray, TaskPriorityNames } from '../../types';
+import { TaskPriorityIcon } from '../../../../shared/Icons/TaskPriorityIcon';
 
 export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
   placeholder,
@@ -13,6 +14,31 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
   autofocus?: boolean;
 }) {
   const store = useTaskQuickEditorStore();
+
+  let items = [];
+
+  if (store.tagActive) {
+    const hasCreateNewTag =
+      store.currentTagValue.length > 1 && !store.currentTagMatch;
+
+    items = store.filteredAvailableTags.map(({ title }) => <>{title}</>);
+
+    if (hasCreateNewTag) {
+      items.unshift(
+        // eslint-disable-next-line react/no-unescaped-entities
+        <>Tag not found. Create new "{store.currentTagValue.slice(1)}" tag</>
+      );
+    }
+  }
+
+  if (store.priorityActive) {
+    items = TaskPriorityArray.map((key) => (
+      <HStack key={key} justifyContent='space-between' w='100%'>
+        <Text>{TaskPriorityNames[key]}</Text>
+        <TaskPriorityIcon priority={key} />
+      </HStack>
+    ));
+  }
 
   return (
     <>
@@ -24,7 +50,7 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
         value={store.value}
         onChange={store.handleChange}
         onFocus={store.handleFocus}
-        onBlur={store.removeFocus}
+        onBlur={store.removeInputFocus}
         onKeyDown={store.handleKeyDown}
         ref={store.inputRef}
       />
@@ -35,12 +61,7 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
             store.value.length - store.currentTagValue.length
           )}
         </chakra.span>
-        <TaskQuickEditorTagsMenu />
-        <TaskPriorityMenu
-          isOpen={store.priorityMenuOpen}
-          onFocus={() => store.input.focus()}
-          onSelect={store.setPriorityAndCommit}
-        />
+        <TaskQuickEditorMenu items={items} />
       </chakra.div>
     </>
   );

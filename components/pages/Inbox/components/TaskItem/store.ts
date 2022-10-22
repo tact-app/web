@@ -41,7 +41,7 @@ class TaskItemStore {
   onStatusChange: TaskItemProps['onStatusChange'];
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    if (this.onFocus && !this.isDisabled) {
+    if (this.onFocus && !this.isDisabled && !this.isEditMode) {
       e.preventDefault();
       document.getSelection().removeAllRanges();
       this.onFocus(

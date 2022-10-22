@@ -22,13 +22,14 @@ export const TaskListItem = observer(function TaskListItem({
       isFocused={store.draggableList.focused.includes(task.id)}
       isDragging={snapshot.isDragging}
       isEditMode={store.editingTaskId && task.id === store.editingTaskId}
+      tagsMap={store.tagsMap}
+      listId={store.listId}
+      onSuggestionsMenuOpen={store.handleSuggestions}
       onFocus={store.draggableList.setFocusedItem}
       onNavigate={store.draggableList.handleNavigation}
       onStatusChange={store.setTaskStatus}
-      onCreate={store.updateTask}
+      onSave={store.updateTask}
       onTagCreate={store.createTag}
-      tagsMap={store.tagsMap}
-      listId={store.listId}
     />
   );
 });

@@ -1,8 +1,6 @@
 import { DB } from '../index';
-import {
-  GoalData,
-  GoalDescriptionData,
-} from '../../../components/pages/Goals/types';
+import { GoalData } from '../../../components/pages/Goals/types';
+import { DescriptionData } from '../../../types/description';
 
 const data = {
   get: {
@@ -34,13 +32,10 @@ const data = {
     },
   },
   post: {
-    '/api/goals/description': async (db: DB, data: GoalDescriptionData) => {
+    '/api/goals/description': async (db: DB, data: DescriptionData) => {
       await db.add('descriptions', data);
     },
-    '/api/goals/description/update': async (
-      db: DB,
-      data: GoalDescriptionData
-    ) => {
+    '/api/goals/description/update': async (db: DB, data: DescriptionData) => {
       const existedDescription = await db.get('descriptions', data.id);
 
       if (existedDescription) {
