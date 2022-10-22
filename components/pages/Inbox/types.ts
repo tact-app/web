@@ -40,6 +40,12 @@ export enum TaskStatus {
   TODO = 'todo',
 }
 
+export const TaskStatusArray = [
+  TaskStatus.TODO,
+  TaskStatus.WONT_DO,
+  TaskStatus.DONE,
+];
+
 export type TaskData = {
   id: string;
   title: string;

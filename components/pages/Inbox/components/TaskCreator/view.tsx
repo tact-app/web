@@ -34,6 +34,7 @@ export const TaskCreatorView = observer(function TaskCreator() {
       alignItems='center'
       mb={7}
       display='flex'
+      minH={10}
     >
       <InputGroup size='md' ref={ref} variant='unstyled'>
         <TaskQuickEditorInput placeholder='+Add task' />
