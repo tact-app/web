@@ -11,7 +11,7 @@ import { InputWrapper } from '../../../../shared/InputWrapper';
 import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
 import { TaskQuickEditorPriority } from '../TaskQuickEditor/TaskQuickEditorPriority';
-import { TaskQuickEditorMenu } from '../TaskQuickEditor/TaskQuickEditorMenu';
+import { TaskQuickEditorMainMenu } from '../TaskQuickEditor/TaskQuickEditorMainMenu';
 import { TaskQuickEditorPriorityMenu } from '../TaskQuickEditor/TaskQuickEditorPriorityMenu';
 
 export const TaskCreatorView = observer(function TaskCreator() {
@@ -21,8 +21,9 @@ export const TaskCreatorView = observer(function TaskCreator() {
   useOutsideClick({
     ref: ref,
     handler: () => {
-      store.removeFocus();
-      store.closeMenu();
+      if (store.focused) {
+        store.handleClickOutside();
+      }
     },
   });
 
@@ -42,7 +43,7 @@ export const TaskCreatorView = observer(function TaskCreator() {
             <TaskQuickEditorPriorityMenu>
               <TaskQuickEditorPriority />
             </TaskQuickEditorPriorityMenu>
-            <TaskQuickEditorMenu />
+            <TaskQuickEditorMainMenu />
           </HStack>
         </InputRightAddon>
       </InputGroup>

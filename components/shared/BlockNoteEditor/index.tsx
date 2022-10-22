@@ -8,9 +8,13 @@ import {
 import { MetricExtension } from './extensions/MetricExtension';
 import { defaultCommands } from 'tact-block-note-core/src/extensions/SlashMenu';
 import { metricCommands } from './extensions/MetricExtension/command';
+import { TaskList } from './extensions/TaskListExtension';
+import { TaskItem } from '@tiptap/extension-task-item';
+import { externalCommands } from './extensions/externalCommands';
 
 export type BlockNoteEditorProps = {
   onChange?: (content: JSONContent) => void;
+  onBlur?: () => void;
   value: JSONContent;
 };
 
@@ -36,10 +40,15 @@ export const BlockNoteEditor = observer(function BlockNoteEditor(
     enableBlockNoteExtensions: false,
     extensions: [
       ...mainExtensions,
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
       slashCommandExtension.configure({
         commands: {
           ...defaultCommands,
           ...metricCommands,
+          ...externalCommands,
         },
       }),
       trailingNodeExtension,
@@ -47,5 +56,5 @@ export const BlockNoteEditor = observer(function BlockNoteEditor(
     ],
   });
 
-  return <EditorContent editor={editor} />;
+  return <EditorContent editor={editor} onBlur={props.onBlur} />;
 });

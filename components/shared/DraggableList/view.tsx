@@ -123,6 +123,7 @@ export const DraggableListView = observer(function DraggableListView({
 
   useOutsideClick({
     ref: ref,
+    enabled: store.isOutsideClickEnabled,
     handler: store.resetFocusedItem,
   });
 

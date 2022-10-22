@@ -4,7 +4,8 @@ import { getProvider } from '../../../helpers/StoreProvider';
 import { ModalsController } from '../../../helpers/ModalsController';
 import { GoalCreationModal } from './modals/GoalCreationModal';
 import { GoalConfigurationModal } from './modals/GoalConfigurationModal';
-import { GoalData, GoalDescriptionData } from './types';
+import { GoalData } from './types';
+import { DescriptionData } from '../../../types/description';
 
 export enum GoalsModalsTypes {
   CREATE_GOAL,
@@ -23,7 +24,7 @@ export class GoalsStore {
 
   items: Record<string, GoalData> = {};
   order: string[] = [];
-  descriptions: Record<string, GoalDescriptionData> = {};
+  descriptions: Record<string, DescriptionData> = {};
 
   modals = new ModalsController(GoalsModals);
 
@@ -58,7 +59,7 @@ export class GoalsStore {
     });
   };
 
-  updateGoal = (goal: GoalData, description?: GoalDescriptionData) => {
+  updateGoal = (goal: GoalData, description?: DescriptionData) => {
     this.items[goal.id] = goal;
     this.root.api.goals.update({ id: goal.id, fields: goal });
 
@@ -73,7 +74,7 @@ export class GoalsStore {
     this.modals.close();
   };
 
-  createGoal = (goal: GoalData, description?: GoalDescriptionData) => {
+  createGoal = (goal: GoalData, description?: DescriptionData) => {
     this.items[goal.id] = goal;
     this.order.push(goal.id);
     this.root.api.goals.create(goal);

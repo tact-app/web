@@ -1,14 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Drawer, DrawerContent, DrawerProps, chakra } from '@chakra-ui/react';
+import {
+  Drawer,
+  DrawerContent,
+  chakra,
+  DrawerContentProps,
+} from '@chakra-ui/react';
 
 export const ResizableDrawer = observer(function ResizableDrawer({
   isOpen,
   onClose,
   children,
-  minWidth = 300,
-  maxWidth = '50%',
-  defaultWidth = 400,
+  minWidth = 400,
+  maxWidth = '75%',
+  defaultWidth = '30%',
   containerRef,
   ...rest
 }: {
@@ -18,7 +23,7 @@ export const ResizableDrawer = observer(function ResizableDrawer({
   maxWidth?: number | string;
   defaultWidth?: number | string;
   containerRef?: React.RefObject<HTMLElement>;
-} & DrawerProps) {
+} & DrawerContentProps) {
   const [isResizing, setIsResizing] = useState(false);
   const [lastDownX, setLastDownX] = useState(0);
   const [newWidth, setNewWidth] = useState(defaultWidth);
@@ -74,21 +79,21 @@ export const ResizableDrawer = observer(function ResizableDrawer({
       onClose={onClose}
       trapFocus={false}
       blockScrollOnMount={false}
-      {...rest}
     >
       <DrawerContent
         maxWidth={maxWidth}
         style={{
           width: newWidth,
         }}
+        {...rest}
       >
         <chakra.div
           onMouseDown={handleMouseDown}
           onDoubleClick={() => setNewWidth(defaultWidth)}
           position='absolute'
           height='100%'
-          width={1}
-          left={-1}
+          width={1.5}
+          left={-0.75}
           _hover={{
             cursor: 'col-resize',
             bg: 'gray.100',

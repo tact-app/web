@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { NavigationDirections } from '../../pages/Inbox/types';
-import { ReactComponent } from 'react-hotkeys';
+import React from 'react';
 
 export type DraggableListCallbacks = {
   onItemsRemove?: (items: string[], ids: string[]) => void;
@@ -18,10 +18,17 @@ export type DraggableListCallbacks = {
   onVerifyDelete?: (ids: string[], cb: () => void) => void;
 };
 
+export type DraggableListComponentInnerProps = {
+  id: string;
+  provided?: any;
+  snapshot?: any;
+  isFocused?: boolean;
+};
+
 export type DraggableListComponentProps = {
-  prefix?: ReactComponent;
-  dragHandler?: ReactComponent;
-  content: ReactComponent;
+  prefix?: React.FC<DraggableListComponentInnerProps>;
+  dragHandler?: React.FC<DraggableListComponentInnerProps>;
+  content: React.FC<DraggableListComponentInnerProps>;
 };
 
 export type DraggableListProps = {
@@ -41,7 +48,8 @@ export class DraggableListStore {
   focusedItemIds: string[] = [];
   items: string[] = [];
 
-  isHotkeysActive = true;
+  isOutsideClickEnabled: boolean = true;
+  isHotkeysActive: boolean = true;
   isDraggingActive: boolean = false;
   isControlDraggingActive: boolean = false;
 
@@ -119,6 +127,14 @@ export class DraggableListStore {
         this.resetFocusedItem();
       }
     }),
+  };
+
+  enableOutsideClick = () => {
+    this.isOutsideClickEnabled = true;
+  };
+
+  disableOutsideClick = () => {
+    this.isOutsideClickEnabled = false;
   };
 
   disableHotkeys = () => {
@@ -250,21 +266,9 @@ export class DraggableListStore {
 
     if (index !== -1) {
       if (direction === NavigationDirections.UP) {
-        const prevActiveItem = this.getPrevActiveItem(this.items[index]);
-
-        if (prevActiveItem) {
-          this.setFocusedItem(prevActiveItem);
-        } else {
-          this.callbacks.onFocusLeave?.(NavigationDirections.UP);
-        }
+        this.focusPrevItem(this.items[index]);
       } else if (direction === NavigationDirections.DOWN) {
-        const nextActiveItem = this.getNextActiveItem(this.items[index]);
-
-        if (nextActiveItem) {
-          this.setFocusedItem(nextActiveItem);
-        } else {
-          this.callbacks.onFocusLeave?.(NavigationDirections.DOWN);
-        }
+        this.focusNextItem(this.items[index]);
       }
     } else {
       if (direction === NavigationDirections.DOWN) {
@@ -325,6 +329,26 @@ export class DraggableListStore {
       );
     } else {
       return this.items[index - 1] || null;
+    }
+  };
+
+  focusNextItem = (id: string) => {
+    const nextActiveItem = this.getNextActiveItem(id);
+
+    if (nextActiveItem) {
+      this.setFocusedItem(nextActiveItem);
+    } else {
+      this.callbacks.onFocusLeave?.(NavigationDirections.DOWN);
+    }
+  };
+
+  focusPrevItem = (id: string) => {
+    const prevActiveItem = this.getPrevActiveItem(id);
+
+    if (prevActiveItem) {
+      this.setFocusedItem(prevActiveItem);
+    } else {
+      this.callbacks.onFocusLeave?.(NavigationDirections.UP);
     }
   };
 

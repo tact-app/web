@@ -3,8 +3,9 @@ import { TaskDeleteModal } from './TaskDeleteModal';
 import { TaskGoalAssignModal } from './TaskGoalAssignModal';
 import { GoalCreationModal } from '../../Goals/modals/GoalCreationModal';
 import { TasksStore } from '../store';
-import { GoalData, GoalDescriptionData } from '../../Goals/types';
+import { GoalData } from '../../Goals/types';
 import { runInAction, toJS } from 'mobx';
+import { DescriptionData } from '../../../../types/description';
 
 export enum ModalsTypes {
   DELETE_TASK,
@@ -47,7 +48,7 @@ export class TasksModals {
             cb();
           }
         },
-        onSave: (goal: GoalData, description?: GoalDescriptionData) => {
+        onSave: (goal: GoalData, description?: DescriptionData) => {
           runInAction(() => {
             this.parent.goals.push(goal);
             this.parent.root.api.goals.create(goal);

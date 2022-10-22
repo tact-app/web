@@ -52,6 +52,7 @@ export class TasksStore {
   keyMap = {
     DONE: 'd',
     GOAL: 'g',
+    FOCUS_INPUT: 'n',
     WONT_DO: ['w', 'cmd+w'],
     EDIT: 'space',
     OPEN: 'enter',
@@ -96,6 +97,9 @@ export class TasksStore {
     SILENT_FOCUS_MODE: this.getHandler((e) => {
       e.preventDefault();
       this.toggleFocusMode(true);
+    }),
+    FOCUS_INPUT: this.getHandler(() => {
+      this.creator.setFocus(true);
     }),
   };
 
@@ -239,6 +243,14 @@ export class TasksStore {
 
   handleToggleFocusMode = () => {
     this.toggleFocusMode();
+  };
+
+  handleSuggestions = (state: boolean) => {
+    if (state) {
+      this.draggableList.disableOutsideClick();
+    } else {
+      this.draggableList.enableOutsideClick();
+    }
   };
 
   loadFocusModeConfiguration = async () => {

@@ -39,7 +39,7 @@ const TaskList = observer(function TaskList() {
           </HStack>
         </HStack>
         <TaskCreator
-          onCreate={store.createTask}
+          onSave={store.createTask}
           onTagCreate={store.createTag}
           onNavigate={store.draggableList.handleNavigation}
           tagsMap={store.tagsMap}

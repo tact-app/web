@@ -1,5 +1,3 @@
-import { OutputData } from '@editorjs/editorjs';
-
 export enum TaskPriority {
   LOW = 'low',
   MEDIUM = 'medium',
@@ -48,7 +46,7 @@ export type TaskData = {
   listId: string;
   goalId?: string;
   tags: string[];
-  description: OutputData;
+  descriptionId?: string;
   status: TaskStatus;
   priority: TaskPriority;
 };
