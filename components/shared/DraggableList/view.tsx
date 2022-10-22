@@ -130,7 +130,7 @@ export const DraggableListView = observer(function DraggableListView({
   useHotkeysHandler(keyMap, store.hotkeyHandlers);
 
   return (
-    <Box ref={ref}>
+    <Box ref={ref} overflow='auto'>
       <DraggableListWrapper>
         {store.items.map((id, index) => {
           return (

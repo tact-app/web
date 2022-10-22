@@ -111,7 +111,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
   const ref = useHotkeysHandler(keyMap, store.hotkeyHandlers);
 
   return store.goals.length ? (
-    <List ref={(el) => (ref.current = el)}>
+    <List ref={(el) => (ref.current = el)} h='100%' overflowY='auto'>
       {!store.multiple && (
         <GoalSelectionListItem
           id={null}

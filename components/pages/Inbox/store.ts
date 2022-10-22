@@ -305,22 +305,23 @@ export class TasksStore {
   };
 
   setTasksStatus = (ids: string[], status: TaskStatus) => {
+    const hasAnotherStatus = ids.some((id) => this.items[id].status !== status);
+    const newStatus = hasAnotherStatus ? status : TaskStatus.TODO;
+
     ids.forEach((id) => {
-      this.setTaskStatus(id, status);
+      this.setTaskStatus(id, newStatus);
     });
   };
 
   setTaskStatus = (taskId: string, status: TaskStatus) => {
     const task = this.items[taskId];
 
-    if (task.status === TaskStatus.TODO) {
-      task.status = status;
+    task.status = status;
 
-      this.root.api.tasks.update({
-        id: task.id,
-        fields: { status },
-      });
-    }
+    this.root.api.tasks.update({
+      id: task.id,
+      fields: { status },
+    });
   };
 
   setEditingTask = (taskId: string | null) => {

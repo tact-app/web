@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       </Head>
       <MenuBar />
-      <Box p={4} flex='1' overflow='scroll'>
+      <Box p={4} pb={0} flex='1' overflow='scroll'>
         {children}
       </Box>
     </Flex>

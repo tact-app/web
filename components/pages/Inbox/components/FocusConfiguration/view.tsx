@@ -37,7 +37,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
       flexDirection='column'
       justifyContent='space-between'
     >
-      <Box width='100%'>
+      <Box width='100%' minH={0} display='flex' flexDirection='column'>
         <HStack
           justifyContent='space-between'
           pt={4}
@@ -60,6 +60,9 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           borderRadius='md'
           bg={store.goalsSelection.isFocused ? 'gray.50' : 'white'}
           ml={2}
+          minH={0}
+          display='flex'
+          flexDirection='column'
         >
           <HStack pb={2} alignItems='baseline'>
             <Text fontSize='lg' fontWeight='semibold'>
