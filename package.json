@@ -7,6 +7,10 @@
     "lint": "next lint",
     "lint:fix": "next lint --dir . -- --fix"
   },
+  "engines" : {
+    "npm" : "^8.0.0",
+    "node" : "^16.14.0"
+  },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.4",
     "@chakra-ui/react": "^2.3.6",
