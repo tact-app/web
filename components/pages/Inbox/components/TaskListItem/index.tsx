@@ -15,21 +15,23 @@ export const TaskListItem = observer(function TaskListItem({
   const focusMatch = store.checkFocusModeMatch(id);
 
   return (
-    <TaskItem
-      task={task}
-      isFocusModeActive={store.isFocusModeActive}
-      isDisabled={!focusMatch}
-      isFocused={store.draggableList.focused.includes(task.id)}
-      isDragging={snapshot.isDragging}
-      isEditMode={store.editingTaskId && task.id === store.editingTaskId}
-      tagsMap={store.tagsMap}
-      listId={store.listId}
-      onSuggestionsMenuOpen={store.handleSuggestions}
-      onFocus={store.draggableList.setFocusedItem}
-      onNavigate={store.draggableList.handleNavigation}
-      onStatusChange={store.setTaskStatus}
-      onSave={store.updateTask}
-      onTagCreate={store.createTag}
-    />
+    task && (
+      <TaskItem
+        task={task}
+        isFocusModeActive={store.isFocusModeActive}
+        isDisabled={!focusMatch}
+        isFocused={store.draggableList.focused.includes(task.id)}
+        isDragging={snapshot.isDragging}
+        isEditMode={store.editingTaskId && task.id === store.editingTaskId}
+        tagsMap={store.tagsMap}
+        listId={store.listId}
+        onSuggestionsMenuOpen={store.handleSuggestions}
+        onFocus={store.draggableList.setFocusedItem}
+        onNavigate={store.draggableList.handleNavigation}
+        onStatusChange={store.setTaskStatus}
+        onSave={store.updateTask}
+        onTagCreate={store.createTag}
+      />
+    )
   );
 });
