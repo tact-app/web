@@ -275,6 +275,7 @@ export class TasksStore {
       delete this.items[id];
     });
 
+    this.order = this.order.filter((id) => !ids.includes(id));
     this.root.api.tasks.delete(this.listId, ids);
   };
 

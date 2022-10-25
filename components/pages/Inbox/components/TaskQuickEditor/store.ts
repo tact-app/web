@@ -67,10 +67,8 @@ export class TaskQuickEditorStore {
   }
 
   get filteredAvailableTags() {
-    return this.availableTags.filter(
-      ({ title }) =>
-        title.startsWith(this.currentTagValue) &&
-        !this.tags.some(({ title: t }) => title === t)
+    return this.availableTags.filter(({ title }) =>
+      title.startsWith(this.currentTagValue)
     );
   }
 
@@ -174,22 +172,24 @@ export class TaskQuickEditorStore {
   };
 
   createNewTag = () => {
-    if (!this.currentTagMatch) {
-      const id = uuidv4();
-      const newTag = { title: this.currentTagValue, id };
+    if (!this.tags.some(({ title: t }) => this.currentTagValue === t)) {
+      if (!this.currentTagMatch) {
+        const id = uuidv4();
+        const newTag = { title: this.currentTagValue, id };
 
-      this.tags.push(newTag);
+        this.tags.push(newTag);
 
-      if (this.onTagCreate) {
-        this.onTagCreate(newTag);
-      }
-    } else {
-      const tag = this.filteredAvailableTags.find(
-        ({ title }) => title === this.currentTagValue
-      );
+        if (this.onTagCreate) {
+          this.onTagCreate(newTag);
+        }
+      } else {
+        const tag = this.filteredAvailableTags.find(
+          ({ title }) => title === this.currentTagValue
+        );
 
-      if (tag) {
-        this.tags.push(tag);
+        if (tag) {
+          this.tags.push(tag);
+        }
       }
     }
 
@@ -197,10 +197,12 @@ export class TaskQuickEditorStore {
   };
 
   addAvailableTag = (id: string) => {
-    const tag = this.availableTags.find((tag) => tag.id === id);
+    if (!this.tags.some(({ id: tagId }) => tagId === id)) {
+      const tag = this.availableTags.find((tag) => tag.id === id);
 
-    this.tags.push(tag);
-    this.disableTagMode();
+      this.tags.push(tag);
+      this.disableTagMode();
+    }
   };
 
   activatePriorityMode = () => {
