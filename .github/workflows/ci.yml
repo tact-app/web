@@ -1,0 +1,43 @@
+name: checking
+
+on:
+  pull_request:
+    branches: [ '*' ]
+    paths:
+      - '.github/workflows/ci.yml'
+      - '**.ts'
+      - 'package*.json'
+  push:
+    branches: [ '*' ]
+    paths:
+      - '.github/workflows/ci.yml'
+      - '**.ts'
+      - 'package*.json'
+    tags: [ '!*' ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v3
+        with: { node-version: 16 }
+
+      - run: npm ci --include=dev
+      - run: npm run build
+
+  notify:
+    needs: [ build ]
+    if: github.event_name == 'push' && (failure() || success())
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+          SLACK_ICON: https://github.com/github.png?size=64
+          SLACK_TITLE: '${{ github.repository }}: ${{ github.workflow }}'
+          SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
