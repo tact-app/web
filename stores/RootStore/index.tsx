@@ -3,8 +3,8 @@ import { enableStaticRendering } from 'mobx-react-lite';
 import { createContext, useContext } from 'react';
 import UserStore from './UserStore';
 import { isClient } from '../../utils';
-import { getAPI } from '../../api';
-import { IDBService } from '../../api/Database/IDBService';
+import { getAPI } from '../../services/api';
+import { IDBService } from '../../services/api/Database/IDBService';
 import { MenuStore } from './MenuStore';
 
 enableStaticRendering(typeof window === 'undefined');

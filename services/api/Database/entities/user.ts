@@ -1,4 +1,4 @@
-import { UserData } from '../../../stores/RootStore/UserStore';
+import { UserData } from '../../../../stores/RootStore/UserStore';
 
 const user: UserData = {
   id: '1',

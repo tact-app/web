@@ -1,6 +1,6 @@
 import { DB } from '../index';
-import { GoalData } from '../../../components/pages/Goals/types';
-import { DescriptionData } from '../../../types/description';
+import { GoalData } from '../../../../components/pages/Goals/types';
+import { DescriptionData } from '../../../../types/description';
 
 const data = {
   get: {

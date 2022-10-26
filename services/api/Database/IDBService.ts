@@ -6,7 +6,7 @@ import descriptions from './entities/descriptions';
 import focusConfigurations from './entities/focusConfigurations';
 import { ApiService } from '../ApiService';
 import type { DB } from './index';
-import { isClient } from '../../utils';
+import { isClient } from '../../../utils';
 
 const stubs: {
   put?: Record<string, Function>;

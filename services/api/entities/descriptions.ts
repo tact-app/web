@@ -1,5 +1,5 @@
 import { ApiService } from '../ApiService';
-import { DescriptionData } from '../../types/description';
+import { DescriptionData } from '../../../types/description';
 
 const getDescriptionsApi = (apiService: ApiService) => ({
   add: (data: DescriptionData) => apiService.post(`/api/description`, data),

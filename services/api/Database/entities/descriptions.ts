@@ -1,5 +1,5 @@
 import { DB } from '../index';
-import { DescriptionData } from '../../../types/description';
+import { DescriptionData } from '../../../../types/description';
 
 const data = {
   get: {
