@@ -1,4 +1,4 @@
-import { TaskData } from '../../../components/pages/Inbox/types';
+import { TaskData } from '../../../../components/pages/Inbox/types';
 import { DB } from '../index';
 
 const data = {
