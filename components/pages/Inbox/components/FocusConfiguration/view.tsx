@@ -57,6 +57,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
         </Text>
         <Box
           p={2}
+          pl={1}
           borderRadius='md'
           bg={store.goalsSelection.isFocused ? 'gray.50' : 'white'}
           ml={2}
@@ -64,7 +65,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           display='flex'
           flexDirection='column'
         >
-          <HStack pb={2} alignItems='baseline'>
+          <HStack pb={2} alignItems='baseline' pl={1}>
             <Text fontSize='lg' fontWeight='semibold'>
               Goals
             </Text>

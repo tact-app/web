@@ -43,22 +43,25 @@ export class TaskQuickEditorSuggestionsMenu {
 
   setIndex(index: number) {
     this.hoveredIndex = index;
+
+    setTimeout(() => {
+      this.itemRef.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    });
   }
 
   next = () => {
-    console.log('next', this.hoveredIndex, this.itemsCount);
     if (this.hoveredIndex < this.itemsCount - 1) {
-      this.hoveredIndex += 1;
+      this.setIndex(this.hoveredIndex + 1);
     } else {
-      this.hoveredIndex = 0;
+      this.setIndex(0);
     }
   };
 
   prev = () => {
     if (this.hoveredIndex > 0) {
-      this.hoveredIndex -= 1;
+      this.setIndex(this.hoveredIndex - 1);
     } else {
-      this.hoveredIndex = this.itemsCount - 1;
+      this.setIndex(this.itemsCount - 1);
     }
   };
 

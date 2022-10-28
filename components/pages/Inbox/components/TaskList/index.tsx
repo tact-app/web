@@ -20,8 +20,8 @@ const TaskList = observer(function TaskList() {
 
   return (
     <Container maxW='container.lg' p={0} h='100%'>
-      <Box pl={5} pr={5} display='flex' flexDirection='column' h='100%'>
-        <HStack justifyContent='space-between'>
+      <Box display='flex' flexDirection='column' h='100%'>
+        <HStack justifyContent='space-between' pl={5} pr={5}>
           <Heading size='lg' mt={2.5} mb={8} pt={4}>
             Today
           </Heading>
@@ -47,6 +47,10 @@ const TaskList = observer(function TaskList() {
           keepFocus
         />
         <DraggableList
+          wrapperProps={{
+            pr: 5,
+            pl: 5,
+          }}
           items={store.order}
           checkItemActivity={store.checkFocusModeMatch}
           content={TaskListItem}
