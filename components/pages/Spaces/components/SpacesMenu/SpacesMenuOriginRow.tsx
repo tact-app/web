@@ -1,10 +1,10 @@
-import { Box, chakra, Checkbox } from '@chakra-ui/react';
+import { Box, chakra, Checkbox, IconButton } from '@chakra-ui/react';
 import { OriginCheckStatusTypes } from './types';
-import { SpacesMenuOriginItemArrow } from './SpacesMenuOriginItemArrow';
 import { OriginChildData, OriginData } from '../../types';
 import { observer } from 'mobx-react-lite';
 import { useSpacesMenuStore } from './store';
 import { useCallback } from 'react';
+import { ArrowDownIcon } from '../../../../shared/Icons/ArrowIcons';
 
 export const SpacesMenuOriginRow = observer(function SpacesMenuOriginRow({
   item,
@@ -67,10 +67,20 @@ export const SpacesMenuOriginRow = observer(function SpacesMenuOriginRow({
         {item.name}
       </chakra.span>
       {item.children?.length > 0 ? (
-        <SpacesMenuOriginItemArrow
-          isOpen={isExpanded}
-          onToggle={handleExpand}
-        />
+        <IconButton
+          size='xs'
+          aria-label={'open'}
+          onClick={handleExpand}
+          variant='unstyled'
+          pr={4}
+        >
+          <chakra.div
+            transition={'transform 0.2s ease-in-out'}
+            transform={isExpanded ? 'rotate(180deg)' : 'rotate(0)'}
+          >
+            <ArrowDownIcon />
+          </chakra.div>
+        </IconButton>
       ) : null}
     </Box>
   );

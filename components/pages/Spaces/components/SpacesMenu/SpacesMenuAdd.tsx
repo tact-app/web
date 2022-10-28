@@ -7,7 +7,16 @@ export const SpacesMenuAdd = (props: {
   size: 'sm' | 'lg';
   title: string;
 }) => (
-  <Button variant='unstyled' p={1} m={0} display='flex' role='group'>
+  <Button
+    variant='unstyled'
+    p={1}
+    m={0}
+    display='flex'
+    role='group'
+    overflow='hidden'
+    justifyContent='start'
+    w='100%'
+  >
     <chakra.div
       display='flex'
       justifyContent='center'
@@ -16,6 +25,7 @@ export const SpacesMenuAdd = (props: {
       borderWidth={2}
       borderColor='gray.200'
       w={props.size === 'lg' ? 8 : 6}
+      minW={props.size === 'lg' ? 8 : 6}
       h={props.size === 'lg' ? 8 : 6}
       transition='background-color 0.2s ease-in-out'
       _groupHover={{

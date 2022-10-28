@@ -5,24 +5,25 @@ import { MainMenu } from '../MainMenu';
 import { NavItem } from '../MainMenu/types';
 import { routes } from '../../../../routes/constants';
 import { useRootStore } from '../../../../stores/RootStore';
-import { CheckboxIcon } from '../../../shared/Icons/CheckboxIcon';
 import { MailIcon } from '../../../shared/Icons/MailIcon';
+import { GoalsIcon } from '../../../shared/Icons/GoalsIcon';
+import { CalendarIcon } from '../../../shared/Icons/CalendarIcon';
 
 const NAV_ITEMS: Array<NavItem> = [
   {
-    label: 'Inbox',
-    icon: <MailIcon />,
+    label: 'Tasks',
+    icon: <CalendarIcon />,
     href: routes.INBOX,
   },
   {
-    label: 'Goals',
-    icon: <CheckboxIcon />,
-    href: routes.GOALS,
+    label: 'Spaces',
+    icon: <MailIcon />,
+    href: routes.SPACES,
   },
   {
-    label: 'Spaces',
-    icon: <CheckboxIcon />,
-    href: routes.SPACES,
+    label: 'Goals',
+    icon: <GoalsIcon />,
+    href: routes.GOALS,
   },
 ];
 
