@@ -54,7 +54,7 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
           width='auto'
           overflow='hidden'
         >
-          <PopoverBody p={0}>
+          <PopoverBody p={0} maxH={64} overflow='auto'>
             {items.map((child, index) => (
               <Button
                 variant='ghost'

@@ -24,7 +24,7 @@ export const TaskGoalAssignModalView = observer(
         <ModalOverlay />
         <ModalContent ref={(el) => (ref.current = el)}>
           <ModalHeader>My goals</ModalHeader>
-          <ModalBody maxH={80} overflow='scroll'>
+          <ModalBody maxH={80} overflow='scroll' pl={5} pr={5}>
             <GoalsSelectionStoreProvider
               goals={store.goals}
               checked={store.selectedGoalId ? [store.selectedGoalId] : []}

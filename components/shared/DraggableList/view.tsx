@@ -116,8 +116,12 @@ export const DraggableListView = observer(function DraggableListView({
   prefix,
   dragHandler = DefaultDraggableListDragHandler,
   content,
+  wrapperProps,
   boxProps,
-}: DraggableListComponentProps & { boxProps?: BoxProps }) {
+}: DraggableListComponentProps & {
+  boxProps?: BoxProps;
+  wrapperProps?: BoxProps;
+}) {
   const store = useDraggableListStore();
   const ref = useRef(null);
 
@@ -130,7 +134,7 @@ export const DraggableListView = observer(function DraggableListView({
   useHotkeysHandler(keyMap, store.hotkeyHandlers);
 
   return (
-    <Box ref={ref} overflow='auto'>
+    <Box ref={ref} overflow='auto' {...wrapperProps}>
       <DraggableListWrapper>
         {store.items.map((id, index) => {
           return (

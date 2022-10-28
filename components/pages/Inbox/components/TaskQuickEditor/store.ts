@@ -380,10 +380,7 @@ export class TaskQuickEditorStore {
   };
 
   handleKeyDownInTagMode = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (
-      (e.key === ' ' || e.key === 'Enter') &&
-      this.currentTagValue.length > 1
-    ) {
+    if (e.key === ' ' && this.currentTagValue.length > 1) {
       e.preventDefault();
       this.createNewTag();
     } else if (
