@@ -23,7 +23,7 @@
     "@tiptap/extension-task-item": "^2.0.0-beta.199",
     "@tiptap/extension-task-list": "^2.0.0-beta.199",
     "allotment": "^1.17.0",
-    "chakra-react-select": "^4.2.5",
+    "chakra-react-select": "^4.4.0",
     "emoji-mart": "^5.2.2",
     "framer-motion": "^7.6.1",
     "idb": "^7.1.0",
