@@ -166,11 +166,19 @@ const theme = extendTheme({
         control: {
           transitionProperty: 'common',
           transitionDuration: 'normal',
-          bg: 'white',
-          _indeterminate: {
+        },
+      },
+      variants: {
+        indeterminateUnfilled: {
+          control: {
+            transitionProperty: 'common',
+            transitionDuration: 'normal',
             bg: 'white',
-            borderColor: 'gray.200',
-            color: 'gray.200',
+            _indeterminate: {
+              bg: 'white',
+              borderColor: 'gray.200',
+              color: 'gray.200',
+            },
           },
         },
       },

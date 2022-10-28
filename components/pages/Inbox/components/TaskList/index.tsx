@@ -19,7 +19,7 @@ const TaskList = observer(function TaskList() {
   const store = useTasksStore();
 
   return (
-    <Container maxW='container.lg' p={0} h='100%'>
+    <Container maxW='container.lg' p={4} pb={0} h='100%'>
       <Box pl={5} pr={5} display='flex' flexDirection='column' h='100%'>
         <HStack justifyContent='space-between'>
           <Heading size='lg' mt={2.5} mb={8} pt={4}>
