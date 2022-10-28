@@ -66,6 +66,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         <Box h={10} pl={2} display='flex' alignItems='center'>
           <div onClick={(e) => e.stopPropagation()}>
             <Checkbox
+              variant='indeterminateUnfilled'
               bg='white'
               size='lg'
               mr={2}

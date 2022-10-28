@@ -7,6 +7,7 @@ import { Task } from './components/Task';
 import 'allotment/dist/style.css';
 import { useTasksStore } from './store';
 import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
+import { Box } from '@chakra-ui/react';
 
 export const TasksView = observer(function TasksView() {
   const store = useTasksStore();
@@ -18,17 +19,19 @@ export const TasksView = observer(function TasksView() {
       <Head>
         <title>Inbox</title>
       </Head>
-      <TaskList />
-      {store.openedTask && (
-        <Task
-          task={store.openedTaskData}
-          callbacks={{
-            onClose: store.closeTask,
-            onPreviousItem: store.draggableList.focusPrevItem,
-            onNextItem: store.draggableList.focusNextItem,
-          }}
-        />
-      )}
+      <Box display='flex' h='100%'>
+        <TaskList />
+        {store.openedTask && (
+          <Task
+            task={store.openedTaskData}
+            callbacks={{
+              onClose: store.closeTask,
+              onPreviousItem: store.draggableList.focusPrevItem,
+              onNextItem: store.draggableList.focusNextItem,
+            }}
+          />
+        )}
+      </Box>
     </>
   );
 });
