@@ -37,6 +37,23 @@ server() {
     node:16-alpine -c 'npm run start'
 }
 
+# Examples:
+#  - run tools npm i vercel@^28.4.12
+tools() {
+  pushd tools
+  trap popd EXIT
+
+  case "${1}" in
+  npm)
+    docker run --rm -it \
+      -v "$(pwd)":/tools \
+      -w /tools \
+      --entrypoint=/bin/sh \
+      node:16-alpine -c "${*}"
+    ;;
+  esac
+}
+
 env() {
   # TODO:improve support custom host with https
   #    sudo code /etc/hosts <- 127.0.0.1  tact.dev tact.local
