@@ -38,7 +38,7 @@ server() {
 }
 
 # Examples:
-#  - run tools npm i vercel@^28.4.12
+#  - run tools npm i vercel@latest
 tools() {
   pushd tools
   trap popd EXIT

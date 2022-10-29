@@ -16,3 +16,27 @@ updates:
       prefix: 'feat'
       prefix-development: 'chore'
       include: 'scope'
+
+  - package-ecosystem: npm
+    directory: /tools/
+    schedule:
+      interval: daily
+    labels:
+      - 'type: improvement'
+      - 'scope: inventory'
+      - 'scope: deps'
+    commit-message:
+      prefix: 'tools'
+      include: 'scope'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    labels:
+      - 'type: improvement'
+      - 'scope: inventory'
+      - 'scope: deps'
+    commit-message:
+      prefix: 'ci/cd'
+      include: 'scope'
