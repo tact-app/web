@@ -5,6 +5,13 @@ import { OriginCheckStatusTypes } from './types';
 
 export type SpacesMenuProps = {
   withCheckboxes?: boolean;
+  hotkeysEnabled?: boolean;
+  callbacks: {
+    onSpaceChange?: (space: SpaceData) => void;
+    onFocusChange?: (path: string[]) => void;
+    onFocus?: () => void;
+    onFocusLeave?: (direction: 'left' | 'right') => void;
+  };
 };
 
 type OriginCheckStateTree = Record<string, OriginCheckState>;
@@ -15,30 +22,32 @@ type OriginCheckState = {
   children: OriginCheckStateTree;
 };
 
-type SpacesMenuPointer = string[];
-
 export class SpacesMenuStore {
   constructor() {
     makeAutoObservable(this);
   }
 
+  callbacks: SpacesMenuProps['callbacks'] = {};
+
   withCheckboxes = false;
   currentSpaceIndex: number = 0;
   spaces: SpaceData[] = [];
   isExpanded = true;
-  focusedPath: SpacesMenuPointer = [];
+  focusedPath: string[] = [];
+  selectedPath: string[] = [];
   savedState: Record<string, OriginCheckStateTree> = {};
   checkState: OriginCheckStateTree = {};
 
   keyMap = {
-    UP: 'up',
-    FORCE_UP: 'cmd+up',
-    DOWN: 'down',
-    FORCE_DOWN: 'cmd+down',
+    UP: ['j', 'up'],
+    FORCE_UP: ['cmd+j', 'cmd+up'],
+    DOWN: ['k', 'down'],
+    FORCE_DOWN: ['cmd+k', 'cmd+down'],
     CHECK: 'space',
     COLLAPSE: 'left',
     EXPAND: 'right',
-    TOGGLE: 'enter',
+    LEAVE: 'esc',
+    SELECT: 'enter',
   };
 
   hotkeysHandlers = {
@@ -53,6 +62,9 @@ export class SpacesMenuStore {
     },
     FORCE_DOWN: () => {
       this.selectNextSpace('down');
+    },
+    LEAVE: () => {
+      this.callbacks.onFocusLeave?.('right');
     },
     COLLAPSE: () => {
       if (this.focusedPath.length) {
@@ -73,8 +85,8 @@ export class SpacesMenuStore {
         this.toggleExpanded(true);
       }
     },
-    TOGGLE: () => {
-      this.toggleFocusedOriginExpand();
+    SELECT: () => {
+      this.selectFocused();
     },
   };
 
@@ -86,14 +98,14 @@ export class SpacesMenuStore {
     return this.spaces[this.currentSpaceIndex].id;
   }
 
-  checkPathFocus = (spaceId: string, path: string[]) => {
+  checkPathMatch = (spaceId: string, path: string[], checkPath: string[]) => {
     if (spaceId !== this.currentSpaceId) {
       return false;
     }
 
-    if (this.focusedPath.length && this.focusedPath.length === path.length) {
+    if (checkPath.length && checkPath.length === path.length) {
       for (let focusedIndex in path) {
-        if (this.focusedPath[focusedIndex] !== path[focusedIndex]) {
+        if (checkPath[focusedIndex] !== path[focusedIndex]) {
           return false;
         }
       }
@@ -102,6 +114,14 @@ export class SpacesMenuStore {
     }
 
     return true;
+  };
+
+  checkPathFocus = (spaceId: string, path: string[]) => {
+    return this.checkPathMatch(spaceId, path, this.focusedPath);
+  };
+
+  checkPathSelect = (spaceId: string, path: string[]) => {
+    return this.checkPathMatch(spaceId, path, this.selectedPath);
   };
 
   moveFocus = (direction: 'up' | 'down') => {
@@ -129,6 +149,14 @@ export class SpacesMenuStore {
         this.selectNextSpace(direction);
       }
 
+      if (
+        this.currentSpaceIndex === this.spaces.length - 1 &&
+        !newPath.length &&
+        direction === 'down'
+      ) {
+        return;
+      }
+
       this.focus(newPath);
     } else {
       this.selectNextSpace(direction);
@@ -137,10 +165,10 @@ export class SpacesMenuStore {
 
   findNeighbor = (
     spaceId: string,
-    path: SpacesMenuPointer,
+    path: string[],
     direction: 'up' | 'down',
     ignoreExpanded = false
-  ): SpacesMenuPointer | null => {
+  ): string[] => {
     if (path.length) {
       const chain = this.getChainByPath(spaceId, path);
 
@@ -230,13 +258,23 @@ export class SpacesMenuStore {
     }
   };
 
-  focus = (data?: SpacesMenuPointer) => {
+  focus = (data?: string[]) => {
     this.focusedPath = data ? data : [];
+    this.callbacks.onFocusChange?.(this.focusedPath);
+  };
+
+  select(path?: string[]) {
+    this.selectedPath = path ? path : [];
+  }
+
+  selectFocused = () => {
+    this.select(this.focusedPath);
   };
 
   handleOriginClick = (spaceId: string, path: string[]) => {
     if (this.currentSpaceId === spaceId) {
       this.focus(path);
+      this.select(path);
     }
   };
 
@@ -262,10 +300,6 @@ export class SpacesMenuStore {
 
   toggleExpanded = (state?: boolean) => {
     this.isExpanded = state === undefined ? !this.isExpanded : state;
-
-    if (!this.isExpanded) {
-      this.focus();
-    }
   };
 
   handleExpanderClick = () => {
@@ -439,6 +473,16 @@ export class SpacesMenuStore {
 
   handleSpaceChange = (index: number) => {
     this.currentSpaceIndex = index;
+    this.callbacks.onSpaceChange?.(this.currentSpace);
+    this.focus();
+    this.select();
+  };
+
+  handleSpaceClick = (index: number) => {
+    if (index === this.currentSpaceIndex) {
+      this.focus();
+      this.select();
+    }
   };
 
   selectNextSpace = (direction: 'up' | 'down') => {
@@ -550,6 +594,13 @@ export class SpacesMenuStore {
         ],
       },
       {
+        id: '4444',
+        color: 'purple.200',
+        name: 'Meetings',
+        shortName: 'M',
+        children: [],
+      },
+      {
         id: '222',
         color: 'blue.200',
         name: 'Life',
@@ -638,8 +689,12 @@ export class SpacesMenuStore {
     this.handleSpaceChange(0);
   };
 
-  init = (props: SpacesMenuProps) => {
+  update = (props: SpacesMenuProps) => {
     this.withCheckboxes = props.withCheckboxes;
+    this.callbacks = props.callbacks || {};
+  };
+
+  init = (props: SpacesMenuProps) => {
     this.loadSpaces();
   };
 }

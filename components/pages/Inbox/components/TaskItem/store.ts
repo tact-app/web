@@ -58,7 +58,7 @@ class TaskItemStore {
     this.onFocus(null);
   };
 
-  init = ({
+  update = ({
     task,
     onFocus,
     onNavigate,
@@ -69,6 +69,7 @@ class TaskItemStore {
     isDragging,
     isEditMode,
   }: TaskItemProps) => {
+    console.log('update', task);
     this.task = task;
     this.onFocus = onFocus;
     this.tags = tagsMap;

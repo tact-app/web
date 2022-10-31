@@ -430,7 +430,7 @@ export class DraggableListStore {
     this.callbacks.onFocusedItemsChange?.(activeItemIds);
   };
 
-  init = (props: DraggableListProps) => {
+  update = (props: DraggableListProps) => {
     this.callbacks = props.callbacks || {};
     this.items = props.items;
     this.checkItemActivity = props.checkItemActivity;

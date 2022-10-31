@@ -20,14 +20,20 @@ export const SpacesMenuView = observer(function SpacesMenuView(
   props: SpacesMenuProps
 ) {
   const store = useSpacesMenuStore();
-  useHotkeysHandler(store.keyMap, store.hotkeysHandlers);
+  useHotkeysHandler(store.keyMap, store.hotkeysHandlers, {
+    enabled: props.hotkeysEnabled,
+  });
+
+  // ToDo: при фокусе наспейсе делать полтиник
 
   return (
     <HorizontalCollapse
+      onMouseDown={store.callbacks.onFocus}
       isOpen={store.isExpanded}
       width={72}
       initialWidth={14}
       boxShadow='lg'
+      flexShrink={0}
     >
       <Box h='100%' alignItems='start' p={2}>
         <IconButton
@@ -39,10 +45,11 @@ export const SpacesMenuView = observer(function SpacesMenuView(
           size='xs'
         >
           <chakra.div
-            width='16px'
+            w={6}
+            h={6}
             m={0}
             transition='transform 0.2s'
-            transform={store.isExpanded ? 'rotate(0)' : 'rotate(180deg)'}
+            transform={store.isExpanded ? 'rotate(180deg)' : 'rotate(0)'}
           >
             <ExpandIcon />
           </chakra.div>
@@ -63,18 +70,24 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                 unselectable='on'
               >
                 <AccordionButton
+                  onClick={() => store.handleSpaceClick(index)}
                   borderRadius='lg'
+                  borderColor={color}
                   overflow='hidden'
                   tabIndex={-1}
                   h={10}
+                  _focus={{ boxShadow: 'none' }}
                   bg={
-                    store.currentSpaceId === id
+                    store.currentSpaceId === id &&
+                    (store.selectedPath.length === 0 || !store.isExpanded
                       ? color.replace(/\d+/, (v) => '' + (parseInt(v) - 100))
-                      : 'transparent'
+                      : store.focusedPath.length === 0
+                      ? color.replace(/\d+/, (v) => '' + (parseInt(v) - 125))
+                      : 'transparent')
                   }
                   p={1}
                   _hover={{
-                    bg: color.replace(/\d+/, (v) => '' + (parseInt(v) - 100)),
+                    bg: color.replace(/\d+/, (v) => '' + (parseInt(v) - 125)),
                   }}
                 >
                   <chakra.div

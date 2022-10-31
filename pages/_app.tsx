@@ -148,7 +148,32 @@ const theme = extendTheme({
   },
   colors: {
     blue: {
-      '25': '#F4FBFF',
+      25: '#F4FBFF',
+      75: '#D6F1FF',
+    },
+    gray: {
+      75: '#F4F8FB',
+    },
+    orange: {
+      75: '#FFF5E0',
+    },
+    yellow: {
+      75: '#FFFFD1',
+    },
+    green: {
+      75: '#DBFFE5',
+    },
+    teal: {
+      75: '#D6FFF7',
+    },
+    cyan: {
+      75: '#DAFBFB',
+    },
+    purple: {
+      75: '#F2E5FF',
+    },
+    pink: {
+      75: '#FFEBEF',
     },
   },
   components: {

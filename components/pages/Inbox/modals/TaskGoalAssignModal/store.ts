@@ -72,7 +72,7 @@ export class TaskGoalAssignModalStore {
     }
   };
 
-  init = (props: TaskGoalAssignModalProps) => {
+  update = (props: TaskGoalAssignModalProps) => {
     this.callbacks = props.callbacks;
     this.multiple = props.multiple;
     this.selectedGoalId = props.value;

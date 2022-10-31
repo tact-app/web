@@ -188,7 +188,7 @@ export class GoalsSelectionStore {
     this.createGoalButtonRef = ref;
   };
 
-  init = (props: GoalsSelectionProps) => {
+  update = (props: GoalsSelectionProps) => {
     this.callbacks = props.callbacks;
     this.goals = props.goals;
     this.multiple = props.multiple;

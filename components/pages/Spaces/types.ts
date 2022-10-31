@@ -17,3 +17,8 @@ export type SpaceData = {
   shortName: string;
   children: OriginData[];
 };
+
+export enum SpacesFocusableBlocks {
+  INBOX = 'INBOX',
+  TREE = 'TREE',
+}

@@ -159,7 +159,7 @@ export class GoalCreationModalStore {
     this.step = GoalCreationModalSteps.FILL_DESCRIPTION;
   };
 
-  init = async (props: GoalCreationModalProps) => {
+  update = async (props: GoalCreationModalProps) => {
     this.onClose = props.onClose;
     this.onSave = props.onSave;
     this.existedGoal = props.goal;

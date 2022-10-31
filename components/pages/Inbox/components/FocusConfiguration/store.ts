@@ -105,10 +105,12 @@ export class FocusConfigurationStore {
     this.callbacks.onChange?.(this.data);
   };
 
-  init = async (props: FocusConfigurationProps) => {
+  update = (props: FocusConfigurationProps) => {
     this.callbacks = props.callbacks;
     this.goals = props.goals;
+  };
 
+  init = async (props: FocusConfigurationProps) => {
     const focusConfig = await this.root.api.focusConfigurations.get(
       this.data.id
     );

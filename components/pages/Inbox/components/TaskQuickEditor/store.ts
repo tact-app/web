@@ -452,7 +452,7 @@ export class TaskQuickEditorStore {
     }
   };
 
-  init = ({
+  update = ({
     onSave,
     onSuggestionsMenuOpen,
     onTagCreate,

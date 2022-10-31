@@ -87,7 +87,7 @@ export class MetricExtensionStore {
     this.value = newValue;
   };
 
-  init = (props: MetricExtensionProps) => {
+  update = (props: MetricExtensionProps) => {
     this.props = props;
     this.value = props.node.attrs.value;
     this.type = props.node.attrs.type;

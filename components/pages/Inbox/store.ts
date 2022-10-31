@@ -384,6 +384,8 @@ export class TasksStore {
   init = async () => {
     await this.load();
   };
+
+  update = () => null;
 }
 
 export const { useStore: useTasksStore, StoreProvider: TasksStoreProvider } =

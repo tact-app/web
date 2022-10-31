@@ -20,7 +20,7 @@ export class GoalConfigurationStore {
     this.value = (e.target as HTMLInputElement).value;
   };
 
-  init = ({ goalId }: GoalConfigurationProps) => {
+  update = ({ goalId }: GoalConfigurationProps) => {
     this.goalId = goalId;
   };
 }

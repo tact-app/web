@@ -9,7 +9,8 @@ import {
 import { RootStore, useRootStore } from '../stores/RootStore';
 
 export interface Store<PropsType> {
-  init(props: PropsType): Promise<void> | void;
+  init?(props: PropsType): Promise<void> | void;
+  update(props: PropsType): void;
 
   subscribe?(): () => void;
 }
@@ -24,7 +25,7 @@ type TypeOfClassMethod<T, M extends keyof T> = T[M] extends Function
 
 type StorePropsType<
   StoreType extends Store<unknown>,
-  ArgType = Parameters<TypeOfClassMethod<StoreType, 'init'>>[0]
+  ArgType = Parameters<TypeOfClassMethod<StoreType, 'update'>>[0]
 > = ArgType extends undefined
   ? PropsWithChildren<Record<string, any>>
   : ArgType;
@@ -49,14 +50,18 @@ export const getProvider = <PropsType, StoreType extends Store<PropsType>>(
     const store = useMemo(() => {
       const res = existedStore || new StoreClass(rootStore);
 
-      res.init(props as PropsType);
+      res.update?.(props as PropsType);
 
       return res;
     }, [rootStore, existedStore]);
 
     useEffect(() => {
-      store.init(props as PropsType);
+      store.update?.(props as PropsType);
     }, [props, store]);
+
+    useEffect(() => {
+      store.init?.(props as PropsType);
+    }, [store]);
 
     useEffect(() => {
       if (store.subscribe) {

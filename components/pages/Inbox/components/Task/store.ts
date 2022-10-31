@@ -99,7 +99,7 @@ class TaskStore {
       fireImmediately: true,
     });
 
-  init = (props: TaskProps) => {
+  update = (props: TaskProps) => {
     this.data = props.task;
     this.callbacks = props.callbacks;
   };

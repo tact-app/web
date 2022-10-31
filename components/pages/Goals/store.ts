@@ -102,6 +102,8 @@ export class GoalsStore {
   init = async () => {
     await this.load();
   };
+
+  update = () => null;
 }
 
 export const { StoreProvider: GoalsStoreProvider, useStore: useGoalsStore } =

@@ -38,6 +38,7 @@ export const SpacesMenuOriginRow = observer(function SpacesMenuOriginRow({
   );
   const status = store.getOriginStatus(space, path);
   const isFocused = store.checkPathFocus(space, path);
+  const isSelected = store.checkPathSelect(space, path);
 
   return (
     <Box
@@ -46,9 +47,17 @@ export const SpacesMenuOriginRow = observer(function SpacesMenuOriginRow({
       display='flex'
       borderRadius='base'
       transition='background-color 0.1s ease-in-out'
-      bg={isFocused ? 'gray.300' : 'white'}
+      bg={
+        isSelected
+          ? isFocused
+            ? 'gray.200'
+            : 'gray.300'
+          : isFocused
+          ? 'gray.100'
+          : 'white'
+      }
       _hover={{
-        bg: isFocused ? 'gray.200' : 'gray.100',
+        bg: isSelected ? 'gray.200' : 'gray.100',
       }}
       alignItems='center'
       mt={2}

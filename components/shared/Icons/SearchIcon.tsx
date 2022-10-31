@@ -1,4 +1,4 @@
-export const ExpandIcon = () => (
+export const SearchIcon = () => (
   <svg
     width='24'
     height='24'
@@ -6,14 +6,16 @@ export const ExpandIcon = () => (
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
   >
-    <path
-      d='M7 6L12.6464 11.6464C12.8417 11.8417 12.8417 12.1583 12.6464 12.3536L7 18'
+    <ellipse
+      cx='10.5'
+      cy='10'
+      rx='6.5'
+      ry='7'
       stroke='#A0AEC0'
       strokeWidth='1.5'
-      strokeLinecap='round'
     />
     <path
-      d='M12 6L17.6464 11.6464C17.8417 11.8417 17.8417 12.1583 17.6464 12.3536L12 18'
+      d='M15.333 14.8057L20.9997 20.4723'
       stroke='#A0AEC0'
       strokeWidth='1.5'
       strokeLinecap='round'

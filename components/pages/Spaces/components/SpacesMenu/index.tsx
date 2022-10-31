@@ -1,11 +1,17 @@
 import { observer } from 'mobx-react-lite';
 import { SpacesMenuView } from './view';
-import { SpacesMenuProps, SpacesMenuStoreProvider } from './store';
+import {
+  SpacesMenuProps,
+  SpacesMenuStore,
+  SpacesMenuStoreProvider,
+} from './store';
 
-export const SpacesMenu = observer(function SpacesMenu(props: SpacesMenuProps) {
+export const SpacesMenu = observer(function SpacesMenu(
+  props: SpacesMenuProps & { instance?: SpacesMenuStore }
+) {
   return (
     <SpacesMenuStoreProvider {...props}>
-      <SpacesMenuView {...props}/>
+      <SpacesMenuView {...props} />
     </SpacesMenuStoreProvider>
   );
 });
