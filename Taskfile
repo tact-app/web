@@ -18,10 +18,12 @@ setup() {
   fi
 
   tools npm ci
+
+  local copied=false
+  command -v pbcopy >/dev/null && echo source bin/activate | pbcopy && copied=true
   echo Run the next commands to complete setup:
-  echo   source bin/activate - to activate virtual environment
-  echo   run vercel link - to link the current directory to a Vercel project
-  command -v pbcopy >/dev/null && echo source bin/activate | pbcopy && echo 'source bin/activate' copied to clipboard
+  printf '├─ source bin/activate\t- to activate virtual environment (copied to clipboard: %s)\n' $copied
+  printf '└─ run vercel link \t- to link the current directory to a Vercel project\n'
 }
 
 env() {
@@ -33,6 +35,7 @@ env() {
   return 1
 }
 
+# Example: run node npm ci --include=dev
 node() {
   docker run --rm -it \
     --entrypoint=/bin/sh \
@@ -77,16 +80,11 @@ tools() {
 _vercel=$(which vercel || true)
 vercel() {
   [ -z "${_vercel}" ] && echo Please setup env and activate it. && return 1
-  $_vercel -t "$(git config vercel.token)" "${@}"
-}
 
-# Example: run clean vercel
-clean() {
-  case "${1}" in
-  vercel)
-    vercel rm tact --safe --yes
-    ;;
-  esac
+  local args=("${@}")
+  if [ "${1:-}" == 'clean' ]; then args=(rm tact --safe --yes); fi
+
+  $_vercel -t "$(git config vercel.token)" "${args[@]}"
 }
 
 help() {
