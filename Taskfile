@@ -2,56 +2,26 @@
 
 set -euo pipefail
 
-install() {
-  [ "${1:-}" == '--from-scratch' ] && rm -rf node_modules
-  local cmd='npm install --include=dev'
-  if [ -t package-lock.json ]; then
-    cmd='npm ci --include=dev'
+setup() {
+  local token
+  echo Please enter Vercel token:
+  read -rs token
+  token=${token## }
+  token=${token%% }
+
+  if [ "${#token}" -lt 24 ]; then
+    echo 'Token is invalid.'
+    return 1
+  else
+    git config vercel.token "${token}"
+    echo 'Token saved.'
   fi
 
-  docker run --rm -it \
-    -v "$(pwd)":/app \
-    -w /app \
-    --entrypoint=/bin/sh \
-    node:16-alpine -c "${cmd}"
-}
-
-build() {
-  [ "${1:-}" == '--from-scratch' ] && rm -rf .next && install "${@}"
-
-  docker run --rm -it \
-    -v "$(pwd)":/app \
-    -w /app \
-    --entrypoint=/bin/sh \
-    node:16-alpine -c 'npm run build'
-}
-
-server() {
-  [ "${1:-}" == '--from-scratch' ] && build "${@}"
-
-  docker run --rm -it \
-    -p 127.0.0.1:3000:3000 \
-    -v "$(pwd)":/app \
-    -w /app \
-    --entrypoint=/bin/sh \
-    node:16-alpine -c 'npm run start'
-}
-
-# Examples:
-#  - run tools npm i vercel@latest
-tools() {
-  pushd tools
-  trap popd EXIT
-
-  case "${1}" in
-  npm)
-    docker run --rm -it \
-      -v "$(pwd)":/tools \
-      -w /tools \
-      --entrypoint=/bin/sh \
-      node:16-alpine -c "${*}"
-    ;;
-  esac
+  tools npm ci
+  echo Run the next commands to complete setup:
+  echo   source bin/activate - to activate virtual environment
+  echo   run vercel link - to link the current directory to a Vercel project
+  command -v pbcopy >/dev/null && echo source bin/activate | pbcopy && echo 'source bin/activate' copied to clipboard
 }
 
 env() {
@@ -61,6 +31,62 @@ env() {
   #  https://web.dev/how-to-use-local-https/
   #  https://github.com/FiloSottile/mkcert
   return 1
+}
+
+node() {
+  docker run --rm -it \
+    --entrypoint=/bin/sh \
+    -v "$(pwd)":/app \
+    -w /app \
+    "${@:2}" \
+    node:16-alpine -c "${1}"
+}
+
+install() {
+  [ "${1:-}" == '--from-scratch' ] && rm -rf node_modules
+  local cmd='npm install --include=dev'
+  if [ -t package-lock.json ]; then
+    cmd='npm ci --include=dev'
+  fi
+  node "${cmd}"
+}
+
+build() {
+  [ "${1:-}" == '--from-scratch' ] && rm -rf .next && install "${@}"
+  node 'npm run build'
+}
+
+server() {
+  [ "${1:-}" == '--from-scratch' ] && build "${@}"
+  node 'npm run start' -p 127.0.0.1:3000:3000
+}
+
+# Example: run tools npm i vercel@latest
+tools() {
+  case "${1}" in
+  npm)
+    docker run --rm -it \
+      -v "$(pwd)/tools":/tools \
+      -w /tools \
+      --entrypoint=/bin/sh \
+      node:16-alpine -c "${*}"
+    ;;
+  esac
+}
+
+_vercel=$(which vercel || true)
+vercel() {
+  [ -z "${_vercel}" ] && echo Please setup env and activate it. && return 1
+  $_vercel -t "$(git config vercel.token)" "${@}"
+}
+
+# Example: run clean vercel
+clean() {
+  case "${1}" in
+  vercel)
+    vercel rm tact --safe --yes
+    ;;
+  esac
 }
 
 help() {
