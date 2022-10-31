@@ -31,6 +31,6 @@ next-env.d.ts
 /.idea/
 
 /.next/
-/.vercel/
+.vercel
 
 /node_modules/
