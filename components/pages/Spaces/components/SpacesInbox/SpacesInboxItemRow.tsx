@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { Box, chakra, Text } from '@chakra-ui/react';
 import { SpacesInboxItemData, SpacesInboxItemStatusTypes } from './types';
 import { useSpacesInboxStore } from './store';
-import { TaskItemMenu } from '../../../Inbox/components/TaskItemMenu';
+import { TaskItemMenu } from '../../../../shared/TasksList/components/TaskItemMenu';
 import React, { useCallback } from 'react';
 
 export const SpacesInboxItemRow = observer(function SpacesInboxItemRow({

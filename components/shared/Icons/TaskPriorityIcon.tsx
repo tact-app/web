@@ -1,5 +1,5 @@
 import React from 'react';
-import { TaskPriority } from '../../pages/Inbox/types';
+import { TaskPriority } from '../TasksList/types';
 
 export const TaskPriorityHigh = () => (
   <svg

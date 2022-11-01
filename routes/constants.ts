@@ -1,6 +1,6 @@
 export enum routes {
   MAIN = '/',
-  INBOX = '/inbox',
+  TASKS = '/tasks',
   GOALS = '/goals',
   SPACES = '/spaces',
 }

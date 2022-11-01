@@ -1,15 +1,20 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { SpacesInboxItemData } from '../SpacesInbox/types';
+import { TasksListStore } from '../../../../shared/TasksList/store';
+import { RootStore } from '../../../../../stores/RootStore';
 
 export type SpacesInboxItemProps = {
   item: SpacesInboxItemData;
+  instance?: SpacesInboxItemStore;
 };
 
 export class SpacesInboxItemStore {
-  constructor() {
+  constructor(public root: RootStore) {
     makeAutoObservable(this);
   }
+
+  list = new TasksListStore(this.root);
 
   item: SpacesInboxItemData | null = null;
   description: string | null = null;
@@ -22,11 +27,16 @@ export class SpacesInboxItemStore {
   };
 
   update = (props: SpacesInboxItemProps) => {
-    if (this.item === null || this.item.id !== props.item.id) {
-      this.loadDescription();
+    if (props.item) {
+      if (this.item === null || this.item.id !== props.item.id) {
+        this.item = props.item;
+        this.list.reset();
+        this.loadDescription();
+      }
+    } else {
+      this.item = null;
+      this.description = null;
     }
-
-    this.item = props.item;
   };
 }
 

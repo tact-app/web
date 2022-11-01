@@ -24,8 +24,6 @@ export const SpacesMenuView = observer(function SpacesMenuView(
     enabled: props.hotkeysEnabled,
   });
 
-  // ToDo: при фокусе наспейсе делать полтиник
-
   return (
     <HorizontalCollapse
       onMouseDown={store.callbacks.onFocus}

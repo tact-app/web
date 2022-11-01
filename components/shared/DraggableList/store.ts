@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { NavigationDirections } from '../../pages/Inbox/types';
+import { NavigationDirections } from '../TasksList/types';
 import React from 'react';
 
 export type DraggableListCallbacks = {
@@ -35,6 +35,7 @@ export type DraggableListProps = {
   callbacks?: DraggableListCallbacks;
   checkItemActivity?: (id: string) => boolean;
   items: string[];
+  dndActive?: boolean;
 };
 
 export class DraggableListStore {
@@ -48,6 +49,7 @@ export class DraggableListStore {
   focusedItemIds: string[] = [];
   items: string[] = [];
 
+  isDndActive: boolean = true;
   isOutsideClickEnabled: boolean = true;
   isHotkeysActive: boolean = true;
   isDraggingActive: boolean = false;
@@ -433,6 +435,7 @@ export class DraggableListStore {
   update = (props: DraggableListProps) => {
     this.callbacks = props.callbacks || {};
     this.items = props.items;
+    this.isDndActive = props.dndActive;
     this.checkItemActivity = props.checkItemActivity;
   };
 }

@@ -5,6 +5,23 @@ import { SpacesMenu } from './components/SpacesMenu';
 import { SpacesInbox } from './components/SpacesInbox';
 import { SpacesFocusableBlocks } from './types';
 import { SpacesInboxItem } from './components/SpacesInboxItem';
+import { ResizableGroup } from '../../shared/ResizableGroup';
+import { Task } from '../../shared/Task';
+import React from 'react';
+
+const configs = [
+  {
+    size: 1,
+    flexible: true,
+  },
+  {
+    size: 1,
+    props: {
+      boxShadow: 'lg',
+    },
+  },
+  { size: 1 },
+];
 
 export const SpacesView = observer(function SpacesView(props: SpacesProps) {
   const store = useSpacesStore();
@@ -21,7 +38,7 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
         }}
         hotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.TREE}
       />
-      <Box display='flex' flex={1}>
+      <ResizableGroup configs={configs}>
         <SpacesInbox
           callbacks={{
             onFocus: () => store.handleFocus(SpacesFocusableBlocks.INBOX),
@@ -31,8 +48,25 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
           space={store.currentSpace}
           hotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.INBOX}
         />
-        <SpacesInboxItem item={store.openedItem} />
-      </Box>
+
+        {store.openedItem && (
+          <SpacesInboxItem item={store.openedItem} instance={store.inboxItem} />
+        )}
+
+        {store.inboxItem.list.openedTask && (
+          <Box p={7}>
+            <Task
+              task={store.inboxItem.list.openedTaskData}
+              callbacks={{
+                onClose: store.inboxItem.list.closeTask,
+                onPreviousItem:
+                  store.inboxItem.list.draggableList.focusPrevItem,
+                onNextItem: store.inboxItem.list.draggableList.focusNextItem,
+              }}
+            />
+          </Box>
+        )}
+      </ResizableGroup>
     </Box>
   );
 });

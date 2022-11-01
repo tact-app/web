@@ -94,6 +94,11 @@ export class SpacesInboxStore {
         title: 'New message',
         descriptionId: 'inbox.newMessage',
         icon: '',
+        origin: {
+          type: 'app',
+          name: 'Mail',
+          id: '1',
+        },
       },
       {
         id: '2',
@@ -101,6 +106,11 @@ export class SpacesInboxStore {
         title: 'New message 2',
         descriptionId: 'inbox.newMessage.2',
         icon: '',
+        origin: {
+          type: 'app',
+          name: 'github',
+          id: '2',
+        },
       },
       {
         id: '3',
@@ -108,6 +118,11 @@ export class SpacesInboxStore {
         title: 'New message 2',
         descriptionId: 'inbox.newMessage.3',
         icon: '',
+        origin: {
+          type: 'app',
+          name: 'github',
+          id: '2',
+        },
       },
       {
         id: '4',
@@ -115,6 +130,11 @@ export class SpacesInboxStore {
         title: 'New message 4',
         descriptionId: 'inbox.newMessage.4',
         icon: '',
+        origin: {
+          type: 'app',
+          name: 'Jira',
+          id: '3',
+        },
       },
       {
         id: '5',
@@ -122,6 +142,11 @@ export class SpacesInboxStore {
         title: 'New message 5',
         descriptionId: 'inbox.newMessage.5',
         icon: '',
+        origin: {
+          type: 'app',
+          name: 'Jira',
+          id: '3',
+        },
       },
     ];
   };

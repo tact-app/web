@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Drawer,
@@ -16,14 +21,15 @@ export const ResizableDrawer = observer(function ResizableDrawer({
   defaultWidth = '30%',
   containerRef,
   ...rest
-}: {
+}: PropsWithChildren<{
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   minWidth?: number | string;
   maxWidth?: number | string;
   defaultWidth?: number | string;
   containerRef?: React.RefObject<HTMLElement>;
-} & DrawerContentProps) {
+}> &
+  DrawerContentProps) {
   const [isResizing, setIsResizing] = useState(false);
   const [lastDownX, setLastDownX] = useState(0);
   const [newWidth, setNewWidth] = useState(defaultWidth);

@@ -6,6 +6,7 @@ export type HorizontalCollapseProps = {
   isOpen?: boolean;
   initialWidth?: number | string;
   width?: number | string;
+  resizable?: boolean;
 };
 
 export const HorizontalCollapse = ({
@@ -13,16 +14,15 @@ export const HorizontalCollapse = ({
   children,
   initialWidth,
   width,
-  flex,
+  resizable,
   ...rest
 }: PropsWithChildren<HorizontalCollapseProps> & HTMLChakraProps<'div'>) => {
   return (
     <chakra.div
       {...rest}
       h='100%'
-      transition={width ? 'width 0.2s ease-in-out' : 'flex 0.2s ease-in-out'}
-      w={width !== undefined ? (isOpen ? width : initialWidth) : '100%'}
-      flex={flex !== undefined ? (isOpen ? flex : 0) : undefined}
+      transition='width 0.2s ease-in-out'
+      w={isOpen ? width : initialWidth}
     >
       {children}
     </chakra.div>

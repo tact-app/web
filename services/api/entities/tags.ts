@@ -1,5 +1,5 @@
 import { ApiService } from '../ApiService';
-import { TaskTag } from '../../../components/pages/Inbox/types';
+import { TaskTag } from '../../../components/shared/TasksList/types';
 
 const getTagsApi = (apiService: ApiService) => ({
   list: () => apiService.get<TaskTag[]>(`/api/tags`),

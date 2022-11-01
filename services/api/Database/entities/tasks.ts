@@ -1,9 +1,20 @@
-import { TaskData } from '../../../../components/pages/Inbox/types';
+import { TaskData } from '../../../../components/shared/TasksList/types';
 import { DB } from '../index';
 
 const data = {
   get: {
-    '/api/tasks': async (db: DB, { id }: { id: string }) => {
+    '/api/tasks': async (
+      db: DB,
+      {
+        id,
+        filter,
+      }: {
+        id: string;
+        filter?: {
+          inputId?: string;
+        };
+      }
+    ) => {
       const tasks = await db.getAll('tasks');
       const taskLists = await db.get('taskLists', id);
 
@@ -16,14 +27,26 @@ const data = {
         };
       }
 
+      const filteredTasks = tasks
+        .filter(({ listId, input }) => {
+          if (listId !== id) {
+            return false;
+          }
+
+          if (filter?.inputId && input?.id !== filter.inputId) {
+            return false;
+          }
+
+          return true;
+        })
+        .reduce((acc, task) => {
+          acc[task.id] = task;
+          return acc;
+        }, {});
+
       return {
-        tasks: tasks
-          .filter(({ listId }) => listId === id)
-          .reduce((acc, task) => {
-            acc[task.id] = task;
-            return acc;
-          }, {}),
-        order: taskLists.taskIds,
+        tasks: filteredTasks,
+        order: taskLists.taskIds.filter((taskId) => filteredTasks[taskId]),
       };
     },
   },

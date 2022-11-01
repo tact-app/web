@@ -3,15 +3,18 @@ import { getProvider } from '../../../helpers/StoreProvider';
 import { SpaceData, SpacesFocusableBlocks } from './types';
 import { SpacesInboxItemData } from './components/SpacesInbox/types';
 import { SpacesMenuStore } from './components/SpacesMenu/store';
+import { SpacesInboxItemStore } from './components/SpacesInboxItem/store';
+import { RootStore } from '../../../stores/RootStore';
 
 export type SpacesProps = {};
 
 export class SpacesStore {
-  constructor() {
+  constructor(public root: RootStore) {
     makeAutoObservable(this);
   }
 
   menu = new SpacesMenuStore();
+  inboxItem = new SpacesInboxItemStore(this.root);
 
   focusedBlock: SpacesFocusableBlocks | null = SpacesFocusableBlocks.TREE;
 

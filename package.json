@@ -1,8 +1,8 @@
 {
   "private": true,
-  "engines" : {
-    "npm" : "^8.0.0",
-    "node" : "^16.14.0"
+  "engines": {
+    "npm": "^8.0.0",
+    "node": "^16.14.0"
   },
   "scripts": {
     "dev": "NODE_OPTIONS=--inspect next dev",
@@ -10,10 +10,6 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --dir . -- --fix"
-  },
-  "engines": {
-    "npm": "^8.0.0",
-    "node": "^16.14.0"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.4",
@@ -42,6 +38,7 @@
     "react-hotkeys-hook": "^3.4.7",
     "tact-block-note-core": "https://gitpkg.now.sh/tact-app/BlockNote/packages/core?main",
     "tippy.js": "^6.3.7",
+    "use-resize-observer": "^9.0.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

@@ -13,7 +13,7 @@ const NAV_ITEMS: Array<NavItem> = [
   {
     label: 'Tasks',
     icon: <CalendarIcon />,
-    href: routes.INBOX,
+    href: routes.TASKS,
   },
   {
     label: 'Spaces',

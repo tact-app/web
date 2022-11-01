@@ -10,4 +10,9 @@ export type SpacesInboxItemData = {
   status: SpacesInboxItemStatusTypes;
   descriptionId: string;
   icon: string;
+  origin: {
+    type: string;
+    name: string;
+    id: string;
+  };
 };

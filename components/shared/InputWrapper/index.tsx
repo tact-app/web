@@ -36,7 +36,9 @@ export const InputWrapperStyles: Record<string, StyleConfig> = {
   },
 };
 
-interface InputWrapperProps extends HTMLChakraProps<'div'>, ThemingProps {
+export interface InputWrapperProps
+  extends HTMLChakraProps<'div'>,
+    ThemingProps {
   variant?: string;
   size?: string;
 }

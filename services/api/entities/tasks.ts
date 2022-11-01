@@ -1,11 +1,11 @@
 import { ApiService } from '../ApiService';
-import { TaskData } from '../../../components/pages/Inbox/types';
+import { TaskData } from '../../../components/shared/TasksList/types';
 
 const getTasksApi = (apiService: ApiService) => ({
-  list: (id: string) =>
+  list: (id: string, filter?: { inputId?: string }) =>
     apiService.get<{ tasks: Record<string, TaskData>; order: string[] }>(
       `/api/tasks`,
-      { id }
+      { id, filter }
     ),
   create: (task: TaskData) =>
     apiService.post<TaskData[]>(`/api/tasks/create`, task),
