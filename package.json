@@ -30,7 +30,7 @@
     "mobx": "^6.0.3",
     "mobx-react-lite": "^3.4.0",
     "next": "^13.0.0",
-    "next-transpile-modules": "^9.1.0",
+    "next-transpile-modules": "^10.0.0",
     "path-to-regexp": "^6.2.1",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
