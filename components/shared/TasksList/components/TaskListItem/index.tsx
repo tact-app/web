@@ -25,7 +25,6 @@ export const TaskListItem = observer(function TaskListItem({
         isEditMode={store.editingTaskId && task.id === store.editingTaskId}
         tagsMap={store.tagsMap}
         listId={store.listId}
-        onSuggestionsMenuOpen={store.handleSuggestions}
         onFocus={store.draggableList.setFocusedItem}
         onNavigate={store.draggableList.handleNavigation}
         onStatusChange={store.setTaskStatus}

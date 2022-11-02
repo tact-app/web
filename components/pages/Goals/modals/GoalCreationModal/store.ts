@@ -46,9 +46,7 @@ export class GoalCreationModalStore {
   hotkeyHandlers = {
     CREATE: (e) => {
       e.preventDefault();
-      if (this.isReadyForSave) {
-        this.handleSave();
-      }
+      this.handleSave();
     },
     BACK: () => {
       this.handleBack();
@@ -125,22 +123,24 @@ export class GoalCreationModalStore {
   };
 
   handleSave = () => {
-    this.onSave?.(
-      {
-        id: this.existedGoal ? this.existedGoal.id : uuidv4(),
-        listId: 'default',
-        title: this.title,
-        descriptionId: this.description.id,
-        icon: {
-          type: GoalIconVariants.EMOJI,
-          color: this.color,
-          value: this.icon,
+    if (this.isReadyForSave) {
+      this.onSave?.(
+        {
+          id: this.existedGoal ? this.existedGoal.id : uuidv4(),
+          listId: 'default',
+          title: this.title,
+          descriptionId: this.description.id,
+          icon: {
+            type: GoalIconVariants.EMOJI,
+            color: this.color,
+            value: this.icon,
+          },
         },
-      },
-      this.description
-    );
+        this.description
+      );
 
-    this.handleClose();
+      this.handleClose();
+    }
   };
 
   handleDescriptionChange = (value: JSONContent) => {

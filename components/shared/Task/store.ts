@@ -10,8 +10,8 @@ import { v4 as uuidv4 } from 'uuid';
 export type TaskProps = {
   callbacks: {
     onClose?: () => void;
-    onNextItem?: (taskId: string) => void;
-    onPreviousItem?: (taskId: string) => void;
+    onNextItem?: (taskId: string, stay?: boolean) => void;
+    onPreviousItem?: (taskId: string, stay?: boolean) => void;
   };
   task: TaskData;
 };
@@ -69,12 +69,12 @@ class TaskStore {
 
   handleNextItem = () => {
     this.handleDescriptionBlur();
-    this.callbacks.onNextItem(this.data?.id);
+    this.callbacks.onNextItem(this.data?.id, true);
   };
 
   handlePreviousItem = () => {
     this.handleDescriptionBlur();
-    this.callbacks.onPreviousItem(this.data?.id);
+    this.callbacks.onPreviousItem(this.data?.id, true);
   };
 
   handleClose = () => {

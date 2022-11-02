@@ -50,7 +50,6 @@ export class DraggableListStore {
   items: string[] = [];
 
   isDndActive: boolean = true;
-  isOutsideClickEnabled: boolean = true;
   isHotkeysActive: boolean = true;
   isDraggingActive: boolean = false;
   isControlDraggingActive: boolean = false;
@@ -129,14 +128,6 @@ export class DraggableListStore {
         this.resetFocusedItem();
       }
     }),
-  };
-
-  enableOutsideClick = () => {
-    this.isOutsideClickEnabled = true;
-  };
-
-  disableOutsideClick = () => {
-    this.isOutsideClickEnabled = false;
   };
 
   disableHotkeys = () => {
@@ -334,22 +325,22 @@ export class DraggableListStore {
     }
   };
 
-  focusNextItem = (id: string) => {
+  focusNextItem = (id: string, stay?: boolean) => {
     const nextActiveItem = this.getNextActiveItem(id);
 
     if (nextActiveItem) {
       this.setFocusedItem(nextActiveItem);
-    } else {
+    } else if (!stay) {
       this.callbacks.onFocusLeave?.(NavigationDirections.DOWN);
     }
   };
 
-  focusPrevItem = (id: string) => {
+  focusPrevItem = (id: string, stay?: boolean) => {
     const prevActiveItem = this.getPrevActiveItem(id);
 
     if (prevActiveItem) {
       this.setFocusedItem(prevActiveItem);
-    } else {
+    } else if (!stay) {
       this.callbacks.onFocusLeave?.(NavigationDirections.UP);
     }
   };

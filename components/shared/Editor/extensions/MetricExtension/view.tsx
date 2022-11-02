@@ -98,6 +98,7 @@ const MetricExtensionTodoValue = observer(function MetricExtensionTodoValue() {
 
   return (
     <Checkbox
+      contentEditable={false}
       pr={1}
       size='lg'
       isChecked={store.isCompleted}

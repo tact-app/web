@@ -6,8 +6,7 @@ import { insertMetric, MetricExtensionTypes } from './command';
 export const MetricExtension = Node.create({
   name: 'metric',
 
-  group: 'inline',
-  inline: true,
+  group: 'block',
   content: 'inline*',
 
   addAttributes() {
@@ -34,17 +33,37 @@ export const MetricExtension = Node.create({
 
   addKeyboardShortcuts() {
     return {
-      Enter: ({ editor }) => {
+      'Shift-Enter': ({ editor }) => {
         if (editor.isActive('metric')) {
-          insertMetric(MetricExtensionTypes.RING)(editor, {
-            from: editor.state.selection.from,
-            to: editor.state.selection.to,
-          });
+          const attrs = editor.getAttributes('metric');
+
+          const { chain, node } = insertMetric(
+            attrs.type,
+            editor,
+            editor.chain().focus()
+          );
+
+          chain.run();
 
           return true;
         } else {
           return false;
         }
+      },
+      Enter: ({ editor }) => {
+        if (editor.isActive('metric')) {
+          editor
+            .chain()
+            .focus()
+            .insertContent(
+              editor.schema.nodes['paragraph'].createAndFill().toJSON()
+            )
+            .focus(editor.state.selection.anchor + 1)
+            .run();
+          return true;
+        }
+
+        return false;
       },
     };
   },

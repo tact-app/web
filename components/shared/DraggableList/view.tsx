@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { Box, BoxProps, IconButton, useOutsideClick } from '@chakra-ui/react';
+import { Box, BoxProps, IconButton } from '@chakra-ui/react';
 import React, { PropsWithChildren, useRef } from 'react';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { TaskDragIcon } from '../Icons/TaskDragIcon';
@@ -124,12 +124,6 @@ export const DraggableListView = observer(function DraggableListView({
 }) {
   const store = useDraggableListStore();
   const ref = useRef(null);
-
-  useOutsideClick({
-    ref: ref,
-    enabled: store.isOutsideClickEnabled,
-    handler: store.resetFocusedItem,
-  });
 
   useHotkeysHandler(keyMap, store.hotkeyHandlers);
 

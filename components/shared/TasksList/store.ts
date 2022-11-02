@@ -172,14 +172,6 @@ export class TasksListStore {
     this.openedTask = null;
   };
 
-  handleSuggestions = (state: boolean) => {
-    if (state) {
-      this.draggableList.disableOutsideClick();
-    } else {
-      this.draggableList.enableOutsideClick();
-    }
-  };
-
   createTask = (task: TaskData) => {
     task.title = task.title.trim();
 

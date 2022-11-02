@@ -58,11 +58,7 @@ export const TasksView = observer(function TasksView() {
           </Box>
         </Container>
         {store.list.openedTask && (
-          <ResizableDrawer
-            isOpen={!!store.list.openedTaskData}
-            width='300'
-            pb={8}
-          >
+          <ResizableDrawer isOpen={!!store.list.openedTaskData} width='300'>
             <Task
               task={store.list.openedTaskData}
               callbacks={{

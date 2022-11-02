@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { Box, Center, CircularProgress, Input } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
-import { BlockNoteEditor } from '../../../../../shared/BlockNoteEditor';
+import { Editor } from '../../../../../shared/Editor';
 
 export const GoalCreationDescription = observer(
   function GoalCreationDescription() {
@@ -30,9 +30,13 @@ export const GoalCreationDescription = observer(
               <CircularProgress isIndeterminate size='24px' />
             </Center>
           ) : (
-            <BlockNoteEditor
-              value={store.description ? store.description.content : undefined}
-              onChange={store.handleDescriptionChange}
+            <Editor
+              content={
+                store.description ? store.description.content : undefined
+              }
+              isFocused
+              onUpdate={store.handleDescriptionChange}
+              onSave={store.handleSave}
             />
           )}
         </Box>

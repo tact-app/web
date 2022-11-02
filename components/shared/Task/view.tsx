@@ -9,17 +9,15 @@ import {
   CloseButton,
 } from '@chakra-ui/react';
 import { useTaskStore } from './store';
-import { BlockNoteEditor } from '../BlockNoteEditor';
 import { ArrowDownIcon, ArrowUpIcon } from '../Icons/ArrowIcons';
+import { Editor } from '../Editor';
 
 export const TaskView = observer(function TaskView() {
   const store = useTaskStore();
 
   return (
-    <>
+    <Box pt={6} pr={7} pl={7}>
       <Box
-        ml={10}
-        mr={8}
         pl={0}
         pr={0}
         pb={2}
@@ -48,22 +46,27 @@ export const TaskView = observer(function TaskView() {
         </Box>
         <CloseButton onClick={store.handleClose} color='gray.400' size='sm' />
       </Box>
-      <Box ml={10} mr={8}>
-        <Heading>{store.data.title}</Heading>
+      <Box mt={6} ml={10}>
+        <Heading fontSize='2xl' fontWeight='semibold'>
+          {store.data.title}
+        </Heading>
         <Box mt={4}>
           {store.isDescriptionLoading ? (
             <Center>
               <CircularProgress isIndeterminate size='24px' />
             </Center>
           ) : (
-            <BlockNoteEditor
-              value={store.description ? store.description.content : undefined}
-              onChange={store.handleDescriptionChange}
+            <Editor
+              isFocused
+              content={
+                store.description ? store.description.content : undefined
+              }
+              onUpdate={store.handleDescriptionChange}
               onBlur={store.handleDescriptionBlur}
             />
           )}
         </Box>
       </Box>
-    </>
+    </Box>
   );
 });
