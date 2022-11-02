@@ -3,6 +3,35 @@
 set -euo pipefail
 
 setup() {
+  __fontawesome_token
+  __vercel_token
+
+  tools npm ci
+
+  local copied=false
+  command -v pbcopy >/dev/null && echo source bin/activate | pbcopy && copied=true
+  echo Run the next commands to complete setup:
+  printf '├─ source bin/activate\t- to activate virtual environment (copied to clipboard: %s)\n' $copied
+  printf '└─ run vercel link \t- to link the current directory to a Vercel project\n'
+}
+
+__fontawesome_token() {
+  local token
+  echo Please enter Font Awesome token:
+  read -rs token
+  token=${token## }
+  token=${token%% }
+
+  if [ "${#token}" -lt 36 ]; then
+    echo 'Token is invalid.'
+    return 1
+  else
+    git config fontawesome.token "${token}"
+    echo 'Token saved.'
+  fi
+}
+
+__vercel_token() {
   local token
   echo Please enter Vercel token:
   read -rs token
@@ -16,14 +45,6 @@ setup() {
     git config vercel.token "${token}"
     echo 'Token saved.'
   fi
-
-  tools npm ci
-
-  local copied=false
-  command -v pbcopy >/dev/null && echo source bin/activate | pbcopy && copied=true
-  echo Run the next commands to complete setup:
-  printf '├─ source bin/activate\t- to activate virtual environment (copied to clipboard: %s)\n' $copied
-  printf '└─ run vercel link \t- to link the current directory to a Vercel project\n'
 }
 
 env() {
@@ -39,6 +60,7 @@ env() {
 node() {
   docker run --rm -it \
     --entrypoint=/bin/sh \
+    -e FONTAWESOME_NPM_AUTH_TOKEN="$(git config fontawesome.token)" \
     -v "$(pwd)":/app \
     -w /app \
     "${@:2}" \
