@@ -5,12 +5,14 @@ on:
     branches: [ '*' ]
     paths:
       - '.github/workflows/ci.yml'
+      - '**.js'
       - '**.ts'
       - 'package*.json'
   push:
     branches: [ '*' ]
     paths:
       - '.github/workflows/ci.yml'
+      - '**.js'
       - '**.ts'
       - 'package*.json'
     tags: [ '!*' ]
