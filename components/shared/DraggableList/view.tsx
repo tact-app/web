@@ -6,22 +6,6 @@ import { TaskDragIcon } from '../Icons/TaskDragIcon';
 import { DraggableListComponentProps, useDraggableListStore } from './store';
 import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
 
-const keyMap = {
-  UP: 'up',
-  DOWN: 'down',
-  DONE: 'd',
-  WONT_DO: ['w', 'cmd+w'],
-  EDIT: 'space',
-  MOVE_UP: ['j', 'cmd+up'],
-  MOVE_DOWN: ['k', 'cmd+down'],
-  SELECT_UP: ['shift+up'],
-  SELECT_DOWN: ['shift+down'],
-  ESC: 'esc',
-  FORCE_DELETE: ['cmd+backspace', 'cmd+delete'],
-  DELETE: ['del', 'backspace'],
-  OPEN: 'enter',
-};
-
 const DraggableListWrapper = observer(function TaskListWrapper({
   children,
 }: PropsWithChildren) {
@@ -52,19 +36,20 @@ const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
   snapshot,
   provided,
   id,
-}: DraggableListComponentProps & { snapshot: any; provided: any; id: string }) {
+}: DraggableListComponentProps & {
+  snapshot: any;
+  provided: any;
+  id: string;
+}) {
   const store = useDraggableListStore();
+  const isFocused = store.focusedItemIds.includes(id);
 
   return (
-    <>
+    <Box w='100%' ref={isFocused ? (el) => store.setFocusedRef(el) : null}>
       {Prefix && <Prefix id={id} snapshot={snapshot} />}
       <DragHandler provided={provided} snapshot={snapshot} id={id} />
-      <Content
-        id={id}
-        isFocused={store.focusedItemIds.includes(id)}
-        snapshot={snapshot}
-      />
-    </>
+      <Content id={id} isFocused={isFocused} snapshot={snapshot} />
+    </Box>
   );
 });
 
@@ -125,7 +110,9 @@ export const DraggableListView = observer(function DraggableListView({
   const store = useDraggableListStore();
   const ref = useRef(null);
 
-  useHotkeysHandler(keyMap, store.hotkeyHandlers);
+  useHotkeysHandler(store.keymap, store.hotkeyHandlers, {
+    enabled: store.isHotkeysActive,
+  });
 
   return (
     <Box ref={ref} overflow='auto' {...wrapperProps}>

@@ -2,8 +2,15 @@ import Head from 'next/head';
 import { Box, Flex } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { MenuBar } from './components/MenuBar';
+import { useHotkeysHandler } from '../../helpers/useHotkeysHandler';
+import { useRootStore } from '../../stores/RootStore';
+import { observer } from 'mobx-react-lite';
 
-export default function Layout({ children }: { children: ReactNode }) {
+const Layout = observer(function Layout({ children }: { children: ReactNode }) {
+  const store = useRootStore();
+
+  useHotkeysHandler(store.keymap, store.hotkeysHandlers);
+
   return (
     <Flex direction='row' h='100vh'>
       <Head>
@@ -16,4 +23,6 @@ export default function Layout({ children }: { children: ReactNode }) {
       </Box>
     </Flex>
   );
-}
+});
+
+export default Layout;

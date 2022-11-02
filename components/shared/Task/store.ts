@@ -10,9 +10,11 @@ import { v4 as uuidv4 } from 'uuid';
 export type TaskProps = {
   callbacks: {
     onClose?: () => void;
+    onBlur?: () => void;
     onNextItem?: (taskId: string, stay?: boolean) => void;
     onPreviousItem?: (taskId: string, stay?: boolean) => void;
   };
+  isEditorFocused?: boolean;
   task: TaskData;
 };
 
@@ -23,6 +25,7 @@ class TaskStore {
 
   quickEditor: TaskQuickEditorStore = new TaskQuickEditorStore(this.root);
 
+  isEditorFocused: boolean = false;
   callbacks: TaskProps['callbacks'];
   data: TaskData | null = null;
   isDescriptionLoading: boolean = true;
@@ -57,7 +60,7 @@ class TaskStore {
 
   handleDescriptionBlur = () => {
     if (this.description.content) {
-      console.log('save description');
+      this.callbacks.onBlur?.();
       this.root.api.descriptions.update({
         id: this.description.id,
         fields: {
@@ -101,6 +104,7 @@ class TaskStore {
 
   update = (props: TaskProps) => {
     this.data = props.task;
+    this.isEditorFocused = props.isEditorFocused;
     this.callbacks = props.callbacks;
   };
 }

@@ -50,9 +50,11 @@ export class DraggableListStore {
   items: string[] = [];
 
   isDndActive: boolean = true;
-  isHotkeysActive: boolean = true;
+  isForceHotkeysActive: boolean = true;
   isDraggingActive: boolean = false;
   isControlDraggingActive: boolean = false;
+
+  focusedRef: HTMLElement | null = null;
 
   DnDApi = null;
   dropTimeout: null | number = null;
@@ -70,22 +72,40 @@ export class DraggableListStore {
     return this.focusedItemIds;
   }
 
-  getHandler = (fn: (e) => void) => (e) => {
-    if (
+  get isHotkeysActive() {
+    return (
       !this.isDraggingActive &&
       !this.isControlDraggingActive &&
-      this.isHotkeysActive
-    ) {
-      fn(e);
-    }
+      this.isForceHotkeysActive
+    );
+  }
+
+  keymap = {
+    UP: 'up',
+    DOWN: 'down',
+    DONE: 'd',
+    WONT_DO: ['w', 'cmd+w'],
+    EDIT: 'space',
+    MOVE_UP: ['j', 'cmd+up'],
+    MOVE_DOWN: ['k', 'cmd+down'],
+    SELECT_UP: ['shift+up'],
+    SELECT_DOWN: ['shift+down'],
+    ESC: 'esc',
+    FORCE_DELETE: ['cmd+backspace', 'cmd+delete'],
+    DELETE: ['del', 'backspace'],
+    OPEN: 'enter',
   };
 
   hotkeyHandlers = {
-    UP: this.getHandler(() => this.handleNavigation(NavigationDirections.UP)),
-    DOWN: this.getHandler(() =>
-      this.handleNavigation(NavigationDirections.DOWN)
-    ),
-    DELETE: this.getHandler(() => {
+    UP: (e) => {
+      e.preventDefault();
+      this.handleNavigation(NavigationDirections.UP);
+    },
+    DOWN: (e) => {
+      e.preventDefault();
+      this.handleNavigation(NavigationDirections.DOWN);
+    },
+    DELETE: () => {
       if (this.focusedItemIds.length) {
         const itemsForDelete = this.focusedItemIds.slice();
 
@@ -94,16 +114,16 @@ export class DraggableListStore {
           this.deleteItems(itemsForDelete);
         });
       }
-    }),
-    FORCE_DELETE: this.getHandler(() => {
+    },
+    FORCE_DELETE: () => {
       if (this.focusedItemIds.length) {
         const itemsForDelete = this.focusedItemIds.slice();
 
         this.focusAfterItems(itemsForDelete);
         this.deleteItems(itemsForDelete);
       }
-    }),
-    MOVE_UP: this.getHandler(() => {
+    },
+    MOVE_UP: () => {
       if (this.focusedItemIds.length) {
         if (this.focusedItemIds.length === 1) {
           this.runControlsMoveAction((lift) => lift.moveUp());
@@ -111,8 +131,8 @@ export class DraggableListStore {
           this.controlsMultiMoveAction('up');
         }
       }
-    }),
-    MOVE_DOWN: this.getHandler(() => {
+    },
+    MOVE_DOWN: () => {
       if (this.focusedItemIds.length) {
         if (this.focusedItemIds.length === 1) {
           this.runControlsMoveAction((lift) => lift.moveDown());
@@ -120,22 +140,22 @@ export class DraggableListStore {
           this.controlsMultiMoveAction('down');
         }
       }
-    }),
-    SELECT_UP: this.getHandler(() => this.shiftSelect('up')),
-    SELECT_DOWN: this.getHandler(() => this.shiftSelect('down')),
-    ESC: this.getHandler(() => {
+    },
+    SELECT_UP: () => this.shiftSelect('up'),
+    SELECT_DOWN: () => this.shiftSelect('down'),
+    ESC: () => {
       if (this.callbacks.onEscape?.()) {
         this.resetFocusedItem();
       }
-    }),
+    },
   };
 
   disableHotkeys = () => {
-    this.isHotkeysActive = false;
+    this.isForceHotkeysActive = false;
   };
 
   enableHotkeys = () => {
-    this.isHotkeysActive = true;
+    this.isForceHotkeysActive = true;
   };
 
   shiftSelect = (direction: 'up' | 'down', count: number = 1) => {
@@ -358,6 +378,17 @@ export class DraggableListStore {
 
     if (nextItemId !== null) {
       this.setFocusedItem(nextItemId);
+    }
+  };
+
+  setFocusedRef = (ref: HTMLElement) => {
+    if (ref && this.focusedRef !== ref) {
+      this.focusedRef = ref;
+
+      ref.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
     }
   };
 

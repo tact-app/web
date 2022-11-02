@@ -4,6 +4,7 @@ import { mode } from '@chakra-ui/theme-tools';
 import { RootStoreProvider } from '../stores/RootStore';
 import Layout from '../components/Layout';
 import { InputWrapperStyles } from '../components/shared/InputWrapper';
+import { useRouter } from 'next/router';
 
 const theme = extendTheme({
   styles: {
@@ -13,6 +14,7 @@ const theme = extendTheme({
           clear: 'both',
         },
         '.ProseMirror': {
+          color: 'gray.700',
           // @see https://github.com/jesster2k10/guava-cards/blob/5d5c283eb720bf503258f4e17bce3865d35fd8d3/packages/website/src/bundles/editor/ContentEditor.tsx#L86
           'ul[data-type="taskList"]': {
             listStyle: 'none',
@@ -55,18 +57,39 @@ const theme = extendTheme({
           },
           h1: {
             fontSize: '1.25rem',
+            mt: 4,
           },
           h2: {
             fontSize: '1.15rem',
+            mt: 4,
           },
           h3: {
             fontSize: '1rem',
+            mt: 4,
           },
           'h1, h2, h3, h4,  h5, h6 ': {
             fontWeight: '700',
           },
           'ul, ol': {
             padding: '0 1.2rem',
+          },
+          ol: {
+            listStyle: 'decimal',
+            ol: {
+              listStyle: 'lower-alpha',
+              ol: {
+                listStyle: 'lower-roman',
+                ol: {
+                  listStyle: 'decimal',
+                  ol: {
+                    listStyle: 'lower-alpha',
+                    ol: {
+                      listStyle: 'lower-roman',
+                    },
+                  },
+                },
+              },
+            },
           },
           code: {
             bg: 'rgba(#616161, 0.1)',
@@ -142,7 +165,7 @@ const theme = extendTheme({
             border: 'none',
             borderTop: '2px solid rgba(#0D0D0D, 0.1)',
           },
-        }, // .ProseMirror
+        },
       },
     }),
   },
@@ -247,9 +270,11 @@ const theme = extendTheme({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
   return (
     <ChakraProvider theme={theme}>
-      <RootStoreProvider>
+      <RootStoreProvider router={router}>
         <Layout>
           <Component {...pageProps} />
         </Layout>

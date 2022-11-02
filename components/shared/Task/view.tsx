@@ -16,7 +16,7 @@ export const TaskView = observer(function TaskView() {
   const store = useTaskStore();
 
   return (
-    <Box pt={6} pr={7} pl={7}>
+    <Box pt={6} pr={7} pl={7} h='100%'>
       <Box
         pl={0}
         pr={0}
@@ -46,21 +46,21 @@ export const TaskView = observer(function TaskView() {
         </Box>
         <CloseButton onClick={store.handleClose} color='gray.400' size='sm' />
       </Box>
-      <Box mt={6} ml={10}>
+      <Box mt={6} ml={0} overflow='auto' h='100%'>
         <Heading fontSize='2xl' fontWeight='semibold'>
           {store.data.title}
         </Heading>
-        <Box mt={4}>
+        <Box mt={4} id='editor'>
           {store.isDescriptionLoading ? (
             <Center>
               <CircularProgress isIndeterminate size='24px' />
             </Center>
           ) : (
             <Editor
-              isFocused
               content={
                 store.description ? store.description.content : undefined
               }
+              isFocused={store.isEditorFocused}
               onUpdate={store.handleDescriptionChange}
               onBlur={store.handleDescriptionBlur}
             />

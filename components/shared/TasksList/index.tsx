@@ -13,7 +13,7 @@ const TasksList = observer(function TasksList(
 ) {
   return (
     <TasksListStoreProvider {...props}>
-      <TasksListView />
+      <TasksListView {...props} />
     </TasksListStoreProvider>
   );
 });

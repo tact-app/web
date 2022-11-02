@@ -21,6 +21,7 @@ export class EditorCreateMenuStore {
   isOpen: boolean = false;
   selectedIndex: number = 0;
   items: any[] = [];
+  plainItems: any[] = [];
 
   onKeyDown = ({ event }) => {
     if (event.key === 'ArrowUp') {
@@ -46,6 +47,16 @@ export class EditorCreateMenuStore {
     return false;
   };
 
+  getLocalIndexMatch = (name: string, index: number) => {
+    const sectionIndex = this.items.findIndex((item) => item.name === name);
+    const itemIndex =
+      this.items
+        .slice(0, sectionIndex)
+        .reduce((acc, { options }) => acc + options.length, 0) + index;
+
+    return this.selectedIndex === itemIndex;
+  };
+
   handleClose = () => {
     this.isOpen = false;
     this.onClose?.();
@@ -57,11 +68,12 @@ export class EditorCreateMenuStore {
 
   upHandler = () => {
     this.selectedIndex =
-      (this.selectedIndex + this.items.length - 1) % this.items.length;
+      (this.selectedIndex + this.plainItems.length - 1) %
+      this.plainItems.length;
   };
 
   downHandler = () => {
-    this.selectedIndex = (this.selectedIndex + 1) % this.items.length;
+    this.selectedIndex = (this.selectedIndex + 1) % this.plainItems.length;
   };
 
   enterHandler = () => {
@@ -69,7 +81,7 @@ export class EditorCreateMenuStore {
   };
 
   selectItem = (index) => {
-    const item = this.items[index];
+    const item = this.plainItems[index];
 
     if (item) {
       this.command?.(item);
@@ -83,6 +95,10 @@ export class EditorCreateMenuStore {
     }
 
     this.items = props.items;
+    this.plainItems = props.items.reduce(
+      (acc, { options }) => [...acc, ...options],
+      []
+    );
     this.onSelect = props.onSelect;
     this.onClose = props.onClose;
     this.command = props.command;

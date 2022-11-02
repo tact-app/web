@@ -1,11 +1,4 @@
-import {
-  Box,
-  HStack,
-  Popover,
-  PopoverContent,
-  Text,
-  useOutsideClick,
-} from '@chakra-ui/react';
+import { Box, Divider, HStack, Text, useOutsideClick } from '@chakra-ui/react';
 import React, { PropsWithChildren, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useEditorCreateMenuStore } from './store';
@@ -22,26 +15,48 @@ export const EditorCreateMenuView = observer(function EditorCreateMenu({
   });
 
   return (
-    <Popover isLazy isOpen={true} autoFocus={false}>
-      <PopoverContent boxShadow='lg' overflow='hidden' w={56} ref={ref}>
-        {store.items.map(({ icon: Icon, label }, index) => (
-          <Box
-            key={label}
-            fontSize='sm'
-            lineHeight='5'
-            fontWeight='normal'
-            p={2}
-            bg={store.selectedIndex === index ? 'gray.100' : 'white'}
-            onClick={() => store.selectItem(index)}
-            cursor='pointer'
-          >
-            <HStack w='100%'>
-              <Icon />
-              <Text>{label}</Text>
-            </HStack>
-          </Box>
-        ))}
-      </PopoverContent>
-    </Popover>
+    <Box boxShadow='lg' w={56} borderRadius='lg' overflow='hidden'>
+      <Box maxH={72} overflow='auto'>
+        {store.items
+          .filter(({ options }) => options.length)
+          .map(({ options, name }) => (
+            <>
+              {options.map(({ icon, label }, index) => {
+                const isMatch = store.getLocalIndexMatch(name, index);
+                return (
+                  <Box
+                    key={label}
+                    fontSize='sm'
+                    lineHeight='5'
+                    fontWeight='normal'
+                    p={2}
+                    bg={isMatch ? 'gray.100' : 'white'}
+                    ref={
+                      isMatch
+                        ? (el) => {
+                            if (el) {
+                              el.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'nearest',
+                              });
+                            }
+                          }
+                        : null
+                    }
+                    onClick={() => store.selectItem(index)}
+                    cursor='pointer'
+                  >
+                    <HStack w='100%'>
+                      {icon()}
+                      <Text>{label}</Text>
+                    </HStack>
+                  </Box>
+                );
+              })}
+              <Divider />
+            </>
+          ))}
+      </Box>
+    </Box>
   );
 });

@@ -42,6 +42,7 @@ export class TasksListStore {
   isLoading: boolean = true;
   isFocusModeActive: boolean = false;
   isItemMenuOpen: boolean = false;
+  isEditorFocused: boolean = false;
 
   keyMap = {
     DONE: 'd',
@@ -50,6 +51,7 @@ export class TasksListStore {
     WONT_DO: ['w', 'cmd+w'],
     EDIT: 'space',
     OPEN: 'enter',
+    FOCUS_EDITOR: 'right',
   };
 
   hotkeyHandlers = {
@@ -84,6 +86,9 @@ export class TasksListStore {
     },
     FOCUS_INPUT: () => {
       this.creator.setFocus(true);
+    },
+    FOCUS_EDITOR: () => {
+      this.isEditorFocused = true;
     },
   };
 
@@ -144,6 +149,10 @@ export class TasksListStore {
   get openedTaskData() {
     return this.items[this.openedTask];
   }
+
+  handleEditorBlur = () => {
+    this.isEditorFocused = false;
+  };
 
   assignGoal = (taskIds: string[], goalId: string) => {
     taskIds.forEach((id) => {

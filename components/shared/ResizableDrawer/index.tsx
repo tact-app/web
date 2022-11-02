@@ -16,9 +16,9 @@ export const ResizableDrawer = observer(function ResizableDrawer({
   isOpen,
   onClose,
   children,
-  minWidth = 400,
+  minWidth = '20%',
   maxWidth = '75%',
-  defaultWidth = '30%',
+  defaultWidth = '35%',
   containerRef,
   ...rest
 }: PropsWithChildren<{
@@ -46,6 +46,7 @@ export const ResizableDrawer = observer(function ResizableDrawer({
       : (containerWidth * parseInt(maxWidth)) / 100;
 
   const handleMouseDown = useCallback((e) => {
+    document.body.style.userSelect = 'none';
     setIsResizing(true);
     setLastDownX(e.clientX);
   }, []);
@@ -65,6 +66,7 @@ export const ResizableDrawer = observer(function ResizableDrawer({
   );
 
   const handleMouseUp = useCallback((e) => {
+    document.body.style.userSelect = '';
     setIsResizing(false);
   }, []);
 

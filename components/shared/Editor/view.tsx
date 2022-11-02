@@ -10,7 +10,7 @@ export const EditorView = observer(function EditorView() {
   const editor = useEditor({
     extensions: store.extensions,
     content: store.content,
-    autofocus: true,
+    autofocus: !!store.isFocused,
     onFocus: store.handleFocus,
     onBlur: store.handleBlur,
   });

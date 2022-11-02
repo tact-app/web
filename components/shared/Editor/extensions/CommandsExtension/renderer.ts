@@ -32,6 +32,17 @@ const getRenderer =
           interactive: true,
           trigger: 'manual',
           placement: 'bottom-start',
+          popperOptions: {
+            modifiers: [
+              {
+                name: 'flip',
+                options: {
+                  fallbackPlacements: ['top-start'],
+                  boundary: document.getElementById('editor'),
+                },
+              },
+            ],
+          },
         });
 
         store.handleOpen();

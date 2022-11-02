@@ -1,9 +1,10 @@
-import { ReactElement } from 'react';
+import { IconDefinition } from '@fortawesome/pro-regular-svg-icons';
 
 export interface NavItem {
   label: string;
-  icon?: ReactElement;
+  icon?: IconDefinition;
   subLabel?: string;
   children?: Array<NavItem>;
+  hotkey: string;
   href?: string;
 }

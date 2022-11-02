@@ -5,24 +5,29 @@ import { MainMenu } from '../MainMenu';
 import { NavItem } from '../MainMenu/types';
 import { routes } from '../../../../routes/constants';
 import { useRootStore } from '../../../../stores/RootStore';
-import { MailIcon } from '../../../shared/Icons/MailIcon';
-import { GoalsIcon } from '../../../shared/Icons/GoalsIcon';
-import { CalendarIcon } from '../../../shared/Icons/CalendarIcon';
+import {
+  faBullseyeArrow,
+  faCalendarDay,
+  faInboxes,
+} from '@fortawesome/pro-regular-svg-icons';
 
 const NAV_ITEMS: Array<NavItem> = [
   {
-    label: 'Tasks',
-    icon: <CalendarIcon />,
-    href: routes.TASKS,
+    label: 'Today',
+    icon: faCalendarDay,
+    hotkey: 'Ctrl+Shift+T',
+    href: routes.TODAY,
   },
   {
-    label: 'Spaces',
-    icon: <MailIcon />,
-    href: routes.SPACES,
+    label: 'Inbox',
+    icon: faInboxes,
+    hotkey: 'Ctrl+Shift+I',
+    href: routes.INBOX,
   },
   {
     label: 'Goals',
-    icon: <GoalsIcon />,
+    icon: faBullseyeArrow,
+    hotkey: 'Ctrl+Shift+G',
     href: routes.GOALS,
   },
 ];
@@ -33,7 +38,7 @@ export const MenuBarView = observer(function MenuBarView() {
       direction='column'
       color={useColorModeValue('gray.600', 'white')}
       borderRight='1px'
-      borderColor={useColorModeValue('gray.100', 'gray.900')}
+      borderColor={useColorModeValue('gray.200', 'gray.900')}
       p={1}
       pt={6}
       w={14}

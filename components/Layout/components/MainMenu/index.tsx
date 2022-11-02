@@ -1,6 +1,7 @@
-import { Stack, chakra, Tooltip, Box } from '@chakra-ui/react';
+import { Stack, chakra, Tooltip, Box, Text } from '@chakra-ui/react';
 import NavLink from '../../../shared/Link';
 import { NavItem } from './types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export function MainMenu({ items }: { items: NavItem[] }) {
   return (
@@ -8,25 +9,39 @@ export function MainMenu({ items }: { items: NavItem[] }) {
       {items.map((navItem) => (
         <Tooltip
           key={navItem.label}
-          label={navItem.label}
+          label={
+            <Box display='flex' alignItems='center' flexDirection='column'>
+              {navItem.label}
+              <Text fontSize='xs' color='gray.400'>
+                {navItem.hotkey}
+              </Text>
+            </Box>
+          }
           placement='right'
+          offset={[0, 20]}
           hasArrow
         >
           <Box>
             <NavLink href={navItem.href}>
               {({ isActive }) => (
                 <chakra.span
-                  p={1}
+                  w={8}
+                  h={8}
                   fontWeight={400}
                   bg={isActive ? 'gray.300' : 'transparent'}
-                  borderRadius={4}
-                  display={'flex'}
-                  alignItems={'center'}
+                  borderRadius='lg'
+                  display='flex'
+                  justifyContent='center'
+                  alignItems='center'
                   _hover={{
                     bg: isActive ? 'gray.300' : 'gray.200',
                   }}
                 >
-                  {navItem.icon}
+                  <FontAwesomeIcon
+                    fixedWidth
+                    icon={navItem.icon}
+                    fontSize={18}
+                  />
                 </chakra.span>
               )}
             </NavLink>

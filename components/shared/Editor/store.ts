@@ -18,6 +18,7 @@ export type EditorProps = {
   content: JSONContent;
   isFocused?: boolean;
 
+  editorRef?: (editor: Editor) => void;
   onFocus?: () => void;
   onBlur?: () => void;
   onSave?: () => void;
@@ -48,9 +49,12 @@ class EditorStore {
       Commands.configure({
         suggestion: {
           items: ({ query }) => {
-            return BlockTypesOptions.filter(({ label }) =>
-              label.toLowerCase().startsWith(query.toLowerCase())
-            ).slice(0, 10);
+            return BlockTypesOptions.map(({ options, name }) => ({
+              name,
+              options: options.filter(({ label }) =>
+                label.toLowerCase().startsWith(query.toLowerCase())
+              ),
+            })).slice(0, 10);
           },
           render: getRenderer(EditorCreateMenu, this.converterMenu),
         } as any, // ToDo fix types
@@ -75,6 +79,7 @@ class EditorStore {
   onBlur: EditorProps['onBlur'];
   onUpdate: EditorProps['onUpdate'];
   onSave: EditorProps['onSave'];
+  editorRef: EditorProps['editorRef'];
 
   isBlocksMenuOpen: boolean = false;
 
@@ -118,11 +123,8 @@ class EditorStore {
     this.editor = editor;
 
     if (this.editor) {
+      this.editorRef?.(this.editor);
       this.editor.on('update', this.handleEditorUpdate);
-
-      if (this.isFocused) {
-        this.editor.on('create', () => this.editor.commands.focus());
-      }
     }
   };
 
@@ -130,10 +132,15 @@ class EditorStore {
     this.content = props.content;
     this.isFocused = props.isFocused;
 
+    if (this.isFocused && this.editor) {
+      this.editor.commands.focus();
+    }
+
     this.onUpdate = props.onUpdate;
     this.onFocus = props.onFocus;
     this.onBlur = props.onBlur;
     this.onSave = props.onSave;
+    this.editorRef = props.editorRef;
   };
 }
 
