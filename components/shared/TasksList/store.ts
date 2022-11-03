@@ -15,6 +15,7 @@ import { SpacesInboxItemData } from '../../pages/Spaces/components/SpacesInbox/t
 export type TasksListProps = {
   checkTaskActivity?: (task: TaskData) => boolean;
   input?: SpacesInboxItemData;
+  highlightActiveTasks?: boolean;
   isHotkeysEnabled?: boolean;
   dnd?: boolean;
   callbacks?: {
@@ -43,6 +44,7 @@ export class TasksListStore {
   editingTaskId: null | string = null;
   openedTask: null | string = null;
 
+  highlightActiveTasks: boolean = false;
   isForceHotkeysEnabled = true;
   isLoading: boolean = true;
   isItemMenuOpen: boolean = false;
@@ -363,6 +365,7 @@ export class TasksListStore {
     this.callbacks = props.callbacks || {};
     this.checkTaskActivity = props.checkTaskActivity;
     this.isForceHotkeysEnabled = props.isHotkeysEnabled;
+    this.highlightActiveTasks = props.highlightActiveTasks;
     this.input = props.input;
   };
 }

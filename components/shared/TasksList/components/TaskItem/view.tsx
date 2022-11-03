@@ -18,7 +18,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
   let hoveredBg = 'white';
   let focusedBg = 'white';
 
-  if (props.isFocusModeActive) {
+  if (props.highlightActiveTasks) {
     if (!store.isDisabled) {
       bg = 'blue.25';
       hoveredBg = 'blue.50';
@@ -45,7 +45,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         flex={1}
         borderBottom='1px'
         borderColor={
-          props.isFocusModeActive && !store.isDisabled
+          props.highlightActiveTasks && !store.isDisabled
             ? 'transparent'
             : 'gray.100'
         }
@@ -58,7 +58,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         _groupHover={{
           bg: store.isFocused ? focusedBg : hoveredBg,
           borderColor:
-            props.isFocusModeActive && !store.isDisabled
+            props.highlightActiveTasks && !store.isDisabled
               ? 'transparent'
               : 'gray.100',
         }}

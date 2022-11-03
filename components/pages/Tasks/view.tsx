@@ -53,6 +53,7 @@ export const TasksView = observer(function TasksView() {
             <TasksList
               dnd={true}
               instance={store.list}
+              highlightActiveTasks={store.isFocusModeActive}
               checkTaskActivity={store.checkFocusModeMatch}
             />
           </Box>

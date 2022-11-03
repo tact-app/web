@@ -12,7 +12,7 @@ import { TaskQuickEditorStore } from '../TaskQuickEditor/store';
 
 export type TaskItemProps = {
   task?: TaskData | null;
-  isFocusModeActive?: boolean;
+  highlightActiveTasks?: boolean;
   isDisabled?: boolean;
   isFocused?: boolean;
   isDragging?: boolean;
