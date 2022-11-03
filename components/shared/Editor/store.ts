@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { BlockTypesOptions } from './types';
 import { Editor, Extension, Extensions, JSONContent } from '@tiptap/core';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
@@ -13,6 +12,7 @@ import { EditorCreateMenu } from './components/EditorCreateMenu';
 import { TaskList } from '@tiptap/extension-task-list';
 import { TaskItem } from '@tiptap/extension-task-item';
 import { MetricExtension } from './extensions/MetricExtension';
+import { BlockTypesOptions } from './slashCommands';
 
 export type EditorProps = {
   content: JSONContent;

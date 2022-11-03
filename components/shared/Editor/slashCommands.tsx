@@ -1,9 +1,3 @@
-import { ChainedCommands, Editor, JSONContent } from '@tiptap/core';
-import { FC } from 'react';
-import {
-  insertMetric,
-  MetricExtensionTypes,
-} from './extensions/MetricExtension/command';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faH1,
@@ -17,6 +11,11 @@ import {
   faPercent,
   faSquareCheck,
 } from '@fortawesome/pro-regular-svg-icons';
+import {
+  insertMetric,
+  MetricExtensionTypes,
+} from './extensions/MetricExtension/command';
+import { BlockTypesOption } from './types';
 
 export enum BlockValues {
   PARAGRAPH = 'paragraph',
@@ -24,16 +23,6 @@ export enum BlockValues {
   ORDERED_LIST = 'orderedList',
   BULLET_LIST = 'bulletList',
 }
-
-export type BlockTypesOption = {
-  name: string;
-  options: {
-    type: 'command';
-    icon: FC;
-    label: string;
-    command: (chain: ChainedCommands, editor: Editor) => ChainedCommands;
-  }[];
-};
 
 export const BlockTypesOptions: BlockTypesOption[] = [
   {
@@ -94,36 +83,24 @@ export const BlockTypesOptions: BlockTypesOption[] = [
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faPercent} />,
         type: 'command',
-        label: 'Percent metric',
+        label: 'Percentage metric',
         command: (chain, editor) =>
           insertMetric(MetricExtensionTypes.RING, editor, chain).chain,
       },
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faSquareCheck} />,
         type: 'command',
-        label: 'Boolean metric',
+        label: 'Binary metric',
         command: (chain, editor) =>
           insertMetric(MetricExtensionTypes.TODO, editor, chain).chain,
       },
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faInputNumeric} />,
         type: 'command',
-        label: 'Target metric',
+        label: 'Numeric metric',
         command: (chain, editor) =>
           insertMetric(MetricExtensionTypes.NUMBER, editor, chain).chain,
       },
     ],
   },
 ];
-
-export type Block<T> = {
-  id: string;
-  type: T;
-  content: JSONContent;
-};
-
-export type Blocks =
-  | Block<BlockValues.PARAGRAPH>
-  | Block<BlockValues.HEADING>
-  | Block<BlockValues.ORDERED_LIST>
-  | Block<BlockValues.BULLET_LIST>;
