@@ -1,4 +1,5 @@
 {
+  "name": "tact.app",
   "private": true,
   "engines": {
     "npm": "^8.0.0",
