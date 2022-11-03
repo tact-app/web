@@ -45,7 +45,14 @@ const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
   const isFocused = store.focusedItemIds.includes(id);
 
   return (
-    <Box w='100%' ref={isFocused ? (el) => store.setFocusedRef(el) : null}>
+    <Box
+      w='100%'
+      ref={
+        isFocused && store.lastFocusedItemId === id
+          ? (el) => store.setFocusedRef(el)
+          : null
+      }
+    >
       {Prefix && <Prefix id={id} snapshot={snapshot} />}
       <DragHandler provided={provided} snapshot={snapshot} id={id} />
       <Content id={id} isFocused={isFocused} snapshot={snapshot} />

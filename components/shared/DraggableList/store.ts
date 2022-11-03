@@ -46,6 +46,7 @@ export class DraggableListStore {
   callbacks: DraggableListCallbacks = {};
   checkItemActivity?: (id: string) => boolean;
 
+  lastFocusedItemId: string | null = null;
   focusedItemIds: string[] = [];
   items: string[] = [];
 
@@ -184,9 +185,12 @@ export class DraggableListStore {
         if (this.currentSelectItemCursor > 0) {
           this.currentSelectItemCursor -= count;
           this.focusedItemIds = this.focusedItemIds.slice(count);
+          this.lastFocusedItemId = this.focusedItemIds[0];
         } else {
           this.currentSelectItemCursor += count;
           this.focusedItemIds = this.focusedItemIds.slice(0, -count);
+          this.lastFocusedItemId =
+            this.focusedItemIds[this.focusedItemIds.length - 1];
         }
       }
     }
@@ -450,6 +454,7 @@ export class DraggableListStore {
     this.focusedItemIds.sort(
       (a, b) => this.items.indexOf(a) - this.items.indexOf(b)
     );
+    this.lastFocusedItemId = activeItemIds[activeItemIds.length - 1];
 
     this.callbacks.onFocusedItemsChange?.(activeItemIds);
   };
