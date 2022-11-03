@@ -25,6 +25,7 @@ export const SpacesInboxView = observer(function SpacesInboxView(
       flex={1}
       maxW='container.lg'
       mt={10}
+      h='100%'
       onMouseDown={store.callbacks.onFocus}
     >
       <Heading color='gray.700' size='lg' mb={7}>

@@ -82,13 +82,13 @@ export class DraggableListStore {
   }
 
   keymap = {
-    UP: 'up',
-    DOWN: 'down',
+    UP: ['j', 'up'],
+    DOWN: ['k', 'down'],
     DONE: 'd',
     WONT_DO: ['w', 'cmd+w'],
     EDIT: 'space',
-    MOVE_UP: ['j', 'cmd+up'],
-    MOVE_DOWN: ['k', 'cmd+down'],
+    MOVE_UP: ['cmd+j', 'cmd+up'],
+    MOVE_DOWN: ['cmd+k', 'cmd+down'],
     SELECT_UP: ['shift+up'],
     SELECT_DOWN: ['shift+down'],
     ESC: 'esc',
@@ -145,7 +145,7 @@ export class DraggableListStore {
     SELECT_UP: () => this.shiftSelect('up'),
     SELECT_DOWN: () => this.shiftSelect('down'),
     ESC: () => {
-      if (this.callbacks.onEscape?.()) {
+      if (!this.callbacks.onEscape?.()) {
         this.resetFocusedItem();
       }
     },
@@ -271,28 +271,34 @@ export class DraggableListStore {
   };
 
   handleNavigation = (direction: NavigationDirections) => {
-    const focusedItemIndex =
-      direction === NavigationDirections.UP
-        ? 0
-        : this.focusedItemIds.length - 1;
-    const index = this.focusedItemIds.length
-      ? this.items.indexOf(this.focusedItemIds[focusedItemIndex])
-      : -1;
+    if (this.activeItems.length) {
+      const focusedItemIndex =
+        direction === NavigationDirections.UP
+          ? 0
+          : this.focusedItemIds.length - 1;
+      const index = this.focusedItemIds.length
+        ? this.items.indexOf(this.focusedItemIds[focusedItemIndex])
+        : -1;
 
-    this.resetFocusedItem();
+      this.resetFocusedItem();
 
-    if (index !== -1) {
-      if (direction === NavigationDirections.UP) {
-        this.focusPrevItem(this.items[index]);
-      } else if (direction === NavigationDirections.DOWN) {
-        this.focusNextItem(this.items[index]);
-      }
-    } else {
-      if (direction === NavigationDirections.DOWN) {
-        this.setFocusedItem(this.getFirstActiveItem());
+      if (index !== -1) {
+        if (direction === NavigationDirections.UP) {
+          this.focusPrevItem(this.items[index]);
+        } else if (direction === NavigationDirections.DOWN) {
+          this.focusNextItem(this.items[index]);
+        }
       } else {
-        this.setFocusedItem(this.getLastActiveItem());
+        if (direction === NavigationDirections.DOWN) {
+          this.setFocusedItem(this.getFirstActiveItem());
+        } else {
+          this.setFocusedItem(this.getLastActiveItem());
+        }
       }
+
+      return true;
+    } else {
+      return false;
     }
   };
 

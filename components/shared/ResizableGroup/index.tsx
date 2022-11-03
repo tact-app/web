@@ -83,7 +83,9 @@ export const ResizableGroup = (
   const [resizingIndex, setIsResizing] = useState<null | number>(null);
   const [widths, setNewWidth] = useState([]);
   const [lastDownX, setLastDownX] = useState(null);
-  const widthRef = useRef(width);
+  const animationFrame = useRef(null);
+  const fullWidth = width || 0;
+  const widthRef = useRef(fullWidth);
   const activeCountRef = useRef(0);
   const activeChildrenSizes = useMemo(() => {
     const children = React.Children.toArray(props.children);
@@ -94,6 +96,13 @@ export const ResizableGroup = (
     return activeChildrenSizes.filter(Boolean).length;
   }, [activeChildrenSizes]);
   const [animations, setAnimations] = useState([]);
+
+  const updateWidths = useCallback(
+    (widths) => {
+      animationFrame.current = requestAnimationFrame(() => setNewWidth(widths));
+    },
+    [setNewWidth]
+  );
 
   const totalSize = activeChildrenSizes.reduce((a, b) => a + b, 0);
 
@@ -113,17 +122,29 @@ export const ResizableGroup = (
 
   useEffect(() => {
     if (
-      width &&
+      fullWidth &&
       (widths.length === 0 || activeCountRef.current !== activeChildrenCount)
     ) {
-      setNewWidth(
-        activeChildrenSizes.map((childSize) => (width / totalSize) * childSize)
+      updateWidths(
+        activeChildrenSizes.map(
+          (childSize) => (fullWidth / totalSize) * childSize
+        )
       );
-    } else if (widthRef.current !== width) {
-      const coef = widthRef.current / width;
-      setNewWidth(widths.map((width) => width / coef));
+      setAnimations((animations) =>
+        animations.map((a, i) => (activeChildrenSizes[i] ? 'start' : 'none'))
+      );
+    } else if (widthRef.current !== fullWidth) {
+      const coef = widthRef.current / fullWidth;
+      updateWidths(widths.map((width) => width / coef));
     }
-  }, [width, activeChildrenSizes, totalSize, widths, activeChildrenCount]);
+  }, [
+    fullWidth,
+    activeChildrenSizes,
+    totalSize,
+    widths,
+    activeChildrenCount,
+    updateWidths,
+  ]);
 
   const handleMouseDown = useCallback(
     (e, index) => {
@@ -146,27 +167,25 @@ export const ResizableGroup = (
 
       let offset = e.clientX - lastDownX.pos;
 
-      setNewWidth((widths) => {
-        const newWidths = [...widths];
+      const newWidths = [...widths];
 
-        newWidths[resizingIndex] = lastDownX.widths[resizingIndex] - offset;
+      newWidths[resizingIndex] = lastDownX.widths[resizingIndex] - offset;
 
-        //const restItems = activeChildrenCount - (resizingIndex + 1);
-        const increment = offset / resizingIndex;
-        const decrement = offset / (activeChildrenCount - resizingIndex);
+      //const restItems = activeChildrenCount - (resizingIndex + 1);
+      const increment = offset / resizingIndex;
+      const decrement = offset / (activeChildrenCount - resizingIndex);
 
-        for (let i = 0; i < resizingIndex; i++) {
-          newWidths[i] = lastDownX.widths[i] + increment;
-        }
+      for (let i = 0; i < resizingIndex; i++) {
+        newWidths[i] = lastDownX.widths[i] + increment;
+      }
 
-        for (let i = resizingIndex; i < newWidths.length; i++) {
-          newWidths[i] = lastDownX.widths[i] - decrement;
-        }
+      for (let i = resizingIndex; i < newWidths.length; i++) {
+        newWidths[i] = lastDownX.widths[i] - decrement;
+      }
 
-        return newWidths;
-      });
+      updateWidths(newWidths);
     },
-    [resizingIndex, lastDownX, activeChildrenCount]
+    [resizingIndex, lastDownX, activeChildrenCount, widths, updateWidths]
   );
 
   const handleMouseUp = useCallback((e) => {
@@ -190,8 +209,8 @@ export const ResizableGroup = (
     activeCountRef.current = activeChildrenCount;
   }, [activeChildrenCount]);
   useEffect(() => {
-    widthRef.current = width;
-  }, [width]);
+    widthRef.current = fullWidth;
+  }, [fullWidth]);
 
   return (
     <chakra.div
@@ -233,9 +252,6 @@ export const ResizableGroup = (
             {i > 0 && (
               <chakra.div
                 onMouseDown={(e) => handleMouseDown(e, i)}
-                onDoubleClick={() =>
-                  setNewWidth((widths) => (widths[i] = undefined))
-                }
                 position='absolute'
                 height='100%'
                 width={'6px'}
@@ -248,6 +264,7 @@ export const ResizableGroup = (
               />
             )}
             <chakra.div
+              h='100%'
               style={{
                 width:
                   props.configs[i].flexible || animation === 'end'

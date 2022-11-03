@@ -23,7 +23,8 @@ export class SpacesInboxStore {
     UP: 'up',
     DOWN: 'down',
     LEAVE_LEFT: 'left',
-    SELECT: 'enter',
+    LEAVE_RIGHT: 'right',
+    SELECT: ['right', 'enter'],
     UNSELECT: 'escape',
   };
 
@@ -32,6 +33,10 @@ export class SpacesInboxStore {
     DOWN: () => this.navigate('down'),
     LEAVE_LEFT: () => {
       this.callbacks.onFocusLeave?.('left');
+    },
+    LEAVE_RIGHT: () => {
+      this.handleItemClick(this.focusedItemId);
+      this.callbacks.onFocusLeave?.('right');
     },
     SELECT: () => this.handleItemClick(this.focusedItemId),
     UNSELECT: () => this.handleItemClick(null),

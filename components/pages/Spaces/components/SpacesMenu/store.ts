@@ -46,7 +46,7 @@ export class SpacesMenuStore {
     CHECK: 'space',
     COLLAPSE: 'left',
     EXPAND: 'right',
-    LEAVE: 'esc',
+    LEAVE: ['esc'],
     SELECT: 'enter',
   };
 

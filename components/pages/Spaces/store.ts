@@ -36,6 +36,11 @@ export class SpacesStore {
       this.menu.toggleExpanded(false);
     }
 
+    if (this.openedItem && item && this.openedItem.id === item.id) {
+      this.focusedBlock = SpacesFocusableBlocks.INBOX_ITEM;
+      this.inboxItem.list.creator.setFocus(true);
+    }
+
     this.openedItem = item;
   };
 
@@ -45,6 +50,13 @@ export class SpacesStore {
     } else if (this.focusedBlock === SpacesFocusableBlocks.INBOX) {
       if (direction === 'left') {
         this.focusedBlock = SpacesFocusableBlocks.TREE;
+      } else if (this.openedItem) {
+        this.focusedBlock = SpacesFocusableBlocks.INBOX_ITEM;
+        this.inboxItem.list.creator.setFocus(true);
+      }
+    } else if (this.focusedBlock === SpacesFocusableBlocks.INBOX_ITEM) {
+      if (direction === 'left') {
+        this.focusedBlock = SpacesFocusableBlocks.INBOX;
       }
     }
   };

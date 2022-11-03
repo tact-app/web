@@ -21,4 +21,5 @@ export type SpaceData = {
 export enum SpacesFocusableBlocks {
   INBOX = 'INBOX',
   TREE = 'TREE',
+  INBOX_ITEM = 'INBOX_ITEM',
 }

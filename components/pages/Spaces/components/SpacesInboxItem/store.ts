@@ -7,6 +7,11 @@ import { RootStore } from '../../../../../stores/RootStore';
 export type SpacesInboxItemProps = {
   item: SpacesInboxItemData;
   instance?: SpacesInboxItemStore;
+  isHotkeysEnabled?: boolean;
+  callbacks?: {
+    onFocus?: () => void;
+    onFocusLeave?: (direction: 'left' | 'right') => void;
+  };
 };
 
 export class SpacesInboxItemStore {
@@ -16,8 +21,10 @@ export class SpacesInboxItemStore {
 
   list = new TasksListStore(this.root);
 
+  isHotkeysEnabled: boolean | null = null;
   item: SpacesInboxItemData | null = null;
   description: string | null = null;
+  callbacks: SpacesInboxItemProps['callbacks'] = {};
 
   loadDescription = async () => {
     if (this.item) {
@@ -27,6 +34,18 @@ export class SpacesInboxItemStore {
   };
 
   update = (props: SpacesInboxItemProps) => {
+    this.callbacks = props.callbacks || {};
+
+    if (this.isHotkeysEnabled !== props.isHotkeysEnabled) {
+      if (props.isHotkeysEnabled) {
+        this.list.draggableList.enableHotkeys();
+      } else {
+        this.list.draggableList.disableHotkeys();
+      }
+    }
+
+    this.isHotkeysEnabled = props.isHotkeysEnabled;
+
     if (props.item) {
       if (this.item === null || this.item.id !== props.item.id) {
         this.item = props.item;

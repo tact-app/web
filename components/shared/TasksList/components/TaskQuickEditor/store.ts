@@ -20,7 +20,7 @@ export type TaskQuickEditorProps = {
   onSave: (task: TaskData) => void;
   onSuggestionsMenuOpen?: (isOpen: boolean) => void;
   onTagCreate: (tag: TaskTag) => void;
-  onNavigate: (direction: NavigationDirections) => void;
+  onNavigate: (direction: NavigationDirections) => boolean;
   tagsMap: Record<string, TaskTag>;
   listId: string;
   keepFocus?: boolean;
@@ -352,7 +352,9 @@ export class TaskQuickEditorStore {
 
   handleKeyDownInStdMode = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
-      this.handleClickOutside();
+      if (this.onNavigate(NavigationDirections.LEFT)) {
+        this.handleClickOutside();
+      }
     } else if (e.key === 'Enter') {
       this.saveTask();
     } else if (
@@ -364,12 +366,15 @@ export class TaskQuickEditorStore {
       this.activatePriorityMode();
     } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
-      this.handleClickOutside();
-      this.onNavigate(
-        e.key === 'ArrowDown'
-          ? NavigationDirections.DOWN
-          : NavigationDirections.UP
-      );
+      if (
+        this.onNavigate(
+          e.key === 'ArrowDown'
+            ? NavigationDirections.DOWN
+            : NavigationDirections.UP
+        )
+      ) {
+        this.handleClickOutside();
+      }
     } else if (
       e.key === 'ArrowRight' &&
       (e.target as HTMLInputElement).selectionEnd === this.value.length &&

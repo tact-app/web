@@ -1,7 +1,7 @@
 import { RootStore } from '../../../stores/RootStore';
 import { makeAutoObservable, reaction, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { TaskData, TaskStatus, TaskTag } from './types';
+import { NavigationDirections, TaskData, TaskStatus, TaskTag } from './types';
 import { TaskQuickEditorStore } from './components/TaskQuickEditor/store';
 import {
   DraggableListCallbacks,
@@ -15,7 +15,11 @@ import { SpacesInboxItemData } from '../../pages/Spaces/components/SpacesInbox/t
 export type TasksListProps = {
   checkTaskActivity?: (task: TaskData) => boolean;
   input?: SpacesInboxItemData;
+  isHotkeysEnabled?: boolean;
   dnd?: boolean;
+  callbacks?: {
+    onFocusLeave?: (direction: 'left' | 'right') => void;
+  };
 };
 
 export class TasksListStore {
@@ -39,18 +43,21 @@ export class TasksListStore {
   editingTaskId: null | string = null;
   openedTask: null | string = null;
 
+  isForceHotkeysEnabled = true;
   isLoading: boolean = true;
-  isFocusModeActive: boolean = false;
   isItemMenuOpen: boolean = false;
   isEditorFocused: boolean = false;
+
+  callbacks: TasksListProps['callbacks'] = {};
 
   keyMap = {
     DONE: 'd',
     GOAL: 'g',
-    FOCUS_INPUT: 'n',
     WONT_DO: ['w', 'cmd+w'],
     EDIT: 'space',
     OPEN: 'enter',
+    FOCUS_LEAVE_LEFT: 'left',
+    FOCUS_INPUT: 'n',
     FOCUS_EDITOR: 'right',
   };
 
@@ -75,7 +82,11 @@ export class TasksListStore {
     },
     OPEN: () => {
       if (this.draggableList.focused.length) {
-        this.openTask(this.draggableList.focused[0]);
+        if (this.openedTask === this.draggableList.focused[0]) {
+          this.isEditorFocused = true;
+        } else {
+          this.openTask(this.draggableList.focused[0]);
+        }
       }
     },
     GOAL: (e) => {
@@ -89,6 +100,10 @@ export class TasksListStore {
     },
     FOCUS_EDITOR: () => {
       this.isEditorFocused = true;
+    },
+    FOCUS_LEAVE_LEFT: () => {
+      this.draggableList.resetFocusedItem();
+      this.callbacks.onFocusLeave?.('left');
     },
   };
 
@@ -130,15 +145,18 @@ export class TasksListStore {
       if (this.openedTask) {
         this.openedTask = null;
 
-        return false;
+        return true;
       }
 
-      return true;
+      this.callbacks.onFocusLeave?.('left');
+
+      return false;
     },
   };
 
   get isHotkeysEnabled() {
     return (
+      this.isForceHotkeysEnabled &&
       !this.isItemMenuOpen &&
       !this.draggableList.isDraggingActive &&
       !this.draggableList.isControlDraggingActive &&
@@ -149,6 +167,16 @@ export class TasksListStore {
   get openedTaskData() {
     return this.items[this.openedTask];
   }
+
+  handleNavigation = (direction: NavigationDirections) => {
+    if (direction === 'left') {
+      this.callbacks.onFocusLeave?.('left');
+    } else {
+      return this.draggableList.handleNavigation(direction);
+    }
+
+    return true;
+  };
 
   handleEditorBlur = () => {
     this.isEditorFocused = false;
@@ -332,7 +360,9 @@ export class TasksListStore {
   };
 
   update = (props: TasksListProps) => {
+    this.callbacks = props.callbacks || {};
     this.checkTaskActivity = props.checkTaskActivity;
+    this.isForceHotkeysEnabled = props.isHotkeysEnabled;
     this.input = props.input;
   };
 }

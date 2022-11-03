@@ -23,7 +23,7 @@ export const TasksListView = observer(function TasksListView(
       <TaskCreator
         onSave={store.createTask}
         onTagCreate={store.createTag}
-        onNavigate={store.draggableList.handleNavigation}
+        onNavigate={store.handleNavigation}
         tagsMap={store.tagsMap}
         listId={store.listId}
         keepFocus

@@ -50,15 +50,33 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
         />
 
         {store.openedItem && (
-          <SpacesInboxItem item={store.openedItem} instance={store.inboxItem} />
+          <SpacesInboxItem
+            item={store.openedItem}
+            instance={store.inboxItem}
+            isHotkeysEnabled={
+              store.focusedBlock === SpacesFocusableBlocks.INBOX_ITEM
+            }
+            callbacks={{
+              onFocusLeave: store.handleFocusLeave,
+              onFocus: () =>
+                store.handleFocus(SpacesFocusableBlocks.INBOX_ITEM),
+            }}
+          />
         )}
 
         {store.inboxItem.list.openedTask && (
-          <Box p={7}>
+          <Box
+            p={7}
+            onMouseDown={() =>
+              store.handleFocus(SpacesFocusableBlocks.INBOX_ITEM)
+            }
+          >
             <Task
               task={store.inboxItem.list.openedTaskData}
+              isEditorFocused={store.inboxItem.list.isEditorFocused}
               callbacks={{
                 onClose: store.inboxItem.list.closeTask,
+                onBlur: store.inboxItem.list.handleEditorBlur,
                 onPreviousItem:
                   store.inboxItem.list.draggableList.focusPrevItem,
                 onNextItem: store.inboxItem.list.draggableList.focusNextItem,

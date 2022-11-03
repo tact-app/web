@@ -10,7 +10,7 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
   const store = useSpacesInboxItemStore();
 
   return (
-    <Box flex={1} p={7}>
+    <Box flex={1} p={7} onMouseDown={store.callbacks.onFocus} h='100%'>
       <Heading fontSize='2xl' fontWeight='semibold'>
         {store.item.title}
       </Heading>
@@ -18,7 +18,14 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
         <Text>{store.description}</Text>
       </Box>
       <Divider mt={6} mb={8} />
-      <TasksList instance={store.list} input={store.item} />
+      <TasksList
+        instance={store.list}
+        input={store.item}
+        isHotkeysEnabled={store.isHotkeysEnabled}
+        callbacks={{
+          onFocusLeave: props.callbacks.onFocusLeave,
+        }}
+      />
     </Box>
   );
 });
