@@ -18,16 +18,6 @@ export const ResizableGroupView = observer(function ResizableGroupView(
     store.setContainerWidth(width || 0);
   }, [width, store]);
 
-  useEffect(() => {
-    document.addEventListener('mousemove', store.handleResize);
-    document.addEventListener('mouseup', store.handleResizeEnd);
-
-    return () => {
-      document.removeEventListener('mousemove', store.handleResize);
-      document.removeEventListener('mouseup', store.handleResizeEnd);
-    };
-  }, [store.handleResizeEnd, store.handleResize]);
-
   return (
     <chakra.div
       ref={ref}
@@ -38,11 +28,14 @@ export const ResizableGroupView = observer(function ResizableGroupView(
     >
       {React.Children.map(props.children, (child, i) => {
         const isFixed = store.isFixed(i);
+
         return child ? (
           <chakra.div
             name='resizable-child'
             style={{
-              width: store.getWidth(i),
+              width: store.widths.length
+                ? store.getWidth(i)
+                : props.configs[i].width || 0,
             }}
             flexShrink={isFixed ? 0 : 1}
             position='relative'

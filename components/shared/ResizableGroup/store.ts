@@ -37,11 +37,7 @@ export class ResizableGroupStore {
 
   get width() {
     if (this.containerWidth) {
-      const fixedWidth = this.configs.reduce(
-        (acc, { width: w }) => (w ? acc + w : acc),
-        0
-      );
-      return this.containerWidth - fixedWidth;
+      return this.containerWidth - this.totalFixedWidths;
     } else {
       return 0;
     }
@@ -75,9 +71,7 @@ export class ResizableGroupStore {
     const childWidth = this.widths[index];
     const isFixed = this.isFixed(index);
 
-    if (isFixed) {
-      return this.configs[index].width;
-    } else if (this.activeChildren[index]) {
+    if (this.activeChildren[index] || isFixed) {
       return childWidth + 'px';
     } else {
       return 0;
@@ -167,12 +161,19 @@ export class ResizableGroupStore {
     this.resizingIndex = index;
 
     document.body.style.userSelect = 'none';
+
+    document.addEventListener('mousemove', this.handleResize);
+    document.addEventListener('mouseup', this.handleResizeEnd);
   };
 
   handleResizeEnd = () => {
     this.resizingIndex = null;
     this.resizeStart = null;
+
     document.body.style.userSelect = '';
+
+    document.removeEventListener('mousemove', this.handleResize);
+    document.removeEventListener('mouseup', this.handleResizeEnd);
   };
 
   handleAnimationEnd = (e) => {
@@ -194,7 +195,16 @@ export class ResizableGroupStore {
         (width, prevWidth) => {
           if (width && prevWidth) {
             const diff = prevWidth / width;
-            this.updateWidths(this.widths.map((width) => width / diff));
+
+            this.updateWidths(
+              this.widths.map((width, index) => {
+                if (this.isFixed(index)) {
+                  return this.configs[index].width;
+                } else {
+                  return width / diff;
+                }
+              })
+            );
           }
         }
       ),
@@ -209,8 +219,12 @@ export class ResizableGroupStore {
 
           setTimeout(() =>
             this.updateWidths(
-              children.map((childSize) => {
-                return (this.width / this.totalSize) * childSize;
+              children.map((childSize, index) => {
+                if (this.isFixed(index)) {
+                  return this.configs[index].width;
+                } else {
+                  return (this.width / this.totalSize) * childSize;
+                }
               })
             )
           );
