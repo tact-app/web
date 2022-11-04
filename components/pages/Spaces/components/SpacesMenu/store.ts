@@ -149,16 +149,22 @@ export class SpacesMenuStore {
 
       if (this.focusedPath[0] === null) {
         if (direction === 'up') {
-          const lastChild =
-            this.currentSpace?.children[this.currentSpace.children.length - 1];
+          if (this.currentSpace?.children.length) {
+            const lastChild =
+              this.currentSpace?.children[
+                this.currentSpace.children.length - 1
+              ];
 
-          this.focus(
-            this.getCornerChildPath({
-              source: lastChild,
-              state:
-                this.checkState[this.currentSpaceId].children[lastChild.id],
-            })
-          );
+            this.focus(
+              this.getCornerChildPath({
+                source: lastChild,
+                state:
+                  this.checkState[this.currentSpaceId].children[lastChild.id],
+              })
+            );
+          } else {
+            this.focus();
+          }
         } else {
           this.selectNextSpace(direction);
         }
