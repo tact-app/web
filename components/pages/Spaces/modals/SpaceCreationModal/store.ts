@@ -98,7 +98,22 @@ export class SpaceCreationModalStore {
         name: this.name,
         shortName: this.shortName,
         color: this.color,
-        children: [],
+        children: [
+          {
+            id: uuidv4(),
+            name: 'Jira',
+            children: [
+              {
+                id: uuidv4(),
+                name: 'Project 1',
+              },
+              {
+                id: uuidv4(),
+                name: 'Project 2',
+              },
+            ],
+          },
+        ],
       });
 
       this.handleClose();

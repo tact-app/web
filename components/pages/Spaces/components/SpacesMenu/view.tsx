@@ -21,7 +21,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
 ) {
   const store = useSpacesMenuStore();
   useHotkeysHandler(store.keyMap, store.hotkeysHandlers, {
-    enabled: props.hotkeysEnabled,
+    enabled: props.isHotkeysEnabled,
   });
 
   return (
@@ -109,22 +109,23 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                     {name}
                   </Text>
                 </Box>
-                <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    store.callbacks.onSpaceSettingsClick?.(space);
-                  }}
-                  aria-label='space-settings'
-                  size='xs'
-                  fill={color + '.500'}
-                  stroke={color + '.500'}
-                  variant='ghost'
-                  _hover={{
-                    bg: color + '.100',
-                  }}
-                >
-                  <GearIcon />
-                </IconButton>
+                {store.currentSpaceId === id && (
+                  <chakra.div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      store.callbacks.onSpaceSettingsClick?.(space);
+                    }}
+                    aria-label='space-settings'
+                    borderRadius='lg'
+                    fill={color + '.500'}
+                    stroke={color + '.500'}
+                    _hover={{
+                      bg: color + '.100',
+                    }}
+                  >
+                    <GearIcon />
+                  </chakra.div>
+                )}
               </AccordionButton>
               <AccordionPanel p={0} pl={4}>
                 {children.map((origin) => (
@@ -136,6 +137,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                 ))}
                 {id !== 'all' && (
                   <SpacesMenuAdd
+                    isFocused={store.focusedPath[0] === null}
                     onClick={() => undefined}
                     title='Add origin'
                     size='sm'
@@ -148,6 +150,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
       </Accordion>
       <SpacesMenuAdd
         onClick={store.callbacks.onSpaceCreationClick}
+        isFocused={props.isHotkeysEnabled && store.currentSpaceIndex === null}
         title='Add space'
         size='lg'
       />

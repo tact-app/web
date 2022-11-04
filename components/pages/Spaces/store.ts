@@ -30,7 +30,7 @@ export class SpacesStore {
   inboxItem = new SpacesInboxItemStore(this.root);
   inbox = new SpacesInboxStore(this.root);
 
-  focusedBlockId: SpacesFocusableBlocks | null = SpacesFocusableBlocks.TREE;
+  focusedBlockId: SpacesFocusableBlocks | null = SpacesFocusableBlocks.INBOX;
 
   currentSpace: SpaceData | null = null;
   focusedPath: string[] = [];
@@ -164,10 +164,15 @@ export class SpacesStore {
 
   saveSpace = (space: SpaceData) => {
     this.menu.addSpace(space);
+    this.root.api.spaces.add(space);
   };
 
   updateSpace = (space: SpaceData) => {
     this.menu.updateSpace(space);
+    this.root.api.spaces.update({
+      id: space.id,
+      fields: space,
+    });
   };
 
   init = (props: SpacesProps) => null;

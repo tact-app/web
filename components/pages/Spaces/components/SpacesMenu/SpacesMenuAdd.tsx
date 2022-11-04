@@ -4,6 +4,7 @@ import { SmallHeavyPlusIcon } from '../../../../shared/Icons/SmallHeavyPlusIcon'
 
 export const SpacesMenuAdd = (props: {
   onClick: () => void;
+  isFocused: boolean;
   size: 'sm' | 'lg';
   title: string;
 }) => (
@@ -28,6 +29,7 @@ export const SpacesMenuAdd = (props: {
       w={props.size === 'lg' ? 8 : 6}
       minW={props.size === 'lg' ? 8 : 6}
       h={props.size === 'lg' ? 8 : 6}
+      bg={props.isFocused ? 'gray.200' : 'transparent'}
       transition='background-color 0.2s ease-in-out'
       _groupHover={{
         bg: 'gray.200',

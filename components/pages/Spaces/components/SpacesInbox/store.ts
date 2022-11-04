@@ -11,7 +11,7 @@ export type SpacesInboxProps = {
     onFocus?: () => void;
     onSelect?: (item: SpacesInboxItemData) => void;
   };
-  hotkeysEnabled: boolean;
+  isHotkeysEnabled: boolean;
 };
 
 export class SpacesInboxStore {

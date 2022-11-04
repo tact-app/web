@@ -17,7 +17,7 @@ export const SpacesInboxView = observer(function SpacesInboxView(
   const store = useSpacesInboxStore();
 
   useHotkeysHandler(store.keyMap, store.hotkeysHandlers, {
-    enabled: props.hotkeysEnabled,
+    enabled: props.isHotkeysEnabled,
   });
 
   return (

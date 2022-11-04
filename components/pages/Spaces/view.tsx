@@ -19,13 +19,13 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
         <SpacesMenu
           instance={store.menu}
           callbacks={store.menuCallbacks}
-          hotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.TREE}
+          isHotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.TREE}
         />
         <SpacesInbox
           instance={store.inbox}
           callbacks={store.inboxCallbacks}
           space={store.currentSpace}
-          hotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.INBOX}
+          isHotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.INBOX}
         />
 
         {store.openedItem && (
