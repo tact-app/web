@@ -2,9 +2,21 @@ import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { SpaceData, SpacesFocusableBlocks } from './types';
 import { SpacesInboxItemData } from './components/SpacesInbox/types';
-import { SpacesMenuStore } from './components/SpacesMenu/store';
-import { SpacesInboxItemStore } from './components/SpacesInboxItem/store';
+import {
+  SpacesInboxItemProps,
+  SpacesInboxItemStore,
+} from './components/SpacesInboxItem/store';
 import { RootStore } from '../../../stores/RootStore';
+import { SpacesModals } from './modals/store';
+import {
+  SpacesMenuProps,
+  SpacesMenuStore,
+} from './components/SpacesMenu/store';
+import {
+  SpacesInboxProps,
+  SpacesInboxStore,
+} from './components/SpacesInbox/store';
+import { TaskProps } from '../../shared/Task/store';
 
 export type SpacesProps = {};
 
@@ -13,15 +25,49 @@ export class SpacesStore {
     makeAutoObservable(this);
   }
 
-  menu = new SpacesMenuStore();
+  modals = new SpacesModals(this.root);
+  menu = new SpacesMenuStore(this.root);
   inboxItem = new SpacesInboxItemStore(this.root);
+  inbox = new SpacesInboxStore(this.root);
 
-  focusedBlock: SpacesFocusableBlocks | null = SpacesFocusableBlocks.TREE;
+  focusedBlockId: SpacesFocusableBlocks | null = SpacesFocusableBlocks.TREE;
 
   currentSpace: SpaceData | null = null;
   focusedPath: string[] = [];
 
   openedItem: SpacesInboxItemData | null = null;
+  expandedBlocks: number[] = [];
+  inboxItemExpanded = false;
+
+  resizableConfig = [
+    {
+      width: 288,
+      size: 0,
+      props: {
+        boxShadow: 'lg',
+      },
+    },
+    {
+      size: 1,
+      flexible: true,
+      minWidth: 300,
+    },
+    {
+      size: 1,
+      minWidth: 300,
+      props: {
+        boxShadow: 'lg',
+      },
+    },
+    {
+      size: 1,
+      minWidth: 300,
+    },
+  ];
+
+  get focusedBlock() {
+    return this.modals.controller.isOpen ? null : this.focusedBlockId;
+  }
 
   setCurrentSpace = (space: SpaceData) => {
     this.currentSpace = space;
@@ -37,32 +83,67 @@ export class SpacesStore {
     }
 
     if (this.openedItem && item && this.openedItem.id === item.id) {
-      this.focusedBlock = SpacesFocusableBlocks.INBOX_ITEM;
+      this.focusedBlockId = SpacesFocusableBlocks.INBOX_ITEM;
       this.inboxItem.list.creator.setFocus(true);
+    }
+
+    if (item === null && this.openedItem) {
+      this.resetExpanded();
+      this.inboxItem.list.closeTask();
     }
 
     this.openedItem = item;
   };
 
+  handleExpand = (indexes: number[]) => {
+    this.expandedBlocks = indexes;
+
+    if (indexes.length === 1 && indexes[0] === 2) {
+      this.inboxItemExpanded = true;
+    }
+
+    this.resizableConfig = this.resizableConfig.map((conf, i) => ({
+      ...conf,
+      size: i === 0 || (indexes.length && !indexes.includes(i)) ? 0 : 1,
+    }));
+  };
+
+  resetExpanded = () => {
+    this.inboxItemExpanded = false;
+    this.handleExpand([1, 2, 3]);
+  };
+
+  handleMenuExpand = () => {
+    this.resizableConfig[0].width = 288;
+    this.resizableConfig = [...this.resizableConfig];
+  };
+
+  handleMenuCollapse = () => {
+    this.resizableConfig[0].width = 56;
+    this.resizableConfig = [...this.resizableConfig];
+  };
+
   handleFocusLeave = (direction: 'left' | 'right') => {
-    if (this.focusedBlock === SpacesFocusableBlocks.TREE) {
-      this.focusedBlock = SpacesFocusableBlocks.INBOX;
-    } else if (this.focusedBlock === SpacesFocusableBlocks.INBOX) {
+    this.resetExpanded();
+
+    if (this.focusedBlockId === SpacesFocusableBlocks.TREE) {
+      this.focusedBlockId = SpacesFocusableBlocks.INBOX;
+    } else if (this.focusedBlockId === SpacesFocusableBlocks.INBOX) {
       if (direction === 'left') {
-        this.focusedBlock = SpacesFocusableBlocks.TREE;
+        this.focusedBlockId = SpacesFocusableBlocks.TREE;
       } else if (this.openedItem) {
-        this.focusedBlock = SpacesFocusableBlocks.INBOX_ITEM;
+        this.focusedBlockId = SpacesFocusableBlocks.INBOX_ITEM;
         this.inboxItem.list.creator.setFocus(true);
       }
-    } else if (this.focusedBlock === SpacesFocusableBlocks.INBOX_ITEM) {
+    } else if (this.focusedBlockId === SpacesFocusableBlocks.INBOX_ITEM) {
       if (direction === 'left') {
-        this.focusedBlock = SpacesFocusableBlocks.INBOX;
+        this.focusedBlockId = SpacesFocusableBlocks.INBOX;
       }
     }
   };
 
   handleFocus = (block: SpacesFocusableBlocks) => {
-    this.focusedBlock = block;
+    this.focusedBlockId = block;
   };
 
   handleSpaceChange = (space: SpaceData) => {
@@ -73,9 +154,84 @@ export class SpacesStore {
     this.setFocusedPath(path);
   };
 
+  handleSpaceCreationClick = () => {
+    this.modals.openSpaceCreationModal(this.saveSpace);
+  };
+
+  handleSpaceSettingsClick = (space) => {
+    this.modals.openSpaceSettingsModal(space, this.updateSpace);
+  };
+
+  saveSpace = (space: SpaceData) => {
+    this.menu.addSpace(space);
+  };
+
+  updateSpace = (space: SpaceData) => {
+    this.menu.updateSpace(space);
+  };
+
   init = (props: SpacesProps) => null;
 
   update = () => null;
+
+  menuCallbacks: SpacesMenuProps['callbacks'] = {
+    onSpaceChange: this.handleSpaceChange,
+    onFocusChange: this.handleFocusChange,
+    onFocus: () => this.handleFocus(SpacesFocusableBlocks.TREE),
+    onFocusLeave: () => this.handleFocusLeave('right'),
+    onSpaceCreationClick: this.handleSpaceCreationClick,
+    onSpaceSettingsClick: this.handleSpaceSettingsClick,
+    onExpand: this.handleMenuExpand,
+    onCollapse: this.handleMenuCollapse,
+  };
+
+  inboxCallbacks: SpacesInboxProps['callbacks'] = {
+    onFocus: () => this.handleFocus(SpacesFocusableBlocks.INBOX),
+    onFocusLeave: this.handleFocusLeave,
+    onSelect: (item) => this.setOpenedItem(item),
+  };
+
+  itemCallbacks: SpacesInboxItemProps['callbacks'] = {
+    onExpand: () => {
+      this.inboxItem.list.closeTask();
+      this.handleExpand([2]);
+    },
+    onCollapse: () => this.resetExpanded(),
+    onClose: () => this.setOpenedItem(null),
+    onFocusLeave: this.handleFocusLeave,
+    onFocus: () => this.handleFocus(SpacesFocusableBlocks.INBOX_ITEM),
+    onPreviousItem: () => {
+      this.inbox.navigate('up');
+      this.inbox.selectFocusedItem();
+    },
+    onNextItem: () => {
+      this.inbox.navigate('down');
+      this.inbox.selectFocusedItem();
+    },
+    onOpenTask: (hasOpenedTask) => {
+      if (this.inboxItemExpanded) {
+        this.handleExpand([2, 3]);
+      } else {
+        this.resetExpanded();
+      }
+    },
+    onCloseTask: () => {
+      if (this.inboxItemExpanded) {
+        this.handleExpand([2]);
+      } else {
+        this.resetExpanded();
+      }
+    },
+  };
+
+  taskCallbacks: TaskProps['callbacks'] = {
+    onClose: this.inboxItem.list.closeTask,
+    onBlur: this.inboxItem.list.handleEditorBlur,
+    onPreviousItem: this.inboxItem.list.draggableList.focusPrevItem,
+    onNextItem: this.inboxItem.list.draggableList.focusNextItem,
+    onExpand: () => this.handleExpand([3]),
+    onCollapse: () => this.resetExpanded(),
+  };
 }
 
 export const { StoreProvider: SpacesStoreProvider, useStore: useSpacesStore } =

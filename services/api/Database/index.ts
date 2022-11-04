@@ -3,6 +3,7 @@ import { TaskData, TaskTag } from '../../../components/shared/TasksList/types';
 import { GoalData } from '../../../components/pages/Goals/types';
 import { JSONContent } from '@tiptap/core';
 import { FocusConfigurationData } from '../../../components/pages/Tasks/components/FocusConfiguration/store';
+import { SpaceData } from '../../../components/pages/Spaces/types';
 
 interface MyDB extends DBSchema {
   tasks: {
@@ -53,12 +54,16 @@ interface MyDB extends DBSchema {
       id: string;
     } & FocusConfigurationData;
   };
+  spaces: {
+    key: string;
+    value: SpaceData;
+  };
 }
 
 export type DB = IDBPDatabase<MyDB>;
 
 export async function initDb() {
-  return await openDB<MyDB>('tact-db', 4, {
+  return await openDB<MyDB>('tact-db', 5, {
     upgrade(db) {
       try {
         const tasksStore = db.createObjectStore('tasks', {
@@ -101,6 +106,12 @@ export async function initDb() {
 
       try {
         db.createObjectStore('focusConfigurations', {
+          keyPath: 'id',
+        });
+      } catch (e) {}
+
+      try {
+        db.createObjectStore('spaces', {
           keyPath: 'id',
         });
       } catch (e) {}

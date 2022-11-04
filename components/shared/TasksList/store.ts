@@ -20,6 +20,8 @@ export type TasksListProps = {
   dnd?: boolean;
   callbacks?: {
     onFocusLeave?: (direction: 'left' | 'right') => void;
+    onOpenTask?: (hasOpenedTask: boolean) => void;
+    onCloseTask?: () => void;
   };
 };
 
@@ -101,7 +103,17 @@ export class TasksListStore {
       this.creator.setFocus(true);
     },
     FOCUS_EDITOR: () => {
-      this.isEditorFocused = true;
+      if (!this.openedTask) {
+        if (this.draggableList.focused.length) {
+          if (this.openedTask === this.draggableList.focused[0]) {
+            this.isEditorFocused = true;
+          } else {
+            this.openTask(this.draggableList.focused[0]);
+          }
+        }
+      } else {
+        this.isEditorFocused = true;
+      }
     },
     FOCUS_LEAVE_LEFT: () => {
       this.draggableList.resetFocusedItem();
@@ -129,7 +141,11 @@ export class TasksListStore {
         }
 
         if (this.openedTask) {
-          this.openTask(ids[0]);
+          if (ids.length) {
+            this.openTask(ids[0]);
+          } else {
+            this.closeTask();
+          }
         }
       }
     },
@@ -145,7 +161,7 @@ export class TasksListStore {
     },
     onEscape: () => {
       if (this.openedTask) {
-        this.openedTask = null;
+        this.closeTask();
 
         return true;
       }
@@ -204,10 +220,15 @@ export class TasksListStore {
   };
 
   openTask = (taskId: string) => {
+    this.callbacks.onOpenTask?.(!!this.openedTask);
     this.openedTask = taskId;
   };
 
-  closeTask = () => {
+  closeTask = (silent?: boolean) => {
+    if (!silent) {
+      this.callbacks.onCloseTask?.();
+    }
+
     this.openedTask = null;
   };
 

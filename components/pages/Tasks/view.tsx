@@ -59,7 +59,12 @@ export const TasksView = observer(function TasksView() {
           </Box>
         </Container>
         {store.list.openedTask && (
-          <ResizableDrawer isOpen={!!store.list.openedTaskData}>
+          <ResizableDrawer
+            isOpen={!!store.list.openedTaskData}
+            pt={6}
+            pr={7}
+            pl={7}
+          >
             <Task
               task={store.list.openedTaskData}
               isEditorFocused={store.list.isEditorFocused}

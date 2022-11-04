@@ -2,15 +2,20 @@ import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { OriginChildData, OriginData, SpaceData } from '../../types';
 import { OriginCheckStatusTypes } from './types';
+import { RootStore } from '../../../../../stores/RootStore';
 
 export type SpacesMenuProps = {
   withCheckboxes?: boolean;
   hotkeysEnabled?: boolean;
   callbacks: {
     onSpaceChange?: (space: SpaceData) => void;
+    onSpaceCreationClick?: () => void;
+    onSpaceSettingsClick?: (space: SpaceData) => void;
     onFocusChange?: (path: string[]) => void;
     onFocus?: () => void;
     onFocusLeave?: (direction: 'left' | 'right') => void;
+    onExpand?: () => void;
+    onCollapse?: () => void;
   };
 };
 
@@ -23,7 +28,7 @@ type OriginCheckState = {
 };
 
 export class SpacesMenuStore {
-  constructor() {
+  constructor(public root: RootStore) {
     makeAutoObservable(this);
   }
 
@@ -43,11 +48,10 @@ export class SpacesMenuStore {
     FORCE_UP: ['cmd+j', 'cmd+up'],
     DOWN: ['k', 'down'],
     FORCE_DOWN: ['cmd+k', 'cmd+down'],
-    CHECK: 'space',
     COLLAPSE: 'left',
     EXPAND: 'right',
     LEAVE: ['esc'],
-    SELECT: 'enter',
+    SELECT: ['space', 'enter'],
   };
 
   hotkeysHandlers = {
@@ -127,10 +131,12 @@ export class SpacesMenuStore {
   moveFocus = (direction: 'up' | 'down') => {
     if (this.isExpanded) {
       if (!this.focusedPath.length) {
-        if (this.currentSpace.children.length && direction === 'down') {
-          this.focus([this.currentSpace.children[0].id]);
-        } else {
-          this.selectNextSpace(direction);
+        if (this.currentSpace) {
+          if (this.currentSpace.children.length && direction === 'down') {
+            this.focus([this.currentSpace.children[0].id]);
+          } else {
+            this.selectNextSpace(direction);
+          }
         }
 
         return;
@@ -300,6 +306,12 @@ export class SpacesMenuStore {
 
   toggleExpanded = (state?: boolean) => {
     this.isExpanded = state === undefined ? !this.isExpanded : state;
+
+    if (this.isExpanded) {
+      this.callbacks.onExpand?.();
+    } else {
+      this.callbacks.onCollapse?.();
+    }
   };
 
   handleExpanderClick = () => {
@@ -385,7 +397,7 @@ export class SpacesMenuStore {
   getChainByPath = (spaceId: string, path: string[]) => {
     const originId = path[0];
 
-    if (originId) {
+    if (originId && this.currentSpace) {
       const originCheck = this.checkState[spaceId].children[originId];
       const originSource = this.currentSpace.children.find(
         ({ id }) => id === originId
@@ -452,7 +464,9 @@ export class SpacesMenuStore {
     return false;
   };
 
-  createOriginCheckState = (source: OriginData | OriginChildData) => {
+  createChildCheckState = (
+    source: OriginData | OriginChildData | SpaceData
+  ): OriginCheckState => {
     return {
       status: OriginCheckStatusTypes.CHECKED,
       expanded: false,
@@ -463,12 +477,15 @@ export class SpacesMenuStore {
   };
 
   createChildrenState = (
-    originChildren: OriginChildData[]
+    children: OriginChildData[] | SpaceData[] | OriginData[]
   ): OriginCheckStateTree => {
-    return originChildren.reduce((acc, child) => {
-      acc[child.id] = this.createOriginCheckState(child);
-      return acc;
-    }, {});
+    const acc: OriginCheckStateTree = {};
+
+    children.forEach((child) => {
+      acc[child.id] = this.createChildCheckState(child);
+    });
+
+    return acc;
   };
 
   handleSpaceChange = (index: number) => {
@@ -502,187 +519,44 @@ export class SpacesMenuStore {
     return false;
   };
 
-  loadSpaces = async () => {
-    this.spaces = [
-      {
+  addSpace = (space: SpaceData) => {
+    this.spaces.push(space);
+    this.checkState[space.id] = this.createChildCheckState(space);
+
+    if (this.spaces.length === 2) {
+      this.spaces.unshift({
         id: 'all',
-        color: 'gray.500',
+        color: 'gray',
         name: 'All spaces',
         shortName: 'A',
         children: [],
-      },
-      {
-        id: '123123',
-        color: 'orange.200',
-        name: 'Work',
-        shortName: 'W',
-        children: [
-          {
-            id: 'github',
-            name: 'Github',
-            children: [
-              {
-                name: 'main project',
-                id: 'github/main-project',
-                children: [
-                  {
-                    id: 'github/main-project/repository-1',
-                    name: 'repository 1',
-                  },
-                  {
-                    id: 'github/main-project/repository-2',
-                    name: 'repository 2',
-                  },
-                ],
-              },
-              {
-                name: 'second project',
-                id: 'github/second-project',
-                children: [
-                  {
-                    id: 'github/second-project/repository-1',
-                    name: 'repository 1',
-                  },
-                ],
-              },
-              {
-                name: 'main project 1',
-                id: 'github/main-project-1',
-                children: [
-                  {
-                    id: 'github/main-project-1/repository-1',
-                    name: 'repository 1',
-                  },
-                  {
-                    id: 'github/main-project-1/repository-2',
-                    name: 'repository 2',
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: 'jira',
-            name: 'Jira',
-            children: [
-              {
-                id: 'jira/project-1',
-                name: 'main project',
-              },
-              {
-                id: 'jira/project-2',
-                name: 'other project',
-              },
-              {
-                id: 'jira/project-3',
-                name: 'main project 1',
-              },
-              {
-                id: 'jira/project-4',
-                name: 'other project 2',
-              },
-              {
-                id: 'jira/project-5',
-                name: 'main project 3',
-              },
-              {
-                id: 'jira/project-6',
-                name: 'other project 4',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: '4444',
-        color: 'purple.200',
-        name: 'Meetings',
-        shortName: 'M',
+      });
+    }
+  };
+
+  updateSpace = (space: SpaceData) => {
+    const index = this.spaces.findIndex(({ id }) => id === space.id);
+
+    if (index > -1) {
+      this.spaces[index] = space;
+      this.checkState[space.id] = this.createChildCheckState(space);
+    }
+  };
+
+  loadSpaces = async () => {
+    const spaces = []; //await this.root.api.spaces.list();
+
+    if (spaces.length > 1) {
+      spaces.unshift({
+        id: 'all',
+        color: 'gray',
+        name: 'All spaces',
+        shortName: 'A',
         children: [],
-      },
-      {
-        id: '222',
-        color: 'blue.200',
-        name: 'Life',
-        shortName: 'L',
-        children: [
-          {
-            id: 'github',
-            name: 'Github',
-            children: [
-              {
-                name: 'main project',
-                id: 'github/main-project',
-                children: [
-                  {
-                    id: 'github/main-project/repository-1',
-                    name: 'repository 1',
-                  },
-                  {
-                    id: 'github/main-project/repository-2',
-                    name: 'repository 2',
-                  },
-                ],
-              },
-              {
-                name: 'second project',
-                id: 'github/second-project',
-                children: [
-                  {
-                    id: 'github/second-project/repository-1',
-                    name: 'repository 1',
-                  },
-                ],
-              },
-              {
-                name: 'main project 1',
-                id: 'github/main-project-1',
-                children: [
-                  {
-                    id: 'github/main-project-1/repository-1',
-                    name: 'repository 1',
-                  },
-                  {
-                    id: 'github/main-project-1/repository-2',
-                    name: 'repository 2',
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: 'jira',
-            name: 'Jira',
-            children: [
-              {
-                id: 'jira/project-1',
-                name: 'main project',
-              },
-              {
-                id: 'jira/project-2',
-                name: 'other project',
-              },
-              {
-                id: 'jira/project-3',
-                name: 'main project 1',
-              },
-              {
-                id: 'jira/project-4',
-                name: 'other project 2',
-              },
-              {
-                id: 'jira/project-5',
-                name: 'main project 3',
-              },
-              {
-                id: 'jira/project-6',
-                name: 'other project 4',
-              },
-            ],
-          },
-        ],
-      },
-    ];
+      });
+    }
+
+    this.spaces = spaces;
 
     this.checkState = this.createChildrenState(this.spaces);
 

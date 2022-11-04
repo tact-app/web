@@ -1,11 +1,17 @@
 import { observer } from 'mobx-react-lite';
 import { SpacesInboxView } from './view';
-import { SpacesInboxProps, SpacesInboxStoreProvider } from './store';
+import {
+  SpacesInboxProps,
+  SpacesInboxStore,
+  SpacesInboxStoreProvider,
+} from './store';
 
-export const SpacesInbox = observer(function SpacesInbox(props: SpacesInboxProps) {
+export const SpacesInbox = observer(function SpacesInbox(
+  props: SpacesInboxProps & { instance: SpacesInboxStore }
+) {
   return (
     <SpacesInboxStoreProvider {...props}>
-      <SpacesInboxView {...props}/>
+      <SpacesInboxView {...props} />
     </SpacesInboxStoreProvider>
   );
 });

@@ -8,6 +8,7 @@ export const SpacesMenuAdd = (props: {
   title: string;
 }) => (
   <Button
+    onClick={props.onClick}
     variant='unstyled'
     p={1}
     m={0}

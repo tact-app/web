@@ -8,43 +8,22 @@ import { SpacesInboxItem } from './components/SpacesInboxItem';
 import { ResizableGroup } from '../../shared/ResizableGroup';
 import { Task } from '../../shared/Task';
 import React from 'react';
-
-const configs = [
-  {
-    size: 1,
-    flexible: true,
-  },
-  {
-    size: 1,
-    props: {
-      boxShadow: 'lg',
-    },
-  },
-  { size: 1 },
-];
+import { ModalsSwitcher } from '../../../helpers/ModalsController';
 
 export const SpacesView = observer(function SpacesView(props: SpacesProps) {
   const store = useSpacesStore();
 
   return (
     <Box h='100%' display='flex'>
-      <SpacesMenu
-        instance={store.menu}
-        callbacks={{
-          onSpaceChange: store.handleSpaceChange,
-          onFocusChange: store.handleFocusChange,
-          onFocus: () => store.handleFocus(SpacesFocusableBlocks.TREE),
-          onFocusLeave: () => store.handleFocusLeave('right'),
-        }}
-        hotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.TREE}
-      />
-      <ResizableGroup configs={configs}>
+      <ResizableGroup configs={store.resizableConfig}>
+        <SpacesMenu
+          instance={store.menu}
+          callbacks={store.menuCallbacks}
+          hotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.TREE}
+        />
         <SpacesInbox
-          callbacks={{
-            onFocus: () => store.handleFocus(SpacesFocusableBlocks.INBOX),
-            onFocusLeave: store.handleFocusLeave,
-            onSelect: (item) => store.setOpenedItem(item),
-          }}
+          instance={store.inbox}
+          callbacks={store.inboxCallbacks}
           space={store.currentSpace}
           hotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.INBOX}
         />
@@ -56,11 +35,7 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
             isHotkeysEnabled={
               store.focusedBlock === SpacesFocusableBlocks.INBOX_ITEM
             }
-            callbacks={{
-              onFocusLeave: store.handleFocusLeave,
-              onFocus: () =>
-                store.handleFocus(SpacesFocusableBlocks.INBOX_ITEM),
-            }}
+            callbacks={store.itemCallbacks}
           />
         )}
 
@@ -74,17 +49,12 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
             <Task
               task={store.inboxItem.list.openedTaskData}
               isEditorFocused={store.inboxItem.list.isEditorFocused}
-              callbacks={{
-                onClose: store.inboxItem.list.closeTask,
-                onBlur: store.inboxItem.list.handleEditorBlur,
-                onPreviousItem:
-                  store.inboxItem.list.draggableList.focusPrevItem,
-                onNextItem: store.inboxItem.list.draggableList.focusNextItem,
-              }}
+              callbacks={store.taskCallbacks}
             />
           </Box>
         )}
       </ResizableGroup>
+      <ModalsSwitcher controller={store.modals.controller} />
     </Box>
   );
 });

@@ -1,6 +1,6 @@
 export type OriginChildData = {
-  name: string;
   id: string;
+  name: string;
   children?: OriginChildData[];
 };
 

@@ -35,11 +35,11 @@ export class SpacesInboxStore {
       this.callbacks.onFocusLeave?.('left');
     },
     LEAVE_RIGHT: () => {
-      this.handleItemClick(this.focusedItemId);
+      this.selectFocusedItem();
       this.callbacks.onFocusLeave?.('right');
     },
-    SELECT: () => this.handleItemClick(this.focusedItemId),
-    UNSELECT: () => this.handleItemClick(null),
+    SELECT: () => this.selectFocusedItem(),
+    UNSELECT: () => this.selectItem(null),
   };
 
   callbacks: SpacesInboxProps['callbacks'] = {};
@@ -85,10 +85,18 @@ export class SpacesInboxStore {
   };
 
   handleItemClick = (id: string | null) => {
+    this.selectItem(id);
+  };
+
+  selectItem = (id: string | null) => {
     const item = this.items.find((item) => item.id === id);
 
     this.focusedItemId = id;
     this.callbacks.onSelect?.(item || null);
+  };
+
+  selectFocusedItem = () => {
+    this.selectItem(this.focusedItemId);
   };
 
   loadItems = () => {

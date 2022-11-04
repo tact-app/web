@@ -10,8 +10,12 @@ export type SpacesInboxItemProps = {
   isHotkeysEnabled?: boolean;
   callbacks?: {
     onFocus?: () => void;
-    onFocusLeave?: (direction: 'left' | 'right') => void;
-  };
+    onExpand?: () => void;
+    onCollapse?: () => void;
+    onPreviousItem?: () => void;
+    onNextItem?: () => void;
+    onClose?: () => void;
+  } & TasksListStore['callbacks'];
 };
 
 export class SpacesInboxItemStore {

@@ -4,69 +4,42 @@ import {
   Box,
   Center,
   CircularProgress,
+  Container,
   Heading,
-  IconButton,
-  CloseButton,
 } from '@chakra-ui/react';
 import { useTaskStore } from './store';
-import { ArrowDownIcon, ArrowUpIcon } from '../Icons/ArrowIcons';
 import { Editor } from '../Editor';
+import { ItemToolbar } from '../ItemToolbar/itemToolbar';
 
 export const TaskView = observer(function TaskView() {
   const store = useTaskStore();
 
   return (
-    <Box pt={6} pr={7} pl={7} h='100%'>
-      <Box
-        pl={0}
-        pr={0}
-        pb={2}
-        borderBottomWidth='1px'
-        display='flex'
-        justifyContent='space-between'
-        alignItems='center'
-      >
-        <Box>
-          <IconButton
-            aria-label={'prev'}
-            size='xs'
-            variant='ghost'
-            onClick={store.handlePreviousItem}
-          >
-            <ArrowUpIcon />
-          </IconButton>
-          <IconButton
-            aria-label={'prev'}
-            size='xs'
-            variant='ghost'
-            onClick={store.handleNextItem}
-          >
-            <ArrowDownIcon />
-          </IconButton>
-        </Box>
-        <CloseButton onClick={store.handleClose} color='gray.400' size='sm' />
+    <Container overflow='auto' h='100%' maxW='container.md' p={0}>
+      <ItemToolbar
+        onPreviousItem={store.handlePreviousItem}
+        onNextItem={store.handleNextItem}
+        onClose={store.handleClose}
+        onExpand={store.handleExpand}
+        onCollapse={store.handleCollapse}
+      />
+      <Heading fontSize='2xl' mt={6} fontWeight='semibold'>
+        {store.data.title}
+      </Heading>
+      <Box mt={4} id='editor'>
+        {store.isDescriptionLoading ? (
+          <Center>
+            <CircularProgress isIndeterminate size='24px' />
+          </Center>
+        ) : (
+          <Editor
+            content={store.description ? store.description.content : undefined}
+            isFocused={store.isEditorFocused}
+            onUpdate={store.handleDescriptionChange}
+            onBlur={store.handleDescriptionBlur}
+          />
+        )}
       </Box>
-      <Box mt={6} ml={0} overflow='auto' h='100%'>
-        <Heading fontSize='2xl' fontWeight='semibold'>
-          {store.data.title}
-        </Heading>
-        <Box mt={4} id='editor'>
-          {store.isDescriptionLoading ? (
-            <Center>
-              <CircularProgress isIndeterminate size='24px' />
-            </Center>
-          ) : (
-            <Editor
-              content={
-                store.description ? store.description.content : undefined
-              }
-              isFocused={store.isEditorFocused}
-              onUpdate={store.handleDescriptionChange}
-              onBlur={store.handleDescriptionBlur}
-            />
-          )}
-        </Box>
-      </Box>
-    </Box>
+    </Container>
   );
 });

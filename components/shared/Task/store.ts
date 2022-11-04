@@ -11,6 +11,8 @@ export type TaskProps = {
   callbacks: {
     onClose?: () => void;
     onBlur?: () => void;
+    onCollapse?: () => void;
+    onExpand?: () => void;
     onNextItem?: (taskId: string, stay?: boolean) => void;
     onPreviousItem?: (taskId: string, stay?: boolean) => void;
   };
@@ -80,9 +82,17 @@ class TaskStore {
     this.callbacks.onPreviousItem(this.data?.id, true);
   };
 
+  handleExpand = () => {
+    this.callbacks.onExpand?.();
+  };
+
+  handleCollapse = () => {
+    this.callbacks.onCollapse?.();
+  };
+
   handleClose = () => {
     this.handleDescriptionBlur();
-    this.callbacks.onClose();
+    this.callbacks.onClose?.();
   };
 
   loadDescription = async () => {
