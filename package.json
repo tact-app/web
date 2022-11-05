@@ -29,7 +29,7 @@
     "@tiptap/extension-task-item": "^2.0.0-beta.202",
     "@tiptap/extension-task-list": "^2.0.0-beta.199",
     "@tiptap/extension-underline": "^2.0.0-beta.199",
-    "@tiptap/react": "^2.0.0-beta.199",
+    "@tiptap/react": "^2.0.0-beta.202",
     "@tiptap/starter-kit": "^2.0.0-beta.199",
     "@tiptap/suggestion": "^2.0.0-beta.199",
     "allotment": "^1.17.0",
