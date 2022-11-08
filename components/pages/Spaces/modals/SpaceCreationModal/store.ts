@@ -6,8 +6,11 @@ import { SyntheticEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 export type SpaceCreationModalProps = {
-  onClose: () => void;
-  onSave: (goal: SpaceData) => void;
+  callbacks: {
+    onClose?: () => void;
+    onSave?: (goal: SpaceData) => void;
+    onDelete?: () => void;
+  };
   editMode?: boolean;
   space?: SpaceData;
 };
@@ -41,30 +44,63 @@ export class SpaceCreationModalStore {
     },
   };
 
-  onClose: SpaceCreationModalProps['onClose'];
-  onSave: SpaceCreationModalProps['onSave'];
+  callbacks: SpaceCreationModalProps['callbacks'] = {};
 
   isOpen = true;
   isColorPickerOpen = false;
   isDescriptionLoading: boolean = true;
   isEditMode: boolean = false;
+
+  selectedAccountId: string = this.root.user.data.accounts[0].id;
   existedSpace: SpaceData | null = null;
   icon: string = '';
   color = colors[Math.floor(Math.random() * colors.length)];
   name: string = '';
   shortName: string = '';
+  shortNameChanged: boolean = false;
+  isDeleteConfirmationOpen: boolean = false;
 
   get isReadyForSave() {
     return !!this.name;
   }
 
+  openConfirmationDelete = () => {
+    this.isDeleteConfirmationOpen = true;
+  };
+
+  closeDeleteConfirmation = () => {
+    this.isDeleteConfirmationOpen = false;
+  };
+
+  confirmDeletion = () => {
+    this.isDeleteConfirmationOpen = false;
+    this.callbacks.onDelete?.();
+  };
+
   handleColorSelect = (color: string) => {
     this.color = color;
   };
 
+  handleAccountSelect = (id: string) => {
+    this.selectedAccountId = id;
+  };
+
+  handleShortNameChange = (e: SyntheticEvent<HTMLInputElement>) => {
+    this.shortName = e.currentTarget.value;
+    this.shortNameChanged = true;
+  };
+
   handleNameChange = (e: SyntheticEvent) => {
     this.name = (e.target as HTMLInputElement).value;
-    this.shortName = this.name.slice(0, 1).toUpperCase();
+
+    if (!this.name) {
+      this.shortName = '';
+      this.shortNameChanged = false;
+    }
+
+    if (!this.shortNameChanged) {
+      this.shortName = this.name.slice(0, 1).toUpperCase();
+    }
   };
 
   handleBack = () => {
@@ -80,7 +116,7 @@ export class SpaceCreationModalStore {
   };
 
   handleCloseComplete = () => {
-    this.onClose?.();
+    this.callbacks.onClose?.();
   };
 
   openColorPicker = () => {
@@ -93,7 +129,7 @@ export class SpaceCreationModalStore {
 
   handleSave = () => {
     if (this.isReadyForSave) {
-      this.onSave?.({
+      this.callbacks.onSave?.({
         id: this.existedSpace ? this.existedSpace.id : uuidv4(),
         name: this.name,
         shortName: this.shortName,
@@ -121,14 +157,15 @@ export class SpaceCreationModalStore {
   };
 
   update = async (props: SpaceCreationModalProps) => {
-    this.onClose = props.onClose;
-    this.onSave = props.onSave;
+    this.callbacks = props.callbacks;
     this.existedSpace = props.space;
     this.isEditMode = props.editMode;
 
     if (this.existedSpace) {
       this.color = this.existedSpace.color;
       this.name = this.existedSpace.name;
+      this.shortName = this.existedSpace.shortName;
+      this.shortNameChanged = true;
     } else {
       runInAction(() => {
         this.isDescriptionLoading = false;

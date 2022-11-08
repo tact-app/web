@@ -14,18 +14,26 @@ import { ExpandIcon } from '../../../../shared/Icons/ExpandIcon';
 import { SpacesMenuOrigin } from './SpacesMenuOrigin';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { SpacesMenuAdd } from './SpacesMenuAdd';
-import { GearIcon } from '../../../../shared/Icons/GearIcon';
+import { SpacesSmallIcon } from '../SpacesIcons/SpacesSmallIcon';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGear } from '@fortawesome/pro-regular-svg-icons';
 
 export const SpacesMenuView = observer(function SpacesMenuView(
   props: SpacesMenuProps
 ) {
   const store = useSpacesMenuStore();
+
   useHotkeysHandler(store.keyMap, store.hotkeysHandlers, {
     enabled: props.isHotkeysEnabled,
   });
 
   return (
-    <Box h='100%' alignItems='start' p={2}>
+    <Box
+      h='100%'
+      alignItems='start'
+      p={2}
+      onMouseDown={props.callbacks.onFocus}
+    >
       <IconButton
         m={2}
         display='flex'
@@ -84,21 +92,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                 }}
               >
                 <Box display='flex' alignItems='center'>
-                  <chakra.div
-                    borderRadius='full'
-                    display='flex'
-                    justifyContent='center'
-                    alignItems='center'
-                    w={8}
-                    minW={8}
-                    h={8}
-                    fontWeight={600}
-                    bg={color + '.200'}
-                    fontSize='lg'
-                    color={color + '.500'}
-                  >
-                    {shortName}
-                  </chakra.div>
+                  <SpacesSmallIcon space={space} />
                   <Text
                     ml={2}
                     whiteSpace='nowrap'
@@ -117,13 +111,14 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                     }}
                     aria-label='space-settings'
                     borderRadius='lg'
-                    fill={color + '.500'}
-                    stroke={color + '.500'}
                     _hover={{
                       bg: color + '.100',
                     }}
                   >
-                    <GearIcon />
+                    <FontAwesomeIcon
+                      icon={faGear}
+                      color={`var(--chakra-colors-${color + '-500'})`}
+                    />
                   </chakra.div>
                 )}
               </AccordionButton>

@@ -13,6 +13,7 @@ import { TaskQuickEditorStore } from '../TaskQuickEditor/store';
 export type TaskItemProps = {
   task?: TaskData | null;
   highlightActiveTasks?: boolean;
+  isReadOnly?: boolean;
   isDisabled?: boolean;
   isFocused?: boolean;
   isDragging?: boolean;
@@ -36,12 +37,18 @@ class TaskItemStore {
   isFocused: boolean = false;
   isEditMode: boolean = false;
   isDragging: boolean = false;
+  isReadOnly: boolean = false;
   onFocus: TaskItemProps['onFocus'];
   onNavigate: TaskItemProps['onNavigate'];
   onStatusChange: TaskItemProps['onStatusChange'];
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    if (this.onFocus && !this.isDisabled && !this.isEditMode) {
+    if (
+      this.onFocus &&
+      !this.isDisabled &&
+      !this.isEditMode &&
+      !this.isReadOnly
+    ) {
       e.preventDefault();
       document.getSelection().removeAllRanges();
       this.onFocus(
@@ -67,6 +74,7 @@ class TaskItemStore {
     isFocused,
     isDisabled,
     isDragging,
+    isReadOnly,
     isEditMode,
   }: TaskItemProps) => {
     this.task = task;
@@ -79,6 +87,7 @@ class TaskItemStore {
     this.isFocused = isFocused;
     this.isDragging = isDragging;
     this.isEditMode = isEditMode;
+    this.isReadOnly = isReadOnly;
   };
 }
 

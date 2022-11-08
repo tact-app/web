@@ -1,6 +1,17 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button, Text, Box, Center, Heading, Input } from '@chakra-ui/react';
+import {
+  Button,
+  Text,
+  Box,
+  Center,
+  Heading,
+  Input,
+  HStack,
+  VStack,
+  Container,
+  Divider,
+} from '@chakra-ui/react';
 import { useSpaceCreationModalStore } from './store';
 import { BackArrowIcon } from '../../../../shared/Icons/BackArrowIcon';
 import {
@@ -9,9 +20,13 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  ModalOverlay,
 } from '@chakra-ui/modal';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { SpaceCreationColorSelect } from './components/SpaceCreationColorSelect';
+import { SpaceCreationAccountSelect } from './components/SpaceCreationAccountSelect';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/pro-regular-svg-icons';
 
 const keyMap = {
   CREATE: ['cmd+enter', 'cmd+s'],
@@ -54,7 +69,7 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
           <Center flex={1} minH={12}>
             <SpaceCreationColorSelect />
             <Heading variant='h1' fontSize='2rem'>
-              Create space
+              {store.existedSpace ? 'Edit' : 'Create'} space
             </Heading>
           </Center>
           <Box display='flex' alignItems='center' position='absolute' right={6}>
@@ -72,26 +87,101 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
           </Box>
         </ModalHeader>
         <ModalBody pb={6} overflow='scroll' position='relative'>
-          <Box
-            maxW='2xl'
-            overflow='visible'
-            position='absolute'
-            left={0}
-            right={0}
-            m='auto'
-          >
-            <Input
-              size='lg'
-              value={store.name}
-              autoFocus
-              placeholder='Space name'
-              onChange={store.handleNameChange}
-              variant='flushed'
-            />
-          </Box>
+          <Container maxW='2xl'>
+            <VStack>
+              <SpaceCreationAccountSelect />
+              <HStack
+                overflow='visible'
+                display='flex'
+                m='auto'
+                w='100%'
+                spacing={6}
+                alignItems='end'
+              >
+                <Box flex={1}>
+                  <Text fontSize='lg' fontWeight='semibold'>
+                    Name
+                  </Text>
+                  <Input
+                    size='lg'
+                    value={store.name}
+                    autoFocus
+                    placeholder='Space name'
+                    onChange={store.handleNameChange}
+                    variant='flushed'
+                  />
+                </Box>
+                <Input
+                  size='lg'
+                  value={store.shortName}
+                  placeholder='-'
+                  w={10}
+                  maxLength={1}
+                  onChange={store.handleShortNameChange}
+                  variant='flushed'
+                />
+              </HStack>
+            </VStack>
+          </Container>
         </ModalBody>
-        <ModalFooter />
+        <ModalFooter>
+          {store.existedSpace && (
+            <Container maxW='2xl'>
+              <Divider />
+              <Box
+                display='flex'
+                alignItems='center'
+                justifyContent='space-between'
+                pb={10}
+                pt={4}
+              >
+                <Box display='flex' alignItems='center'>
+                  <FontAwesomeIcon icon={faTrash} fixedWidth />
+                  <Text fontSize='sm' fontWeight='normal'>
+                    Delete space
+                  </Text>
+                </Box>
+                <Button
+                  onClick={store.openConfirmationDelete}
+                  variant='outline'
+                  borderWidth='2px'
+                  colorScheme='blue'
+                  borderColor='blue.400'
+                  color='blue.400'
+                  size='xs'
+                >
+                  Delete
+                </Button>
+              </Box>
+            </Container>
+          )}
+        </ModalFooter>
       </ModalContent>
+
+      <Modal
+        isOpen={store.isDeleteConfirmationOpen}
+        onClose={store.closeDeleteConfirmation}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm deletion</ModalHeader>
+          <ModalBody>Are you sure?</ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme='gray'
+              variant='ghost'
+              mr={3}
+              onClick={store.closeDeleteConfirmation}
+            >
+              Cancel
+            </Button>
+            <Button colorScheme='red' onClick={store.confirmDeletion}>
+              Delete
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Modal>
   );
 });

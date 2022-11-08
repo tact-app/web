@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Box, Checkbox, HStack, Text, chakra, Tag } from '@chakra-ui/react';
+import {
+  Box,
+  Checkbox,
+  HStack,
+  Text,
+  chakra,
+  Tag,
+  useOutsideClick,
+} from '@chakra-ui/react';
 import { TaskStatus } from '../../types';
 import { TaskItemProps, useTaskItemStore } from './store';
-import { TaskPriorityIcon } from '../../../Icons/TaskPriorityIcon';
 import { TaskItemMenu } from '../TaskItemMenu';
 import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
@@ -14,6 +21,13 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
   const store = useTaskItemStore();
   const quickEditStore = useTaskQuickEditorStore();
   const isTodoTask = store.task.status === TaskStatus.TODO;
+  const ref = useRef(null);
+  const hasTags = Boolean(
+    store.isEditMode
+      ? quickEditStore.modes.tag.tags.length
+      : store.task.tags.length
+  );
+
   let bg = 'white';
   let hoveredBg = 'white';
   let focusedBg = 'white';
@@ -32,8 +46,14 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
     }
   }
 
+  useOutsideClick({
+    ref: ref,
+    handler: quickEditStore.handleClickOutside,
+  });
+
   return (
     <Box
+      ref={ref}
       flex={1}
       display='flex'
       transition={['filter 0.2s ease-in-out', 'opacity 0.2s ease-in-out']}
@@ -44,6 +64,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
       <Box
         flex={1}
         borderBottom='1px'
+        overflow='hidden'
         borderColor={
           props.highlightActiveTasks && !store.isDisabled
             ? 'transparent'
@@ -63,9 +84,10 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
               : 'gray.100',
         }}
       >
-        <Box h={10} pl={2} display='flex' alignItems='center'>
+        <Box minH={10} pl={2} display='flex' alignItems='center'>
           <div onClick={(e) => e.stopPropagation()}>
             <Checkbox
+              pointerEvents={store.isReadOnly ? 'none' : 'auto'}
               variant='indeterminateUnfilled'
               bg='white'
               size='lg'
@@ -79,10 +101,13 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           {store.isEditMode && isTodoTask ? (
             <TaskQuickEditorInput autofocus />
           ) : (
-            <Box position='relative'>
+            <Box position='relative' overflow='hidden'>
               <Text
                 transition='color 0.2s ease-in-out'
                 color={isTodoTask ? 'gray.700' : 'gray.400'}
+                whiteSpace='nowrap'
+                textOverflow='ellipsis'
+                overflow='hidden'
               >
                 {store.task.title}
               </Text>
@@ -97,30 +122,43 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
             </Box>
           )}
           <chakra.div justifySelf='end' ml='auto' mr={4}>
-            {store.isEditMode ? (
-              <TaskQuickEditorPriority />
-            ) : (
-              <TaskPriorityIcon priority={store.task.priority} />
-            )}
+            <TaskQuickEditorPriority />
           </chakra.div>
         </Box>
-        {store.isEditMode
-          ? !!quickEditStore.tags.length && (
-              <HStack ml={9} pb={2.5} maxH='34px'>
-                <TaskQuickEditorTags />
-              </HStack>
-            )
-          : !!store.task.tags.length && (
-              <HStack ml={9} pb={2.5}>
-                {store.task.tags.map((id) => (
-                  <Tag bg='blue.400' color='white' cursor='pointer' key={id}>
-                    {store.tags[id]?.title}
-                  </Tag>
-                ))}
-              </HStack>
+        {hasTags && (
+          <HStack
+            overflow='auto'
+            ml={8}
+            pb={2.5}
+            pr={2}
+            pt={1}
+            pl={1}
+            css={{
+              scrollbarWidth: 'none',
+              '&::-webkit-scrollbar': {
+                display: 'none',
+              },
+            }}
+          >
+            {store.isEditMode ? (
+              <TaskQuickEditorTags />
+            ) : (
+              store.task.tags.map((id) => (
+                <Tag
+                  bg='blue.400'
+                  color='white'
+                  cursor='pointer'
+                  key={id}
+                  flexShrink={0}
+                >
+                  {store.tags[id]?.title}
+                </Tag>
+              ))
             )}
+          </HStack>
+        )}
       </Box>
-      <TaskItemMenu />
+      {!store.isReadOnly && <TaskItemMenu />}
     </Box>
   );
 });

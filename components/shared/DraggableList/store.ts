@@ -34,6 +34,7 @@ export type DraggableListComponentProps = {
 export type DraggableListProps = {
   callbacks?: DraggableListCallbacks;
   checkItemActivity?: (id: string) => boolean;
+  isHotkeysEnabled?: boolean;
   items: string[];
   dndActive?: boolean;
 };
@@ -149,14 +150,6 @@ export class DraggableListStore {
         this.resetFocusedItem();
       }
     },
-  };
-
-  disableHotkeys = () => {
-    this.isForceHotkeysActive = false;
-  };
-
-  enableHotkeys = () => {
-    this.isForceHotkeysActive = true;
   };
 
   shiftSelect = (direction: 'up' | 'down', count: number = 1) => {
@@ -469,6 +462,7 @@ export class DraggableListStore {
     this.callbacks = props.callbacks || {};
     this.items = props.items;
     this.isDndActive = props.dndActive;
+    this.isForceHotkeysActive = props.isHotkeysEnabled ?? true;
     this.checkItemActivity = props.checkItemActivity;
   };
 }

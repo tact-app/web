@@ -7,9 +7,9 @@ export enum SpacesInboxItemStatusTypes {
 export type SpacesInboxItemData = {
   id: string;
   title: string;
-  status: SpacesInboxItemStatusTypes;
   descriptionId: string;
   icon: string;
+  spaceId: string;
   origin: {
     type: string;
     name: string;

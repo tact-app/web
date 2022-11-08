@@ -19,11 +19,13 @@ export const TaskListItem = observer(function TaskListItem({
       <TaskItem
         task={task}
         highlightActiveTasks={store.highlightActiveTasks}
+        isReadOnly={store.isReadOnly}
         isDisabled={!focusMatch}
         isFocused={store.draggableList.focused.includes(task.id)}
         isDragging={snapshot.isDragging}
         isEditMode={store.editingTaskId && task.id === store.editingTaskId}
         tagsMap={store.tagsMap}
+        spaces={store.spaces}
         listId={store.listId}
         onFocus={store.draggableList.setFocusedItem}
         onNavigate={store.draggableList.handleNavigation}

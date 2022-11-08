@@ -9,32 +9,36 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useTaskQuickEditorStore } from './store';
+import { Modes, useTaskQuickEditorStore } from './store';
+
+export const SUGGESTIONS_MENU_ID = 'task-quick-editor-suggestions';
 
 export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
   items,
+  openForMode,
 }: {
   items: React.ReactNode[];
+  openForMode?: Modes;
 }) {
   const store = useTaskQuickEditorStore();
+  const isOpen = openForMode
+    ? store.suggestionsMenu.openForMode === openForMode
+    : store.suggestionsMenu.isOpen;
 
   useEffect(() => {
-    if (
-      store.suggestionsMenu.isOpen &&
-      items.length !== store.suggestionsMenu.itemsCount
-    ) {
+    if (isOpen && items.length !== store.suggestionsMenu.itemsCount) {
       store.suggestionsMenu.setCount(items.length);
     }
   }, [
+    isOpen,
     items.length,
     store.suggestionsMenu,
-    store.suggestionsMenu.isOpen,
     store.suggestionsMenu.itemsCount,
   ]);
 
   return (
     <Popover
-      isOpen={store.suggestionsMenu.isOpen}
+      isOpen={isOpen}
       placement='bottom-start'
       offset={[0, 24]}
       isLazy
@@ -45,8 +49,8 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
       </PopoverTrigger>
       <Portal>
         <PopoverContent
+          data-id={SUGGESTIONS_MENU_ID}
           onClick={(e) => e.stopPropagation()}
-          onMouseUp={(e) => e.stopPropagation()}
           p={0}
           boxShadow='lg'
           onFocus={store.handleFocus}
@@ -62,8 +66,9 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
                 borderRadius={0}
                 w='100%'
                 key={index}
+                height='auto'
+                minH={8}
                 fontSize='sm'
-                lineHeight='5'
                 fontWeight='normal'
                 display='flex'
                 justifyContent='start'

@@ -53,6 +53,7 @@ export type TaskData = {
   title: string;
   listId: string;
   goalId?: string;
+  spaceId?: string;
   input?: SpacesInboxItemData;
   tags: string[];
   descriptionId?: string;

@@ -40,14 +40,6 @@ export class SpacesInboxItemStore {
   update = (props: SpacesInboxItemProps) => {
     this.callbacks = props.callbacks || {};
 
-    if (this.isHotkeysEnabled !== props.isHotkeysEnabled) {
-      if (props.isHotkeysEnabled) {
-        this.list.draggableList.enableHotkeys();
-      } else {
-        this.list.draggableList.disableHotkeys();
-      }
-    }
-
     this.isHotkeysEnabled = props.isHotkeysEnabled;
 
     if (props.item) {

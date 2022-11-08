@@ -25,6 +25,7 @@ export class TasksStore {
   };
 
   isFocusModeActive: boolean = false;
+  isSilentFocusMode: boolean = false;
 
   keyMap = {
     FOCUS_MODE: 'f',
@@ -81,6 +82,7 @@ export class TasksStore {
 
     if (isOpen) {
       if (silent) {
+        this.isSilentFocusMode = true;
         this.loadFocusModeConfiguration();
       } else {
         this.root.menu.setReplacer(FocusConfiguration, {
@@ -89,14 +91,8 @@ export class TasksStore {
           callbacks: {
             onChange: this.setFocusModeConfiguration,
             onClose: this.toggleFocusMode,
-            onFocus: () => {
-              this.list.draggableList.resetFocusedItem();
-              this.list.draggableList.disableHotkeys();
-            },
-            onBlur: () => {
-              this.list.draggableList.focusFirstItem();
-              this.list.draggableList.enableHotkeys();
-            },
+            onFocus: this.list.draggableList.resetFocusedItem,
+            onBlur: this.list.draggableList.focusFirstItem,
             onGoalCreateClick: () => this.list.modals.openGoalCreationModal(),
           },
         });
@@ -104,6 +100,8 @@ export class TasksStore {
     } else {
       this.root.menu.resetReplacer();
     }
+
+    this.isSilentFocusMode = false;
   };
 
   handleToggleFocusMode = () => {

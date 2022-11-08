@@ -201,6 +201,13 @@ const theme = extendTheme({
   },
   components: {
     ...InputWrapperStyles,
+    Radio: {
+      baseStyle: {
+        label: {
+          flex: 1,
+        },
+      },
+    },
     Menu: {
       baseStyle: {
         list: {

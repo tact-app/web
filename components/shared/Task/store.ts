@@ -6,6 +6,7 @@ import { TaskQuickEditorStore } from '../TasksList/components/TaskQuickEditor/st
 import { DescriptionData } from '../../../types/description';
 import { JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
+import { SpaceData } from '../../pages/Spaces/types';
 
 export type TaskProps = {
   callbacks: {
@@ -16,6 +17,7 @@ export type TaskProps = {
     onNextItem?: (taskId: string, stay?: boolean) => void;
     onPreviousItem?: (taskId: string, stay?: boolean) => void;
   };
+  spaces: SpaceData[];
   isEditorFocused?: boolean;
   task: TaskData;
 };
@@ -30,8 +32,13 @@ class TaskStore {
   isEditorFocused: boolean = false;
   callbacks: TaskProps['callbacks'];
   data: TaskData | null = null;
+  spaces: SpaceData[] = [];
   isDescriptionLoading: boolean = true;
   description: DescriptionData | null = null;
+
+  get inputSpace() {
+    return this.spaces.find((space) => space.id === this.data?.input.spaceId);
+  }
 
   handleDescriptionChange = (content: JSONContent) => {
     this.description.content = content;
@@ -114,6 +121,7 @@ class TaskStore {
 
   update = (props: TaskProps) => {
     this.data = props.task;
+    this.spaces = props.spaces;
     this.isEditorFocused = props.isEditorFocused;
     this.callbacks = props.callbacks;
   };

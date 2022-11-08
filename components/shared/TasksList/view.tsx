@@ -20,24 +20,28 @@ export const TasksListView = observer(function TasksListView(
 
   return (
     <>
-      <TaskCreator
-        onSave={store.createTask}
-        onTagCreate={store.createTag}
-        onNavigate={store.handleNavigation}
-        tagsMap={store.tagsMap}
-        listId={store.listId}
-        keepFocus
-        wrapperProps={{
-          ml: props.dnd ? 5 : 0,
-          mr: props.dnd ? 5 : 0,
-        }}
-      />
+      {store.isCreatorEnabled && (
+        <TaskCreator
+          onSave={store.createTask}
+          onTagCreate={store.createTag}
+          onNavigate={store.handleNavigation}
+          tagsMap={store.tagsMap}
+          spaces={store.spaces}
+          listId={store.listId}
+          keepFocus
+          wrapperProps={{
+            ml: props.dnd ? 5 : 0,
+            mr: props.dnd ? 5 : 0,
+          }}
+        />
+      )}
       {store.isLoading ? (
         <Center>
           <Spinner />
         </Center>
       ) : (
         <DraggableList
+          isHotkeysEnabled={store.isHotkeysEnabled}
           dndActive={props.dnd}
           wrapperProps={
             props.dnd

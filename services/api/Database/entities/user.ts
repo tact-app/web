@@ -4,7 +4,21 @@ const user: UserData = {
   id: '1',
   name: 'John Doe',
   email: 'test@test.ts',
-  avatar: 'https://via.placeholder.com/150',
+  avatar: 'https://i.pravatar.cc/150?img=67',
+  accounts: [
+    {
+      id: '1',
+      name: 'John Doe',
+      email: 'JD@gmail.com',
+      avatar: 'https://i.pravatar.cc/150?img=50',
+    },
+    {
+      id: '2',
+      name: 'Elvis Presley',
+      email: 'elvis_presley@gmail.com',
+      avatar: 'https://i.pravatar.cc/150?img=22',
+    },
+  ],
 };
 
 const data = {

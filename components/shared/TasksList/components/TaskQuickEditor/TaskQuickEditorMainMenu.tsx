@@ -39,7 +39,7 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
             lineHeight='5'
             fontWeight='normal'
             command='!'
-            onClick={store.startPriority}
+            onClick={store.modes.priority.activate}
           >
             Set priority
           </MenuItem>
@@ -48,7 +48,7 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
             lineHeight='5'
             fontWeight='normal'
             command='#'
-            onClick={store.startTag}
+            onClick={store.modes.tag.activate}
           >
             Add tag
           </MenuItem>

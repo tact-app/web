@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { RootStore } from '../../../../../stores/RootStore';
-import { SpacesInboxItemData, SpacesInboxItemStatusTypes } from './types';
+import { SpacesInboxItemData } from './types';
 import { SpaceData } from '../../types';
 
 export type SpacesInboxProps = {
@@ -9,6 +9,7 @@ export type SpacesInboxProps = {
   callbacks: {
     onFocusLeave?: (direction: 'left' | 'right') => void;
     onFocus?: () => void;
+    onTodayHelpClick?: () => void;
     onSelect?: (item: SpacesInboxItemData) => void;
   };
   isHotkeysEnabled: boolean;
@@ -47,21 +48,6 @@ export class SpacesInboxStore {
   focusedItemId: string | null = null;
   space: SpaceData | null = null;
   items: SpacesInboxItemData[] = [];
-
-  handleStatusChange = (id: string) => {
-    const item = this.items.find((item) => item.id === id);
-
-    if (item) {
-      if (
-        item.status === SpacesInboxItemStatusTypes.NEW ||
-        item.status === SpacesInboxItemStatusTypes.HANDLED
-      ) {
-        item.status = SpacesInboxItemStatusTypes.COMPLETED;
-      } else {
-        item.status = SpacesInboxItemStatusTypes.HANDLED;
-      }
-    }
-  };
 
   navigate = (direction: 'up' | 'down') => {
     const index = this.items.findIndex(
@@ -103,7 +89,7 @@ export class SpacesInboxStore {
     this.items = [
       {
         id: '1',
-        status: SpacesInboxItemStatusTypes.NEW,
+        spaceId: this.space.id,
         title: 'New message',
         descriptionId: 'inbox.newMessage',
         icon: '',
@@ -115,7 +101,7 @@ export class SpacesInboxStore {
       },
       {
         id: '2',
-        status: SpacesInboxItemStatusTypes.COMPLETED,
+        spaceId: this.space.id,
         title: 'New message 2',
         descriptionId: 'inbox.newMessage.2',
         icon: '',
@@ -127,7 +113,7 @@ export class SpacesInboxStore {
       },
       {
         id: '3',
-        status: SpacesInboxItemStatusTypes.NEW,
+        spaceId: this.space.id,
         title: 'New message 2',
         descriptionId: 'inbox.newMessage.3',
         icon: '',
@@ -139,7 +125,7 @@ export class SpacesInboxStore {
       },
       {
         id: '4',
-        status: SpacesInboxItemStatusTypes.NEW,
+        spaceId: this.space.id,
         title: 'New message 4',
         descriptionId: 'inbox.newMessage.4',
         icon: '',
@@ -151,7 +137,7 @@ export class SpacesInboxStore {
       },
       {
         id: '5',
-        status: SpacesInboxItemStatusTypes.NEW,
+        spaceId: this.space.id,
         title: 'New message 5',
         descriptionId: 'inbox.newMessage.5',
         icon: '',
@@ -167,7 +153,10 @@ export class SpacesInboxStore {
   update = (props: SpacesInboxProps) => {
     this.callbacks = props.callbacks;
     this.space = props.space;
-    this.loadItems();
+
+    if (this.space) {
+      this.loadItems();
+    }
   };
 }
 

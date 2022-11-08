@@ -21,8 +21,10 @@ export class SpacesModals {
     this.controller.open({
       type: SpacesModalsTypes.CREATE_SPACE,
       props: {
-        onSave: cb,
-        onClose: this.controller.close,
+        callbacks: {
+          onSave: cb,
+          onClose: this.controller.close,
+        },
       },
     });
   };
@@ -35,8 +37,10 @@ export class SpacesModals {
       type: SpacesModalsTypes.CREATE_SPACE,
       props: {
         space,
-        onSave: cb,
-        onClose: this.controller.close,
+        callbacks: {
+          onSave: cb,
+          onClose: this.controller.close,
+        },
       },
     });
   };

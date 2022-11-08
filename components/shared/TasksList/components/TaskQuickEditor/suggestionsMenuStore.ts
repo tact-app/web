@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import { Modes } from './store';
 
 export class TaskQuickEditorSuggestionsMenu {
   constructor(props: {
@@ -14,10 +15,19 @@ export class TaskQuickEditorSuggestionsMenu {
   onSelect: (index: number) => void;
   onOpen: (state: boolean) => void;
 
+  openForMode: Modes = Modes.DEFAULT;
   isOpen: boolean = false;
   itemRef: HTMLButtonElement | null = null;
   itemsCount: number = 0;
   hoveredIndex: number = 0;
+
+  openFor = (mode: Modes) => {
+    this.openForMode = mode;
+  };
+
+  closeForMode = () => {
+    this.openForMode = Modes.DEFAULT;
+  };
 
   open = () => {
     this.isOpen = true;
@@ -45,7 +55,9 @@ export class TaskQuickEditorSuggestionsMenu {
     this.hoveredIndex = index;
 
     setTimeout(() => {
-      this.itemRef.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      if (this.itemRef) {
+        this.itemRef.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     });
   }
 

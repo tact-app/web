@@ -30,6 +30,7 @@ export class SpacesStore {
   inboxItem = new SpacesInboxItemStore(this.root);
   inbox = new SpacesInboxStore(this.root);
 
+  isTodayHelpOpen: boolean = false;
   focusedBlockId: SpacesFocusableBlocks | null = SpacesFocusableBlocks.INBOX;
 
   currentSpace: SpaceData | null = null;
@@ -68,6 +69,14 @@ export class SpacesStore {
   get focusedBlock() {
     return this.modals.controller.isOpen ? null : this.focusedBlockId;
   }
+
+  toggleTodayHelp = () => {
+    this.isTodayHelpOpen = !this.isTodayHelpOpen;
+  };
+
+  closeTodayHelp = () => {
+    this.isTodayHelpOpen = false;
+  };
 
   setCurrentSpace = (space: SpaceData) => {
     this.currentSpace = space;
@@ -194,6 +203,7 @@ export class SpacesStore {
     onFocus: () => this.handleFocus(SpacesFocusableBlocks.INBOX),
     onFocusLeave: this.handleFocusLeave,
     onSelect: (item) => this.setOpenedItem(item),
+    onTodayHelpClick: this.toggleTodayHelp,
   };
 
   itemCallbacks: SpacesInboxItemProps['callbacks'] = {

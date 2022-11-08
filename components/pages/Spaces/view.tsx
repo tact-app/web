@@ -9,6 +9,7 @@ import { ResizableGroup } from '../../shared/ResizableGroup';
 import { Task } from '../../shared/Task';
 import React from 'react';
 import { ModalsSwitcher } from '../../../helpers/ModalsController';
+import { SpacesTodayHelp } from './components/SpacesTodayHelp';
 
 export const SpacesView = observer(function SpacesView(props: SpacesProps) {
   const store = useSpacesStore();
@@ -42,18 +43,21 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
         {store.inboxItem.list.openedTask && (
           <Box
             p={7}
+            h='100%'
             onMouseDown={() =>
               store.handleFocus(SpacesFocusableBlocks.INBOX_ITEM)
             }
           >
             <Task
               task={store.inboxItem.list.openedTaskData}
+              spaces={store.inboxItem.list.spaces}
               isEditorFocused={store.inboxItem.list.isEditorFocused}
               callbacks={store.taskCallbacks}
             />
           </Box>
         )}
       </ResizableGroup>
+      <SpacesTodayHelp />
       <ModalsSwitcher controller={store.modals.controller} />
     </Box>
   );

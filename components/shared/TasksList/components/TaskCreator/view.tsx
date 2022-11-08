@@ -2,9 +2,9 @@ import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   InputGroup,
-  useOutsideClick,
   HStack,
   InputRightAddon,
+  useOutsideClick,
 } from '@chakra-ui/react';
 import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
 import { InputWrapper, InputWrapperProps } from '../../../InputWrapper';
@@ -12,7 +12,7 @@ import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
 import { TaskQuickEditorPriority } from '../TaskQuickEditor/TaskQuickEditorPriority';
 import { TaskQuickEditorMainMenu } from '../TaskQuickEditor/TaskQuickEditorMainMenu';
-import { TaskQuickEditorPriorityMenu } from '../TaskQuickEditor/TaskQuickEditorPriorityMenu';
+import { TaskQuickEditorSpace } from '../TaskQuickEditor/TaskQuickEditorSpace';
 
 export type TaskCreatorProps = { wrapperProps: InputWrapperProps };
 
@@ -24,11 +24,7 @@ export const TaskCreatorView = observer(function TaskCreator(
 
   useOutsideClick({
     ref: ref,
-    handler: () => {
-      if (store.focused) {
-        store.handleClickOutside();
-      }
-    },
+    handler: store.handleClickOutside,
   });
 
   return (
@@ -47,9 +43,8 @@ export const TaskCreatorView = observer(function TaskCreator(
         <InputRightAddon>
           <HStack>
             <TaskQuickEditorTags />
-            <TaskQuickEditorPriorityMenu>
-              <TaskQuickEditorPriority />
-            </TaskQuickEditorPriorityMenu>
+            <TaskQuickEditorSpace />
+            <TaskQuickEditorPriority />
             <TaskQuickEditorMainMenu />
           </HStack>
         </InputRightAddon>

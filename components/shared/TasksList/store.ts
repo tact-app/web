@@ -11,12 +11,15 @@ import { GoalData } from '../../pages/Goals/types';
 import { TasksModals } from './modals/store';
 import { subscriptions } from '../../../helpers/subscriptions';
 import { SpacesInboxItemData } from '../../pages/Spaces/components/SpacesInbox/types';
+import { SpaceData } from '../../pages/Spaces/types';
 
 export type TasksListProps = {
   checkTaskActivity?: (task: TaskData) => boolean;
-  input?: SpacesInboxItemData;
   highlightActiveTasks?: boolean;
   isHotkeysEnabled?: boolean;
+  isCreatorEnabled?: boolean;
+  isReadOnly?: boolean;
+  input?: SpacesInboxItemData;
   dnd?: boolean;
   callbacks?: {
     onFocusLeave?: (direction: 'left' | 'right') => void;
@@ -41,12 +44,15 @@ export class TasksListStore {
   items: Record<string, TaskData> = {};
   order: string[] = [];
   goals: GoalData[] = [];
+  spaces: SpaceData[] = [];
   tags: TaskTag[] = [];
   tagsMap: Record<string, TaskTag> = {};
   editingTaskId: null | string = null;
   openedTask: null | string = null;
 
   highlightActiveTasks: boolean = false;
+  isReadOnly: boolean = false;
+  isCreatorEnabled: boolean = true;
   isForceHotkeysEnabled = true;
   isLoading: boolean = true;
   isItemMenuOpen: boolean = false;
@@ -351,6 +357,14 @@ export class TasksListStore {
     });
   };
 
+  loadSpaces = async () => {
+    const spaces = await this.root.api.spaces.list();
+
+    runInAction(() => {
+      this.spaces = spaces;
+    });
+  };
+
   subscribe = () =>
     subscriptions(
       reaction(
@@ -376,6 +390,7 @@ export class TasksListStore {
     this.loadTasks();
     this.loadTags();
     this.loadGoals();
+    this.loadSpaces();
   };
 
   init = async () => {
@@ -387,6 +402,8 @@ export class TasksListStore {
     this.checkTaskActivity = props.checkTaskActivity;
     this.isForceHotkeysEnabled = props.isHotkeysEnabled;
     this.highlightActiveTasks = props.highlightActiveTasks;
+    this.isCreatorEnabled = props.isCreatorEnabled ?? true;
+    this.isReadOnly = props.isReadOnly ?? false;
     this.input = props.input;
   };
 }

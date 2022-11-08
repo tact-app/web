@@ -6,6 +6,14 @@ export type UserData = {
   name: string;
   email: string;
   avatar: string;
+  accounts: UserAccount[];
+};
+
+export type UserAccount = {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
 };
 
 export default class UserStore {
