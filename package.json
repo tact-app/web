@@ -10,8 +10,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "next lint --dir . -- --fix"
+    "lint:fix": "next lint --dir . -- --fix",
+    "type-check": "tsc"
   },
+  "pre-commit": [
+    "lint",
+    "type-check"
+  ],
   "dependencies": {
     "@chakra-ui/icons": "^2.0.4",
     "@chakra-ui/react": "^2.3.7",
@@ -59,6 +64,7 @@
     "eslint-config-next": "13.0.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-unused-imports": "^2.0.0",
+    "pre-commit": "^1.2.2",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"
   }
