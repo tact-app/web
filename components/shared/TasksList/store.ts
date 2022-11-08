@@ -365,20 +365,7 @@ export class TasksListStore {
     });
   };
 
-  subscribe = () =>
-    subscriptions(
-      reaction(
-        () => this.modals.controller.isOpen || this.isItemMenuOpen,
-        (isOpen) => {
-          if (isOpen) {
-            this.draggableList.disableHotkeys();
-          } else {
-            this.draggableList.enableHotkeys();
-          }
-        }
-      ),
-      reaction(() => this.input, this.loadTasks)
-    );
+  subscribe = () => subscriptions(reaction(() => this.input, this.loadTasks));
 
   reset = () => {
     this.editingTaskId = null;

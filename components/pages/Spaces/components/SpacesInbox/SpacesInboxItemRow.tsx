@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
-import { Box, chakra, Text } from '@chakra-ui/react';
-import { SpacesInboxItemData, SpacesInboxItemStatusTypes } from './types';
+import { Box, Text } from '@chakra-ui/react';
+import { SpacesInboxItemData } from './types';
 import { useSpacesInboxStore } from './store';
 import { TaskItemMenu } from '../../../../shared/TasksList/components/TaskItemMenu';
 import React, { useCallback } from 'react';
@@ -11,7 +11,6 @@ export const SpacesInboxItemRow = observer(function SpacesInboxItemRow({
   item: SpacesInboxItemData;
 }) {
   const store = useSpacesInboxStore();
-  const isToDoItem = item.status !== SpacesInboxItemStatusTypes.COMPLETED;
   const bg = 'white';
   const hoveredBg = 'gray.100';
   const focusedBg = 'gray.200';
@@ -46,20 +45,9 @@ export const SpacesInboxItemRow = observer(function SpacesInboxItemRow({
       >
         <Box h={10} pl={2} display='flex' alignItems='center'>
           <Box position='relative'>
-            <Text
-              transition='color 0.2s ease-in-out'
-              color={isToDoItem ? 'gray.700' : 'gray.400'}
-            >
+            <Text transition='color 0.2s ease-in-out' color={'gray.700'}>
               {item.title}
             </Text>
-            <chakra.div
-              h='1px'
-              bg='gray.400'
-              bottom='0.675rem'
-              transition='width 0.2s ease-in-out'
-              position='absolute'
-              w={isToDoItem ? 0 : '100%'}
-            />
           </Box>
         </Box>
       </Box>

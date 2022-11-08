@@ -12,6 +12,7 @@ import { useTaskItemStore } from '../TaskItem/store';
 import { useTasksListStore } from '../../store';
 import React from 'react';
 import { TaskStatus } from '../../types';
+import { Modes } from '../TaskQuickEditor/store';
 
 export const TaskItemMenu = observer(function TaskItemMenu() {
   const store = useTaskItemStore();
@@ -36,7 +37,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
           <MenuItem
             onClick={() => {
               tasksStore.setEditingTask(store.task.id);
-              setTimeout(() => store.quickEdit.startPriority());
+              setTimeout(() => store.quickEdit.activateMode(Modes.PRIORITY));
             }}
           >
             Set priority
@@ -44,7 +45,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
           <MenuItem
             onClick={() => {
               tasksStore.setEditingTask(store.task.id);
-              setTimeout(() => store.quickEdit.startTag());
+              setTimeout(() => store.quickEdit.activateMode(Modes.TAG));
             }}
           >
             Add tag

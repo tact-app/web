@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { useTaskQuickEditorStore } from './store';
+import { Modes, useTaskQuickEditorStore } from './store';
 import {
   chakra,
   IconButton,
@@ -39,7 +39,7 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
             lineHeight='5'
             fontWeight='normal'
             command='!'
-            onClick={store.modes.priority.activate}
+            onClick={() => store.activateMode(Modes.PRIORITY)}
           >
             Set priority
           </MenuItem>
@@ -48,9 +48,18 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
             lineHeight='5'
             fontWeight='normal'
             command='#'
-            onClick={store.modes.tag.activate}
+            onClick={() => store.activateMode(Modes.TAG)}
           >
             Add tag
+          </MenuItem>
+          <MenuItem
+            fontSize='sm'
+            lineHeight='5'
+            fontWeight='normal'
+            command='#'
+            onClick={() => store.activateMode(Modes.SPACE)}
+          >
+            Link to space
           </MenuItem>
         </MenuList>
       </Menu>

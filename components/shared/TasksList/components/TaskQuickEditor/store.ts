@@ -106,8 +106,15 @@ export class TaskQuickEditorStore {
     Object.values(this.modes).forEach((mode) => mode.reset());
   };
 
-  silentEnterMode = (modeType: Modes) => {
+  activateMode = (modeType: Modes) => {
     this.activeModeType = modeType;
+    this.activeMode.activate();
+    this.suggestionsMenu.open();
+
+    this.modeStartPos = this.value.length;
+    this.modeEndPos = this.value.length + 1;
+    this.value += this.modes[modeType].startSymbol;
+    this.input?.focus();
   };
 
   enterMode = (modeType: Modes, e: KeyboardEvent<HTMLInputElement>) => {
