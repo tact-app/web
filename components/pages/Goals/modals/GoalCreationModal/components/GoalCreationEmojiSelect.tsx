@@ -65,11 +65,7 @@ export const GoalCreationEmojiSelect = observer(
             <Picker
               autoFocus
               theme='light'
-              data={async () => {
-                const data = await import('@emoji-mart/data');
-
-                return data.default;
-              }}
+              data={store.emojiStore.data}
               onEmojiSelect={store.handleEmojiSelect}
             />
           </PopoverBody>

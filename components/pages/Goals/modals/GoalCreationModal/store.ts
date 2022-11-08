@@ -71,6 +71,9 @@ export class GoalCreationModalStore {
   currentTemplate: null | GoalTemplateData = null;
   templates: GoalTemplateData[] = [];
   step: GoalCreationModalSteps = GoalCreationModalSteps.SELECT_TEMPLATE;
+  emojiStore = new (class EmojiStore {
+    data: any = '';
+  })();
 
   get isReadyForSave() {
     return !!this.title;
@@ -157,6 +160,35 @@ export class GoalCreationModalStore {
   selectTemplate = (template: GoalTemplateData | null) => {
     this.currentTemplate = template;
     this.step = GoalCreationModalSteps.FILL_DESCRIPTION;
+  };
+
+  init = async () => {
+    const data = await import('@emoji-mart/data');
+
+    runInAction(() => {
+      this.emojiStore.data = data.default;
+
+      if (!this.existedGoal) {
+        const data = this.emojiStore.data;
+        const selectedCategories = ['people', 'activity', 'objects'];
+        const categories = data.categories.filter(({ id }) =>
+          selectedCategories.includes(id)
+        );
+        const emojiKeys = categories.reduce((acc, category) => {
+          return [...acc, ...category.emojis];
+        }, []);
+
+        const randomEmojiKey: any =
+          emojiKeys[Math.floor(Math.random() * emojiKeys.length)];
+        const randomEmoji = data.emojis[randomEmojiKey];
+
+        if (randomEmoji) {
+          this.icon = randomEmoji.skins[0].native;
+        }
+
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+    });
   };
 
   update = async (props: GoalCreationModalProps) => {
