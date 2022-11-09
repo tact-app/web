@@ -83,21 +83,21 @@ export const BlockTypesOptions: BlockTypesOption[] = [
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faPercent} />,
         type: 'command',
-        label: 'Percentage metric',
+        label: 'Percentage target',
         command: (chain, editor) =>
           insertMetric(MetricExtensionTypes.RING, editor, chain).chain,
       },
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faSquareCheck} />,
         type: 'command',
-        label: 'Binary metric',
+        label: 'Binary target',
         command: (chain, editor) =>
           insertMetric(MetricExtensionTypes.TODO, editor, chain).chain,
       },
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faInputNumeric} />,
         type: 'command',
-        label: 'Numeric metric',
+        label: 'Numeric target',
         command: (chain, editor) =>
           insertMetric(MetricExtensionTypes.NUMBER, editor, chain).chain,
       },
