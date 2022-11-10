@@ -34,8 +34,12 @@ export class SpacesStore {
   focusedBlockId: SpacesFocusableBlocks | null = SpacesFocusableBlocks.INBOX;
 
   currentSpace: SpaceData | null = null;
-  selectedSpaceId: string = this.root.router.query.path[0] as string;
-  selectedPath: string[] = this.root.router.query.path.slice(1) as string[];
+  selectedSpaceId: string | undefined = this.root.router.query.path
+    ? (this.root.router.query.path[0] as string)
+    : undefined;
+  selectedPath: string[] = this.root.router.query.path
+    ? (this.root.router.query.path.slice(1) as string[])
+    : [];
 
   openedItem: SpacesInboxItemData | null = null;
   expandedBlocks: number[] = [];
