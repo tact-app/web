@@ -663,9 +663,6 @@ export class SpacesMenuStore {
       }
     } else {
       runInAction(() => {
-        this.focus(props.selectedPath);
-        this.select(props.selectedPath);
-
         props.selectedPath.slice(0, -1).reduce((acc, key) => {
           if (acc) {
             acc.children[key].expanded = true;

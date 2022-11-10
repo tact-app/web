@@ -2,6 +2,28 @@ import { observer } from 'mobx-react-lite';
 import { useSpacesInboxStore } from './store';
 import { Box, chakra } from '@chakra-ui/react';
 import { OriginChildData, OriginData, SpaceData } from '../../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight } from '@fortawesome/pro-solid-svg-icons';
+
+const SpacesInboxBreadcrumbsItem = (props: {
+  isLast?: boolean;
+  name: string;
+  onClick: () => void;
+}) => (
+  <chakra.span
+    cursor='pointer'
+    fontSize='md'
+    display='flex'
+    alignItems='center'
+    fontWeight='semibold'
+    color={!props.isLast ? 'gray.400' : 'gray.700'}
+    onClick={props.onClick}
+    mr={2}
+  >
+    <chakra.span mr={2}>{props.name}</chakra.span>
+    {!props.isLast ? <FontAwesomeIcon icon={faChevronRight} /> : ''}
+  </chakra.span>
+);
 
 export const SpacesInboxBreadcrumbs = observer(
   function SpacesInboxBreadcrumbs() {
@@ -10,33 +32,22 @@ export const SpacesInboxBreadcrumbs = observer(
 
     return (
       store.space && (
-        <Box>
-          <chakra.span
-            cursor='pointer'
-            fontSize='md'
-            fontWeight='semibold'
-            color={store.selectedPath.length ? 'gray.400' : 'gray.700'}
+        <Box display='flex'>
+          <SpacesInboxBreadcrumbsItem
+            name={store.space.name}
             onClick={store.goToSpace}
-          >
-            {store.space.name}
-            {store.selectedPath.length ? ' > ' : ''}
-          </chakra.span>
+            isLast={store.selectedPath.length === 0}
+          />
           {store.selectedPath.map((item, index) => {
             pointer = pointer.children.find((child) => child.id === item);
-            const isLast = index === store.selectedPath.length - 1;
 
             return (
-              <chakra.span
-                cursor={isLast ? 'default' : 'pointer'}
+              <SpacesInboxBreadcrumbsItem
+                key={pointer.id}
+                name={pointer.name}
                 onClick={() => store.goToOrigin(item)}
-                fontSize='md'
-                fontWeight='semibold'
-                key={item}
-                color={!isLast ? 'gray.400' : 'gray.700'}
-              >
-                {pointer.name}
-                {!isLast ? ' > ' : ''}
-              </chakra.span>
+                isLast={index === store.selectedPath.length - 1}
+              />
             );
           })}
         </Box>
