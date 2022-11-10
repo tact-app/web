@@ -17,12 +17,12 @@ export class SpacesModals {
     [SpacesModalsTypes.CREATE_SPACE]: SpaceCreationModal,
   });
 
-  openSpaceCreationModal = (cb: (space: SpaceData) => void) => {
+  openSpaceCreationModal = (onSave: (space: SpaceData) => void) => {
     this.controller.open({
       type: SpacesModalsTypes.CREATE_SPACE,
       props: {
         callbacks: {
-          onSave: cb,
+          onSave,
           onClose: this.controller.close,
         },
       },
@@ -31,14 +31,19 @@ export class SpacesModals {
 
   openSpaceSettingsModal = (
     space: SpaceData,
-    cb: (space: SpaceData) => void
+    onSave: (space: SpaceData) => void,
+    onDelete: (space: SpaceData) => void
   ) => {
     this.controller.open({
       type: SpacesModalsTypes.CREATE_SPACE,
       props: {
         space,
         callbacks: {
-          onSave: cb,
+          onSave,
+          onDelete: () => {
+            this.controller.close();
+            onDelete(space);
+          },
           onClose: this.controller.close,
         },
       },

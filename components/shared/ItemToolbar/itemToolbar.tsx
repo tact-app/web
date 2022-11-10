@@ -1,10 +1,15 @@
 import { Box, chakra, CloseButton, IconButton } from '@chakra-ui/react';
-import { ExpandLayoutIcon } from '../Icons/ExpandLayoutIcon';
-import { SideLayoutIcon } from '../Icons/SideLayoutIcon';
-import { ArrowDownIcon, ArrowUpIcon } from '../Icons/ArrowIcons';
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faArrowDownLeftAndArrowUpRightToCenter,
+  faArrowUpRightAndArrowDownLeftFromCenter,
+  faChevronDown,
+  faChevronUp,
+} from '@fortawesome/pro-solid-svg-icons';
 
 export const ItemToolbar = (props: {
+  isExpanded?: boolean;
   onExpand?: () => void;
   onCollapse?: () => void;
   onPreviousItem?: () => void;
@@ -21,7 +26,7 @@ export const ItemToolbar = (props: {
     alignItems='center'
   >
     <Box display='flex' alignItems='center'>
-      {props.onExpand && (
+      {props.onExpand && !props.isExpanded && (
         <IconButton
           aria-label={'expand'}
           size='xs'
@@ -29,18 +34,28 @@ export const ItemToolbar = (props: {
           onClick={props.onExpand}
           mr={2}
         >
-          <ExpandLayoutIcon />
+          <FontAwesomeIcon
+            fontSize={16}
+            color={`var(--chakra-colors-gray-400)`}
+            icon={faArrowUpRightAndArrowDownLeftFromCenter}
+            fixedWidth
+          />
         </IconButton>
       )}
-      {props.onCollapse && (
+      {props.onCollapse && props.isExpanded && (
         <IconButton
-          aria-label={'expand'}
+          aria-label={'collapse'}
           size='xs'
           variant='ghost'
           onClick={props.onCollapse}
           mr={2}
         >
-          <SideLayoutIcon />
+          <FontAwesomeIcon
+            fontSize={16}
+            color={`var(--chakra-colors-gray-400)`}
+            icon={faArrowDownLeftAndArrowUpRightToCenter}
+            fixedWidth
+          />
         </IconButton>
       )}
       {(props.onCollapse || props.onExpand) && (
@@ -55,7 +70,12 @@ export const ItemToolbar = (props: {
             mr={2}
             onClick={props.onPreviousItem}
           >
-            <ArrowUpIcon />
+            <FontAwesomeIcon
+              fontSize={16}
+              color={`var(--chakra-colors-gray-400)`}
+              icon={faChevronUp}
+              fixedWidth
+            />
           </IconButton>
           <IconButton
             aria-label={'next'}
@@ -63,7 +83,12 @@ export const ItemToolbar = (props: {
             variant='ghost'
             onClick={props.onNextItem}
           >
-            <ArrowDownIcon />
+            <FontAwesomeIcon
+              fontSize={16}
+              color={`var(--chakra-colors-gray-400)`}
+              icon={faChevronDown}
+              fixedWidth
+            />
           </IconButton>
         </>
       )}

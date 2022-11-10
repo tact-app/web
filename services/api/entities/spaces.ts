@@ -6,6 +6,7 @@ const getSpacesApi = (apiService: ApiService) => ({
   add: (data: SpaceData) => apiService.post(`/api/spaces`, data),
   update: (data: { id: string; fields: Partial<SpaceData> }) =>
     apiService.put<SpaceData>(`/api/spaces`, data),
+  delete: (id: string) => apiService.delete(`/api/spaces`, { id }),
 });
 
 export default getSpacesApi;

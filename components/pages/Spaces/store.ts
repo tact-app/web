@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { SpaceData, SpacesFocusableBlocks } from './types';
-import { SpacesInboxItemData } from './components/SpacesInbox/types';
+import { SpaceData, SpacesFocusableBlocks, SpacesInboxItemData } from './types';
 import {
   SpacesInboxItemProps,
   SpacesInboxItemStore,
@@ -17,6 +16,7 @@ import {
   SpacesInboxStore,
 } from './components/SpacesInbox/store';
 import { TaskProps } from '../../shared/Task/store';
+import { getStubItems } from './modals/SpaceCreationModal/stubs';
 
 export type SpacesProps = {};
 
@@ -34,7 +34,8 @@ export class SpacesStore {
   focusedBlockId: SpacesFocusableBlocks | null = SpacesFocusableBlocks.INBOX;
 
   currentSpace: SpaceData | null = null;
-  focusedPath: string[] = [];
+  selectedSpaceId: string = this.root.router.query.path[0] as string;
+  selectedPath: string[] = this.root.router.query.path.slice(1) as string[];
 
   openedItem: SpacesInboxItemData | null = null;
   expandedBlocks: number[] = [];
@@ -70,6 +71,18 @@ export class SpacesStore {
     return this.modals.controller.isOpen ? null : this.focusedBlockId;
   }
 
+  get isInboxItemExpanded() {
+    return this.resizableConfig.every(({ size }, index) => {
+      return (index === 2 && size === 1) || (index !== 2 && size === 0);
+    });
+  }
+
+  get isInboxItemTaskExpanded() {
+    return this.resizableConfig.every(({ size }, index) => {
+      return (index === 3 && size === 1) || (index !== 3 && size === 0);
+    });
+  }
+
   toggleTodayHelp = () => {
     this.isTodayHelpOpen = !this.isTodayHelpOpen;
   };
@@ -79,11 +92,23 @@ export class SpacesStore {
   };
 
   setCurrentSpace = (space: SpaceData) => {
+    if (this.currentSpace?.id !== space.id && this.currentSpace) {
+      window.history.pushState(null, 'Inbox', `/inbox/${space.id}`);
+    }
+
     this.currentSpace = space;
   };
 
-  setFocusedPath = (path: string[]) => {
-    this.focusedPath = path;
+  setSelectedPath = (path: string[]) => {
+    if (this.selectedPath !== path) {
+      window.history.pushState(
+        null,
+        'Inbox',
+        `/inbox/${this.currentSpace?.id}/${path.join('/')}`
+      );
+    }
+
+    this.selectedPath = path;
   };
 
   setOpenedItem = (item: SpacesInboxItemData | null) => {
@@ -159,8 +184,8 @@ export class SpacesStore {
     this.setCurrentSpace(space);
   };
 
-  handleFocusChange = (path: string[]) => {
-    this.setFocusedPath(path);
+  handlePathSelect = (path: string[]) => {
+    this.setSelectedPath(path);
   };
 
   handleSpaceCreationClick = () => {
@@ -168,7 +193,11 @@ export class SpacesStore {
   };
 
   handleSpaceSettingsClick = (space) => {
-    this.modals.openSpaceSettingsModal(space, this.updateSpace);
+    this.modals.openSpaceSettingsModal(
+      space,
+      this.updateSpace,
+      this.deleteSpace
+    );
   };
 
   saveSpace = (space: SpaceData) => {
@@ -184,13 +213,24 @@ export class SpacesStore {
     });
   };
 
-  init = (props: SpacesProps) => null;
+  deleteSpace = (space: SpaceData) => {
+    this.menu.deleteSpace(space.id);
+    this.root.api.spaces.delete(space.id);
+  };
+
+  getInboxItems = async () => {
+    if (this.currentSpace.id !== 'all') {
+      return getStubItems([this.currentSpace.id, ...this.selectedPath]);
+    } else {
+      return getStubItems();
+    }
+  };
 
   update = () => null;
 
   menuCallbacks: SpacesMenuProps['callbacks'] = {
     onSpaceChange: this.handleSpaceChange,
-    onFocusChange: this.handleFocusChange,
+    onPathChange: this.handlePathSelect,
     onFocus: () => this.handleFocus(SpacesFocusableBlocks.TREE),
     onFocusLeave: () => this.handleFocusLeave('right'),
     onSpaceCreationClick: this.handleSpaceCreationClick,
@@ -204,6 +244,7 @@ export class SpacesStore {
     onFocusLeave: this.handleFocusLeave,
     onSelect: (item) => this.setOpenedItem(item),
     onTodayHelpClick: this.toggleTodayHelp,
+    onPathChange: this.handlePathSelect,
   };
 
   itemCallbacks: SpacesInboxItemProps['callbacks'] = {

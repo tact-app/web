@@ -34,6 +34,7 @@ export class ResizableGroupStore {
 
   isFirstRender = true;
   isAnimationActive: boolean = false;
+  enterAnimation = {};
 
   get width() {
     if (this.containerWidth) {
@@ -179,6 +180,7 @@ export class ResizableGroupStore {
   handleAnimationEnd = (e) => {
     if (e.target.getAttribute('name') === 'resizable-child') {
       this.isAnimationActive = false;
+      this.enterAnimation = {};
     }
   };
 
@@ -210,9 +212,15 @@ export class ResizableGroupStore {
       ),
       reaction(
         () => this.activeChildren,
-        (children) => {
+        (children, prevChildren) => {
           if (!this.isFirstRender) {
             this.isAnimationActive = true;
+
+            children.forEach((size, index) => {
+              if (size && !prevChildren[index]) {
+                this.enterAnimation[index] = true;
+              }
+            });
           }
 
           this.isFirstRender = false;

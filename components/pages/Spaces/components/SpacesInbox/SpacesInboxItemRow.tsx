@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite';
 import { Box, Text } from '@chakra-ui/react';
-import { SpacesInboxItemData } from './types';
 import { useSpacesInboxStore } from './store';
-import { TaskItemMenu } from '../../../../shared/TasksList/components/TaskItemMenu';
 import React, { useCallback } from 'react';
+import { SpacesInboxItemData } from '../../types';
+import { OriginIcon } from '../SpacesIcons/OriginsIcons';
 
 export const SpacesInboxItemRow = observer(function SpacesInboxItemRow({
   item,
@@ -30,6 +30,7 @@ export const SpacesInboxItemRow = observer(function SpacesInboxItemRow({
     >
       <Box
         flex={1}
+        w='100%'
         borderBottom='1px'
         borderColor='gray.100'
         transition={[
@@ -44,14 +45,22 @@ export const SpacesInboxItemRow = observer(function SpacesInboxItemRow({
         }}
       >
         <Box h={10} pl={2} display='flex' alignItems='center'>
-          <Box position='relative'>
-            <Text transition='color 0.2s ease-in-out' color={'gray.700'}>
+          <Box w={4} h={4} mr={1}>
+            <OriginIcon origin={item.origin.type} />
+          </Box>
+          <Box position='relative' overflow='hidden'>
+            <Text
+              transition='color 0.2s ease-in-out'
+              color={'gray.700'}
+              whiteSpace='nowrap'
+              textOverflow='ellipsis'
+              overflow='hidden'
+            >
               {item.title}
             </Text>
           </Box>
         </Box>
       </Box>
-      <TaskItemMenu />
     </Box>
   );
 });

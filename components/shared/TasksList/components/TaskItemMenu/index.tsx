@@ -79,7 +79,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
           <MenuItem>Edit task</MenuItem>
           <MenuItem
             command='⌫'
-            onClick={() => tasksStore.deleteTasks([store.task.id])}
+            onClick={() => tasksStore.deleteWithVerify([store.task.id])}
           >
             Delete
           </MenuItem>

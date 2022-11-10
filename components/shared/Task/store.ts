@@ -18,6 +18,7 @@ export type TaskProps = {
     onPreviousItem?: (taskId: string, stay?: boolean) => void;
   };
   spaces: SpaceData[];
+  isExpanded?: boolean;
   isEditorFocused?: boolean;
   task: TaskData;
 };
@@ -29,6 +30,7 @@ class TaskStore {
 
   quickEditor: TaskQuickEditorStore = new TaskQuickEditorStore(this.root);
 
+  isExpanded: boolean = false;
   isEditorFocused: boolean = false;
   callbacks: TaskProps['callbacks'];
   data: TaskData | null = null;
@@ -122,6 +124,7 @@ class TaskStore {
   update = (props: TaskProps) => {
     this.data = props.task;
     this.spaces = props.spaces;
+    this.isExpanded = props.isExpanded;
     this.isEditorFocused = props.isEditorFocused;
     this.callbacks = props.callbacks;
   };

@@ -28,6 +28,11 @@ const data = {
       }
     },
   },
+  delete: {
+    '/api/spaces': async (db: DB, data: { id: string }) => {
+      await db.delete('spaces', data.id);
+    },
+  },
 };
 
 export default data;

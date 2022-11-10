@@ -1,4 +1,4 @@
-import { SpacesInboxItemData } from '../../pages/Spaces/components/SpacesInbox/types';
+import { SpacesInboxItemData } from '../../pages/Spaces/types';
 
 export enum TaskPriority {
   LOW = 'low',

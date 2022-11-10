@@ -19,11 +19,15 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
       <ResizableGroup configs={store.resizableConfig}>
         <SpacesMenu
           instance={store.menu}
+          selectedSpaceId={store.selectedSpaceId}
+          selectedPath={store.selectedPath}
           callbacks={store.menuCallbacks}
           isHotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.TREE}
         />
         <SpacesInbox
           instance={store.inbox}
+          selectedPath={store.selectedPath}
+          itemsLoader={store.getInboxItems}
           callbacks={store.inboxCallbacks}
           space={store.currentSpace}
           isHotkeysEnabled={store.focusedBlock === SpacesFocusableBlocks.INBOX}
@@ -33,6 +37,7 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
           <SpacesInboxItem
             item={store.openedItem}
             instance={store.inboxItem}
+            isExpanded={store.isInboxItemExpanded}
             isHotkeysEnabled={
               store.focusedBlock === SpacesFocusableBlocks.INBOX_ITEM
             }
@@ -52,6 +57,7 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
               task={store.inboxItem.list.openedTaskData}
               spaces={store.inboxItem.list.spaces}
               isEditorFocused={store.inboxItem.list.isEditorFocused}
+              isExpanded={store.isInboxItemTaskExpanded}
               callbacks={store.taskCallbacks}
             />
           </Box>

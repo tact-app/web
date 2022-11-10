@@ -28,10 +28,6 @@ export const InputWrapperStyles: Record<string, StyleConfig> = {
         boxShadow: '0 0 0 2px var(--chakra-colors-blue-400)',
         bg: 'white',
       },
-      primary: ({ theme }) => {
-        console.log(theme);
-        return {};
-      },
     },
   },
 };

@@ -3,6 +3,7 @@ import { SpacesInboxItemProps, useSpacesInboxItemStore } from './store';
 import { Box, Container, Divider, Heading, Text } from '@chakra-ui/react';
 import TasksList from '../../../../shared/TasksList';
 import { ItemToolbar } from '../../../../shared/ItemToolbar/itemToolbar';
+import { SpacesInboxItemFields } from './SpacesInboxItemFields';
 
 export const SpacesInboxItemView = observer(function SpacesInboxItemView(
   props: SpacesInboxItemProps
@@ -23,11 +24,13 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
         onPreviousItem={store.callbacks.onPreviousItem}
         onNextItem={store.callbacks.onNextItem}
         onClose={store.callbacks.onClose}
+        isExpanded={props.isExpanded}
       />
       <Box mt={6}>
         <Heading fontSize='2xl' fontWeight='semibold'>
           {store.item.title}
         </Heading>
+        <SpacesInboxItemFields />
         <Box mt={6}>
           <Text>{store.description}</Text>
         </Box>

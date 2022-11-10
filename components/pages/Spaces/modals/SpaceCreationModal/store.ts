@@ -4,6 +4,7 @@ import { getProvider } from '../../../../../helpers/StoreProvider';
 import { SpaceData } from '../../types';
 import { SyntheticEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { getRandomOrigins } from './stubs';
 
 export type SpaceCreationModalProps = {
   callbacks: {
@@ -129,27 +130,14 @@ export class SpaceCreationModalStore {
 
   handleSave = () => {
     if (this.isReadyForSave) {
+      const id = this.existedSpace ? this.existedSpace.id : uuidv4();
+
       this.callbacks.onSave?.({
-        id: this.existedSpace ? this.existedSpace.id : uuidv4(),
+        id,
         name: this.name,
         shortName: this.shortName,
         color: this.color,
-        children: [
-          {
-            id: uuidv4(),
-            name: 'Jira',
-            children: [
-              {
-                id: uuidv4(),
-                name: 'Project 1',
-              },
-              {
-                id: uuidv4(),
-                name: 'Project 2',
-              },
-            ],
-          },
-        ],
+        children: getRandomOrigins(id, 3),
       });
 
       this.handleClose();

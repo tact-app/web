@@ -34,7 +34,6 @@ export const GoalCreationDescription = observer(
               content={
                 store.description ? store.description.content : undefined
               }
-              isFocused
               onUpdate={store.handleDescriptionChange}
               onSave={store.handleSave}
             />

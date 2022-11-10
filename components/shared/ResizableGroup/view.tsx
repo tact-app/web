@@ -63,13 +63,16 @@ export const ResizableGroupView = observer(function ResizableGroupView(
             <chakra.div
               h='100%'
               transition={
-                (store.isAnimationActive || isFixed) && 'width 0.2s ease-in-out'
+                !store.enterAnimation[i] &&
+                (store.isAnimationActive || isFixed) &&
+                'width 0.2s ease-in-out'
               }
               style={{
                 width:
-                  props.configs[i].flexible ||
-                  !store.isAnimationActive ||
-                  isFixed
+                  !store.enterAnimation[i] &&
+                  (props.configs[i].flexible ||
+                    !store.isAnimationActive ||
+                    isFixed)
                     ? 'auto'
                     : store.widths[i] + 'px',
               }}

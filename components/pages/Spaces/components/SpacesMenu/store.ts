@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { OriginChildData, OriginData, SpaceData } from '../../types';
 import { OriginCheckStatusTypes } from './types';
@@ -7,12 +7,14 @@ import { RootStore } from '../../../../../stores/RootStore';
 export type SpacesMenuProps = {
   withCheckboxes?: boolean;
   isHotkeysEnabled?: boolean;
+  selectedPath?: string[];
+  selectedSpaceId?: string;
   callbacks: {
     onSpaceChange?: (space: SpaceData) => void;
     onSpaceCreationClick?: () => void;
     onSpaceOriginAddClick?: (space: SpaceData) => void;
     onSpaceSettingsClick?: (space: SpaceData) => void;
-    onFocusChange?: (path: string[]) => void;
+    onPathChange?: (path: string[]) => void;
     onFocus?: () => void;
     onFocusLeave?: (direction: 'left' | 'right') => void;
     onExpand?: () => void;
@@ -55,16 +57,20 @@ export class SpacesMenuStore {
   };
 
   hotkeysHandlers = {
-    UP: () => {
+    UP: (e) => {
+      e.preventDefault();
       this.moveFocus('up');
     },
-    FORCE_UP: () => {
+    FORCE_UP: (e) => {
+      e.preventDefault();
       this.selectNextSpace('up');
     },
-    DOWN: () => {
+    DOWN: (e) => {
+      e.preventDefault();
       this.moveFocus('down');
     },
-    FORCE_DOWN: () => {
+    FORCE_DOWN: (e) => {
+      e.preventDefault();
       this.selectNextSpace('down');
     },
     LEAVE: () => {
@@ -91,6 +97,14 @@ export class SpacesMenuStore {
     },
     SELECT: () => {
       this.selectFocused();
+
+      if (
+        !this.focusedPath.length &&
+        this.currentSpaceIndex !== null &&
+        this.currentSpaceId !== 'all'
+      ) {
+        this.callbacks.onSpaceSettingsClick?.(this.currentSpace);
+      }
     },
   };
 
@@ -180,6 +194,7 @@ export class SpacesMenuStore {
       if (!newPath.length) {
         if (direction === 'down') {
           this.focus([null]);
+          return;
         } else {
           this.selectNextSpace(direction);
         }
@@ -296,18 +311,20 @@ export class SpacesMenuStore {
 
   focus = (data?: string[]) => {
     this.focusedPath = data ? data : [];
-    this.callbacks.onFocusChange?.(this.focusedPath);
   };
 
   select(path?: string[]) {
     if ((!path || !path.length) && this.currentSpaceIndex === null) {
       this.callbacks.onSpaceCreationClick?.();
     }
+
     if (this.focusedPath[0] === null) {
       this.callbacks.onSpaceOriginAddClick?.(this.currentSpace);
     } else {
       this.selectedPath = path ? path : [];
     }
+
+    this.callbacks.onPathChange?.(this.selectedPath);
   }
 
   selectFocused = () => {
@@ -426,9 +443,13 @@ export class SpacesMenuStore {
     );
   };
 
-  getOrigin = (spaceId: string, path: string[]) => {
+  getOrigin = (
+    spaceId: string,
+    path: string[]
+  ): OriginData | OriginChildData | null => {
     return path.reduce(
-      (acc, key) => acc.children.find(({ id }) => id === key),
+      (acc, key): OriginChildData | OriginData =>
+        acc.children.find(({ id }) => id === key),
       this.spaces.find(({ id }) => id === spaceId)
     );
   };
@@ -527,11 +548,14 @@ export class SpacesMenuStore {
     return acc;
   };
 
-  handleSpaceChange = (index: number) => {
+  handleSpaceChange = (index: number, select: boolean = true) => {
     this.currentSpaceIndex = index;
     this.callbacks.onSpaceChange?.(this.currentSpace);
     this.focus();
-    this.select();
+
+    if (select) {
+      this.select();
+    }
   };
 
   handleSpaceClick = (index: number) => {
@@ -587,6 +611,24 @@ export class SpacesMenuStore {
     }
   };
 
+  deleteSpace = (spaceId: string) => {
+    const index = this.spaces.findIndex(({ id }) => id === spaceId);
+
+    if (index > -1) {
+      this.spaces.splice(index, 1);
+      delete this.checkState[spaceId];
+
+      if (this.currentSpaceIndex === index) {
+        const newIndex = this.spaces.length > 1 ? 0 : null;
+        this.handleSpaceChange(newIndex, newIndex !== null);
+      }
+
+      if (this.spaces.length === 1) {
+        this.spaces.shift();
+      }
+    }
+  };
+
   loadSpaces = async () => {
     const spaces = await this.root.api.spaces.list();
 
@@ -603,19 +645,44 @@ export class SpacesMenuStore {
     this.spaces = spaces;
 
     this.checkState = this.createChildrenState(this.spaces);
-
-    if (this.spaces.length) {
-      this.handleSpaceChange(0);
-    }
   };
 
   update = (props: SpacesMenuProps) => {
     this.withCheckboxes = props.withCheckboxes;
     this.callbacks = props.callbacks || {};
+    this.selectedPath = props.selectedPath;
+    this.focusedPath = props.selectedPath;
   };
 
-  init = (props: SpacesMenuProps) => {
-    this.loadSpaces();
+  init = async (props: SpacesMenuProps) => {
+    await this.loadSpaces();
+
+    if (!props.selectedSpaceId) {
+      if (this.spaces.length) {
+        this.handleSpaceChange(0);
+      }
+    } else {
+      runInAction(() => {
+        this.focus(props.selectedPath);
+        this.select(props.selectedPath);
+
+        props.selectedPath.slice(0, -1).reduce((acc, key) => {
+          if (acc) {
+            acc.children[key].expanded = true;
+            return acc.children[key];
+          }
+        }, this.checkState[props.selectedSpaceId]);
+
+        const spaceIndex = this.spaces.findIndex(
+          ({ id }) => id === props.selectedSpaceId
+        );
+
+        if (spaceIndex > -1) {
+          this.currentSpaceIndex = spaceIndex;
+          this.callbacks.onSpaceChange?.(this.currentSpace);
+        }
+      });
+    }
   };
 }
 

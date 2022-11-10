@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeObservable, runInAction } from 'mobx';
 import { enableStaticRendering } from 'mobx-react-lite';
 import { createContext, PropsWithChildren, useContext } from 'react';
 import UserStore from './UserStore';
@@ -12,7 +12,9 @@ enableStaticRendering(typeof window === 'undefined');
 
 export class RootStore {
   constructor() {
-    makeAutoObservable(this);
+    makeObservable(this, {
+      isLoading: true,
+    });
   }
 
   keymap = {

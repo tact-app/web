@@ -14,6 +14,7 @@ import { useTaskStore } from './store';
 import { Editor } from '../Editor';
 import { ItemToolbar } from '../ItemToolbar/itemToolbar';
 import { SpacesSmallIcon } from '../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
+import { OriginIcon } from '../../pages/Spaces/components/SpacesIcons/OriginsIcons';
 
 export const TaskView = observer(function TaskView() {
   const store = useTaskStore();
@@ -34,6 +35,7 @@ export const TaskView = observer(function TaskView() {
           onClose={store.handleClose}
           onExpand={store.handleExpand}
           onCollapse={store.handleCollapse}
+          isExpanded={store.isExpanded}
         />
         <Heading fontSize='2xl' mt={6} fontWeight='semibold'>
           {store.data.title}
@@ -85,7 +87,8 @@ export const TaskView = observer(function TaskView() {
             >
               <SpacesSmallIcon space={store.inputSpace} size={6} />
             </Button>
-            <Text fontSize='xs' fontWeight='normal'>
+            <OriginIcon origin={store.data.input.origin.type} />
+            <Text fontSize='xs' fontWeight='normal' ml={1}>
               {store.data.input.title}
             </Text>
           </Box>

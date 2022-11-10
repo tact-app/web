@@ -103,12 +103,13 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                     {name}
                   </Text>
                 </Box>
-                {store.currentSpaceId === id && (
+                {store.currentSpaceId === id && id !== 'all' && (
                   <chakra.div
                     onClick={(e) => {
                       e.stopPropagation();
                       store.callbacks.onSpaceSettingsClick?.(space);
                     }}
+                    minW={6}
                     aria-label='space-settings'
                     borderRadius='lg'
                     _hover={{
@@ -124,11 +125,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
               </AccordionButton>
               <AccordionPanel p={0} pl={4}>
                 {children.map((origin) => (
-                  <SpacesMenuOrigin
-                    key={origin.name}
-                    space={id}
-                    item={origin}
-                  />
+                  <SpacesMenuOrigin key={origin.id} space={id} item={origin} />
                 ))}
                 {id !== 'all' && (
                   <SpacesMenuAdd

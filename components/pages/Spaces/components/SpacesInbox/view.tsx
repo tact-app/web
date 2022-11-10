@@ -3,22 +3,32 @@ import { SpacesInboxProps, useSpacesInboxStore } from './store';
 import {
   Box,
   Container,
-  Heading,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
+  chakra,
 } from '@chakra-ui/react';
 import { SpacesInboxItemRow } from './SpacesInboxItemRow';
 import { SearchIcon } from '../../../../shared/Icons/SearchIcon';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faListCheck } from '@fortawesome/pro-regular-svg-icons';
+import React from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { SpacesInboxBreadcrumbs } from './SpacesInboxBreadcrumbs';
 
 export const SpacesInboxView = observer(function SpacesInboxView(
   props: SpacesInboxProps
 ) {
   const store = useSpacesInboxStore();
+  const parentRef = React.useRef<HTMLDivElement | null>(null);
+
+  const rows = useVirtualizer({
+    count: store.items.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 41,
+  });
 
   useHotkeysHandler(store.keyMap, store.hotkeysHandlers, {
     enabled: props.isHotkeysEnabled,
@@ -28,8 +38,11 @@ export const SpacesInboxView = observer(function SpacesInboxView(
     <Container
       flex={1}
       maxW='container.lg'
-      mt={10}
+      pt={10}
       h='100%'
+      display='flex'
+      flexDirection='column'
+      overflow='hidden'
       onMouseDown={store.callbacks.onFocus}
     >
       <Box
@@ -38,9 +51,7 @@ export const SpacesInboxView = observer(function SpacesInboxView(
         alignItems='center'
         mb={7}
       >
-        <Heading color='gray.700' size='lg'>
-          {store.space?.name}
-        </Heading>
+        <SpacesInboxBreadcrumbs />
         <Box>
           <IconButton
             aria-label='today help'
@@ -63,9 +74,36 @@ export const SpacesInboxView = observer(function SpacesInboxView(
           <SearchIcon />
         </InputRightElement>
       </InputGroup>
-      {store.items.map((item) => (
-        <SpacesInboxItemRow item={item} key={item.id} />
-      ))}
+      <Box overflow='auto' ref={parentRef} flex={1}>
+        <chakra.div
+          style={{
+            height: rows.getTotalSize(),
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          {rows.getVirtualItems().map((virtualRow) => (
+            <Box
+              key={virtualRow.key}
+              data-index={virtualRow.index}
+              ref={
+                store.items[virtualRow.index].id === store.focusedItemId
+                  ? store.setFocusedItemRef
+                  : null
+              }
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+            >
+              <SpacesInboxItemRow item={store.items[virtualRow.index]} />
+            </Box>
+          ))}
+        </chakra.div>
+      </Box>
     </Container>
   );
 });

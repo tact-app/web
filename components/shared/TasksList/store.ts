@@ -10,8 +10,7 @@ import {
 import { GoalData } from '../../pages/Goals/types';
 import { TasksModals } from './modals/store';
 import { subscriptions } from '../../../helpers/subscriptions';
-import { SpacesInboxItemData } from '../../pages/Spaces/components/SpacesInbox/types';
-import { SpaceData } from '../../pages/Spaces/types';
+import { SpaceData, SpacesInboxItemData } from '../../pages/Spaces/types';
 
 export type TasksListProps = {
   checkTaskActivity?: (task: TaskData) => boolean;
@@ -258,6 +257,12 @@ export class TasksListStore {
 
     this.order = this.order.filter((id) => !ids.includes(id));
     this.root.api.tasks.delete(this.listId, ids);
+  };
+
+  deleteWithVerify = (ids: string[]) => {
+    this.modals.openVerifyDeleteModal(ids, () => {
+      this.deleteTasks(ids);
+    });
   };
 
   updateTask = (task: TaskData) => {

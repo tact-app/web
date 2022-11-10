@@ -1,13 +1,15 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { SpacesInboxItemData } from '../SpacesInbox/types';
 import { TasksListStore } from '../../../../shared/TasksList/store';
 import { RootStore } from '../../../../../stores/RootStore';
+import { getStubDescription } from '../../modals/SpaceCreationModal/stubs';
+import { SpacesInboxItemData } from '../../types';
 
 export type SpacesInboxItemProps = {
   item: SpacesInboxItemData;
   instance?: SpacesInboxItemStore;
   isHotkeysEnabled?: boolean;
+  isExpanded?: boolean;
   callbacks?: {
     onFocus?: () => void;
     onExpand?: () => void;
@@ -32,8 +34,7 @@ export class SpacesInboxItemStore {
 
   loadDescription = async () => {
     if (this.item) {
-      this.description =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+      this.description = getStubDescription(this.item.descriptionId);
     }
   };
 

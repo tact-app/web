@@ -1,15 +1,17 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { RootStore } from '../../../../../stores/RootStore';
-import { SpacesInboxItemData } from './types';
-import { SpaceData } from '../../types';
+import { SpaceData, SpacesInboxItemData } from '../../types';
 
 export type SpacesInboxProps = {
   space: SpaceData;
+  selectedPath: string[];
+  itemsLoader: () => Promise<SpacesInboxItemData[]>;
   callbacks: {
     onFocusLeave?: (direction: 'left' | 'right') => void;
     onFocus?: () => void;
     onTodayHelpClick?: () => void;
+    onPathChange?: (path: string[]) => void;
     onSelect?: (item: SpacesInboxItemData) => void;
   };
   isHotkeysEnabled: boolean;
@@ -30,8 +32,14 @@ export class SpacesInboxStore {
   };
 
   hotkeysHandlers = {
-    UP: () => this.navigate('up'),
-    DOWN: () => this.navigate('down'),
+    UP: (e) => {
+      e.preventDefault();
+      this.navigate('up');
+    },
+    DOWN: (e) => {
+      e.preventDefault();
+      this.navigate('down');
+    },
     LEAVE_LEFT: () => {
       this.callbacks.onFocusLeave?.('left');
     },
@@ -45,9 +53,12 @@ export class SpacesInboxStore {
 
   callbacks: SpacesInboxProps['callbacks'] = {};
 
+  selectedPath: string[] = [];
   focusedItemId: string | null = null;
+  focusedItemRef: HTMLElement | null = null;
   space: SpaceData | null = null;
   items: SpacesInboxItemData[] = [];
+  itemsLoader: (() => Promise<SpacesInboxItemData[]>) | null = null;
 
   navigate = (direction: 'up' | 'down') => {
     const index = this.items.findIndex(
@@ -61,12 +72,22 @@ export class SpacesInboxStore {
       if (nextItem) {
         this.focusedItemId = nextItem.id;
       }
-    } else {
+    } else if (this.items.length) {
       if (direction === 'down') {
         this.focusedItemId = this.items[0].id;
       } else {
         this.focusedItemId = this.items[this.items.length - 1].id;
       }
+    }
+  };
+
+  setFocusedItemRef = (ref: HTMLElement | null) => {
+    if (ref && this.focusedItemRef !== ref) {
+      this.focusedItemRef = ref;
+      this.focusedItemRef.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
     }
   };
 
@@ -85,73 +106,24 @@ export class SpacesInboxStore {
     this.selectItem(this.focusedItemId);
   };
 
-  loadItems = () => {
-    this.items = [
-      {
-        id: '1',
-        spaceId: this.space.id,
-        title: 'New message',
-        descriptionId: 'inbox.newMessage',
-        icon: '',
-        origin: {
-          type: 'app',
-          name: 'Mail',
-          id: '1',
-        },
-      },
-      {
-        id: '2',
-        spaceId: this.space.id,
-        title: 'New message 2',
-        descriptionId: 'inbox.newMessage.2',
-        icon: '',
-        origin: {
-          type: 'app',
-          name: 'github',
-          id: '2',
-        },
-      },
-      {
-        id: '3',
-        spaceId: this.space.id,
-        title: 'New message 2',
-        descriptionId: 'inbox.newMessage.3',
-        icon: '',
-        origin: {
-          type: 'app',
-          name: 'github',
-          id: '2',
-        },
-      },
-      {
-        id: '4',
-        spaceId: this.space.id,
-        title: 'New message 4',
-        descriptionId: 'inbox.newMessage.4',
-        icon: '',
-        origin: {
-          type: 'app',
-          name: 'Jira',
-          id: '3',
-        },
-      },
-      {
-        id: '5',
-        spaceId: this.space.id,
-        title: 'New message 5',
-        descriptionId: 'inbox.newMessage.5',
-        icon: '',
-        origin: {
-          type: 'app',
-          name: 'Jira',
-          id: '3',
-        },
-      },
-    ];
+  loadItems = async () => {
+    this.items = await this.itemsLoader();
+  };
+
+  goToSpace = () => {
+    this.callbacks.onPathChange?.([]);
+  };
+
+  goToOrigin = (id: string) => {
+    const index = this.selectedPath.findIndex((item) => item === id);
+
+    this.callbacks.onPathChange?.(this.selectedPath.slice(0, index + 1));
   };
 
   update = (props: SpacesInboxProps) => {
     this.callbacks = props.callbacks;
+    this.itemsLoader = props.itemsLoader;
+    this.selectedPath = props.selectedPath;
     this.space = props.space;
 
     if (this.space) {

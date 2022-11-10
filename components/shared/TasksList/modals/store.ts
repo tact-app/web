@@ -23,14 +23,14 @@ export class TasksModals {
     [ModalsTypes.GOAL_CREATION]: GoalCreationModal,
   });
 
-  openVerifyDeleteModal = (ids: string[], done: () => void) => {
+  openVerifyDeleteModal = (ids: string[], done?: () => void) => {
     this.controller.open({
       type: ModalsTypes.DELETE_TASK,
       props: {
         onDelete: () => {
           this.parent.deleteTasks(ids);
           this.controller.close();
-          done();
+          done?.();
         },
         onClose: this.controller.close,
       },
