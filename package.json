@@ -36,7 +36,7 @@
     "@tiptap/extension-underline": "^2.0.0-beta.199",
     "@tiptap/react": "^2.0.0-beta.202",
     "@tiptap/starter-kit": "^2.0.0-beta.202",
-    "@tiptap/suggestion": "^2.0.0-beta.199",
+    "@tiptap/suggestion": "^2.0.0-beta.202",
     "allotment": "^1.17.0",
     "chakra-react-select": "^4.4.0",
     "emoji-mart": "^5.2.2",
