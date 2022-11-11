@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, toJS } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { SpaceData, SpacesFocusableBlocks, SpacesInboxItemData } from './types';
 import {
@@ -16,7 +16,10 @@ import {
   SpacesInboxStore,
 } from './components/SpacesInbox/store';
 import { TaskProps } from '../../shared/Task/store';
-import { getStubItems } from './modals/SpaceCreationModal/stubs';
+import {
+  getRandomOrigins,
+  getStubItems,
+} from './modals/SpaceCreationModal/stubs';
 
 export type SpacesProps = {};
 
@@ -204,6 +207,18 @@ export class SpacesStore {
     );
   };
 
+  handleSpaceAddOriginClick = (space) => {
+    space.children.push(getRandomOrigins(space.id, 1)[0]);
+
+    this.menu.updateSpace(space);
+    this.root.api.spaces.update({
+      id: space.id,
+      fields: {
+        children: toJS(space.children),
+      },
+    });
+  };
+
   saveSpace = (space: SpaceData) => {
     this.menu.addSpace(space);
     this.root.api.spaces.add(space);
@@ -239,6 +254,7 @@ export class SpacesStore {
     onFocusLeave: () => this.handleFocusLeave('right'),
     onSpaceCreationClick: this.handleSpaceCreationClick,
     onSpaceSettingsClick: this.handleSpaceSettingsClick,
+    onSpaceOriginAddClick: this.handleSpaceAddOriginClick,
     onExpand: this.handleMenuExpand,
     onCollapse: this.handleMenuCollapse,
   };

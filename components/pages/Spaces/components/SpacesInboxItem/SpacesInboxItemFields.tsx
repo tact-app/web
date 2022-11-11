@@ -29,6 +29,7 @@ const SpacesInboxItemsFieldsRow = observer(function SpacesInbotItemsFieldsRow({
         pr={6}
         pt={1.5}
         pb={1.5}
+        w={32}
       >
         {key}:
       </chakra.th>
