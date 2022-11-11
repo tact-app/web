@@ -17,15 +17,21 @@ import { TagModeStore } from './modes/TagModeStore';
 import { SpaceModeStore } from './modes/SpaceModeStore';
 import { SUGGESTIONS_MENU_ID } from './TaskQuickEditorMenu';
 import { TAGS_ID } from './TaskQuickEditorTags';
+import { GoalModeStore } from './modes/GoalModeStore';
+import { GoalData } from '../../../../pages/Goals/types';
 
 export type TaskQuickEditorProps = {
-  onSave: (task: TaskData) => void;
-  onSuggestionsMenuOpen?: (isOpen: boolean) => void;
-  onTagCreate: (tag: TaskTag) => void;
-  onNavigate: (direction: NavigationDirections) => boolean;
+  callbacks: {
+    onSave?: (task: TaskData) => void;
+    onSuggestionsMenuOpen?: (isOpen: boolean) => void;
+    onTagCreate?: (tag: TaskTag) => void;
+    onNavigate?: (direction: NavigationDirections) => boolean;
+    onModeNavigate?: (mode: Modes, direction: NavigationDirections) => void;
+  };
   tagsMap: Record<string, TaskTag>;
   spaces: SpaceData[];
-  listId: string;
+  goals: GoalData[];
+  listId?: string;
   keepFocus?: boolean;
   task?: TaskData;
 };
@@ -35,10 +41,21 @@ export enum Modes {
   PRIORITY = 'priority',
   TAG = 'tag',
   SPACE = 'space',
+  GOAL = 'goal',
 }
 
-// ToDo: Удалять спейс при нажатии на бекспейс
-// ToDo: Открывать меню выбора спейса при нажатии на его иконку/ентер
+const castArrowToDirection = (key: string): NavigationDirections => {
+  switch (key) {
+    case 'ArrowDown':
+      return NavigationDirections.DOWN;
+    case 'ArrowUp':
+      return NavigationDirections.UP;
+    case 'ArrowLeft':
+      return NavigationDirections.LEFT;
+    case 'ArrowRight':
+      return NavigationDirections.RIGHT;
+  }
+};
 
 export class TaskQuickEditorStore {
   constructor(public root: RootStore) {
@@ -47,13 +64,10 @@ export class TaskQuickEditorStore {
 
   suggestionsMenu = new TaskQuickEditorSuggestionsMenu({
     onSelect: (index: number) => this.handleSuggestionSelect(index),
-    onOpen: (isOpen: boolean) => this.onSuggestionsMenuOpen?.(isOpen),
+    onOpen: (isOpen: boolean) => this.callbacks.onSuggestionsMenuOpen?.(isOpen),
   });
 
-  onSave: TaskQuickEditorProps['onSave'];
-  onTagCreate: TaskQuickEditorProps['onTagCreate'];
-  onNavigate: TaskQuickEditorProps['onNavigate'];
-  onSuggestionsMenuOpen: TaskQuickEditorProps['onSuggestionsMenuOpen'];
+  callbacks: TaskQuickEditorProps['callbacks'];
 
   modes = {
     [Modes.PRIORITY]: new PriorityModeStore({
@@ -64,9 +78,12 @@ export class TaskQuickEditorStore {
     [Modes.TAG]: new TagModeStore({
       onExit: () => this.exitMode(),
       onFocusInput: () => this.input?.focus(),
-      onTagCreate: (tag: TaskTag) => this.onTagCreate(tag),
+      onTagCreate: (tag: TaskTag) => this.callbacks.onTagCreate?.(tag),
     }),
     [Modes.SPACE]: new SpaceModeStore({
+      onExit: () => this.exitMode(),
+    }),
+    [Modes.GOAL]: new GoalModeStore({
       onExit: () => this.exitMode(),
     }),
   };
@@ -92,6 +109,12 @@ export class TaskQuickEditorStore {
 
   get activeMode() {
     return this.modes[this.activeModeType];
+  }
+
+  get filledModes() {
+    return Object.entries(this.modes)
+      .filter(([, mode]) => mode.isFilled)
+      .map(([name]) => name) as Modes[];
   }
 
   getMatchMode = (symbol: string): Modes => {
@@ -175,17 +198,21 @@ export class TaskQuickEditorStore {
   handleClickOutside = (e: Event) => {
     let currentElem = e.target as HTMLElement;
 
-    while (currentElem) {
-      const attr = currentElem.getAttribute('data-id');
-      if (attr === SUGGESTIONS_MENU_ID || attr === TAGS_ID) {
-        return;
+    if (this.focused) {
+      while (currentElem) {
+        const attr = currentElem.getAttribute('data-id');
+
+        if (attr === SUGGESTIONS_MENU_ID || attr === TAGS_ID) {
+          return;
+        }
+
+        currentElem = currentElem.parentElement;
       }
 
-      currentElem = currentElem.parentElement;
-    }
-
-    if (this.focused) {
       this.leave();
+    } else {
+      this.suggestionsMenu.close();
+      this.suggestionsMenu.closeForMode();
     }
   };
 
@@ -215,8 +242,8 @@ export class TaskQuickEditorStore {
   };
 
   saveTask = () => {
-    if (this.onSave && this.value) {
-      this.onSave({
+    if (this.callbacks.onSave && this.value) {
+      this.callbacks.onSave({
         title: this.value,
         id: this.task ? this.task.id : uuidv4(),
         listId: this.listId,
@@ -224,6 +251,7 @@ export class TaskQuickEditorStore {
         status: TaskStatus.TODO,
         priority: this.modes.priority.priority,
         spaceId: this.modes.space.selectedSpaceId || undefined,
+        goalId: this.modes.goal.selectedGoalId || undefined,
       });
 
       if (this.keepFocus) {
@@ -340,8 +368,20 @@ export class TaskQuickEditorStore {
         return true;
       } else if (e.key === 'Backspace') {
         e.preventDefault();
-        this.modes[this.suggestionsMenu.openForMode].reset();
+        e.stopPropagation();
+        this.modes[modeType].reset();
         this.input?.focus();
+        return true;
+      } else if (
+        this.suggestionsMenu.openForMode === Modes.DEFAULT &&
+        (e.key === 'ArrowDown' ||
+          e.key === 'ArrowUp' ||
+          e.key === 'ArrowLeft' ||
+          e.key === 'ArrowRight')
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.callbacks.onModeNavigate?.(modeType, castArrowToDirection(e.key));
         return true;
       }
 
@@ -372,7 +412,7 @@ export class TaskQuickEditorStore {
     const mode = this.getMatchMode(e.key);
 
     if (e.key === 'Escape') {
-      if (this.onNavigate(NavigationDirections.LEFT)) {
+      if (this.callbacks.onNavigate?.(NavigationDirections.LEFT)) {
         this.leave();
       }
     } else if (e.key === 'Enter') {
@@ -381,13 +421,7 @@ export class TaskQuickEditorStore {
       this.enterMode(mode, e);
     } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
-      if (
-        this.onNavigate(
-          e.key === 'ArrowDown'
-            ? NavigationDirections.DOWN
-            : NavigationDirections.UP
-        )
-      ) {
+      if (this.callbacks.onNavigate?.(castArrowToDirection(e.key))) {
         this.leave();
       }
     } else if (
@@ -405,32 +439,30 @@ export class TaskQuickEditorStore {
   };
 
   update = ({
-    onSave,
-    onSuggestionsMenuOpen,
-    onTagCreate,
+    callbacks,
     listId,
-    onNavigate,
     task,
     tagsMap,
     spaces,
+    goals,
     keepFocus,
   }: TaskQuickEditorProps) => {
-    this.onSave = onSave;
-    this.onTagCreate = onTagCreate;
-    this.onNavigate = onNavigate;
-    this.onSuggestionsMenuOpen = onSuggestionsMenuOpen;
-    this.listId = listId;
+    this.callbacks = callbacks || {};
+    this.listId = task ? task.listId : listId;
     this.keepFocus = keepFocus;
     this.modes.tag.tagsMap = tagsMap;
     this.modes.space.spaces = spaces;
+    this.modes.goal.goals = goals;
 
     if (task) {
       this.task = task;
       this.value = task.title;
       this.modes.priority.priority = task.priority;
+      this.modes.space.selectedSpaceId = task.spaceId;
+      this.modes.goal.selectedGoalId = task.goalId;
       this.modes.tag.tags = task.tags.map((tag) => ({
         id: tag,
-        title: tagsMap[tag].title,
+        title: tagsMap[tag] && tagsMap[tag].title,
       }));
     }
   };

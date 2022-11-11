@@ -56,6 +56,8 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
             <Task
               task={store.inboxItem.list.openedTaskData}
               spaces={store.inboxItem.list.spaces}
+              tagsMap={store.inboxItem.list.tagsMap}
+              goals={store.inboxItem.list.goals}
               isEditorFocused={store.inboxItem.list.isEditorFocused}
               isExpanded={store.isInboxItemTaskExpanded}
               callbacks={store.taskCallbacks}

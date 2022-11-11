@@ -1,10 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import {
-  NavigationDirections,
-  TaskData,
-  TaskStatus,
-  TaskTag,
-} from '../../types';
+import { TaskData, TaskStatus, TaskTag } from '../../types';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import React, { MouseEvent } from 'react';
@@ -19,7 +14,6 @@ export type TaskItemProps = {
   isDragging?: boolean;
   isEditMode?: boolean;
   onFocus?: (taskId: string, multiselect?: 'single' | 'many') => void;
-  onNavigate?: (direction: NavigationDirections) => void;
   onStatusChange?: (taskId: string, status: TaskStatus) => void;
   tagsMap: Record<string, TaskTag>;
 };
@@ -39,7 +33,6 @@ class TaskItemStore {
   isDragging: boolean = false;
   isReadOnly: boolean = false;
   onFocus: TaskItemProps['onFocus'];
-  onNavigate: TaskItemProps['onNavigate'];
   onStatusChange: TaskItemProps['onStatusChange'];
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
@@ -68,7 +61,6 @@ class TaskItemStore {
   update = ({
     task,
     onFocus,
-    onNavigate,
     onStatusChange,
     tagsMap,
     isFocused,
@@ -81,7 +73,6 @@ class TaskItemStore {
     this.onFocus = onFocus;
     this.tags = tagsMap;
     this.onStatusChange = onStatusChange;
-    this.onNavigate = onNavigate;
 
     this.isDisabled = isDisabled;
     this.isFocused = isFocused;

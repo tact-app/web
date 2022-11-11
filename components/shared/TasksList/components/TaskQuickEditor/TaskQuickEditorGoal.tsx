@@ -1,45 +1,46 @@
 import { observer } from 'mobx-react-lite';
 import { Modes, useTaskQuickEditorStore } from './store';
-import { SpacesSmallIcon } from '../../../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
 import { Button, ButtonProps, chakra } from '@chakra-ui/react';
 import React from 'react';
 import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
+import { GoalIcon } from '../../../../pages/Goals/components/GoalIcon';
 
-export const TaskQuickEditorSpace = observer(function TaskQuickEditorSpace({
+export const TaskQuickEditorGoal = observer(function TaskQuickEditorGoal({
   withTitle,
   iconSize = 5,
+  iconFontSize = 'sm',
   ...rest
 }: {
-  iconSize?: number;
   withTitle?: boolean;
+  iconSize?: number;
+  iconFontSize?: string;
 } & ButtonProps) {
   const store = useTaskQuickEditorStore();
-  const space = store.modes.space.selectedSpace;
+  const goal = store.modes.goal.selectedGoal;
 
-  return space ? (
+  return goal ? (
     <Button
-      ref={store.modes.space.setButtonRef}
+      ref={store.modes.goal.setButtonRef}
       onClick={(e) => {
         e.stopPropagation();
-        store.suggestionsMenu.openFor(Modes.SPACE);
+        store.suggestionsMenu.openFor(Modes.GOAL);
       }}
-      onKeyDown={store.handleKeyDownWithModeMenu(Modes.SPACE)}
-      borderRadius='md'
-      overflow='hidden'
+      onKeyDown={store.handleKeyDownWithModeMenu(Modes.GOAL)}
       display='flex'
-      justifyContent='center'
       h={6}
       w={6}
       minW={6}
-      bg={space.color + '.100'}
-      p={1}
-      _hover={{
-        bg: space.color + '.75',
-      }}
+      justifyContent='center'
+      variant='unstyled'
       {...rest}
     >
-      <chakra.div flex={1} display='flex' alignItems='center'>
-        <SpacesSmallIcon space={space} size={iconSize} />
+      <chakra.div
+        flex={1}
+        display='flex'
+        alignItems='center'
+        justifyContent='center'
+      >
+        <GoalIcon icon={goal.icon} fontSize={iconFontSize} size={iconSize} />
       </chakra.div>
       {withTitle ? (
         <chakra.span
@@ -51,12 +52,12 @@ export const TaskQuickEditorSpace = observer(function TaskQuickEditorSpace({
           overflow='hidden'
           textOverflow='ellipsis'
         >
-          {space.name}
+          {goal.title}
         </chakra.span>
       ) : null}
       <TaskQuickEditorMenu
-        items={store.modes.space.suggestions}
-        openForMode={Modes.SPACE}
+        items={store.modes.goal.suggestions}
+        openForMode={Modes.GOAL}
       />
     </Button>
   ) : null;

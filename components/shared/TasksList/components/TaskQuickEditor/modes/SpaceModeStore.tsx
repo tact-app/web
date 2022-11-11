@@ -19,10 +19,15 @@ export class SpaceModeStore {
   callbacks: SpaceModeCallbacks;
 
   isMenuOpen = false;
+  buttonRef: HTMLButtonElement | null = null;
 
   spaces: SpaceData[] = [];
   strValue: string = '';
   selectedSpaceId: string | null = null;
+
+  get isFilled() {
+    return this.selectedSpaceId != null;
+  }
 
   get filteredSpaces() {
     const spaceName = this.strValue.slice(1).toLowerCase();
@@ -65,6 +70,14 @@ export class SpaceModeStore {
       return [<>Space not found</>];
     }
   }
+
+  setButtonRef = (ref: HTMLButtonElement | null) => {
+    this.buttonRef = ref;
+  };
+
+  focus = () => {
+    this.buttonRef?.focus();
+  };
 
   activate = () => {
     this.strValue = '^';

@@ -22,11 +22,14 @@ export const TasksListView = observer(function TasksListView(
     <>
       {store.isCreatorEnabled && (
         <TaskCreator
-          onSave={store.createTask}
-          onTagCreate={store.createTag}
-          onNavigate={store.handleNavigation}
+          callbacks={{
+            onSave: store.createTask,
+            onTagCreate: store.createTag,
+            onNavigate: store.handleNavigation,
+          }}
           tagsMap={store.tagsMap}
           spaces={store.spaces}
+          goals={store.goals}
           listId={store.listId}
           keepFocus
           wrapperProps={{

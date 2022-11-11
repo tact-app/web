@@ -291,6 +291,9 @@ export class SpacesStore {
     onNextItem: this.inboxItem.list.draggableList.focusNextItem,
     onExpand: () => this.handleExpand([3]),
     onCollapse: () => this.resetExpanded(),
+    onStatusChange: this.inboxItem.list.setTaskStatus,
+    onTaskChange: this.inboxItem.list.updateTask,
+    onTagCreate: this.inboxItem.list.createTag,
   };
 }
 

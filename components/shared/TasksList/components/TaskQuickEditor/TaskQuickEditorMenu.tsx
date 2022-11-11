@@ -39,7 +39,7 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
   return (
     <Popover
       isOpen={isOpen}
-      placement='bottom-start'
+      placement={openForMode ? 'bottom' : 'bottom-start'}
       offset={[0, 24]}
       isLazy
       autoFocus={false}

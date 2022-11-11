@@ -26,12 +26,15 @@ export const TaskListItem = observer(function TaskListItem({
         isEditMode={store.editingTaskId && task.id === store.editingTaskId}
         tagsMap={store.tagsMap}
         spaces={store.spaces}
+        goals={store.goals}
         listId={store.listId}
         onFocus={store.draggableList.setFocusedItem}
-        onNavigate={store.draggableList.handleNavigation}
         onStatusChange={store.setTaskStatus}
-        onSave={store.updateTask}
-        onTagCreate={store.createTag}
+        callbacks={{
+          onNavigate: store.draggableList.handleNavigation,
+          onSave: store.updateTask,
+          onTagCreate: store.createTag,
+        }}
       />
     )
   );

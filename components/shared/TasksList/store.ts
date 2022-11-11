@@ -242,6 +242,7 @@ export class TasksListStore {
 
     if (this.input) {
       task.input = toJS(this.input);
+      task.spaceId = this.input.spaceId;
     }
 
     this.items[task.id] = task;

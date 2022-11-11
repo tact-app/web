@@ -1,23 +1,36 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Box,
-  Button,
   Center,
+  Checkbox,
   CircularProgress,
   Container,
   Divider,
-  Heading,
+  HStack,
   Text,
+  useOutsideClick,
 } from '@chakra-ui/react';
 import { useTaskStore } from './store';
 import { Editor } from '../Editor';
 import { ItemToolbar } from '../ItemToolbar/itemToolbar';
-import { SpacesSmallIcon } from '../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
 import { OriginIcon } from '../../pages/Spaces/components/SpacesIcons/OriginsIcons';
+import { TaskQuickEditorStoreProvider } from '../TasksList/components/TaskQuickEditor/store';
+import { TaskQuickEditorInput } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorInput';
+import { TaskQuickEditorPriority } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorPriority';
+import { TaskQuickEditorTags } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorTags';
+import { TaskQuickEditorGoal } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorGoal';
+import { TaskStatus } from '../TasksList/types';
+import { TaskQuickEditorSpace } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorSpace';
 
 export const TaskView = observer(function TaskView() {
   const store = useTaskStore();
+  const ref = useRef();
+
+  useOutsideClick({
+    ref,
+    handler: store.quickEditor.handleClickOutside,
+  });
 
   return (
     <Container
@@ -28,73 +41,115 @@ export const TaskView = observer(function TaskView() {
       flexDirection='column'
       justifyContent='space-between'
     >
-      <Box minH={0} flex={1} pb={6} display='flex' flexDirection='column'>
-        <ItemToolbar
-          onPreviousItem={store.handlePreviousItem}
-          onNextItem={store.handleNextItem}
-          onClose={store.handleClose}
-          onExpand={store.handleExpand}
-          onCollapse={store.handleCollapse}
-          isExpanded={store.isExpanded}
-        />
-        <Heading fontSize='2xl' mt={6} fontWeight='semibold'>
-          {store.data.title}
-        </Heading>
-        <Box mt={4} id='editor' overflow='auto'>
-          {store.isDescriptionLoading ? (
-            <Center>
-              <CircularProgress isIndeterminate size='24px' />
-            </Center>
-          ) : (
-            <Editor
-              content={
-                store.description ? store.description.content : undefined
-              }
-              isFocused={store.isEditorFocused}
-              onUpdate={store.handleDescriptionChange}
-              onBlur={store.handleDescriptionBlur}
-            />
-          )}
-        </Box>
-      </Box>
-      {store.data.input && store.inputSpace ? (
-        <Box>
-          <Divider />
-          <Box
-            borderColor='gray.200'
-            display='flex'
-            alignItems='center'
-            pt={2}
-            pb={2}
-          >
-            <Button
-              borderRadius='md'
-              overflow='hidden'
-              display='flex'
-              justifyContent='center'
-              mr={2}
-              h={7}
-              w={7}
-              minW={7}
-              bg={store.inputSpace.color + '.100'}
-              p={1}
-              _hover={{
-                bg: store.inputSpace.color + '.75',
-              }}
-              _active={{
-                bg: store.inputSpace.color + '.100',
-              }}
-            >
-              <SpacesSmallIcon space={store.inputSpace} size={6} />
-            </Button>
-            <OriginIcon origin={store.data.input.origin.type} />
-            <Text fontSize='xs' fontWeight='normal' ml={1}>
-              {store.data.input.title}
-            </Text>
+      <TaskQuickEditorStoreProvider
+        instance={store.quickEditor}
+        callbacks={store.quickEditorCallbacks}
+        spaces={store.spaces}
+        goals={store.goals}
+        tagsMap={store.tagsMap}
+        task={store.data}
+      >
+        <Box minH={0} flex={1} pb={6} display='flex' flexDirection='column'>
+          <ItemToolbar
+            onPreviousItem={store.handlePreviousItem}
+            onNextItem={store.handleNextItem}
+            onClose={store.handleClose}
+            onExpand={store.handleExpand}
+            onCollapse={store.handleCollapse}
+            isExpanded={store.isExpanded}
+          />
+          <Box mt={6}>
+            {store.quickEditor.filledModes.length ? (
+              <HStack mb={4} spacing={6} h={10}>
+                <TaskQuickEditorPriority
+                  withTitle
+                  w='auto'
+                  h={8}
+                  pt={1.5}
+                  pb={1.5}
+                  pl={0.5}
+                  pr={1}
+                />
+                <TaskQuickEditorGoal
+                  withTitle
+                  w='auto'
+                  iconFontSize='lg'
+                  iconSize={8}
+                />
+                <TaskQuickEditorSpace
+                  withTitle
+                  iconSize={6}
+                  w='auto'
+                  h={8}
+                  pt={1.5}
+                  pb={1.5}
+                  pl={1}
+                  pr={1}
+                />
+              </HStack>
+            ) : null}
+            <HStack ref={ref}>
+              <Checkbox
+                variant='indeterminateUnfilled'
+                bg='white'
+                size='lg'
+                cursor='pointer'
+                isChecked={store.data.status === TaskStatus.DONE}
+                isIndeterminate={store.data.status === TaskStatus.WONT_DO}
+                onChange={store.handleStatusChange}
+                name='task-status'
+              />
+              <TaskQuickEditorInput
+                autofocus
+                fontSize='2xl'
+                fontWeight='semibold'
+              />
+            </HStack>
           </Box>
-          <Divider />
+          <Box mt={4} id='editor' overflow='auto'>
+            {store.isDescriptionLoading ? (
+              <Center>
+                <CircularProgress isIndeterminate size='24px' />
+              </Center>
+            ) : (
+              <Editor
+                content={
+                  store.description ? store.description.content : undefined
+                }
+                isFocused={store.isEditorFocused}
+                onUpdate={store.handleDescriptionChange}
+                onBlur={store.handleDescriptionBlur}
+              />
+            )}
+          </Box>
         </Box>
-      ) : null}
+        {store.data.input && store.inputSpace ? (
+          <Box>
+            <Divider />
+            <Box
+              borderColor='gray.200'
+              display='flex'
+              alignItems='center'
+              pt={2}
+              pb={2}
+            >
+              <OriginIcon origin={store.data.input.origin.type} />
+              <Text fontSize='xs' fontWeight='normal' ml={1}>
+                {store.data.input.title}
+              </Text>
+            </Box>
+            <Divider />
+          </Box>
+        ) : null}
+        <TaskQuickEditorTags
+          boxProps={{
+            display: 'inline',
+          }}
+          buttonProps={{
+            mt: 2,
+          }}
+        />
+      </TaskQuickEditorStoreProvider>
     </Container>
   );
 });

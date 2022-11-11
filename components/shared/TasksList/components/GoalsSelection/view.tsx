@@ -1,18 +1,18 @@
 import { observer } from 'mobx-react-lite';
-import { GoalIconData, GoalIconVariants } from '../../../../pages/Goals/types';
+import { GoalIconData } from '../../../../pages/Goals/types';
 import {
   chakra,
   Box,
   Checkbox,
   List,
   ListItem,
-  Text,
   Button,
 } from '@chakra-ui/react';
 import { useGoalsSelectionStore } from './store';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import React from 'react';
 import { LargePlusIcon } from '../../../Icons/LargePlusIcon';
+import { GoalIcon } from '../../../../pages/Goals/components/GoalIcon';
 
 const keyMap = {
   UP: 'up',
@@ -80,24 +80,7 @@ const GoalSelectionListItem = observer(function GoalSelectionListItem({
           fontSize='sm'
           fontWeight='normal'
         >
-          {icon ? (
-            <Box
-              w={8}
-              h={8}
-              mr={2}
-              borderRadius='full'
-              display='inline-flex'
-              justifyContent='center'
-              flexDirection='column'
-              bg={icon?.color}
-            >
-              {icon && icon.type === GoalIconVariants.EMOJI ? (
-                <Text fontSize='lg' textAlign='center'>
-                  {icon.value}
-                </Text>
-              ) : null}
-            </Box>
-          ) : null}
+          {icon ? <GoalIcon icon={icon} /> : null}
           {title}
         </chakra.span>
       </Checkbox>

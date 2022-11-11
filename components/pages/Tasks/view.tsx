@@ -64,12 +64,17 @@ export const TasksView = observer(function TasksView() {
               <Task
                 task={store.list.openedTaskData}
                 spaces={store.list.spaces}
+                tagsMap={store.list.tagsMap}
+                goals={store.list.goals}
                 isEditorFocused={store.list.isEditorFocused}
                 callbacks={{
                   onClose: store.list.closeTask,
                   onBlur: store.list.handleEditorBlur,
                   onPreviousItem: store.list.draggableList.focusPrevItem,
                   onNextItem: store.list.draggableList.focusNextItem,
+                  onStatusChange: store.list.setTaskStatus,
+                  onTaskChange: store.list.updateTask,
+                  onTagCreate: store.list.createTag,
                 }}
               />
             </Box>

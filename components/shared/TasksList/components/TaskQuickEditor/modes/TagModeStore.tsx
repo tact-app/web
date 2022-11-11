@@ -23,6 +23,10 @@ export class TagModeStore {
   tags: Array<TaskTag & { ref?: HTMLButtonElement }> = [];
   strValue: string = '';
 
+  get isFilled() {
+    return this.tags.length > 0;
+  }
+
   get availableTags() {
     return Object.values(this.tagsMap);
   }

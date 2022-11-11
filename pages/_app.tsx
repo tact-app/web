@@ -265,6 +265,11 @@ const theme = extendTheme({
       },
     },
     Popover: {
+      baseStyle: {
+        popper: {
+          zIndex: 'popover',
+        },
+      },
       variants: {
         relative: {
           popper: {

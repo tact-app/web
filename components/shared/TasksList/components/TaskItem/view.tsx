@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite';
 import {
   Box,
   Checkbox,
-  HStack,
   Text,
   chakra,
   Tag,
@@ -126,9 +125,11 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           </chakra.div>
         </Box>
         {hasTags && (
-          <HStack
+          <Box
             overflow='auto'
+            display='flex'
             ml={8}
+            mr={5}
             pb={2.5}
             pr={2}
             pt={1}
@@ -150,12 +151,13 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
                   cursor='pointer'
                   key={id}
                   flexShrink={0}
+                  mr={2}
                 >
                   {store.tags[id]?.title}
                 </Tag>
               ))
             )}
-          </HStack>
+          </Box>
         )}
       </Box>
       {!store.isReadOnly && <TaskItemMenu />}

@@ -25,9 +25,14 @@ export class PriorityModeStore {
   exitSymbol = /[^!]/;
 
   callbacks: PriorityCallbacks;
+  buttonRef: HTMLButtonElement | null = null;
 
   strValue: string = '';
   priority: TaskPriority = TaskPriority.NONE;
+
+  get isFilled() {
+    return this.priority !== TaskPriority.NONE;
+  }
 
   get suggestions() {
     return TaskPriorityArray.map((key) => (
@@ -37,6 +42,14 @@ export class PriorityModeStore {
       </HStack>
     ));
   }
+
+  setButtonRef = (ref: HTMLButtonElement | null) => {
+    this.buttonRef = ref;
+  };
+
+  focus = () => {
+    this.buttonRef?.focus();
+  };
 
   activate = () => {
     this.strValue = '!';
