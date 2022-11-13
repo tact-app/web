@@ -104,7 +104,17 @@ vercel() {
   [ -z "${_vercel}" ] && echo Please setup env and activate it. && return 1
 
   local args=("${@}")
-  if [ "${1:-}" == 'clean' ]; then args=(rm tact --safe --yes); fi
+  if [ "${1:-}" == 'clean' ]; then
+    args=(rm --yes)
+    if [ "${2:-}" == 'all' ]; then
+      local deployment
+      while IFS='' read -r deployment; do
+        args+=("${deployment}")
+      done < <($_vercel -t "$(git config vercel.token)" ls 2>&1 | grep https | awk '{print $2}')
+    else
+      args+=(--safe tact)
+    fi
+  fi
 
   $_vercel -t "$(git config vercel.token)" "${args[@]}"
 }
