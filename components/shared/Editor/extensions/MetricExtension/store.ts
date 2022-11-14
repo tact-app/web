@@ -18,6 +18,9 @@ export class MetricExtensionStore {
   value: number = 0;
   type: MetricExtensionTypes;
 
+  inputRef = null;
+  secondInputRef = null;
+
   focusTimeout: number;
   isFocused = false;
 
@@ -32,10 +35,24 @@ export class MetricExtensionStore {
     }
   }
 
+  setInputRef = (ref: HTMLInputElement) => {
+    this.inputRef = ref;
+  };
+
+  setSecondInputRef = (ref: HTMLInputElement) => {
+    this.secondInputRef = ref;
+  };
+
   handleFocus = () => {
     clearTimeout(this.focusTimeout);
 
     this.isFocused = true;
+
+    if (this.type === MetricExtensionTypes.RING) {
+      const count = this.value.toString().length;
+
+      this.inputRef.setSelectionRange(count, count);
+    }
   };
 
   handleBlur = () => {
@@ -66,6 +83,71 @@ export class MetricExtensionStore {
     this.value = newValue;
   };
 
+  handleKewDown = (e) => {
+    e.stopPropagation();
+
+    if (this.type === MetricExtensionTypes.RING) {
+      if (e.key === 'ArrowUp' && this.value < 100) {
+        this.props.updateAttributes({
+          value: this.value + 1,
+        });
+      }
+
+      if (e.key === 'ArrowDown' && this.value > 0) {
+        this.props.updateAttributes({
+          value: this.value - 1,
+        });
+      }
+    }
+
+    if (
+      this.type === MetricExtensionTypes.TODO ||
+      this.type === MetricExtensionTypes.RING
+    ) {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+
+        this.props.editor.chain().focus().run();
+      }
+
+      if (e.key === 'Enter') {
+        this.props.editor.chain().focus().run();
+      }
+    }
+
+    if (this.type === MetricExtensionTypes.NUMBER) {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+
+        if (e.shiftKey) {
+          this.props.editor.chain().focus().run();
+        } else {
+          this.secondInputRef.focus();
+        }
+      }
+
+      if (e.key === 'Enter') {
+        this.secondInputRef.focus();
+      }
+    }
+  };
+
+  handleSecondKewDown = (e) => {
+    e.stopPropagation();
+
+    if (this.type === MetricExtensionTypes.NUMBER) {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+
+        this.inputRef.focus();
+      }
+
+      if (e.key === 'Enter') {
+        this.props.editor.chain().focus().run();
+      }
+    }
+  };
+
   handleChangeValue = (e) => {
     const newValue = Math.min(
       Math.max(0, Math.floor(parseInt(e.target.value) || 0)),
@@ -92,6 +174,15 @@ export class MetricExtensionStore {
     this.value = props.node.attrs.value;
     this.type = props.node.attrs.type;
     this.targetValue = props.node.attrs.targetValue;
+
+    if (props.node.attrs.focus) {
+      this.isFocused = true;
+      this.inputRef?.focus();
+
+      props.updateAttributes({
+        focus: false,
+      });
+    }
   };
 }
 

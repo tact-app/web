@@ -13,14 +13,18 @@ export const useRunAfterUpdate = () => {
   return (fn) => (afterPaintRef.current = fn);
 };
 
-export const wrapChange = (onChange, run) => (evt) => {
-  const input = evt.target;
-  const cursor = input.selectionStart;
+export const wrapChange =
+  (onChange, run, delta = 0) =>
+  (evt) => {
+    const input = evt.target;
+    const cursor = input.selectionStart;
 
-  onChange(evt);
+    onChange(evt);
 
-  run(() => {
-    input.selectionStart = cursor;
-    input.selectionEnd = cursor;
-  });
-};
+    run(() => {
+      const count = input.value.length;
+      const newCursor = cursor + delta > count ? count - 1 : cursor;
+
+      input.setSelectionRange(newCursor, newCursor);
+    });
+  };

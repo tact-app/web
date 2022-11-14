@@ -20,6 +20,9 @@ export const MetricExtension = Node.create({
       type: {
         default: MetricExtensionTypes.RING,
       },
+      focus: {
+        default: false,
+      },
     };
   },
 
@@ -49,6 +52,13 @@ export const MetricExtension = Node.create({
         } else {
           return false;
         }
+      },
+      Tab: ({ editor }) => {
+        if (editor.isActive('metric')) {
+          editor.commands.updateAttributes('metric', { focus: true });
+        }
+
+        return true;
       },
       Enter: ({ editor }) => {
         if (editor.isActive('metric')) {

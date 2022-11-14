@@ -71,12 +71,13 @@ const MetricExtensionRingValue = observer(function MetricExtensionRingValue() {
       <Input
         h={8}
         value={store.value + '%'}
-        onChange={wrapChange(store.handleChangeValue, runAfterUpdate)}
+        onKeyDown={store.handleKewDown}
+        onChange={wrapChange(store.handleChangeValue, runAfterUpdate, 1)}
         onFocus={store.handleFocus}
         onBlur={store.handleBlur}
+        ref={store.setInputRef}
         position='absolute'
         variant='unstyled'
-        left={0}
         right={0}
         top={0}
         bottom={0}
@@ -98,6 +99,8 @@ const MetricExtensionTodoValue = observer(function MetricExtensionTodoValue() {
 
   return (
     <Checkbox
+      ref={store.setInputRef}
+      onKeyDown={store.handleKewDown}
       contentEditable={false}
       pr={1}
       size='lg'
@@ -122,7 +125,9 @@ const MetricExtensionNumberValue = observer(
       >
         <AutoFitInput
           h={8}
+          inputRef={store.setInputRef}
           value={store.value}
+          onKeyDown={store.handleKewDown}
           onChange={wrapChange(store.handleChangeStartValue, runAfterUpdate)}
           onFocus={store.handleFocus}
           onBlur={store.handleBlur}
@@ -161,6 +166,8 @@ const MetricExtensionNumberValue = observer(
             <AutoFitInput
               h={8}
               value={store.targetValue}
+              inputRef={store.setSecondInputRef}
+              onKeyDown={store.handleSecondKewDown}
               onChange={wrapChange(
                 store.handleChangeTargetValue,
                 runAfterUpdate
