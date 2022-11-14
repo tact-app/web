@@ -1,4 +1,4 @@
-import { ChainedCommands } from '@tiptap/core';
+import { ChainedCommands, Editor } from '@tiptap/core';
 
 export enum MetricExtensionTypes {
   RING = 'ring',
@@ -8,7 +8,7 @@ export enum MetricExtensionTypes {
 
 export const insertMetric = (
   type: MetricExtensionTypes,
-  editor,
+  editor: Editor,
   chain: ChainedCommands
 ) => {
   const node = editor.schema.nodeFromJSON({
@@ -33,7 +33,7 @@ export const insertMetric = (
   return {
     chain: chain
       .insertContent(node.toJSON())
-      .focus(editor.state.selection.anchor + node.nodeSize),
+      .focus(editor.state.selection.anchor + node.textContent.length - 1),
     node,
   };
 };

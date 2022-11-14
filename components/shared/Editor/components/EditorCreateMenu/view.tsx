@@ -16,7 +16,7 @@ export const EditorCreateMenuView = observer(function EditorCreateMenu({
 
   return (
     <Box boxShadow='lg' w={56} borderRadius='lg' overflow='hidden'>
-      <Box maxH={72} overflow='auto'>
+      <Box maxH={72} overflow='auto' bg='white'>
         {store.items
           .filter(({ options }) => options.length)
           .map(({ options, name }) => (
@@ -31,6 +31,9 @@ export const EditorCreateMenuView = observer(function EditorCreateMenu({
                     fontWeight='normal'
                     p={2}
                     bg={isMatch ? 'gray.100' : 'white'}
+                    _hover={{
+                      bg: 'gray.50',
+                    }}
                     ref={
                       isMatch
                         ? (el) => {
@@ -43,7 +46,7 @@ export const EditorCreateMenuView = observer(function EditorCreateMenu({
                           }
                         : null
                     }
-                    onClick={() => store.selectItem(index)}
+                    onClick={() => store.handleClickItem(name, index)}
                     cursor='pointer'
                   >
                     <HStack w='100%'>

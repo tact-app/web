@@ -38,7 +38,6 @@ const getRenderer =
                 name: 'flip',
                 options: {
                   fallbackPlacements: ['top-start'],
-                  boundary: document.getElementById('editor'),
                 },
               },
             ],

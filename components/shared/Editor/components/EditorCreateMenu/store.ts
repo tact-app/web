@@ -47,19 +47,29 @@ export class EditorCreateMenuStore {
     return false;
   };
 
-  getLocalIndexMatch = (name: string, index: number) => {
+  getLocalIndex = (name: string, index: number) => {
     const sectionIndex = this.items.findIndex((item) => item.name === name);
-    const itemIndex =
+
+    return (
       this.items
         .slice(0, sectionIndex)
-        .reduce((acc, { options }) => acc + options.length, 0) + index;
+        .reduce((acc, { options }) => acc + options.length, 0) + index
+    );
+  };
 
-    return this.selectedIndex === itemIndex;
+  getLocalIndexMatch = (name: string, index: number) => {
+    return this.selectedIndex === this.getLocalIndex(name, index);
   };
 
   handleClose = () => {
     this.isOpen = false;
     this.onClose?.();
+  };
+
+  handleClickItem = (name: string, index: number) => {
+    const resolvedIndex = this.getLocalIndex(name, index);
+
+    this.selectItem(resolvedIndex);
   };
 
   handleOpen = () => {
