@@ -73,14 +73,21 @@ export class TasksStore {
   };
 
   toggleFocusMode = (silent?: boolean) => {
-    if (!this.isFocusModeActive) {
-      this.list.draggableList.resetFocusedItem();
-    }
-
     const isOpen = !this.isFocusModeActive;
     this.isFocusModeActive = !this.isFocusModeActive;
 
     if (isOpen) {
+      this.list.draggableList.revalidateFocusedItems();
+
+      const isOpenedTaskFocused = Boolean(
+        this.list.openedTask &&
+          this.checkFocusModeMatch(this.list.openedTaskData)
+      );
+
+      if (!isOpenedTaskFocused) {
+        this.list.closeTask();
+      }
+
       if (silent) {
         this.isSilentFocusMode = true;
         this.loadFocusModeConfiguration();

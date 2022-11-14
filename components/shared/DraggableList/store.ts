@@ -301,6 +301,11 @@ export class DraggableListStore {
     this.callbacks.onFocusedItemsChange?.([]);
   };
 
+  revalidateFocusedItems = () => {
+    this.focusedItemIds = this.focusedItemIds.filter(this.checkItemActivity);
+    this.callbacks.onFocusedItemsChange?.(this.focusedItemIds);
+  };
+
   getFirstActiveItem = () => {
     if (this.checkItemActivity) {
       return this.items.find((id) => this.checkItemActivity(id)) || null;
