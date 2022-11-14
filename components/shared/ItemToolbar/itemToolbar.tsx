@@ -1,4 +1,10 @@
-import { Box, chakra, CloseButton, IconButton } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  chakra,
+  CloseButton,
+  IconButton,
+} from '@chakra-ui/react';
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -8,14 +14,22 @@ import {
   faChevronUp,
 } from '@fortawesome/pro-solid-svg-icons';
 
-export const ItemToolbar = (props: {
+export const ItemToolbar = ({
+  isExpanded,
+  onExpand,
+  onCollapse,
+  onPreviousItem,
+  onNextItem,
+  onClose,
+  ...rest
+}: {
   isExpanded?: boolean;
   onExpand?: () => void;
   onCollapse?: () => void;
   onPreviousItem?: () => void;
   onNextItem?: () => void;
   onClose?: () => void;
-}) => (
+} & BoxProps) => (
   <Box
     pl={0}
     pr={0}
@@ -24,14 +38,15 @@ export const ItemToolbar = (props: {
     display='flex'
     justifyContent='space-between'
     alignItems='center'
+    {...rest}
   >
     <Box display='flex' alignItems='center'>
-      {props.onExpand && !props.isExpanded && (
+      {onExpand && !isExpanded && (
         <IconButton
           aria-label={'expand'}
           size='xs'
           variant='ghost'
-          onClick={props.onExpand}
+          onClick={onExpand}
           mr={2}
         >
           <FontAwesomeIcon
@@ -42,12 +57,12 @@ export const ItemToolbar = (props: {
           />
         </IconButton>
       )}
-      {props.onCollapse && props.isExpanded && (
+      {onCollapse && isExpanded && (
         <IconButton
           aria-label={'collapse'}
           size='xs'
           variant='ghost'
-          onClick={props.onCollapse}
+          onClick={onCollapse}
           mr={2}
         >
           <FontAwesomeIcon
@@ -58,17 +73,17 @@ export const ItemToolbar = (props: {
           />
         </IconButton>
       )}
-      {(props.onCollapse || props.onExpand) && (
+      {(onCollapse || onExpand) && (
         <chakra.div h={4} bg='gray.200' w={0.5} display='inline-block' mr={2} />
       )}
-      {(props.onPreviousItem || props.onNextItem) && (
+      {(onPreviousItem || onNextItem) && (
         <>
           <IconButton
             aria-label={'prev'}
             size='xs'
             variant='ghost'
             mr={2}
-            onClick={props.onPreviousItem}
+            onClick={onPreviousItem}
           >
             <FontAwesomeIcon
               fontSize={16}
@@ -81,7 +96,7 @@ export const ItemToolbar = (props: {
             aria-label={'next'}
             size='xs'
             variant='ghost'
-            onClick={props.onNextItem}
+            onClick={onNextItem}
           >
             <FontAwesomeIcon
               fontSize={16}
@@ -93,6 +108,6 @@ export const ItemToolbar = (props: {
         </>
       )}
     </Box>
-    <CloseButton onClick={props.onClose} color='gray.400' size='sm' />
+    <CloseButton onClick={onClose} color='gray.400' size='sm' />
   </Box>
 );

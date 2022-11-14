@@ -12,13 +12,17 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
 
   return (
     <Container
-      p={7}
+      p={6}
       overflow='auto'
       h='100%'
       maxW='container.md'
+      display='flex'
+      flexDirection='column'
       onMouseDown={store.callbacks.onFocus}
     >
       <ItemToolbar
+        ml={1}
+        mr={1}
         onExpand={store.callbacks.onExpand}
         onCollapse={store.callbacks.onCollapse}
         onPreviousItem={store.callbacks.onPreviousItem}
@@ -26,25 +30,27 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
         onClose={store.callbacks.onClose}
         isExpanded={props.isExpanded}
       />
-      <Box mt={6}>
-        <Heading fontSize='2xl' fontWeight='semibold'>
+      <Box mt={6} display='flex' flexDirection='column' overflow='hidden'>
+        <Heading fontSize='2xl' fontWeight='semibold' mr={1} ml={1} mb={6}>
           {store.item.title}
         </Heading>
-        <SpacesInboxItemFields />
-        <Box mt={6}>
-          <Text>{store.description}</Text>
+        <Box overflow='auto' pr={1} pl={1}>
+          <SpacesInboxItemFields />
+          <Box>
+            <Text>{store.description}</Text>
+          </Box>
+          <Divider mt={6} mb={8} />
+          <TasksList
+            instance={store.list}
+            input={store.item}
+            isHotkeysEnabled={store.isHotkeysEnabled}
+            callbacks={{
+              onFocusLeave: props.callbacks.onFocusLeave,
+              onOpenTask: props.callbacks.onOpenTask,
+              onCloseTask: props.callbacks.onCloseTask,
+            }}
+          />
         </Box>
-        <Divider mt={6} mb={8} />
-        <TasksList
-          instance={store.list}
-          input={store.item}
-          isHotkeysEnabled={store.isHotkeysEnabled}
-          callbacks={{
-            onFocusLeave: props.callbacks.onFocusLeave,
-            onOpenTask: props.callbacks.onOpenTask,
-            onCloseTask: props.callbacks.onCloseTask,
-          }}
-        />
       </Box>
     </Container>
   );

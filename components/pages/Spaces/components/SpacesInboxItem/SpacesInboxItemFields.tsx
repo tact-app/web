@@ -47,7 +47,7 @@ export const SpacesInboxItemFields = observer(function SpacesInboxItemFields() {
   const lastItems = items.slice(5);
 
   return items.length ? (
-    <Box mt={4}>
+    <Box>
       <chakra.table
         style={{
           tableLayout: 'auto',
@@ -100,7 +100,7 @@ export const SpacesInboxItemFields = observer(function SpacesInboxItemFields() {
           </AccordionItem>
         </Accordion>
       ) : null}
-      <Divider mt={4} />
+      <Divider mt={4} mb={4} />
     </Box>
   ) : null;
 });

@@ -126,29 +126,34 @@ export class ResizableGroupStore {
 
     let offset = e.clientX - this.resizeStart.x;
 
-    const newWidths = [...this.widths];
+    let leftSideTotal = 0;
+    let rightSideTotal = 0;
 
-    const prevActiveItemsCount = this.activeChildren
-      .slice(0, this.resizingIndex)
-      .filter(Boolean).length;
-    const nextActiveItemsCount = this.activeChildren
-      .slice(this.resizingIndex)
-      .filter(Boolean).length;
-
-    const increment = prevActiveItemsCount ? offset / prevActiveItemsCount : 0;
-    const decrement = nextActiveItemsCount ? offset / nextActiveItemsCount : 0;
-
-    for (let i = 0; i < this.resizingIndex; i++) {
-      if (this.activeChildren[i]) {
-        newWidths[i] = this.resizeStart.widths[i] + increment;
+    this.activeChildren.forEach((size, index) => {
+      if (this.activeChildren[index]) {
+        if (index < this.resizingIndex) {
+          leftSideTotal += this.resizeStart.widths[index];
+        } else if (index >= this.resizingIndex) {
+          rightSideTotal += this.resizeStart.widths[index];
+        }
       }
-    }
+    });
 
-    for (let i = this.resizingIndex; i < newWidths.length; i++) {
-      if (this.activeChildren[i]) {
-        newWidths[i] = this.resizeStart.widths[i] - decrement;
+    const newWidths = this.activeChildren.map((size, index) => {
+      if (size) {
+        if (index < this.resizingIndex && leftSideTotal) {
+          const proportion = this.resizeStart.widths[index] / leftSideTotal;
+
+          return this.resizeStart.widths[index] + offset * proportion;
+        } else if (index >= this.resizingIndex && rightSideTotal) {
+          const proportion = this.resizeStart.widths[index] / rightSideTotal;
+
+          return this.resizeStart.widths[index] - offset * proportion;
+        }
       }
-    }
+
+      return this.resizeStart.widths[index];
+    });
 
     this.updateWidths(newWidths);
   };
