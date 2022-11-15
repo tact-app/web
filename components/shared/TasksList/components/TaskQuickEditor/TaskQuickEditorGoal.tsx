@@ -32,6 +32,11 @@ export const TaskQuickEditorGoal = observer(function TaskQuickEditorGoal({
       minW={6}
       justifyContent='center'
       variant='unstyled'
+      _focus={{
+        outline: 'none',
+        boxShadow: 'none',
+        bg: goal.icon.color.replace('.200', '.100'),
+      }}
       {...rest}
     >
       <chakra.div

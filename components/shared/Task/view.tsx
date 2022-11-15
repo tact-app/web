@@ -75,19 +75,11 @@ export const TaskView = observer(function TaskView() {
                 <TaskQuickEditorGoal
                   withTitle
                   w='auto'
+                  h='auto'
                   iconFontSize='lg'
                   iconSize={8}
                 />
-                <TaskQuickEditorSpace
-                  withTitle
-                  iconSize={6}
-                  w='auto'
-                  h={8}
-                  pt={1.5}
-                  pb={1.5}
-                  pl={1}
-                  pr={1}
-                />
+                <TaskQuickEditorSpace withTitle iconSize={6} w='auto' h={8} />
               </HStack>
             ) : null}
             <HStack ref={ref}>

@@ -41,6 +41,11 @@ export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({
       bg={withTitle ? bg + '.50' : undefined}
       _hover={withTitle ? { bg: bg + '.75' } : undefined}
       _active={withTitle ? { bg: bg + '.100' } : undefined}
+      _focus={{
+        outline: 'none',
+        boxShadow: 'none',
+        bg: bg + '.100',
+      }}
       {...rest}
     >
       <chakra.div flex={1}>

@@ -36,24 +36,37 @@ export const TaskQuickEditorSpace = observer(function TaskQuickEditorSpace({
       _hover={{
         bg: space.color + '.75',
       }}
+      _focus={{
+        outline: 'none',
+        boxShadow: 'none',
+        bg: space.color + '.200',
+      }}
       {...rest}
     >
-      <chakra.div flex={1} display='flex' alignItems='center'>
-        <SpacesSmallIcon space={space} size={iconSize} />
-      </chakra.div>
       {withTitle ? (
         <chakra.span
           fontSize='sm'
-          fontWeight='normal'
-          pl={1}
-          pr={1}
+          borderRadius='full'
+          pl={2}
+          pr={2}
           maxW={28}
+          h='100%'
+          verticalAlign='middle'
           overflow='hidden'
           textOverflow='ellipsis'
+          bg={space.color + '.200'}
+          color={space.color + '.500'}
+          fontWeight={600}
+          display='flex'
+          alignItems='center'
         >
           {space.name}
         </chakra.span>
-      ) : null}
+      ) : (
+        <chakra.div flex={1} display='flex' alignItems='center'>
+          <SpacesSmallIcon space={space} size={iconSize} />
+        </chakra.div>
+      )}
       <TaskQuickEditorMenu
         items={store.modes.space.suggestions}
         openForMode={Modes.SPACE}

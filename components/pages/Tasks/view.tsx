@@ -61,6 +61,7 @@ export const TasksView = observer(function TasksView() {
         {store.list.openedTask && (
           <ResizableDrawer
             isOpen={!!store.list.openedTaskData}
+            onClose={store.list.closeTask}
             full={store.isTaskExpanded}
           >
             <Box p={6} h='100%'>
