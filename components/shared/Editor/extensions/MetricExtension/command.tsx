@@ -20,7 +20,7 @@ export const insertMetric = (
     content: [
       {
         type: 'text',
-        text: 'Metric name',
+        text: 'Target name',
         marks: [
           {
             type: 'bold',
