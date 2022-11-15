@@ -1,11 +1,11 @@
-import { TaskTag } from '../../../types';
+import { NavigationDirections, TaskTag } from '../../../types';
 import React, { KeyboardEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { makeAutoObservable } from 'mobx';
 
 export type TagModeCallbacks = {
   onTagCreate: (tag: TaskTag) => void;
-  onFocusInput: () => void;
+  onFocusLeave: (direction: NavigationDirections) => void;
   onExit: () => void;
 };
 
@@ -58,6 +58,12 @@ export class TagModeStore {
     return items;
   }
 
+  focus = (corner: 'first' | 'last') => {
+    const index = corner === 'first' ? 0 : this.tags.length - 1;
+
+    this.tags[index].ref?.focus();
+  };
+
   setTagRef = (button: HTMLButtonElement, id: string) => {
     const tag = this.tags.find((tag) => tag.id === id);
 
@@ -84,7 +90,7 @@ export class TagModeStore {
     this.activate();
   };
 
-  removeTag = (id: string, setFocus?: boolean) => {
+  removeTag = (id: string) => {
     const index = this.tags.findIndex((tag) => tag.id === id);
     this.tags.splice(index, 1);
   };
@@ -157,7 +163,7 @@ export class TagModeStore {
       this.removeTag(id);
 
       if (!this.tags.length) {
-        this.callbacks.onFocusInput();
+        this.callbacks.onFocusLeave(NavigationDirections.LEFT);
       } else if (this.tags[tagIndex - 1]) {
         this.tags[tagIndex - 1].ref.focus();
       } else if (this.tags[tagIndex]) {
@@ -168,12 +174,14 @@ export class TagModeStore {
       const index = this.tags.findIndex((tag) => tag.id === id);
 
       if (index === 0) {
-        this.callbacks.onFocusInput();
+        this.callbacks.onFocusLeave(NavigationDirections.LEFT);
       } else {
         const nextTag = this.tags[index - 1];
 
         if (nextTag) {
           nextTag.ref.focus();
+        } else {
+          this.callbacks.onFocusLeave(NavigationDirections.LEFT);
         }
       }
     } else if (e.key === 'ArrowRight') {
@@ -183,6 +191,8 @@ export class TagModeStore {
 
       if (nextTag) {
         nextTag.ref.focus();
+      } else {
+        this.callbacks.onFocusLeave(NavigationDirections.RIGHT);
       }
     }
   };

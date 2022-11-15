@@ -26,6 +26,7 @@ export const TaskQuickEditorGoal = observer(function TaskQuickEditorGoal({
         store.suggestionsMenu.openFor(Modes.GOAL);
       }}
       onKeyDown={store.handleKeyDownWithModeMenu(Modes.GOAL)}
+      onFocus={store.handleModeFocus(Modes.GOAL)}
       display='flex'
       h={6}
       w={6}

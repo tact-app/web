@@ -24,6 +24,7 @@ export const TaskQuickEditorSpace = observer(function TaskQuickEditorSpace({
         store.suggestionsMenu.openFor(Modes.SPACE);
       }}
       onKeyDown={store.handleKeyDownWithModeMenu(Modes.SPACE)}
+      onFocus={store.handleModeFocus(Modes.SPACE)}
       borderRadius='md'
       overflow='hidden'
       display='flex'

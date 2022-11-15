@@ -7,11 +7,14 @@ import {
 } from './store';
 import { TaskItemView } from './view';
 import {
+  Modes,
   TaskQuickEditorProps,
   TaskQuickEditorStoreProvider,
 } from '../TaskQuickEditor/store';
 
 const useTasksItemStoreInstance = () => useTaskItemStore().quickEdit;
+
+const modesOrder = [Modes.TAG];
 
 const TaskItem = observer(function TaskItem(
   props: TaskItemProps & TaskQuickEditorProps
@@ -20,6 +23,7 @@ const TaskItem = observer(function TaskItem(
     <TaskItemStoreProvider {...props}>
       <TaskQuickEditorStoreProvider
         {...props}
+        order={modesOrder}
         useInstance={useTasksItemStoreInstance}
       >
         <TaskItemView {...props} />

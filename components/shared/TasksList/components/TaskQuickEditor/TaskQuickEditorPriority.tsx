@@ -29,6 +29,7 @@ export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({
         store.suggestionsMenu.openFor(Modes.PRIORITY);
       }}
       onKeyDown={store.handleKeyDownWithModeMenu(Modes.PRIORITY)}
+      onFocus={store.handleModeFocus(Modes.PRIORITY)}
       variant='ghost'
       borderRadius='md'
       overflow='hidden'

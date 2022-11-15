@@ -17,11 +17,9 @@ import { ItemToolbar } from '../ItemToolbar/itemToolbar';
 import { OriginIcon } from '../../pages/Spaces/components/SpacesIcons/OriginsIcons';
 import { TaskQuickEditorStoreProvider } from '../TasksList/components/TaskQuickEditor/store';
 import { TaskQuickEditorInput } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorInput';
-import { TaskQuickEditorPriority } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorPriority';
 import { TaskQuickEditorTags } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorTags';
-import { TaskQuickEditorGoal } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorGoal';
 import { TaskStatus } from '../TasksList/types';
-import { TaskQuickEditorSpace } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorSpace';
+import { TaskModesMenu } from './TaskModesMenu';
 
 export const TaskView = observer(function TaskView() {
   const store = useTaskStore();
@@ -46,6 +44,7 @@ export const TaskView = observer(function TaskView() {
         callbacks={store.quickEditorCallbacks}
         spaces={store.spaces}
         goals={store.goals}
+        order={store.modesOrder}
         tagsMap={store.tagsMap}
         task={store.data}
       >
@@ -61,27 +60,7 @@ export const TaskView = observer(function TaskView() {
             isExpanded={store.isExpanded}
           />
           <Box mt={6}>
-            {store.quickEditor.filledModes.length ? (
-              <HStack mb={4} spacing={6} h={10}>
-                <TaskQuickEditorPriority
-                  withTitle
-                  w='auto'
-                  h={8}
-                  pt={1.5}
-                  pb={1.5}
-                  pl={0.5}
-                  pr={1}
-                />
-                <TaskQuickEditorGoal
-                  withTitle
-                  w='auto'
-                  h='auto'
-                  iconFontSize='lg'
-                  iconSize={8}
-                />
-                <TaskQuickEditorSpace withTitle iconSize={6} w='auto' h={8} />
-              </HStack>
-            ) : null}
+            <TaskModesMenu />
             <HStack ref={ref}>
               <Checkbox
                 variant='indeterminateUnfilled'

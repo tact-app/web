@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { useTaskQuickEditorStore } from './store';
+import { Modes, useTaskQuickEditorStore } from './store';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Box, BoxProps, Button, ButtonProps, Tag } from '@chakra-ui/react';
 import React from 'react';
@@ -31,9 +31,10 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
             <Button
               variant='unstyled'
               size='xs'
-              onClick={() => store.modes.tag.removeTag(id, true)}
+              onClick={() => store.modes.tag.removeTag(id)}
               ref={(el) => store.modes.tag.setTagRef(el, id)}
               onKeyDown={(e) => store.modes.tag.handleButtonKeyDown(e, id)}
+              onFocus={store.handleModeFocus(Modes.TAG)}
               fontSize='initial'
               verticalAlign='initial'
               mr={2}

@@ -58,7 +58,7 @@ class TaskStore {
   goals: GoalData[] = [];
   isDescriptionLoading: boolean = true;
   description: DescriptionData | null = null;
-  modesOrder = [Modes.PRIORITY, Modes.GOAL, Modes.SPACE];
+  modesOrder = [Modes.PRIORITY, Modes.GOAL, Modes.SPACE, Modes.TAG];
 
   get inputSpace() {
     return this.spaces.find((space) => space.id === this.data?.input.spaceId);
@@ -153,42 +153,16 @@ class TaskStore {
       if (direction === NavigationDirections.DOWN) {
         this.isEditorFocused = true;
       } else if (direction === NavigationDirections.UP) {
-        const filledModes = this.quickEditor.filledModes;
-        const firstMode = this.modesOrder.find((mode) =>
-          filledModes.includes(mode)
-        );
-
-        if (firstMode) {
-          this.quickEditor.modes[firstMode].focus();
-        }
+        this.quickEditor.focusFirstFilledMode();
       }
 
       return true;
     },
     onModeNavigate: (mode: Modes, direction: NavigationDirections) => {
-      if (direction === NavigationDirections.RIGHT) {
-        const filledModes = this.quickEditor.filledModes;
-        const orderIndex = this.modesOrder.indexOf(mode);
-        const nextFilledMode = this.modesOrder
-          .slice(orderIndex + 1)
-          .find((orderedMode) => filledModes.includes(orderedMode));
-
-        if (nextFilledMode) {
-          this.quickEditor.modes[nextFilledMode].focus();
-        }
-      } else if (direction === NavigationDirections.LEFT) {
-        const filledModes = this.quickEditor.filledModes;
-        const orderIndex = this.modesOrder.indexOf(mode);
-        const previousFilledMode = this.modesOrder
-          .slice(0, orderIndex)
-          .reverse()
-          .find((orderedMode) => filledModes.includes(orderedMode));
-
-        if (previousFilledMode) {
-          this.quickEditor.modes[previousFilledMode].focus();
-        }
-      } else if (direction === NavigationDirections.DOWN) {
+      if (direction === NavigationDirections.DOWN) {
         this.quickEditor.setFocus(true);
+
+        return true;
       }
     },
     onSave: this.handleTaskChange,

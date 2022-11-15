@@ -27,10 +27,11 @@ export type TaskQuickEditorProps = {
     onSuggestionsMenuOpen?: (isOpen: boolean) => void;
     onTagCreate?: (tag: TaskTag) => void;
     onNavigate?: (direction: NavigationDirections) => boolean;
-    onModeNavigate?: (mode: Modes, direction: NavigationDirections) => void;
+    onModeNavigate?: (mode: Modes, direction: NavigationDirections) => boolean;
   };
   tagsMap: Record<string, TaskTag>;
   spaces: SpaceData[];
+  order?: Modes[];
   goals: GoalData[];
   listId?: string;
   keepFocus?: boolean;
@@ -68,6 +69,7 @@ export class TaskQuickEditorStore {
     onOpen: (isOpen: boolean) => this.callbacks.onSuggestionsMenuOpen?.(isOpen),
   });
 
+  order = [Modes.TAG, Modes.PRIORITY, Modes.GOAL, Modes.SPACE];
   callbacks: TaskQuickEditorProps['callbacks'];
 
   modes = {
@@ -78,7 +80,13 @@ export class TaskQuickEditorStore {
     }),
     [Modes.TAG]: new TagModeStore({
       onExit: () => this.exitMode(),
-      onFocusInput: () => this.input?.focus(),
+      onFocusLeave: (direction: NavigationDirections) => {
+        if (direction === NavigationDirections.LEFT) {
+          this.focusPrevFilledMode();
+        } else if (direction === NavigationDirections.RIGHT) {
+          this.focusNextFilledMode();
+        }
+      },
       onTagCreate: (tag: TaskTag) => this.callbacks.onTagCreate?.(tag),
     }),
     [Modes.SPACE]: new SpaceModeStore({
@@ -92,6 +100,7 @@ export class TaskQuickEditorStore {
   modeStartPos = 0;
   modeEndPos = 0;
   activeModeType: Modes = Modes.DEFAULT;
+  focusedMode: Modes | null = null;
 
   isMenuOpen: boolean = false;
   keepFocus: boolean = false;
@@ -116,6 +125,14 @@ export class TaskQuickEditorStore {
     return Object.entries(this.modes)
       .filter(([, mode]) => mode.isFilled)
       .map(([name]) => name) as Modes[];
+  }
+
+  get isFilled() {
+    return this.filledModes.length > 0;
+  }
+
+  get orderedFilledModes() {
+    return this.order.filter((mode) => this.filledModes.includes(mode));
   }
 
   getMatchMode = (symbol: string): Modes => {
@@ -249,6 +266,50 @@ export class TaskQuickEditorStore {
     }
   };
 
+  focusMode = (mode: Modes, corner: 'first' | 'last') => {
+    this.modes[mode].focus(corner);
+  };
+
+  focusFirstFilledMode = () => {
+    const filledModes = this.orderedFilledModes;
+
+    if (filledModes.length) {
+      this.focusMode(filledModes[0], 'first');
+    }
+  };
+
+  focusNextFilledMode = () => {
+    const filledModes = this.orderedFilledModes;
+    const orderIndex = filledModes.indexOf(this.focusedMode);
+
+    if (
+      filledModes.length &&
+      orderIndex !== -1 &&
+      orderIndex < filledModes.length - 1
+    ) {
+      this.focusMode(filledModes[orderIndex + 1], 'first');
+
+      return true;
+    }
+
+    return false;
+  };
+
+  focusPrevFilledMode = () => {
+    const filledModes = this.orderedFilledModes;
+    const orderIndex = filledModes.indexOf(this.focusedMode);
+
+    if (filledModes.length && orderIndex !== -1 && orderIndex > 0) {
+      this.focusMode(filledModes[orderIndex - 1], 'last');
+
+      return true;
+    } else {
+      this.setFocus(true);
+    }
+
+    return false;
+  };
+
   saveTask = () => {
     if (this.callbacks.onSave && this.value) {
       this.callbacks.onSave({
@@ -274,6 +335,7 @@ export class TaskQuickEditorStore {
 
   handleFocus = () => {
     this.setFocus();
+    this.focusedMode = null;
     this.callbacks.onFocus?.();
   };
 
@@ -321,6 +383,10 @@ export class TaskQuickEditorStore {
     }
 
     this.value = value;
+  };
+
+  handleModeFocus = (mode: Modes) => () => {
+    this.focusedMode = mode;
   };
 
   handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -376,7 +442,7 @@ export class TaskQuickEditorStore {
         if (this.suggestionsMenu.openForMode !== Modes.DEFAULT) {
           this.suggestionsMenu.closeForMode();
         } else {
-          this.input?.focus();
+          this.setFocus(true);
         }
 
         return true;
@@ -384,7 +450,7 @@ export class TaskQuickEditorStore {
         e.preventDefault();
         e.stopPropagation();
         this.modes[modeType].reset();
-        this.input?.focus();
+        this.setFocus(true);
         return true;
       } else if (
         this.suggestionsMenu.openForMode === Modes.DEFAULT &&
@@ -395,8 +461,18 @@ export class TaskQuickEditorStore {
       ) {
         e.preventDefault();
         e.stopPropagation();
-        this.callbacks.onModeNavigate?.(modeType, castArrowToDirection(e.key));
-        return true;
+        if (e.key === 'ArrowRight' && this.focusNextFilledMode()) {
+          return true;
+        } else if (e.key === 'ArrowLeft' && this.focusPrevFilledMode()) {
+          return true;
+        } else if (
+          this.callbacks.onModeNavigate?.(modeType, castArrowToDirection(e.key))
+        ) {
+          return true;
+        } else {
+          this.setFocus(true);
+          return true;
+        }
       }
 
       return this.handleSuggestionMenuNavigation(e);
@@ -442,7 +518,7 @@ export class TaskQuickEditorStore {
       e.key === 'ArrowRight' &&
       (e.target as HTMLInputElement).selectionEnd === this.value.length
     ) {
-      this.modes.tag.enterTagsList();
+      this.focusFirstFilledMode();
     }
   };
 
@@ -457,6 +533,7 @@ export class TaskQuickEditorStore {
     listId,
     task,
     tagsMap,
+    order,
     spaces,
     goals,
     keepFocus,
@@ -464,6 +541,7 @@ export class TaskQuickEditorStore {
     this.callbacks = callbacks || {};
     this.listId = task ? task.listId : listId;
     this.keepFocus = keepFocus;
+    this.order = order || this.order;
     this.modes.tag.tagsMap = tagsMap;
     this.modes.space.spaces = spaces;
     this.modes.goal.goals = goals;
