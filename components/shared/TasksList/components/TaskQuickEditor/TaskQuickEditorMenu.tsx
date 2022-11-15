@@ -55,6 +55,7 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
           boxShadow='lg'
           onFocus={store.handleFocus}
           minW={32}
+          maxW={64}
           width='auto'
           overflow='hidden'
         >

@@ -178,7 +178,7 @@ export class TasksListStore {
   };
 
   get isHotkeysEnabled() {
-    return (
+    return !!(
       this.isForceHotkeysEnabled &&
       !this.isItemMenuOpen &&
       !this.draggableList.isDraggingActive &&
@@ -393,8 +393,8 @@ export class TasksListStore {
   update = (props: TasksListProps) => {
     this.callbacks = props.callbacks || {};
     this.checkTaskActivity = props.checkTaskActivity;
-    this.isForceHotkeysEnabled = props.isHotkeysEnabled;
     this.highlightActiveTasks = props.highlightActiveTasks;
+    this.isForceHotkeysEnabled = props.isHotkeysEnabled ?? true;
     this.isCreatorEnabled = props.isCreatorEnabled ?? true;
     this.isReadOnly = props.isReadOnly ?? false;
     this.input = props.input;

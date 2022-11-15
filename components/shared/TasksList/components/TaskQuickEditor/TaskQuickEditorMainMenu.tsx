@@ -38,15 +38,6 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
             fontSize='sm'
             lineHeight='5'
             fontWeight='normal'
-            command='!'
-            onClick={() => store.activateMode(Modes.PRIORITY)}
-          >
-            Set priority
-          </MenuItem>
-          <MenuItem
-            fontSize='sm'
-            lineHeight='5'
-            fontWeight='normal'
             command='#'
             onClick={() => store.activateMode(Modes.TAG)}
           >
@@ -56,7 +47,25 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
             fontSize='sm'
             lineHeight='5'
             fontWeight='normal'
-            command='#'
+            command='!'
+            onClick={() => store.activateMode(Modes.PRIORITY)}
+          >
+            Set priority
+          </MenuItem>
+          <MenuItem
+            fontSize='sm'
+            lineHeight='5'
+            fontWeight='normal'
+            command='*'
+            onClick={() => store.activateMode(Modes.GOAL)}
+          >
+            Add goal
+          </MenuItem>
+          <MenuItem
+            fontSize='sm'
+            lineHeight='5'
+            fontWeight='normal'
+            command='^'
             onClick={() => store.activateMode(Modes.SPACE)}
           >
             Link to space

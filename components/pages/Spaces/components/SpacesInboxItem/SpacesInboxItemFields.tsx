@@ -54,9 +54,11 @@ export const SpacesInboxItemFields = observer(function SpacesInboxItemFields() {
         }}
         w='auto'
       >
-        {firstItems.map((item) => (
-          <SpacesInboxItemsFieldsRow key={item.key} item={item} />
-        ))}
+        <chakra.tbody>
+          {firstItems.map((item) => (
+            <SpacesInboxItemsFieldsRow key={item.key} item={item} />
+          ))}
+        </chakra.tbody>
       </chakra.table>
       {lastItems.length ? (
         <Accordion allowToggle>
@@ -77,9 +79,11 @@ export const SpacesInboxItemFields = observer(function SpacesInboxItemFields() {
                     }}
                     w='auto'
                   >
-                    {lastItems.map((item) => (
-                      <SpacesInboxItemsFieldsRow key={item.key} item={item} />
-                    ))}
+                    <chakra.tbody>
+                      {lastItems.map((item) => (
+                        <SpacesInboxItemsFieldsRow key={item.key} item={item} />
+                      ))}
+                    </chakra.tbody>
                   </chakra.table>
                 </AccordionPanel>
                 <AccordionButton

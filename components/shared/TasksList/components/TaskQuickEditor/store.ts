@@ -363,7 +363,12 @@ export class TaskQuickEditorStore {
       } else if (e.key === 'Escape') {
         e.stopPropagation();
         e.preventDefault();
-        this.suggestionsMenu.closeForMode();
+
+        if (this.suggestionsMenu.openForMode !== Modes.DEFAULT) {
+          this.suggestionsMenu.closeForMode();
+        } else {
+          this.input?.focus();
+        }
 
         return true;
       } else if (e.key === 'Backspace') {
@@ -412,7 +417,7 @@ export class TaskQuickEditorStore {
     const mode = this.getMatchMode(e.key);
 
     if (e.key === 'Escape') {
-      if (this.callbacks.onNavigate?.(NavigationDirections.LEFT)) {
+      if (this.callbacks.onNavigate?.(NavigationDirections.INVARIANT)) {
         this.leave();
       }
     } else if (e.key === 'Enter') {

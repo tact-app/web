@@ -148,13 +148,15 @@ class TaskStore {
     onNavigate: (direction: NavigationDirections) => {
       if (direction === NavigationDirections.DOWN) {
         this.isEditorFocused = true;
-      } else {
+      } else if (direction === NavigationDirections.UP) {
         const filledModes = this.quickEditor.filledModes;
         const firstMode = this.modesOrder.find((mode) =>
           filledModes.includes(mode)
         );
 
-        this.quickEditor.modes[firstMode].focus();
+        if (firstMode) {
+          this.quickEditor.modes[firstMode].focus();
+        }
       }
 
       return true;

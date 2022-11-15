@@ -56,11 +56,14 @@ export class SpaceModeStore {
         key={space.id}
         pt={1}
         pb={1}
+        w='100%'
         display='flex'
         alignItems='center'
       >
         <SpacesSmallIcon space={space} />
-        <chakra.span ml={3}>{space.name}</chakra.span>
+        <chakra.span ml={3} overflow='hidden' textOverflow='ellipsis'>
+          {space.name}
+        </chakra.span>
       </chakra.div>
     ));
 

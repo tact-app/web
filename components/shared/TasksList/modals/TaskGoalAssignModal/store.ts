@@ -67,9 +67,7 @@ export class TaskGoalAssignModalStore {
   };
 
   handleSubmit = () => {
-    if (this.selectedGoalId) {
-      this.callbacks.onSelect?.(this.selectedGoalId);
-    }
+    this.callbacks.onSelect?.(this.selectedGoalId);
   };
 
   update = (props: TaskGoalAssignModalProps) => {

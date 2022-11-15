@@ -132,7 +132,7 @@ export class GoalCreationModalStore {
           id: this.existedGoal ? this.existedGoal.id : uuidv4(),
           listId: 'default',
           title: this.title,
-          descriptionId: this.description.id,
+          descriptionId: this.description ? this.description.id : undefined,
           icon: {
             type: GoalIconVariants.EMOJI,
             color: this.color,

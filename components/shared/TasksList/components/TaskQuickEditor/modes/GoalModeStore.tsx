@@ -56,11 +56,14 @@ export class GoalModeStore {
         key={goal.id}
         pt={1}
         pb={1}
+        w='100%'
         display='flex'
         alignItems='center'
       >
         <GoalIcon icon={goal.icon} />
-        <chakra.span ml={3}>{goal.title}</chakra.span>
+        <chakra.span ml={3} overflow='hidden' textOverflow='ellipsis'>
+          {goal.title}
+        </chakra.span>
       </chakra.div>
     ));
 

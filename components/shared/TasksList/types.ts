@@ -68,4 +68,5 @@ export enum NavigationDirections {
   DOWN = 'down',
   LEFT = 'left',
   RIGHT = 'right',
+  INVARIANT = 'invariant',
 }

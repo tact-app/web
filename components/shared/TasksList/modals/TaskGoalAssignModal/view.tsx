@@ -41,11 +41,7 @@ export const TaskGoalAssignModalView = observer(
             <Button mr={3} onClick={store.callbacks.onClose}>
               Close
             </Button>
-            <Button
-              colorScheme='blue'
-              disabled={!store.selectedGoalId}
-              onClick={store.handleSubmit}
-            >
+            <Button colorScheme='blue' onClick={store.handleSubmit}>
               Save
             </Button>
           </ModalFooter>

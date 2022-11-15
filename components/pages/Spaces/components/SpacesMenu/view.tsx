@@ -129,7 +129,10 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                 ))}
                 {id !== 'all' && (
                   <SpacesMenuAdd
-                    isFocused={store.focusedPath[0] === null}
+                    isFocused={
+                      store.focusedPath.length === 1 &&
+                      store.focusedPath[0] === null
+                    }
                     onClick={() =>
                       store.callbacks.onSpaceOriginAddClick?.(space)
                     }

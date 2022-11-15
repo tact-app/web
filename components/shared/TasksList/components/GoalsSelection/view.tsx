@@ -81,7 +81,7 @@ const GoalSelectionListItem = observer(function GoalSelectionListItem({
           fontWeight='normal'
         >
           {icon ? <GoalIcon icon={icon} /> : null}
-          {title}
+          <chakra.span ml={2}>{title}</chakra.span>
         </chakra.span>
       </Checkbox>
     </ListItem>
