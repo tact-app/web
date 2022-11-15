@@ -159,6 +159,13 @@ export class TaskQuickEditorStore {
         this.value.slice(this.modeEndPos);
 
       this.savedCaretPosition = this.modeStartPos;
+
+      setTimeout(() =>
+        this.input.setSelectionRange(
+          this.savedCaretPosition,
+          this.savedCaretPosition
+        )
+      );
     }
   };
 

@@ -17,9 +17,9 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
   let items = store.activeMode ? store.activeMode.suggestions : [];
 
   return (
-    <Box w='100%'>
-      <chakra.div position='absolute'>
-        <chakra.span visibility='hidden'>
+    <Box w='100%' position='relative'>
+      <chakra.div position='absolute' overflow='hidden' w='100%' display='flex'>
+        <chakra.span visibility='hidden' overflow='hidden' whiteSpace='nowrap'>
           {store.isModeActive
             ? store.value.slice(0, store.modeStartPos)
             : store.value}
