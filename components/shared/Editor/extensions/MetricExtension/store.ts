@@ -86,6 +86,10 @@ export class MetricExtensionStore {
   handleKewDown = (e) => {
     e.stopPropagation();
 
+    if (e.key === 'Escape') {
+      this.props.editor.chain().focus().run();
+    }
+
     if (this.type === MetricExtensionTypes.RING) {
       if (e.key === 'ArrowUp' && this.value < 100) {
         this.props.updateAttributes({
@@ -134,6 +138,10 @@ export class MetricExtensionStore {
 
   handleSecondKewDown = (e) => {
     e.stopPropagation();
+
+    if (e.key === 'Escape') {
+      this.props.editor.chain().focus().run();
+    }
 
     if (this.type === MetricExtensionTypes.NUMBER) {
       if (e.key === 'Tab') {

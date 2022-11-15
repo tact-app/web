@@ -43,7 +43,8 @@ export const MetricExtension = Node.create({
           const { chain, node } = insertMetric(
             attrs.type,
             editor,
-            editor.chain().focus()
+            editor.chain().focus(),
+            false
           );
 
           chain.run();
@@ -68,8 +69,9 @@ export const MetricExtension = Node.create({
             .insertContent(
               editor.schema.nodes['paragraph'].createAndFill().toJSON()
             )
-            .focus(editor.state.selection.anchor + 1)
+            .focus(editor.state.selection.anchor)
             .run();
+
           return true;
         }
 

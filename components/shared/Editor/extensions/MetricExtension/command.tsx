@@ -9,7 +9,8 @@ export enum MetricExtensionTypes {
 export const insertMetric = (
   type: MetricExtensionTypes,
   editor: Editor,
-  chain: ChainedCommands
+  chain: ChainedCommands,
+  fromSlashCommand = true
 ) => {
   const node = editor.schema.nodeFromJSON({
     type: 'metric',
@@ -33,7 +34,11 @@ export const insertMetric = (
   return {
     chain: chain
       .insertContent(node.toJSON())
-      .focus(editor.state.selection.anchor + node.textContent.length - 1),
+      .focus(
+        editor.state.selection.anchor +
+          node.nodeSize -
+          (fromSlashCommand ? 3 : 0)
+      ),
     node,
   };
 };
