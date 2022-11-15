@@ -23,6 +23,7 @@ import { GoalData } from '../../../../pages/Goals/types';
 export type TaskQuickEditorProps = {
   callbacks: {
     onSave?: (task: TaskData) => void;
+    onFocus?: () => void;
     onSuggestionsMenuOpen?: (isOpen: boolean) => void;
     onTagCreate?: (tag: TaskTag) => void;
     onNavigate?: (direction: NavigationDirections) => boolean;
@@ -273,6 +274,7 @@ export class TaskQuickEditorStore {
 
   handleFocus = () => {
     this.setFocus();
+    this.callbacks.onFocus?.();
   };
 
   handleSuggestionSelect = (index: number) => {

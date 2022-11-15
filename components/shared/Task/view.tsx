@@ -56,6 +56,8 @@ export const TaskView = observer(function TaskView() {
             onClose={store.handleClose}
             onExpand={store.handleExpand}
             onCollapse={store.handleCollapse}
+            hasPreviousItem={store.hasPrevious}
+            hasNextItem={store.hasNext}
             isExpanded={store.isExpanded}
           />
           <Box mt={6}>

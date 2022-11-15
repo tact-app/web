@@ -19,6 +19,7 @@ export const ResizableDrawer = observer(function ResizableDrawer({
   minWidth = '20%',
   maxWidth = '75%',
   defaultWidth = '35%',
+  full,
   containerRef,
   ...rest
 }: PropsWithChildren<{
@@ -27,6 +28,7 @@ export const ResizableDrawer = observer(function ResizableDrawer({
   minWidth?: number | string;
   maxWidth?: number | string;
   defaultWidth?: number | string;
+  full?: boolean;
   containerRef?: React.RefObject<HTMLElement>;
 }> &
   DrawerContentProps) {
@@ -89,25 +91,27 @@ export const ResizableDrawer = observer(function ResizableDrawer({
       blockScrollOnMount={false}
     >
       <DrawerContent
-        maxWidth={maxWidth}
+        maxWidth={!full ? maxWidth : '100%'}
         style={{
-          width: newWidth,
+          width: !full ? newWidth : '100%',
         }}
         {...rest}
       >
-        <chakra.div
-          onMouseDown={handleMouseDown}
-          onDoubleClick={() => setNewWidth(defaultWidth)}
-          position='absolute'
-          height='100%'
-          width={1.5}
-          left={-0.75}
-          _hover={{
-            cursor: 'col-resize',
-            bg: 'gray.100',
-          }}
-          bg={isResizing ? 'gray.200' : 'transparent'}
-        />
+        {!full && (
+          <chakra.div
+            onMouseDown={handleMouseDown}
+            onDoubleClick={() => setNewWidth(defaultWidth)}
+            position='absolute'
+            height='100%'
+            width={1.5}
+            left={-0.75}
+            _hover={{
+              cursor: 'col-resize',
+              bg: 'gray.100',
+            }}
+            bg={isResizing ? 'gray.200' : 'transparent'}
+          />
+        )}
         {children}
       </DrawerContent>
     </Drawer>

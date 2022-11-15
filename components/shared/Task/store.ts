@@ -34,6 +34,8 @@ export type TaskProps = {
   tagsMap: Record<string, TaskTag>;
   goals: GoalData[];
   isExpanded?: boolean;
+  hasPrevious?: boolean;
+  hasNext?: boolean;
   isEditorFocused?: boolean;
   task: TaskData;
 };
@@ -45,6 +47,8 @@ class TaskStore {
 
   quickEditor: TaskQuickEditorStore = new TaskQuickEditorStore(this.root);
 
+  hasPrevious = true;
+  hasNext = true;
   isExpanded: boolean = false;
   isEditorFocused: boolean = false;
   callbacks: TaskProps['callbacks'];
@@ -203,6 +207,8 @@ class TaskStore {
     this.spaces = props.spaces;
     this.tagsMap = props.tagsMap;
     this.goals = props.goals;
+    this.hasPrevious = props.hasPrevious;
+    this.hasNext = props.hasNext;
     this.isExpanded = props.isExpanded;
     this.isEditorFocused = props.isEditorFocused;
     this.callbacks = props.callbacks;

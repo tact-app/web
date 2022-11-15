@@ -105,6 +105,8 @@ export class TasksListStore {
       }
     },
     FOCUS_INPUT: () => {
+      this.draggableList.resetFocusedItem();
+      this.closeTask();
       this.creator.setFocus(true);
     },
     FOCUS_EDITOR: () => {
@@ -138,7 +140,9 @@ export class TasksListStore {
       this.setEditingTask(id);
     },
     onFocusedItemsChange: (ids: string[]) => {
-      if (ids.length !== 1) {
+      if (!ids.length) {
+        this.closeTask();
+      } else if (ids.length !== 1) {
         this.setEditingTask(null);
       } else {
         if (this.editingTaskId) {
@@ -191,6 +195,18 @@ export class TasksListStore {
     return this.items[this.openedTask];
   }
 
+  get hasNextTask() {
+    const index = this.order.indexOf(this.openedTask) + 1;
+
+    return index < this.order.length;
+  }
+
+  get hasPrevTask() {
+    const index = this.order.indexOf(this.openedTask) - 1;
+
+    return this.order.length > 1 && index >= 0;
+  }
+
   handleNavigation = (direction: NavigationDirections) => {
     if (direction === 'left') {
       this.callbacks.onFocusLeave?.('left');
@@ -199,6 +215,11 @@ export class TasksListStore {
     }
 
     return true;
+  };
+
+  handleCreatorFocus = () => {
+    this.draggableList.resetFocusedItem();
+    this.closeTask();
   };
 
   handleEditorBlur = () => {

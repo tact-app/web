@@ -59,13 +59,19 @@ export const TasksView = observer(function TasksView() {
           </Box>
         </Container>
         {store.list.openedTask && (
-          <ResizableDrawer isOpen={!!store.list.openedTaskData}>
+          <ResizableDrawer
+            isOpen={!!store.list.openedTaskData}
+            full={store.isTaskExpanded}
+          >
             <Box p={6} h='100%'>
               <Task
                 task={store.list.openedTaskData}
                 spaces={store.list.spaces}
                 tagsMap={store.list.tagsMap}
                 goals={store.list.goals}
+                hasNext={store.list.hasNextTask}
+                hasPrevious={store.list.hasPrevTask}
+                isExpanded={store.isTaskExpanded}
                 isEditorFocused={store.list.isEditorFocused}
                 callbacks={{
                   onClose: store.list.closeTask,
@@ -75,6 +81,8 @@ export const TasksView = observer(function TasksView() {
                   onStatusChange: store.list.setTaskStatus,
                   onTaskChange: store.list.updateTask,
                   onTagCreate: store.list.createTag,
+                  onExpand: store.handleExpandTask,
+                  onCollapse: store.handleCollapseTask,
                 }}
               />
             </Box>

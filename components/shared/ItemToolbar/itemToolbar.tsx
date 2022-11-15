@@ -16,6 +16,8 @@ import {
 
 export const ItemToolbar = ({
   isExpanded,
+  hasPreviousItem = true,
+  hasNextItem = true,
   onExpand,
   onCollapse,
   onPreviousItem,
@@ -24,6 +26,8 @@ export const ItemToolbar = ({
   ...rest
 }: {
   isExpanded?: boolean;
+  hasPreviousItem?: boolean;
+  hasNextItem?: boolean;
   onExpand?: () => void;
   onCollapse?: () => void;
   onPreviousItem?: () => void;
@@ -81,6 +85,7 @@ export const ItemToolbar = ({
           <IconButton
             aria-label={'prev'}
             size='xs'
+            disabled={!hasPreviousItem}
             variant='ghost'
             mr={2}
             onClick={onPreviousItem}
@@ -95,6 +100,7 @@ export const ItemToolbar = ({
           <IconButton
             aria-label={'next'}
             size='xs'
+            disabled={!hasNextItem}
             variant='ghost'
             onClick={onNextItem}
           >

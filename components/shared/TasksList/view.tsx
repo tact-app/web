@@ -26,6 +26,7 @@ export const TasksListView = observer(function TasksListView(
             onSave: store.createTask,
             onTagCreate: store.createTag,
             onNavigate: store.handleNavigation,
+            onFocus: store.handleCreatorFocus,
           }}
           tagsMap={store.tagsMap}
           spaces={store.spaces}

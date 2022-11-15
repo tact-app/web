@@ -148,6 +148,7 @@ export class DraggableListStore {
     ESC: () => {
       if (!this.callbacks.onEscape?.()) {
         this.resetFocusedItem();
+        this.callbacks.onFocusedItemsChange?.([]);
       }
     },
   };
@@ -284,7 +285,7 @@ export class DraggableListStore {
       } else {
         if (direction === NavigationDirections.DOWN) {
           this.setFocusedItem(this.getFirstActiveItem());
-        } else {
+        } else if (direction === NavigationDirections.UP) {
           this.setFocusedItem(this.getLastActiveItem());
         }
       }
@@ -295,10 +296,15 @@ export class DraggableListStore {
     }
   };
 
+  leaveFocus = (direction: NavigationDirections) => {
+    this.resetFocusedItem();
+    this.callbacks.onFocusLeave?.(direction);
+    this.callbacks.onFocusedItemsChange?.(this.focusedItemIds);
+  };
+
   resetFocusedItem = () => {
     this.focusedItemIds = [];
     this.currentSelectItemCursor = 0;
-    this.callbacks.onFocusedItemsChange?.([]);
   };
 
   revalidateFocusedItems = () => {
@@ -359,7 +365,7 @@ export class DraggableListStore {
     if (nextActiveItem) {
       this.setFocusedItem(nextActiveItem);
     } else if (!stay) {
-      this.callbacks.onFocusLeave?.(NavigationDirections.DOWN);
+      this.leaveFocus(NavigationDirections.DOWN);
     }
   };
 
@@ -369,7 +375,7 @@ export class DraggableListStore {
     if (prevActiveItem) {
       this.setFocusedItem(prevActiveItem);
     } else if (!stay) {
-      this.callbacks.onFocusLeave?.(NavigationDirections.UP);
+      this.leaveFocus(NavigationDirections.UP);
     }
   };
 

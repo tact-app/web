@@ -24,6 +24,7 @@ export class TasksStore {
     showImportant: false,
   };
 
+  isTaskExpanded: boolean = false;
   isFocusModeActive: boolean = false;
   isSilentFocusMode: boolean = false;
 
@@ -109,6 +110,14 @@ export class TasksStore {
     }
 
     this.isSilentFocusMode = false;
+  };
+
+  handleExpandTask = () => {
+    this.isTaskExpanded = true;
+  };
+
+  handleCollapseTask = () => {
+    this.isTaskExpanded = false;
   };
 
   handleToggleFocusMode = () => {
