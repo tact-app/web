@@ -42,7 +42,7 @@ const GoalSelectionListItem = observer(function GoalSelectionListItem({
     >
       <Checkbox
         isChecked={!!store.checkedGoals[id]}
-        onFocus={store.handleFocus}
+        onFocus={store.handleFocus(index)}
         onBlur={store.handleBlur}
         onChange={() => store.handleGoalCheck(index)}
         onKeyDown={store.handleKeyDown(index)}

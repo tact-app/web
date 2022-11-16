@@ -5,7 +5,7 @@ import {
   TaskPriorityNames,
   TaskPriorityValues,
 } from '../../../types';
-import React, { KeyboardEvent } from 'react';
+import React from 'react';
 import { HStack, Text } from '@chakra-ui/react';
 import { TaskPriorityIcon } from '../../../../Icons/TaskPriorityIcon';
 import { makeAutoObservable } from 'mobx';
@@ -28,6 +28,7 @@ export class PriorityModeStore {
   buttonRef: HTMLButtonElement | null = null;
 
   strValue: string = '';
+  currentPriority: TaskPriority = TaskPriority.NONE;
   priority: TaskPriority = TaskPriority.NONE;
 
   get isFilled() {
@@ -53,7 +54,7 @@ export class PriorityModeStore {
 
   activate = () => {
     this.strValue = '!';
-    this.priority = TaskPriority.LOW;
+    this.currentPriority = TaskPriority.LOW;
   };
 
   disable = () => {
@@ -64,6 +65,7 @@ export class PriorityModeStore {
   reset = () => {
     this.strValue = '';
     this.priority = TaskPriority.NONE;
+    this.currentPriority = TaskPriority.NONE;
   };
 
   startPriority = () => {
@@ -72,13 +74,15 @@ export class PriorityModeStore {
 
   setPriority = (value: TaskPriority) => {
     this.strValue = TaskPriorityValues[value];
-    this.priority = value;
+    this.currentPriority = value;
 
     this.callbacks.onChangeSuggestionIndex(TaskPriorityArray.indexOf(value));
   };
 
   commitPriority = () => {
     this.strValue = '';
+    this.priority = this.currentPriority;
+    this.currentPriority = TaskPriority.NONE;
     this.callbacks.onExit();
   };
 
@@ -102,15 +106,5 @@ export class PriorityModeStore {
 
   handleSuggestionSelect = (index: number) => {
     this.setPriorityAndCommit(TaskPriorityArray[index]);
-  };
-
-  handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === '!') {
-      if (this.strValue.length < 3) {
-        this.setPriority(TaskPriorityKeys[this.strValue + '!']);
-      }
-    } else if (e.key === 'Backspace' && this.strValue.length === 1) {
-      this.reset();
-    }
   };
 }

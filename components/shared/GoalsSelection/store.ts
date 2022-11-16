@@ -1,5 +1,5 @@
 import { KeyboardEvent } from 'react';
-import { makeAutoObservable } from 'mobx';
+import { action, makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { GoalData } from '../../pages/Goals/types';
 import { getProvider } from '../../../helpers/StoreProvider';
@@ -54,10 +54,11 @@ export class GoalsSelectionStore {
     return Object.keys(this.checkedGoals);
   }
 
-  handleFocus = (index) => () => {
-    this.isFocused = true;
-    this.callbacks.onFocus?.(this.goals[index].id);
-  };
+  handleFocus = (index) =>
+    action(() => {
+      this.isFocused = true;
+      this.callbacks.onFocus?.(this.goals[index].id);
+    });
 
   handleBlur = () => {
     this.isFocused = false;
