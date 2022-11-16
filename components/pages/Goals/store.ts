@@ -59,16 +59,28 @@ export class GoalsStore {
     });
   };
 
-  updateGoal = (goal: GoalData, description?: DescriptionData) => {
+  updateGoal = (
+    goal: GoalData,
+    description?: DescriptionData,
+    isNewDescription?: boolean
+  ) => {
     this.items[goal.id] = goal;
     this.root.api.goals.update({ id: goal.id, fields: goal });
 
     if (description) {
       this.descriptions[description.id] = description;
-      this.root.api.descriptions.update({
-        fields: { content: toJS(description.content) },
-        id: description.id,
-      });
+
+      if (isNewDescription) {
+        this.root.api.descriptions.add({
+          content: toJS(description.content),
+          id: description.id,
+        });
+      } else {
+        this.root.api.descriptions.update({
+          fields: { content: toJS(description.content) },
+          id: description.id,
+        });
+      }
     }
 
     this.modals.close();

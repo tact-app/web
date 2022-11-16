@@ -12,7 +12,11 @@ import { DescriptionData } from '../../../../../types/description';
 
 export type GoalCreationModalProps = {
   onClose: () => void;
-  onSave: (goal: GoalData, description?: DescriptionData) => void;
+  onSave: (
+    goal: GoalData,
+    description?: DescriptionData,
+    isNewDescription?: boolean
+  ) => void;
   editMode?: boolean;
   goal?: GoalData;
 };
@@ -132,6 +136,11 @@ export class GoalCreationModalStore {
 
   handleSave = () => {
     if (this.isReadyForSave) {
+      const isDescriptionCreated = Boolean(
+        (!this.existedGoal || !this.existedGoal.descriptionId) &&
+          this.description
+      );
+
       this.onSave?.(
         {
           id: this.existedGoal ? this.existedGoal.id : uuidv4(),
@@ -144,7 +153,8 @@ export class GoalCreationModalStore {
             value: this.icon,
           },
         },
-        this.description
+        this.description,
+        isDescriptionCreated
       );
 
       this.handleClose();
@@ -223,11 +233,11 @@ export class GoalCreationModalStore {
           this.isDescriptionLoading = false;
         });
       }
-    } else {
-      runInAction(() => {
-        this.isDescriptionLoading = false;
-      });
     }
+
+    runInAction(() => {
+      this.isDescriptionLoading = false;
+    });
   };
 }
 
