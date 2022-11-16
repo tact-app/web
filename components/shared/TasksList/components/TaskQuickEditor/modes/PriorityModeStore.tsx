@@ -109,9 +109,8 @@ export class PriorityModeStore {
       if (this.strValue.length < 3) {
         this.setPriority(TaskPriorityKeys[this.strValue + '!']);
       }
-    } else if (e.key === 'Backspace') {
-      e.preventDefault();
-      this.setPriority(TaskPriorityKeys[this.strValue.slice(0, -1)]);
+    } else if (e.key === 'Backspace' && this.strValue.length === 1) {
+      this.reset();
     }
   };
 }

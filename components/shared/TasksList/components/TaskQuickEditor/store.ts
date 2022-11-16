@@ -398,8 +398,9 @@ export class TaskQuickEditorStore {
 
     if (!this.isModeActive) {
       this.handleKeyDownInStdMode(e);
-    } else if (!this.handleKeyDownWithActiveMode(e)) {
+    } else {
       this.activeMode.handleKeyDown?.(e);
+      this.handleKeyDownWithActiveMode(e);
     }
   };
 

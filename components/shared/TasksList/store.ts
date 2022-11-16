@@ -286,7 +286,7 @@ export class TasksListStore {
   updateTask = (task: TaskData) => {
     task.title = task.title.trim();
 
-    Object.assign(this.items[task.id], task);
+    this.items[task.id] = task;
 
     this.root.api.tasks.update({ id: task.id, fields: task });
   };
