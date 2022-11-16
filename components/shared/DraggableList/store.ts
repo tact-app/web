@@ -359,6 +359,18 @@ export class DraggableListStore {
     }
   };
 
+  hasNextTask(taskId: string) {
+    const index = this.activeItems.indexOf(taskId) + 1;
+
+    return index < this.activeItems.length;
+  }
+
+  hasPrevTask(taskId: string) {
+    const index = this.activeItems.indexOf(taskId) - 1;
+
+    return this.activeItems.length > 1 && index >= 0;
+  }
+
   focusNextItem = (id: string, stay?: boolean) => {
     const nextActiveItem = this.getNextActiveItem(id);
 

@@ -74,17 +74,7 @@ export const TasksView = observer(function TasksView() {
                 hasPrevious={store.list.hasPrevTask}
                 isExpanded={store.isTaskExpanded}
                 isEditorFocused={store.list.isEditorFocused}
-                callbacks={{
-                  onClose: store.list.closeTask,
-                  onBlur: store.list.handleEditorBlur,
-                  onPreviousItem: store.list.draggableList.focusPrevItem,
-                  onNextItem: store.list.draggableList.focusNextItem,
-                  onStatusChange: store.list.setTaskStatus,
-                  onTaskChange: store.list.updateTask,
-                  onTagCreate: store.list.createTag,
-                  onExpand: store.handleExpandTask,
-                  onCollapse: store.handleCollapseTask,
-                }}
+                callbacks={store.taskCallbacks}
               />
             </Box>
           </ResizableDrawer>

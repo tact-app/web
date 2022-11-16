@@ -11,6 +11,7 @@ import { GoalData } from '../../pages/Goals/types';
 import { TasksModals } from './modals/store';
 import { subscriptions } from '../../../helpers/subscriptions';
 import { SpaceData, SpacesInboxItemData } from '../../pages/Spaces/types';
+import { TaskProps } from '../Task/store';
 
 export type TasksListProps = {
   checkTaskActivity?: (task: TaskData) => boolean;
@@ -142,11 +143,10 @@ export class TasksListStore {
     onFocusedItemsChange: (ids: string[]) => {
       if (!ids.length) {
         this.closeTask();
-      } else if (ids.length !== 1) {
         this.setEditingTask(null);
       } else {
-        if (this.editingTaskId) {
-          this.setEditingTask(ids[0]);
+        if (ids.length > 1 || this.editingTaskId !== ids[0]) {
+          this.setEditingTask(null);
         }
 
         if (this.openedTask) {
@@ -196,15 +196,11 @@ export class TasksListStore {
   }
 
   get hasNextTask() {
-    const index = this.order.indexOf(this.openedTask) + 1;
-
-    return index < this.order.length;
+    return this.draggableList.hasNextTask(this.openedTask);
   }
 
   get hasPrevTask() {
-    const index = this.order.indexOf(this.openedTask) - 1;
-
-    return this.order.length > 1 && index >= 0;
+    return this.draggableList.hasPrevTask(this.openedTask);
   }
 
   handleNavigation = (direction: NavigationDirections) => {
@@ -419,6 +415,16 @@ export class TasksListStore {
     this.isCreatorEnabled = props.isCreatorEnabled ?? true;
     this.isReadOnly = props.isReadOnly ?? false;
     this.input = props.input;
+  };
+
+  taskCallbacks: TaskProps['callbacks'] = {
+    onClose: this.closeTask,
+    onBlur: this.handleEditorBlur,
+    onPreviousItem: this.draggableList.focusPrevItem,
+    onNextItem: this.draggableList.focusNextItem,
+    onStatusChange: this.setTaskStatus,
+    onTaskChange: this.updateTask,
+    onTagCreate: this.createTag,
   };
 }
 

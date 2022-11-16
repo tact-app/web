@@ -220,6 +220,15 @@ export class TaskQuickEditorStore {
     }
   };
 
+  removeFocus = () => {
+    this.focused = false;
+    this.input?.blur();
+
+    this.closeMenu();
+    this.suggestionsMenu.close();
+    this.suggestionsMenu.closeForMode();
+  };
+
   handleClickOutside = (e: Event) => {
     let currentElem = e.target as HTMLElement;
 
@@ -242,16 +251,11 @@ export class TaskQuickEditorStore {
   };
 
   leave = () => {
-    this.focused = false;
-    this.input?.blur();
+    this.removeFocus();
 
     if (!this.keepFocus) {
       this.saveTask();
     }
-
-    this.closeMenu();
-    this.suggestionsMenu.close();
-    this.suggestionsMenu.closeForMode();
   };
 
   handleSelect = (e: SyntheticEvent) => {
@@ -328,7 +332,7 @@ export class TaskQuickEditorStore {
         this.value = '';
         this.resetModes();
       } else if (this.focused) {
-        this.input?.blur();
+        this.removeFocus();
       }
     }
   };
@@ -547,6 +551,7 @@ export class TaskQuickEditorStore {
     this.modes.goal.goals = goals;
 
     if (task) {
+      this.reset();
       this.task = task;
       this.value = task.title;
       this.modes.priority.priority = task.priority;

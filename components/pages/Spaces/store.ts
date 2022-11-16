@@ -301,15 +301,9 @@ export class SpacesStore {
   };
 
   taskCallbacks: TaskProps['callbacks'] = {
-    onClose: this.inboxItem.list.closeTask,
-    onBlur: this.inboxItem.list.handleEditorBlur,
-    onPreviousItem: this.inboxItem.list.draggableList.focusPrevItem,
-    onNextItem: this.inboxItem.list.draggableList.focusNextItem,
+    ...this.inboxItem.list.taskCallbacks,
     onExpand: () => this.handleExpand([3]),
     onCollapse: () => this.resetExpanded(),
-    onStatusChange: this.inboxItem.list.setTaskStatus,
-    onTaskChange: this.inboxItem.list.updateTask,
-    onTagCreate: this.inboxItem.list.createTag,
   };
 }
 

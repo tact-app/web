@@ -12,7 +12,6 @@ import {
   useOutsideClick,
 } from '@chakra-ui/react';
 import { useTaskStore } from './store';
-import { Editor } from '../Editor';
 import { ItemToolbar } from '../ItemToolbar/itemToolbar';
 import { OriginIcon } from '../../pages/Spaces/components/SpacesIcons/OriginsIcons';
 import { TaskQuickEditorStoreProvider } from '../TasksList/components/TaskQuickEditor/store';
@@ -20,6 +19,7 @@ import { TaskQuickEditorInput } from '../TasksList/components/TaskQuickEditor/Ta
 import { TaskQuickEditorTags } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorTags';
 import { TaskStatus } from '../TasksList/types';
 import { TaskModesMenu } from './TaskModesMenu';
+import { TaskEditor } from './TaskEditor';
 
 export const TaskView = observer(function TaskView() {
   const store = useTaskStore();
@@ -85,14 +85,7 @@ export const TaskView = observer(function TaskView() {
                 <CircularProgress isIndeterminate size='24px' />
               </Center>
             ) : (
-              <Editor
-                content={
-                  store.description ? store.description.content : undefined
-                }
-                isFocused={store.isEditorFocused}
-                onUpdate={store.handleDescriptionChange}
-                onBlur={store.handleDescriptionBlur}
-              />
+              <TaskEditor />
             )}
           </Box>
         </Box>

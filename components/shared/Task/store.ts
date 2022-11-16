@@ -175,8 +175,6 @@ class TaskStore {
     });
 
   update = (props: TaskProps) => {
-    this.quickEditor.reset();
-
     this.data = props.task;
     this.spaces = props.spaces;
     this.tagsMap = props.tagsMap;

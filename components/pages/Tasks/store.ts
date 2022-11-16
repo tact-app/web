@@ -9,6 +9,7 @@ import {
   TaskStatus,
 } from '../../shared/TasksList/types';
 import { TasksListStore } from '../../shared/TasksList/store';
+import { TaskProps } from '../../shared/Task/store';
 
 export class TasksStore {
   constructor(public root: RootStore) {
@@ -135,6 +136,12 @@ export class TasksStore {
   };
 
   update = () => null;
+
+  taskCallbacks: TaskProps['callbacks'] = {
+    ...this.list.taskCallbacks,
+    onExpand: this.handleExpandTask,
+    onCollapse: this.handleCollapseTask,
+  };
 }
 
 export const { useStore: useTasksStore, StoreProvider: TasksStoreProvider } =
