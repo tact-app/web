@@ -3,11 +3,7 @@ import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { FocusConfigurationData } from './components/FocusConfiguration/store';
 import { FocusConfiguration } from './components/FocusConfiguration';
-import {
-  TaskData,
-  TaskPriority,
-  TaskStatus,
-} from '../../shared/TasksList/types';
+import { TaskData, TaskPriority } from '../../shared/TasksList/types';
 import { TasksListStore } from '../../shared/TasksList/store';
 import { TaskProps } from '../../shared/Task/store';
 
@@ -53,21 +49,17 @@ export class TasksStore {
     const { goals, showImportant } = this.focusModeConfiguration;
 
     if (this.isFocusModeActive) {
-      if (task && task.status === TaskStatus.TODO) {
-        const priorityMatch = showImportant
-          ? task.priority === TaskPriority.HIGH
-          : true;
-        const goalMatch = goals.length ? goals.includes(task.goalId) : false;
+      const priorityMatch = showImportant
+        ? task.priority === TaskPriority.HIGH
+        : true;
+      const goalMatch = goals.length ? goals.includes(task.goalId) : false;
 
-        if (showImportant && goals.length) {
-          return priorityMatch && goalMatch;
-        } else if (showImportant) {
-          return priorityMatch;
-        } else if (goals.length) {
-          return goalMatch;
-        }
-      } else {
-        return false;
+      if (showImportant && goals.length) {
+        return priorityMatch && goalMatch;
+      } else if (showImportant) {
+        return priorityMatch;
+      } else if (goals.length) {
+        return goalMatch;
       }
     } else {
       return true;
