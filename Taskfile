@@ -17,7 +17,7 @@ setup() {
   command -v pbcopy >/dev/null && echo source bin/activate | pbcopy && copied=true
   echo Run the next commands to complete setup:
   printf '├─ source bin/activate\t- to activate virtual environment (copied to clipboard: %s)\n' $copied
-  printf '└─ run whoami \t\t- to show meta information\n'
+  printf '└─ run whoami \t\t- to show meta information about your environment\n'
 }
 
 __fontawesome_token() {
@@ -154,7 +154,7 @@ vercel() {
       local deployment
       while IFS='' read -r deployment; do
         args+=("${deployment}")
-      done < <($_vercel -t "$(git config vercel.token)" ls 2>&1 | grep https | awk '{print $2}')
+      done < <(vercel ls 2>&1 | grep https | awk '{print $2}')
     else
       args+=(--safe tact)
     fi
