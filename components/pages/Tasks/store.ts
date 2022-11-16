@@ -114,6 +114,9 @@ export class TasksStore {
   };
 
   handleToggleFocusMode = () => {
+    // workaround for @zag-js/focus-visible library
+    // it doesn't show focus on elements after mouse click
+    document.dispatchEvent(new KeyboardEvent('keyup'));
     this.toggleFocusMode();
   };
 
