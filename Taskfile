@@ -151,10 +151,15 @@ vercel() {
   if [ "${1:-}" == 'clean' ]; then
     args=(rm --yes)
     if [ "${2:-}" == 'all' ]; then
-      local deployment
+      local deployment found=false
       while IFS='' read -r deployment; do
         args+=("${deployment}")
+        found=true
       done < <(vercel ls 2>&1 | grep https | awk '{print $2}')
+      if ! $found; then
+        echo No deployments found.
+        return 0
+      fi
     else
       args+=(--safe tact)
     fi
