@@ -322,12 +322,13 @@ export class TasksListStore {
 
   setTaskStatus = (taskId: string, status: TaskStatus) => {
     const task = this.items[taskId];
+    const newStatus = task.status === status ? TaskStatus.TODO : status;
 
-    task.status = status;
+    task.status = newStatus;
 
     this.root.api.tasks.update({
       id: task.id,
-      fields: { status },
+      fields: { status: newStatus },
     });
   };
 
