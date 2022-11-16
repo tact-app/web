@@ -31,13 +31,14 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
             <Button
               variant='unstyled'
               size='xs'
-              onClick={() => store.modes.tag.removeTag(id)}
+              onClick={() => store.modes.tag.focusTag(id)}
               ref={(el) => store.modes.tag.setTagRef(el, id)}
               onKeyDown={(e) => store.modes.tag.handleButtonKeyDown(e, id)}
               onFocus={store.handleModeFocus(Modes.TAG)}
               fontSize='initial'
               verticalAlign='initial'
               mr={2}
+              _focus={{ boxShadow: 'var(--chakra-shadows-outline)' }}
               {...buttonProps}
             >
               <Tag bg='blue.400' color='white' cursor='pointer'>

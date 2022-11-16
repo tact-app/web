@@ -1,5 +1,5 @@
 import { NavigationDirections, TaskTag } from '../../../types';
-import React, { KeyboardEvent } from 'react';
+import React, { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { makeAutoObservable } from 'mobx';
 
@@ -97,6 +97,14 @@ export class TagModeStore {
     this.tags = [];
   };
 
+  focusTag = (id: string) => {
+    const tag = this.tags.find((tag) => tag.id === id);
+
+    if (tag) {
+      tag.ref?.focus();
+    }
+  };
+
   startTag = () => {
     this.activate();
   };
@@ -166,7 +174,10 @@ export class TagModeStore {
     this.strValue = value;
   };
 
-  handleButtonKeyDown = (e: KeyboardEvent<HTMLButtonElement>, id: string) => {
+  handleButtonKeyDown = (
+    e: ReactKeyboardEvent<HTMLButtonElement>,
+    id: string
+  ) => {
     e.stopPropagation();
 
     if (e.key === 'Backspace' || e.key === 'Delete') {

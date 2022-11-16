@@ -524,7 +524,9 @@ export class TaskQuickEditorStore {
       e.key === 'ArrowRight' &&
       (e.target as HTMLInputElement).selectionEnd === this.value.length
     ) {
-      this.focusFirstFilledMode();
+      if (this.input.selectionStart === this.input.selectionEnd) {
+        this.focusFirstFilledMode();
+      }
     }
   };
 
