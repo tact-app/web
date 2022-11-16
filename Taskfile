@@ -4,6 +4,7 @@ set -euo pipefail
 
 setup() {
   __fontawesome_token
+  __okteto_token
   __vercel_token
 
   tools npm ci
@@ -16,7 +17,7 @@ setup() {
   command -v pbcopy >/dev/null && echo source bin/activate | pbcopy && copied=true
   echo Run the next commands to complete setup:
   printf '├─ source bin/activate\t- to activate virtual environment (copied to clipboard: %s)\n' $copied
-  printf '└─ run vercel link \t- to link the current directory to a Vercel project\n'
+  printf '└─ run whoami \t\t- to show meta information\n'
 }
 
 __fontawesome_token() {
@@ -31,6 +32,22 @@ __fontawesome_token() {
     return 1
   else
     git config fontawesome.token "${token}"
+    echo 'Token saved.'
+  fi
+}
+
+__okteto_token() {
+  local token
+  echo Please enter Okteto token:
+  read -rs token
+  token=${token## }
+  token=${token%% }
+
+  if [ "${#token}" -lt 48 ]; then
+    echo 'Token is invalid.'
+    return 1
+  else
+    git config okteto.token "${token}"
     echo 'Token saved.'
   fi
 }
@@ -119,8 +136,11 @@ _okteto=$(which okteto || true)
 okteto() {
   [ -z "${_okteto}" ] && echo Please setup env and activate it. && return 1
 
+  local OKTETO_TOKEN
+  OKTETO_TOKEN=$(git config okteto.token)
+
   local args=("${@}")
-  $_okteto "${args[@]}"
+  OKTETO_TOKEN=$(git config okteto.token) $_okteto "${args[@]}"
 }
 
 _vercel=$(which vercel || true)
@@ -141,6 +161,12 @@ vercel() {
   fi
 
   $_vercel -t "$(git config vercel.token)" "${args[@]}"
+}
+
+whoami() {
+  echo "You are $(git config user.name) <$(git config user.email)>"
+  okteto version
+  vercel whoami
 }
 
 help() {

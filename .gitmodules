@@ -1,0 +1,3 @@
+[submodule "k8s/okteto-demo"]
+	path = k8s/okteto-demo
+	url = git@github.com:okteto/movies-with-compose.git
