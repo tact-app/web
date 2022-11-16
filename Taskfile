@@ -13,6 +13,8 @@ setup() {
   tools go
   okteto context use https://cloud.okteto.com
 
+  build --from-scratch
+
   local copied=false
   command -v pbcopy >/dev/null && echo source bin/activate | pbcopy && copied=true
   echo Run the next commands to complete setup:
