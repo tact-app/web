@@ -33,39 +33,56 @@ export class TagModeStore {
     return Object.values(this.tagsMap);
   }
 
-  get filteredAvailableTags() {
-    return this.availableTags.filter(({ title }) =>
-      title.startsWith(this.strValue)
+  get filteredTags() {
+    const trimmedValue = this.strValue.trim();
+
+    return this.availableTags.filter(
+      ({ title }) =>
+        title.startsWith(trimmedValue) &&
+        !this.tags.some(({ title: tagTitle }) => tagTitle === title)
     );
   }
 
   get currentTagMatch() {
-    return this.filteredAvailableTags.some(
-      ({ title }) => title === this.strValue
-    );
+    const trimmedValue = this.strValue.trim();
+
+    return this.filteredTags.some(({ title }) => title === trimmedValue);
+  }
+
+  get hasTag() {
+    const trimmedValue = this.strValue.trim();
+
+    return this.tags.some(({ title: tagTitle }) => tagTitle === trimmedValue);
+  }
+
+  get isSearchEmpty() {
+    return this.filteredTags.length === 0 && this.availableTags.length;
+  }
+
+  get isTagCreationAvailable() {
+    return this.strValue.length > 1 && !this.currentTagMatch && !this.hasTag;
   }
 
   get suggestions() {
-    const hasCreateNewTag = this.strValue.length > 1 && !this.currentTagMatch;
-
-    const items = this.filteredAvailableTags.map(({ title }) => <>{title}</>);
+    const hasCreateNewTag = this.isTagCreationAvailable;
+    const tags = this.filteredTags;
+    const items = tags.slice(0, 15).map(({ title }) => <>{title}</>);
 
     if (hasCreateNewTag) {
       items.unshift(
         <>
-          {this.availableTags.length === 0 ? '' : 'Tag not found. '}Create new
-          &quot;
+          {this.isSearchEmpty ? 'Tag not found. ' : ''}Create new &quot;
           {this.strValue.slice(1)}&quot; tag
         </>
       );
-    }
-
-    if (
+    } else if (
       items.length === 0 &&
-      this.availableTags.length === 0 &&
+      tags.length === 0 &&
       this.strValue === this.startSymbol
     ) {
       items.push(<>Start typing to create a new tag</>);
+    } else if (this.hasTag) {
+      items.unshift(<>This tag is already used</>);
     }
 
     return items;
@@ -131,23 +148,13 @@ export class TagModeStore {
   createNewTag = () => {
     const trimmedValue = this.strValue.trim();
 
-    if (!this.tags.some(({ title: t }) => trimmedValue === t)) {
-      if (!this.currentTagMatch) {
-        const id = uuidv4();
-        const newTag = { title: trimmedValue, id };
+    if (!this.hasTag && !this.currentTagMatch) {
+      const id = uuidv4();
+      const newTag = { title: trimmedValue, id };
 
-        this.addTag(newTag);
+      this.addTag(newTag);
 
-        this.callbacks.onTagCreate(newTag);
-      } else {
-        const tag = this.filteredAvailableTags.find(
-          ({ title }) => title === trimmedValue
-        );
-
-        if (tag) {
-          this.addTag(tag);
-        }
-      }
+      this.callbacks.onTagCreate(newTag);
     }
 
     this.disable();
@@ -155,7 +162,7 @@ export class TagModeStore {
 
   addAvailableTag = (id: string) => {
     if (!this.tags.some(({ id: tagId }) => tagId === id)) {
-      const tag = this.availableTags.find((tag) => tag.id === id);
+      const tag = this.filteredTags.find((tag) => tag.id === id);
 
       this.addTag(tag);
       this.disable();
@@ -169,13 +176,18 @@ export class TagModeStore {
   };
 
   handleSuggestionSelect = (index: number) => {
-    if (this.availableTags.length !== 0 || this.strValue !== this.startSymbol) {
-      const hasCreateNewTag = this.strValue.length > 1 && !this.currentTagMatch;
-
-      if (!hasCreateNewTag) {
-        this.addAvailableTag(this.filteredAvailableTags[index].id);
-      } else {
+    if (this.strValue !== this.startSymbol || this.filteredTags.length) {
+      if (index === 0 && !this.currentTagMatch && !this.hasTag) {
         this.createNewTag();
+        return;
+      }
+
+      if (!this.hasTag || index > 0) {
+        const hasFirstItem = !this.currentTagMatch || this.hasTag;
+
+        this.addAvailableTag(
+          this.filteredTags[hasFirstItem ? index - 1 : index].id
+        );
       }
     }
   };

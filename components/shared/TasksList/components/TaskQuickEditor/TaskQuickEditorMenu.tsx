@@ -40,7 +40,7 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
     <Popover
       isOpen={isOpen}
       placement={openForMode ? 'bottom' : 'bottom-start'}
-      offset={[0, 24]}
+      offset={[0, 40]}
       isLazy
       autoFocus={false}
     >
@@ -55,7 +55,7 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
           boxShadow='lg'
           onFocus={store.handleFocus}
           minW={32}
-          maxW={64}
+          maxW={72}
           width='auto'
           overflow='hidden'
         >
