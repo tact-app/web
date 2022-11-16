@@ -7,6 +7,10 @@ setup() {
   __vercel_token
 
   tools npm ci
+  vercel link
+
+  tools go
+  okteto context use https://cloud.okteto.com
 
   local copied=false
   command -v pbcopy >/dev/null && echo source bin/activate | pbcopy && copied=true
@@ -96,7 +100,27 @@ tools() {
       --entrypoint=/bin/sh \
       node:16-alpine -c "${*}"
     ;;
+  go)
+    local os arch bin version
+    os=$(uname -s)
+    arch=$(uname -m)
+    bin=$(echo bin/"${os}"/"${arch}" | tr '[:upper:]' '[:lower:]')
+    version=2.9.0
+
+    mkdir -p "${bin}"
+    curl -sSfL "https://github.com/okteto/okteto/releases/download/${version}/okteto-${os}-${arch}" \
+      -o "${bin}"/okteto
+    chmod +x "${bin}"/okteto
+    ;;
   esac
+}
+
+_okteto=$(which okteto || true)
+okteto() {
+  [ -z "${_okteto}" ] && echo Please setup env and activate it. && return 1
+
+  local args=("${@}")
+  $_okteto "${args[@]}"
 }
 
 _vercel=$(which vercel || true)
