@@ -15,15 +15,10 @@ import {
 } from '@chakra-ui/modal';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 
-const keyMap = {
-  CREATE: ['cmd+enter', 'cmd+s'],
-  CANCEL: ['esc'],
-};
-
 export const GoalCreationModalView = observer(function GoalCreationModal() {
   const store = useGoalCreationModalStore();
 
-  useHotkeysHandler(keyMap, store.hotkeyHandlers);
+  useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
   return (
     <Modal

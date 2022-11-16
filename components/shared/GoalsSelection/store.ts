@@ -1,8 +1,8 @@
 import { KeyboardEvent } from 'react';
 import { makeAutoObservable } from 'mobx';
-import { RootStore } from '../../../../../stores/RootStore';
-import { GoalData } from '../../../../pages/Goals/types';
-import { getProvider } from '../../../../../helpers/StoreProvider';
+import { RootStore } from '../../../stores/RootStore';
+import { GoalData } from '../../pages/Goals/types';
+import { getProvider } from '../../../helpers/StoreProvider';
 
 export type GoalsSelectionProps = {
   callbacks?: {
@@ -31,6 +31,11 @@ export class GoalsSelectionStore {
   checkedGoals: Record<string, boolean> = {};
   isFocused: boolean = false;
   multiple: boolean = false;
+
+  keyMap = {
+    UP: 'up',
+    DOWN: 'down',
+  };
 
   hotkeyHandlers = {
     UP: () => {

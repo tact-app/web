@@ -204,10 +204,10 @@ export class TasksListStore {
   }
 
   handleNavigation = (direction: NavigationDirections) => {
-    if (direction === 'left') {
+    if (direction === NavigationDirections.LEFT) {
       this.callbacks.onFocusLeave?.('left');
-    } else {
-      return this.draggableList.handleNavigation(direction);
+    } else if (direction === NavigationDirections.DOWN) {
+      this.draggableList.handleNavigation(direction);
     }
 
     return true;

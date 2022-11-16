@@ -43,6 +43,11 @@ export class GoalCreationModalStore {
     });
   }
 
+  keyMap = {
+    CREATE: ['cmd+enter', 'cmd+s'],
+    CANCEL: ['esc'],
+  };
+
   hotkeyHandlers = {
     CREATE: (e) => {
       e.preventDefault();

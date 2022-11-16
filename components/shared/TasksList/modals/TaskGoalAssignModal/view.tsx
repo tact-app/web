@@ -9,8 +9,8 @@ import {
 } from '@chakra-ui/modal';
 import { Button } from '@chakra-ui/react';
 import { useTaskGoalAssignModalStore } from './store';
-import { GoalsSelectionStoreProvider } from '../../components/GoalsSelection/store';
-import { GoalsSelectionView } from '../../components/GoalsSelection/view';
+import { GoalsSelectionStoreProvider } from '../../../GoalsSelection/store';
+import { GoalsSelectionView } from '../../../GoalsSelection/view';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 
 export const TaskGoalAssignModalView = observer(

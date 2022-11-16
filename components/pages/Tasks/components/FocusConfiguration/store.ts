@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { RootStore } from '../../../../../stores/RootStore';
 import { GoalData } from '../../../Goals/types';
-import { GoalsSelectionStore } from '../../../../shared/TasksList/components/GoalsSelection/store';
+import { GoalsSelectionStore } from '../../../../shared/GoalsSelection/store';
 
 export type FocusConfigurationData = {
   id: string;

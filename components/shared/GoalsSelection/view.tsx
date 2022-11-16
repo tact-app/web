@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { GoalIconData } from '../../../../pages/Goals/types';
+import { GoalIconData } from '../../pages/Goals/types';
 import {
   chakra,
   Box,
@@ -9,16 +9,10 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useGoalsSelectionStore } from './store';
-import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
 import React from 'react';
-import { LargePlusIcon } from '../../../Icons/LargePlusIcon';
-import { GoalIcon } from '../../../../pages/Goals/components/GoalIcon';
-
-const keyMap = {
-  UP: 'up',
-  DOWN: 'down',
-  ENTER: 'enter',
-};
+import { LargePlusIcon } from '../Icons/LargePlusIcon';
+import { GoalIcon } from '../../pages/Goals/components/GoalIcon';
 
 type GoalSelectionListItemProps = {
   id: string | null;
@@ -91,7 +85,7 @@ const GoalSelectionListItem = observer(function GoalSelectionListItem({
 export const GoalsSelectionView = observer(function GoalsSelectionView() {
   const store = useGoalsSelectionStore();
 
-  const ref = useHotkeysHandler(keyMap, store.hotkeyHandlers);
+  const ref = useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
   return store.goals.length ? (
     <List

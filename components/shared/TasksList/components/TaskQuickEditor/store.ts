@@ -515,6 +515,7 @@ export class TaskQuickEditorStore {
       this.enterMode(mode, e);
     } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
+
       if (this.callbacks.onNavigate?.(castArrowToDirection(e.key))) {
         this.leave();
       }

@@ -11,8 +11,8 @@ import {
   Switch,
   Text,
 } from '@chakra-ui/react';
-import { GoalsSelectionStoreProvider } from '../../../../shared/TasksList/components/GoalsSelection/store';
-import { GoalsSelectionView } from '../../../../shared/TasksList/components/GoalsSelection/view';
+import { GoalsSelectionStoreProvider } from '../../../../shared/GoalsSelection/store';
+import { GoalsSelectionView } from '../../../../shared/GoalsSelection/view';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { useEffect } from 'react';
 

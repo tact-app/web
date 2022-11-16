@@ -95,7 +95,6 @@ export class DraggableListStore {
     ESC: 'esc',
     FORCE_DELETE: ['cmd+backspace', 'cmd+delete'],
     DELETE: ['del', 'backspace'],
-    OPEN: 'enter',
   };
 
   hotkeyHandlers = {
@@ -125,7 +124,9 @@ export class DraggableListStore {
         this.deleteItems(itemsForDelete);
       }
     },
-    MOVE_UP: () => {
+    MOVE_UP: (e) => {
+      e.preventDefault();
+
       if (this.focusedItemIds.length) {
         if (this.focusedItemIds.length === 1) {
           this.runControlsMoveAction((lift) => lift.moveUp());
@@ -134,7 +135,9 @@ export class DraggableListStore {
         }
       }
     },
-    MOVE_DOWN: () => {
+    MOVE_DOWN: (e) => {
+      e.preventDefault();
+
       if (this.focusedItemIds.length) {
         if (this.focusedItemIds.length === 1) {
           this.runControlsMoveAction((lift) => lift.moveDown());

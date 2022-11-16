@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { GoalsSelectionStore } from '../../components/GoalsSelection/store';
+import { GoalsSelectionStore } from '../../../GoalsSelection/store';
 import { GoalData } from '../../../../pages/Goals/types';
 
 export type TaskGoalAssignModalProps = {
