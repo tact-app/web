@@ -69,8 +69,10 @@ export class GoalModeStore {
 
     if (goals.length) {
       return goals;
-    } else {
+    } else if (this.goals.length) {
       return [<>Goal not found</>];
+    } else {
+      return [<>You haven&apos;t created any goal yet</>];
     }
   }
 

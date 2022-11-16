@@ -50,9 +50,20 @@ export class TagModeStore {
 
     if (hasCreateNewTag) {
       items.unshift(
-        // eslint-disable-next-line react/no-unescaped-entities
-        <>Tag not found. Create new "{this.strValue.slice(1)}" tag</>
+        <>
+          {this.availableTags.length === 0 ? '' : 'Tag not found. '}Create new
+          &quot;
+          {this.strValue.slice(1)}&quot; tag
+        </>
       );
+    }
+
+    if (
+      items.length === 0 &&
+      this.availableTags.length === 0 &&
+      this.strValue === this.startSymbol
+    ) {
+      items.push(<>Start typing to create a new tag</>);
     }
 
     return items;
@@ -140,12 +151,14 @@ export class TagModeStore {
   };
 
   handleSuggestionSelect = (index: number) => {
-    const hasCreateNewTag = this.strValue.length > 1 && !this.currentTagMatch;
+    if (this.availableTags.length !== 0 || this.strValue !== this.startSymbol) {
+      const hasCreateNewTag = this.strValue.length > 1 && !this.currentTagMatch;
 
-    if (!hasCreateNewTag) {
-      this.addAvailableTag(this.filteredAvailableTags[index].id);
-    } else {
-      this.createNewTag();
+      if (!hasCreateNewTag) {
+        this.addAvailableTag(this.filteredAvailableTags[index].id);
+      } else {
+        this.createNewTag();
+      }
     }
   };
 

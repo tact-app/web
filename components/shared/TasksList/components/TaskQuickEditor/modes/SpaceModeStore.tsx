@@ -69,8 +69,10 @@ export class SpaceModeStore {
 
     if (spaces.length) {
       return spaces;
-    } else {
+    } else if (this.spaces.length) {
       return [<>Space not found</>];
+    } else {
+      return [<>You haven&apos;t created any space yet</>];
     }
   }
 
