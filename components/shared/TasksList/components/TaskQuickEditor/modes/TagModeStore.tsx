@@ -9,6 +9,8 @@ export type TagModeCallbacks = {
   onExit: () => void;
 };
 
+type TagWithRef = TaskTag & { ref?: HTMLButtonElement };
+
 export class TagModeStore {
   constructor(callbacks: TagModeCallbacks) {
     this.callbacks = callbacks;
@@ -20,7 +22,7 @@ export class TagModeStore {
   callbacks: TagModeCallbacks;
 
   tagsMap: Record<string, TaskTag> = {};
-  tags: Array<TaskTag & { ref?: HTMLButtonElement }> = [];
+  tags: Array<TagWithRef> = [];
   strValue: string = '';
 
   get isFilled() {
@@ -71,8 +73,9 @@ export class TagModeStore {
 
   focus = (corner: 'first' | 'last') => {
     const index = corner === 'first' ? 0 : this.tags.length - 1;
+    const tag = this.tags[index];
 
-    this.tags[index].ref?.focus();
+    this.focusTag(tag);
   };
 
   setTagRef = (button: HTMLButtonElement, id: string) => {
@@ -97,11 +100,18 @@ export class TagModeStore {
     this.tags = [];
   };
 
-  focusTag = (id: string) => {
+  focusTagById = (id: string) => {
     const tag = this.tags.find((tag) => tag.id === id);
+    this.focusTag(tag);
+  };
 
-    if (tag) {
-      tag.ref?.focus();
+  focusTag = (tag?: TagWithRef) => {
+    if (tag && tag.ref) {
+      tag.ref.focus();
+      tag.ref.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
     }
   };
 
@@ -154,7 +164,7 @@ export class TagModeStore {
 
   enterTagsList = () => {
     if (this.tags.length) {
-      this.tags[0].ref.focus();
+      this.focusTag(this.tags[0]);
     }
   };
 
@@ -189,9 +199,9 @@ export class TagModeStore {
       if (!this.tags.length) {
         this.callbacks.onFocusLeave(NavigationDirections.LEFT);
       } else if (this.tags[tagIndex - 1]) {
-        this.tags[tagIndex - 1].ref.focus();
+        this.focusTag(this.tags[tagIndex - 1]);
       } else if (this.tags[tagIndex]) {
-        this.tags[tagIndex].ref.focus();
+        this.focusTag(this.tags[tagIndex]);
       }
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
@@ -203,7 +213,7 @@ export class TagModeStore {
         const nextTag = this.tags[index - 1];
 
         if (nextTag) {
-          nextTag.ref.focus();
+          this.focusTag(nextTag);
         } else {
           this.callbacks.onFocusLeave(NavigationDirections.LEFT);
         }
@@ -214,7 +224,7 @@ export class TagModeStore {
       const nextTag = this.tags[index + 1];
 
       if (nextTag) {
-        nextTag.ref.focus();
+        this.focusTag(nextTag);
       } else {
         this.callbacks.onFocusLeave(NavigationDirections.RIGHT);
       }

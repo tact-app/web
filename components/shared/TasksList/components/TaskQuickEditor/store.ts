@@ -522,11 +522,11 @@ export class TaskQuickEditorStore {
       }
     } else if (
       e.key === 'ArrowRight' &&
-      (e.target as HTMLInputElement).selectionEnd === this.value.length
+      (e.target as HTMLInputElement).selectionEnd === this.value.length &&
+      this.input.selectionStart === this.input.selectionEnd
     ) {
-      if (this.input.selectionStart === this.input.selectionEnd) {
-        this.focusFirstFilledMode();
-      }
+      e.preventDefault();
+      this.focusFirstFilledMode();
     }
   };
 

@@ -31,7 +31,7 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
             <Button
               variant='unstyled'
               size='xs'
-              onClick={() => store.modes.tag.focusTag(id)}
+              onClick={() => store.modes.tag.focusTagById(id)}
               ref={(el) => store.modes.tag.setTagRef(el, id)}
               onKeyDown={(e) => store.modes.tag.handleButtonKeyDown(e, id)}
               onFocus={store.handleModeFocus(Modes.TAG)}

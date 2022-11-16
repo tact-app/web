@@ -59,10 +59,27 @@ export const TaskCreatorView = observer(function TaskCreator(
         {...props.wrapperProps}
       >
         <InputGroup size='md' ref={ref} variant='unstyled'>
-          <TaskQuickEditorInput placeholder='+Add task' />
-          <InputRightAddon>
-            <HStack>
-              <TaskQuickEditorTags />
+          <TaskQuickEditorInput
+            placeholder='+Add task'
+            flex={1}
+            pt={1}
+            pb={1}
+          />
+          <InputRightAddon maxW='50%' minWidth={0} justifyContent='end'>
+            <HStack w='100%'>
+              <TaskQuickEditorTags
+                boxProps={{
+                  overflow: 'auto',
+                  minWidth: 0,
+                  p: 1,
+                  css: {
+                    scrollbarWidth: 'none',
+                    '&::-webkit-scrollbar': {
+                      display: 'none',
+                    },
+                  },
+                }}
+              />
               <TaskQuickEditorSpace />
               <TaskQuickEditorGoal />
               <TaskQuickEditorPriority />
