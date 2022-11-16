@@ -2,6 +2,6 @@
   "private": true,
   "scripts": {},
   "dependencies": {
-    "vercel": "^28.5.1"
+    "vercel": "^28.5.3"
   }
 }
