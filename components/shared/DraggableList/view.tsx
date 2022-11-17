@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { Box, BoxProps, IconButton } from '@chakra-ui/react';
+import { Box, BoxProps } from '@chakra-ui/react';
 import React, { PropsWithChildren, useRef } from 'react';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { TaskDragIcon } from '../Icons/TaskDragIcon';
@@ -89,15 +89,12 @@ export const DefaultDraggableListDragHandler = observer(
           opacity: !store.isDraggingActive ? '1' : '0',
         }}
         {...provided.dragHandleProps}
+        tabIndex={-1}
       >
         {!store.checkItemActivity || store.checkItemActivity(id) ? (
-          <IconButton
-            cursor='grab'
-            size='xs'
-            aria-label='Drag'
-            icon={<TaskDragIcon />}
-            variant='unstyled'
-          />
+          <Box cursor='grab' aria-label='Drag'>
+            <TaskDragIcon />
+          </Box>
         ) : null}
       </Box>
     );

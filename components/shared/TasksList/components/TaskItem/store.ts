@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { TaskData, TaskStatus, TaskTag } from '../../types';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import React, { MouseEvent } from 'react';
+import React, { MouseEvent, FocusEvent } from 'react';
 import { TaskQuickEditorStore } from '../TaskQuickEditor/store';
 
 export type TaskItemProps = {
@@ -25,6 +25,8 @@ class TaskItemStore {
 
   quickEdit: TaskQuickEditorStore = new TaskQuickEditorStore(this.root);
 
+  boxRef: HTMLDivElement | null = null;
+
   task: TaskData;
   tags: Record<string, TaskTag>;
   isDisabled: boolean = false;
@@ -34,6 +36,10 @@ class TaskItemStore {
   isReadOnly: boolean = false;
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
+
+  setBoxRef = (ref: HTMLDivElement | null) => {
+    this.boxRef = ref;
+  };
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
     if (
@@ -48,6 +54,12 @@ class TaskItemStore {
         this.task.id,
         e.metaKey ? 'single' : e.shiftKey ? 'many' : undefined
       );
+    }
+  };
+
+  handleFocus = (e: FocusEvent) => {
+    if (!this.isFocused) {
+      this.onFocus(this.task.id);
     }
   };
 
@@ -69,13 +81,19 @@ class TaskItemStore {
     isReadOnly,
     isEditMode,
   }: TaskItemProps) => {
+    const prevIsFocused = this.isFocused;
+    this.isFocused = isFocused;
+
+    if (isFocused !== prevIsFocused && isFocused) {
+      this.boxRef?.focus();
+    }
+
     this.task = task;
     this.onFocus = onFocus;
     this.tags = tagsMap;
     this.onStatusChange = onStatusChange;
 
     this.isDisabled = isDisabled;
-    this.isFocused = isFocused;
     this.isDragging = isDragging;
     this.isEditMode = isEditMode;
     this.isReadOnly = isReadOnly;

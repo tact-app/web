@@ -28,6 +28,9 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
         _groupHover={{
           visibility: 'visible',
         }}
+        _focus={{
+          bg: 'gray.100',
+        }}
         visibility={store.isDragging || store.isFocused ? 'visible' : 'hidden'}
       >
         <TaskItemMenuIcon />

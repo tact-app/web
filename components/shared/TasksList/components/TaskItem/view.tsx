@@ -61,6 +61,13 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
       pointerEvents={store.isDisabled ? 'none' : 'auto'}
     >
       <Box
+        ref={store.setBoxRef}
+        onClick={store.handleClick}
+        onFocus={store.handleFocus}
+        tabIndex={store.isDisabled || store.isReadOnly ? -1 : 0}
+        _focus={{
+          outline: 'none',
+        }}
         flex={1}
         borderBottom='1px'
         overflow='hidden'
@@ -73,7 +80,6 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           'border-color 0.2s ease-in-out',
           'background 0.2s ease-in-out',
         ]}
-        onClick={store.handleClick}
         bg={store.isFocused ? focusedBg : bg}
         _groupHover={{
           bg: store.isFocused ? focusedBg : hoveredBg,
@@ -93,6 +99,8 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
               bg='white'
               size='lg'
               mr={2}
+              isFocusable={false}
+              tabIndex={-1}
               isChecked={store.task.status === TaskStatus.DONE}
               isIndeterminate={store.task.status === TaskStatus.WONT_DO}
               onChange={store.handleStatusChange}

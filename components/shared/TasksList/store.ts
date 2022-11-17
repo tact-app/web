@@ -25,6 +25,7 @@ export type TasksListProps = {
     onFocusLeave?: (direction: 'left' | 'right') => void;
     onOpenTask?: (hasOpenedTask: boolean) => void;
     onCloseTask?: () => void;
+    onInit?: () => void | Promise<void>;
   };
 };
 
@@ -421,14 +422,17 @@ export class TasksListStore {
   };
 
   load = async () => {
-    this.loadTasks();
-    this.loadTags();
-    this.loadGoals();
-    this.loadSpaces();
+    return Promise.all([
+      this.loadTasks(),
+      this.loadTags(),
+      this.loadGoals(),
+      this.loadSpaces(),
+    ]);
   };
 
   init = async () => {
     await this.load();
+    await this.callbacks.onInit?.();
   };
 
   update = (props: TasksListProps) => {

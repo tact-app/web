@@ -4,7 +4,7 @@ import { getProvider } from '../../../helpers/StoreProvider';
 import { FocusConfigurationData } from './components/FocusConfiguration/store';
 import { FocusConfiguration } from './components/FocusConfiguration';
 import { TaskData, TaskPriority } from '../../shared/TasksList/types';
-import { TasksListStore } from '../../shared/TasksList/store';
+import { TasksListProps, TasksListStore } from '../../shared/TasksList/store';
 import { TaskProps } from '../../shared/Task/store';
 
 export class TasksStore {
@@ -132,10 +132,22 @@ export class TasksStore {
 
   update = () => null;
 
+  setFirstFocus = () => {
+    if (this.list.order.length) {
+      this.list.draggableList.focusFirstItem();
+    } else {
+      this.list.creator.setFocus(true);
+    }
+  };
+
   taskCallbacks: TaskProps['callbacks'] = {
     ...this.list.taskCallbacks,
     onExpand: this.handleExpandTask,
     onCollapse: this.handleCollapseTask,
+  };
+
+  tasksListCallbacks: TasksListProps['callbacks'] = {
+    onInit: this.setFirstFocus,
   };
 }
 

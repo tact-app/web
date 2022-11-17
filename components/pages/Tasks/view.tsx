@@ -51,6 +51,7 @@ export const TasksView = observer(function TasksView() {
               </HStack>
             </HStack>
             <TasksList
+              callbacks={store.tasksListCallbacks}
               dnd={true}
               instance={store.list}
               highlightActiveTasks={store.isFocusModeActive}
