@@ -40,7 +40,7 @@ export const MetricExtension = Node.create({
         if (editor.isActive('metric')) {
           const attrs = editor.getAttributes('metric');
 
-          const { chain, node } = insertMetric(
+          const { chain } = insertMetric(
             attrs.type,
             editor,
             editor.chain().focus(),
@@ -62,17 +62,11 @@ export const MetricExtension = Node.create({
         return true;
       },
       Enter: ({ editor }) => {
-        if (editor.isActive('metric')) {
-          editor
-            .chain()
-            .focus()
-            .insertContent(
-              editor.schema.nodes['paragraph'].createAndFill().toJSON()
-            )
-            .focus(editor.state.selection.anchor)
-            .run();
-
-          return true;
+        if (
+          editor.isActive('metric') &&
+          !editor.state.selection.$to.nodeAfter
+        ) {
+          editor.chain().focus().unsetBold().run();
         }
 
         return false;

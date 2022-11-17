@@ -147,7 +147,11 @@ export class MetricExtensionStore {
       if (e.key === 'Tab') {
         e.preventDefault();
 
-        this.inputRef.focus();
+        if (e.shiftKey) {
+          this.inputRef.focus();
+        } else {
+          this.props.editor.chain().focus().run();
+        }
       }
 
       if (e.key === 'Enter') {

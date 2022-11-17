@@ -7,3 +7,7 @@
   line-Height: 1.75rem;
 }
 
+.root :global(.is-empty) {
+  user-select: none;
+}
+
