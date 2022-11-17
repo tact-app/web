@@ -138,7 +138,7 @@ export class TaskQuickEditorStore {
   }
 
   get isFilled() {
-    return this.filledModes.length > 0;
+    return this.filledModes.filter((mode) => mode !== Modes.TAG).length > 0;
   }
 
   get orderedFilledModes() {
