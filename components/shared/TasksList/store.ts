@@ -150,7 +150,7 @@ export class TasksListStore {
         }
 
         if (this.openedTask) {
-          if (ids.length) {
+          if (ids.length === 1) {
             this.openTask(ids[0]);
           } else {
             this.closeTask();

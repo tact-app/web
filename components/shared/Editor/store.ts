@@ -13,6 +13,7 @@ import { TaskList } from '@tiptap/extension-task-list';
 import { TaskItem } from '@tiptap/extension-task-item';
 import { MetricExtension } from './extensions/MetricExtension';
 import { BlockTypesOptions } from './slashCommands';
+import { NavigationDirections } from '../TasksList/types';
 
 export type EditorProps = {
   content: JSONContent;
@@ -22,6 +23,7 @@ export type EditorProps = {
   onFocus?: () => void;
   onBlur?: () => void;
   onSave?: () => void;
+  onLeave?: (direction: NavigationDirections) => void;
   onUpdate?: (content: JSONContent) => void;
 };
 
@@ -32,6 +34,7 @@ class EditorStore {
     const converterMenu = new EditorCreateMenuStore();
 
     const handleSave = this.handleSave.bind(this);
+    const handleLeave = this.handleLeave.bind(this);
 
     this.converterMenu = converterMenu;
 
@@ -67,6 +70,15 @@ class EditorStore {
               handleSave?.();
               return true;
             },
+            ArrowUp: ({ editor }) => {
+              if (editor.state.selection.from <= 1) {
+                editor.commands.blur();
+                handleLeave(NavigationDirections.UP);
+                return true;
+              }
+
+              return false;
+            },
           };
         },
       }),
@@ -79,6 +91,7 @@ class EditorStore {
   onBlur: EditorProps['onBlur'];
   onUpdate: EditorProps['onUpdate'];
   onSave: EditorProps['onSave'];
+  onLeave: EditorProps['onLeave'];
   editorRef: EditorProps['editorRef'];
 
   isBlocksMenuOpen: boolean = false;
@@ -115,6 +128,10 @@ class EditorStore {
     this.onSave?.();
   };
 
+  handleLeave = (direction: NavigationDirections) => {
+    this.onLeave?.(direction);
+  };
+
   handleEditorUpdate = ({ editor }) => {
     this.onUpdate(this.editor.getJSON());
   };
@@ -140,6 +157,7 @@ class EditorStore {
     this.onFocus = props.onFocus;
     this.onBlur = props.onBlur;
     this.onSave = props.onSave;
+    this.onLeave = props.onLeave;
     this.editorRef = props.editorRef;
   };
 }

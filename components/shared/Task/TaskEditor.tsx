@@ -12,6 +12,7 @@ export const TaskEditor = observer(function TaskEditor() {
       isFocused={store.isEditorFocused}
       onUpdate={store.handleDescriptionChange}
       onBlur={store.handleDescriptionBlur}
+      onLeave={() => store.quickEditor.setFocus(true)}
     />
   );
 });

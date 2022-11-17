@@ -33,17 +33,17 @@ export class GoalsSelectionStore {
   multiple: boolean = false;
 
   keyMap = {
-    UP: 'up',
-    DOWN: 'down',
+    UP: ['j', 'up'],
+    DOWN: ['k', 'down'],
   };
 
   hotkeyHandlers = {
-    UP: () => {
+    UP: (e) => {
       if (!this.isFocused) {
         this.focusLast();
       }
     },
-    DOWN: () => {
+    DOWN: (e) => {
       if (!this.isFocused) {
         this.focusFirst();
       }
@@ -150,7 +150,7 @@ export class GoalsSelectionStore {
 
   handleKeyDown =
     (index: number | null) => (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'ArrowUp') {
+      if (e.key === 'ArrowUp' || e.key === 'j') {
         e.stopPropagation();
         e.preventDefault();
 
@@ -163,7 +163,7 @@ export class GoalsSelectionStore {
         }
       }
 
-      if (e.key === 'ArrowDown') {
+      if (e.key === 'ArrowDown' || e.key === 'k') {
         e.stopPropagation();
         e.preventDefault();
         if (index === null) {

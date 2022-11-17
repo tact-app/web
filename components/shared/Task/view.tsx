@@ -72,11 +72,7 @@ export const TaskView = observer(function TaskView() {
                 onChange={store.handleStatusChange}
                 name='task-status'
               />
-              <TaskQuickEditorInput
-                autofocus
-                fontSize='2xl'
-                fontWeight='semibold'
-              />
+              <TaskQuickEditorInput fontSize='2xl' fontWeight='semibold' />
             </HStack>
           </Box>
           <Box mt={4} id='editor' overflow='auto'>

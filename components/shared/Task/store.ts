@@ -93,7 +93,6 @@ class TaskStore {
 
   handleDescriptionBlur = () => {
     if (this.description.content) {
-      this.callbacks.onBlur?.();
       this.root.api.descriptions.update({
         id: this.description.id,
         fields: {
@@ -101,6 +100,8 @@ class TaskStore {
         },
       });
     }
+
+    this.callbacks.onBlur?.();
   };
 
   handleNextItem = () => {
