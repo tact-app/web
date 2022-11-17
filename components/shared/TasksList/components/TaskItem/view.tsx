@@ -86,7 +86,9 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         <Box minH={10} pl={2} display='flex' alignItems='center'>
           <div onClick={(e) => e.stopPropagation()}>
             <Checkbox
-              pointerEvents={store.isReadOnly ? 'none' : 'auto'}
+              pointerEvents={
+                store.isReadOnly || store.isDisabled ? 'none' : 'auto'
+              }
               variant='indeterminateUnfilled'
               bg='white'
               size='lg'
@@ -160,7 +162,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           </Box>
         )}
       </Box>
-      {!store.isReadOnly && <TaskItemMenu />}
+      {!store.isReadOnly && !store.isDisabled && <TaskItemMenu />}
     </Box>
   );
 });

@@ -48,7 +48,7 @@ export class TasksStore {
   checkFocusModeMatch = (task: TaskData) => {
     const { goals, showImportant } = this.focusModeConfiguration;
 
-    if (this.isFocusModeActive) {
+    if (this.isFocusModeActive && task) {
       const priorityMatch = showImportant
         ? task.priority === TaskPriority.HIGH
         : true;

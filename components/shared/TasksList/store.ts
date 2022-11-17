@@ -338,9 +338,13 @@ export class TasksListStore {
   };
 
   checkTask = (taskId: string) => {
-    return this.checkTaskActivity
-      ? this.checkTaskActivity(this.items[taskId])
-      : true;
+    if (taskId) {
+      return this.checkTaskActivity
+        ? this.checkTaskActivity(this.items[taskId])
+        : true;
+    }
+
+    return false;
   };
 
   loadTasks = async () => {
