@@ -396,6 +396,7 @@ export class DraggableListStore {
 
     const item = this.items
       .slice(index + 1)
+      .concat(this.items.slice(0, index))
       .find(
         (id) =>
           (!this.checkItemActivity || this.checkItemActivity(id)) && filter(id)
