@@ -9,7 +9,7 @@ Please prepare tokens for Font Awesome, Okteto, and Vercel before you start.
 ```bash
 $ alias run='./Taskfile'
 $ alias activate='source bin/activate'
-$ run setup
+$ activate && run setup
 ```
 
 After setup, you can choose the following commands:
