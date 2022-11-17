@@ -121,6 +121,16 @@ export class TaskQuickEditorStore {
     return this.modes[this.activeModeType];
   }
 
+  get maxLength() {
+    if (this.activeMode?.maxLength) {
+      return (
+        this.value.length +
+        this.activeMode.maxLength -
+        this.activeMode.strValue.length
+      );
+    }
+  }
+
   get filledModes() {
     return Object.entries(this.modes)
       .filter(([, mode]) => mode.isFilled)
@@ -369,7 +379,12 @@ export class TaskQuickEditorStore {
       const currentPos = target.selectionStart - 1;
 
       if (currentPos >= this.modeStartPos && currentPos <= this.modeEndPos) {
-        this.modeEndPos = target.selectionStart;
+        if (this.modeEndPos < target.selectionEnd) {
+          this.modeEndPos = target.selectionEnd;
+        } else {
+          this.modeEndPos -= this.value.length - value.length;
+        }
+
         const modeValue = value.slice(this.modeStartPos, this.modeEndPos);
 
         const shouldExit =

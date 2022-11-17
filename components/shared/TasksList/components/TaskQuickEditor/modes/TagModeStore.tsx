@@ -17,6 +17,7 @@ export class TagModeStore {
     makeAutoObservable(this);
   }
 
+  maxLength = 21;
   startSymbol = '#';
 
   callbacks: TagModeCallbacks;
@@ -24,6 +25,10 @@ export class TagModeStore {
   tagsMap: Record<string, TaskTag> = {};
   tags: Array<TagWithRef> = [];
   strValue: string = '';
+
+  get trimmedStrValue() {
+    return this.strValue.trim();
+  }
 
   get isFilled() {
     return this.tags.length > 0;
@@ -33,26 +38,28 @@ export class TagModeStore {
     return Object.values(this.tagsMap);
   }
 
-  get filteredTags() {
-    const trimmedValue = this.strValue.trim();
+  get overflow() {
+    return this.strValue.length >= this.maxLength;
+  }
 
+  get filteredTags() {
     return this.availableTags.filter(
       ({ title }) =>
-        title.startsWith(trimmedValue) &&
+        title.startsWith(this.trimmedStrValue) &&
         !this.tags.some(({ title: tagTitle }) => tagTitle === title)
     );
   }
 
   get currentTagMatch() {
-    const trimmedValue = this.strValue.trim();
-
-    return this.filteredTags.some(({ title }) => title === trimmedValue);
+    return this.filteredTags.some(
+      ({ title }) => title === this.trimmedStrValue
+    );
   }
 
   get hasTag() {
-    const trimmedValue = this.strValue.trim();
-
-    return this.tags.some(({ title: tagTitle }) => tagTitle === trimmedValue);
+    return this.tags.some(
+      ({ title: tagTitle }) => tagTitle === this.trimmedStrValue
+    );
   }
 
   get isSearchEmpty() {
@@ -60,7 +67,9 @@ export class TagModeStore {
   }
 
   get isTagCreationAvailable() {
-    return this.strValue.length > 1 && !this.currentTagMatch && !this.hasTag;
+    return (
+      this.trimmedStrValue.length > 1 && !this.currentTagMatch && !this.hasTag
+    );
   }
 
   get suggestions() {
@@ -72,13 +81,13 @@ export class TagModeStore {
       items.unshift(
         <>
           {this.isSearchEmpty ? 'Tag not found. ' : ''}Create new &quot;
-          {this.strValue.slice(1)}&quot; tag
+          {this.trimmedStrValue.slice(1)}&quot; tag
         </>
       );
     } else if (
       items.length === 0 &&
       tags.length === 0 &&
-      this.strValue === this.startSymbol
+      this.trimmedStrValue === this.startSymbol
     ) {
       items.push(<>Start typing to create a new tag</>);
     } else if (this.hasTag) {
@@ -146,11 +155,9 @@ export class TagModeStore {
   };
 
   createNewTag = () => {
-    const trimmedValue = this.strValue.trim();
-
     if (!this.hasTag && !this.currentTagMatch) {
       const id = uuidv4();
-      const newTag = { title: trimmedValue, id };
+      const newTag = { title: this.trimmedStrValue, id };
 
       this.addTag(newTag);
 
@@ -176,14 +183,21 @@ export class TagModeStore {
   };
 
   handleSuggestionSelect = (index: number) => {
-    if (this.strValue !== this.startSymbol || this.filteredTags.length) {
-      if (index === 0 && !this.currentTagMatch && !this.hasTag) {
+    if (this.trimmedStrValue !== this.startSymbol || this.filteredTags.length) {
+      if (
+        index === 0 &&
+        !this.currentTagMatch &&
+        !this.hasTag &&
+        this.trimmedStrValue !== this.startSymbol
+      ) {
         this.createNewTag();
         return;
       }
 
       if (!this.hasTag || index > 0) {
-        const hasFirstItem = !this.currentTagMatch || this.hasTag;
+        const hasFirstItem =
+          (!this.currentTagMatch || this.hasTag) &&
+          this.trimmedStrValue !== this.startSymbol;
 
         this.addAvailableTag(
           this.filteredTags[hasFirstItem ? index - 1 : index].id

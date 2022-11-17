@@ -184,6 +184,7 @@ export class TasksListStore {
   get isHotkeysEnabled() {
     return !!(
       this.isForceHotkeysEnabled &&
+      !this.creator.isMenuOpen &&
       !this.isItemMenuOpen &&
       !this.draggableList.isDraggingActive &&
       !this.draggableList.isControlDraggingActive &&

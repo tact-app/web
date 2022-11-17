@@ -28,6 +28,7 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
       </chakra.div>
       <Input
         size='md'
+        maxLength={store.maxLength}
         autoFocus={autofocus}
         variant='unstyled'
         placeholder={placeholder}

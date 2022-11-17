@@ -48,7 +48,7 @@ export const TaskCreatorView = observer(function TaskCreator(
   });
 
   return (
-    <Box>
+    <Box position='relative'>
       <InputWrapper
         variant={!store.focused ? 'primary' : 'focused'}
         size='md'
