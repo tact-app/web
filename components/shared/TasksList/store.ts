@@ -214,6 +214,18 @@ export class TasksListStore {
     return true;
   };
 
+  handleStatusChange = (id: string, status: TaskStatus) => {
+    this.setTaskStatus(id, status);
+
+    if (status === TaskStatus.DONE) {
+      setTimeout(() => {
+        this.draggableList.focusNextItemWithFilter(id, (id: string) => {
+          return this.items[id].status === TaskStatus.TODO;
+        });
+      });
+    }
+  };
+
   handleCreatorFocus = () => {
     this.draggableList.resetFocusedItem();
     this.closeTask();
@@ -315,6 +327,12 @@ export class TasksListStore {
   setTasksStatus = (ids: string[], status: TaskStatus) => {
     const hasAnotherStatus = ids.some((id) => this.items[id].status !== status);
     const newStatus = hasAnotherStatus ? status : TaskStatus.TODO;
+
+    if (ids.length === 1 && newStatus !== TaskStatus.TODO) {
+      this.draggableList.focusNextWithFilter((id: string) => {
+        return this.items[id].status === TaskStatus.TODO;
+      });
+    }
 
     ids.forEach((id) => {
       this.setTaskStatus(id, newStatus);

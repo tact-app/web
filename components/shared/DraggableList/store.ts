@@ -384,6 +384,28 @@ export class DraggableListStore {
     }
   };
 
+  focusNextWithFilter = (filter: (id: string) => boolean) => {
+    this.focusNextItemWithFilter(
+      this.focusedItemIds[this.focusedItemIds.length - 1],
+      filter
+    );
+  };
+
+  focusNextItemWithFilter = (id: string, filter: (id: string) => boolean) => {
+    const index = this.items.indexOf(id);
+
+    const item = this.items
+      .slice(index + 1)
+      .find(
+        (id) =>
+          (!this.checkItemActivity || this.checkItemActivity(id)) && filter(id)
+      );
+
+    if (item) {
+      this.setFocusedItem(item);
+    }
+  };
+
   focusPrevItem = (id: string, stay?: boolean) => {
     const prevActiveItem = this.getPrevActiveItem(id);
 
@@ -414,9 +436,11 @@ export class DraggableListStore {
     if (ref && this.focusedRef !== ref) {
       this.focusedRef = ref;
 
-      ref.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
+      setTimeout(() => {
+        ref.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
       });
     }
   };

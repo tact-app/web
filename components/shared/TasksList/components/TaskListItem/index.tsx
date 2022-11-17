@@ -29,7 +29,7 @@ export const TaskListItem = observer(function TaskListItem({
         goals={store.goals}
         listId={store.listId}
         onFocus={store.draggableList.setFocusedItem}
-        onStatusChange={store.setTaskStatus}
+        onStatusChange={store.handleStatusChange}
         callbacks={{
           onNavigate: store.draggableList.handleNavigation,
           onSave: store.updateTask,
