@@ -131,7 +131,9 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
             </Box>
           )}
           <chakra.div justifySelf='end' ml='auto' mr={4}>
-            <TaskQuickEditorPriority />
+            <TaskQuickEditorPriority
+              disabled={store.isDisabled || store.isReadOnly}
+            />
           </chakra.div>
         </Box>
         {hasTags && (

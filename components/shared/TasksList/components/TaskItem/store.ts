@@ -34,6 +34,7 @@ class TaskItemStore {
   isEditMode: boolean = false;
   isDragging: boolean = false;
   isReadOnly: boolean = false;
+  skipClick: boolean = false;
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
 
@@ -46,19 +47,24 @@ class TaskItemStore {
       this.onFocus &&
       !this.isDisabled &&
       !this.isEditMode &&
-      !this.isReadOnly
+      !this.isReadOnly &&
+      !this.skipClick
     ) {
       e.preventDefault();
       document.getSelection().removeAllRanges();
+
       this.onFocus(
         this.task.id,
         e.metaKey ? 'single' : e.shiftKey ? 'many' : undefined
       );
     }
+
+    this.skipClick = false;
   };
 
   handleFocus = (e: FocusEvent) => {
     if (!this.isFocused) {
+      this.skipClick = true;
       this.onFocus(this.task.id);
     }
   };

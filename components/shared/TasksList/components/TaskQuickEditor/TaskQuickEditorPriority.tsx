@@ -8,9 +8,11 @@ import { TaskPriority, TaskPriorityNames } from '../../types';
 
 export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({
   withTitle,
+  disabled,
   ...rest
 }: {
   withTitle?: boolean;
+  disabled?: boolean;
 } & ButtonProps) {
   const store = useTaskQuickEditorStore();
   const priority = store.modes.priority.priority;
@@ -24,6 +26,7 @@ export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({
   return priority !== TaskPriority.NONE ? (
     <Button
       ref={store.modes.priority.setButtonRef}
+      tabIndex={disabled ? -1 : 0}
       onClick={(e) => {
         e.stopPropagation();
         store.suggestionsMenu.openFor(Modes.PRIORITY);
