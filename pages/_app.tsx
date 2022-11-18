@@ -56,16 +56,19 @@ const theme = extendTheme({
             outline: 'none',
           },
           h1: {
-            fontSize: '1.25rem',
+            fontSize: '1.375rem',
             mt: 4,
           },
           h2: {
-            fontSize: '1.15rem',
+            fontSize: '1.125rem',
             mt: 4,
           },
           h3: {
             fontSize: '1rem',
             mt: 4,
+          },
+          p: {
+            fontSize: '1rem',
           },
           'h1, h2, h3, h4,  h5, h6 ': {
             fontWeight: '700',
