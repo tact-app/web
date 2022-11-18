@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { TaskData, TaskStatus, TaskTag } from '../../types';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import React, { MouseEvent, FocusEvent } from 'react';
+import React, { MouseEvent } from 'react';
 import { TaskQuickEditorStore } from '../TaskQuickEditor/store';
 
 export type TaskItemProps = {
@@ -29,6 +29,7 @@ class TaskItemStore {
 
   task: TaskData;
   tags: Record<string, TaskTag>;
+  isMouseDown: boolean = false;
   isDisabled: boolean = false;
   isFocused: boolean = false;
   isEditMode: boolean = false;
@@ -42,13 +43,20 @@ class TaskItemStore {
     this.boxRef = ref;
   };
 
+  handleMouseDown = () => {
+    this.isMouseDown = true;
+  };
+
+  handleMouseUp = () => {
+    this.isMouseDown = false;
+  };
+
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
     if (
       this.onFocus &&
       !this.isDisabled &&
       !this.isEditMode &&
-      !this.isReadOnly &&
-      !this.skipClick
+      !this.isReadOnly
     ) {
       e.preventDefault();
       document.getSelection().removeAllRanges();
@@ -62,9 +70,8 @@ class TaskItemStore {
     this.skipClick = false;
   };
 
-  handleFocus = (e: FocusEvent) => {
-    if (!this.isFocused) {
-      this.skipClick = true;
+  handleFocus = () => {
+    if (!this.isFocused && !this.isMouseDown) {
       this.onFocus(this.task.id);
     }
   };

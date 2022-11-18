@@ -63,6 +63,8 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
       <Box
         ref={store.setBoxRef}
         onClick={store.handleClick}
+        onMouseDown={store.handleMouseDown}
+        onMouseUp={store.handleMouseUp}
         onFocus={store.handleFocus}
         tabIndex={store.isDisabled || store.isReadOnly ? -1 : 0}
         _focus={{

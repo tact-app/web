@@ -220,14 +220,18 @@ export class DraggableListStore {
     const mainSelectedItemId = this.focusedItemIds[0];
     const destinationIndex =
       this.items.indexOf(mainSelectedItemId) + (direction === 'up' ? -1 : 1);
+    const boundedDestinationIndex = Math.min(
+      this.items.length - 1,
+      Math.max(0, destinationIndex)
+    );
 
     this.items = this.items.filter((id) => !this.focusedItemIds.includes(id));
-    this.items.splice(destinationIndex, 0, ...this.focusedItemIds);
+    this.items.splice(boundedDestinationIndex, 0, ...this.focusedItemIds);
 
     this.callbacks.onOrderChange?.(
       this.items,
       this.focusedItemIds,
-      destinationIndex
+      boundedDestinationIndex
     );
   };
 
