@@ -66,10 +66,10 @@ export class TasksListStore {
     GOAL: 'g',
     WONT_DO: ['w', 'cmd+w'],
     EDIT: 'space',
-    OPEN: 'enter',
+    OPEN_AND_EDIT: 'enter',
     FOCUS_LEAVE_LEFT: 'left',
     FOCUS_INPUT: 'n',
-    FOCUS_EDITOR: 'right',
+    OPEN: 'right',
   };
 
   hotkeyHandlers = {
@@ -91,13 +91,10 @@ export class TasksListStore {
         );
       }
     },
-    OPEN: () => {
+    OPEN_AND_EDIT: () => {
       if (this.draggableList.focused.length) {
-        if (this.openedTask === this.draggableList.focused[0]) {
-          this.isEditorFocused = true;
-        } else {
-          this.openTask(this.draggableList.focused[0]);
-        }
+        this.openTask(this.draggableList.focused[0]);
+        this.isEditorFocused = true;
       }
     },
     GOAL: (e) => {
@@ -111,7 +108,7 @@ export class TasksListStore {
       this.closeTask();
       this.creator.setFocus(true);
     },
-    FOCUS_EDITOR: () => {
+    OPEN: () => {
       if (!this.openedTask) {
         if (this.draggableList.focused.length) {
           if (this.openedTask === this.draggableList.focused[0]) {
@@ -218,7 +215,7 @@ export class TasksListStore {
   handleStatusChange = (id: string, status: TaskStatus) => {
     this.setTaskStatus(id, status);
 
-    if (status === TaskStatus.DONE) {
+    if (status === TaskStatus.DONE || status === TaskStatus.WONT_DO) {
       setTimeout(() => {
         this.draggableList.focusNextItemWithFilter(id, (id: string) => {
           return this.items[id].status === TaskStatus.TODO;

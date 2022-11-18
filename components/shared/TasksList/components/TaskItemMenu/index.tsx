@@ -90,7 +90,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
               <MenuItem
                 command='D'
                 onClick={() =>
-                  tasksStore.setTaskStatus(store.task.id, TaskStatus.DONE)
+                  tasksStore.handleStatusChange(store.task.id, TaskStatus.DONE)
                 }
               >
                 Done
@@ -98,7 +98,10 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
               <MenuItem
                 command='W / ⇧W'
                 onClick={() =>
-                  tasksStore.setTaskStatus(store.task.id, TaskStatus.WONT_DO)
+                  tasksStore.handleStatusChange(
+                    store.task.id,
+                    TaskStatus.WONT_DO
+                  )
                 }
               >
                 Won&apos;t do
