@@ -527,6 +527,7 @@ export class TaskQuickEditorStore {
         this.leave();
       }
     } else if (e.key === 'Enter') {
+      this.callbacks.onNavigate?.(NavigationDirections.DOWN);
       this.saveTask();
     } else if (mode) {
       this.enterMode(mode, e);
