@@ -47,8 +47,8 @@ repository:
   # General / Pull Requests
   #
   allow_merge_commit: false             # Allow merge commits
-  allow_squash_merge: true              # Allow squash merging
-  use_squash_pr_title_as_default: true  # Default to PR title for squash merge commits
+  allow_squash_merge: false             # Allow squash merging
+  use_squash_pr_title_as_default: false # Default to PR title for squash merge commits
   allow_rebase_merge: true              # Allow rebase merging
   allow_update_branch: false            # Always suggest updating pull request branches
   allow_auto_merge: false               # Allow auto-merge
