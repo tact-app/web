@@ -68,8 +68,8 @@ export const TaskCreatorView = observer(function TaskCreator(
           <InputRightAddon maxW='50%' minWidth={0} justifyContent='end'>
             <HStack w='100%'>
               <TaskQuickEditorTags
+                collapsable
                 boxProps={{
-                  overflow: 'auto',
                   minWidth: 0,
                   p: 1,
                   css: {

@@ -350,6 +350,7 @@ export class TaskQuickEditorStore {
   handleFocus = () => {
     this.setFocus();
     this.focusedMode = null;
+    this.suggestionsMenu.closeForMode();
     this.callbacks.onFocus?.();
   };
 

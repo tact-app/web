@@ -20,6 +20,13 @@ export class TagModeStore {
   maxLength = 21;
   startSymbol = '#';
 
+  isCollapsable = false;
+  isCollapsed = false;
+  isCollapseOpen = false;
+
+  containerRef: HTMLDivElement | null = null;
+  collapseRef?: HTMLButtonElement;
+
   callbacks: TagModeCallbacks;
 
   tagsMap: Record<string, TaskTag> = {};
@@ -97,11 +104,40 @@ export class TagModeStore {
     return items;
   }
 
-  focus = (corner: 'first' | 'last') => {
-    const index = corner === 'first' ? 0 : this.tags.length - 1;
-    const tag = this.tags[index];
+  setIsCollapsable = (isCollapsable: boolean) => {
+    this.isCollapsable = isCollapsable;
+  };
 
-    this.focusTag(tag);
+  checkOverflow = () => {
+    if (this.isCollapsable && this.containerRef) {
+      setTimeout(() => {
+        if (!this.isCollapsed) {
+          if (this.containerRef.scrollWidth > this.containerRef.clientWidth) {
+            this.isCollapsed = true;
+          }
+        } else {
+          const totalWidth = this.tags.reduce(
+            (acc, { ref }) => acc + (ref ? ref.offsetWidth + 8 : 0),
+            0
+          );
+
+          if (totalWidth < this.containerRef.clientWidth) {
+            this.isCollapsed = false;
+          }
+        }
+      });
+    }
+  };
+
+  focus = (corner: 'first' | 'last') => {
+    if (this.isCollapsed && !this.isCollapseOpen) {
+      this.collapseRef?.focus();
+    } else {
+      const index = corner === 'first' ? 0 : this.tags.length - 1;
+      const tag = this.tags[index];
+
+      this.focusTag(tag);
+    }
   };
 
   setTagRef = (button: HTMLButtonElement, id: string) => {
@@ -110,6 +146,14 @@ export class TagModeStore {
     if (tag) {
       tag.ref = button;
     }
+  };
+
+  setContainerRef = (ref: HTMLDivElement) => {
+    this.containerRef = ref;
+  };
+
+  setCollapseRef = (button: HTMLButtonElement) => {
+    this.collapseRef = button;
   };
 
   activate = () => {
@@ -148,10 +192,19 @@ export class TagModeStore {
   removeTag = (id: string) => {
     const index = this.tags.findIndex((tag) => tag.id === id);
     this.tags.splice(index, 1);
+
+    if (this.tags.length === 0) {
+      this.isCollapsed = false;
+      this.isCollapseOpen = false;
+    }
   };
 
   addTag = (tag: TaskTag) => {
     this.tags.push(tag);
+
+    if (!this.isCollapsed) {
+      this.checkOverflow();
+    }
   };
 
   createNewTag = () => {
@@ -210,6 +263,38 @@ export class TagModeStore {
     this.strValue = value;
   };
 
+  handleCollapseOpen = () => {
+    this.isCollapseOpen = true;
+
+    setTimeout(() => this.focus('first'), 100);
+  };
+
+  handleCollapseClose = () => {
+    this.isCollapseOpen = false;
+  };
+
+  handleCollapseButtonKeyDown = (e: ReactKeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      this.callbacks.onFocusLeave(NavigationDirections.LEFT);
+    } else if (e.key === 'ArrowRight') {
+      this.callbacks.onFocusLeave(NavigationDirections.RIGHT);
+    } else if (e.key === 'ArrowDown') {
+      e.stopPropagation();
+
+      if (!this.isCollapseOpen) {
+        this.isCollapseOpen = true;
+      }
+
+      setTimeout(() => this.focus('first'));
+    } else if (e.key === 'ArrowUp') {
+      e.stopPropagation();
+
+      if (!this.isCollapseOpen) {
+        this.isCollapseOpen = false;
+      }
+    }
+  };
+
   handleButtonKeyDown = (
     e: ReactKeyboardEvent<HTMLButtonElement>,
     id: string
@@ -229,12 +314,21 @@ export class TagModeStore {
       } else if (this.tags[tagIndex]) {
         this.focusTag(this.tags[tagIndex]);
       }
-    } else if (e.key === 'ArrowLeft') {
+    } else if (
+      (!this.isCollapseOpen && e.key === 'ArrowLeft') ||
+      (this.isCollapseOpen && e.key === 'ArrowUp')
+    ) {
       e.preventDefault();
+      e.stopPropagation();
       const index = this.tags.findIndex((tag) => tag.id === id);
 
       if (index === 0) {
-        this.callbacks.onFocusLeave(NavigationDirections.LEFT);
+        if (this.isCollapseOpen) {
+          this.collapseRef?.focus();
+          this.isCollapseOpen = false;
+        } else {
+          this.callbacks.onFocusLeave(NavigationDirections.LEFT);
+        }
       } else {
         const nextTag = this.tags[index - 1];
 
@@ -244,16 +338,30 @@ export class TagModeStore {
           this.callbacks.onFocusLeave(NavigationDirections.LEFT);
         }
       }
-    } else if (e.key === 'ArrowRight') {
+    } else if (
+      (!this.isCollapseOpen && e.key === 'ArrowRight') ||
+      (this.isCollapseOpen && e.key === 'ArrowDown')
+    ) {
       e.preventDefault();
+      e.stopPropagation();
       const index = this.tags.findIndex((tag) => tag.id === id);
       const nextTag = this.tags[index + 1];
 
       if (nextTag) {
         this.focusTag(nextTag);
       } else {
-        this.callbacks.onFocusLeave(NavigationDirections.RIGHT);
+        if (this.isCollapseOpen) {
+          this.collapseRef?.focus();
+          this.isCollapseOpen = false;
+        } else {
+          this.callbacks.onFocusLeave(NavigationDirections.RIGHT);
+        }
       }
+    } else if (e.key === 'Escape' && this.isCollapsed) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.handleCollapseClose();
+      this.collapseRef?.focus();
     }
   };
 }
