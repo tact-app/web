@@ -23,6 +23,12 @@ export const GoalCreationDescription = observer(
           placeholder='Goal name'
           onChange={store.handleTitleChange}
           variant='flushed'
+          fontSize='2xl'
+          fontWeight='semibold'
+          _focusVisible={{
+            borderColor: 'blue.400',
+            boxShadow: 'none',
+          }}
         />
         <Box mt={4}>
           {store.isDescriptionLoading ? (
