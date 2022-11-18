@@ -216,14 +216,23 @@ export class TasksListStore {
   };
 
   handleStatusChange = (id: string, status: TaskStatus) => {
-    this.setTaskStatus(id, status);
+    const task = this.items[id];
+    const newStatus = task.status === status ? TaskStatus.TODO : status;
+    const isSameStatus = task.status === status;
 
-    if (status === TaskStatus.DONE || status === TaskStatus.WONT_DO) {
+    this.setTaskStatus(id, newStatus);
+
+    if (
+      !isSameStatus &&
+      (newStatus === TaskStatus.DONE || newStatus === TaskStatus.WONT_DO)
+    ) {
       setTimeout(() => {
         this.draggableList.focusNextItemWithFilter(id, (id: string) => {
           return this.items[id].status === TaskStatus.TODO;
         });
       });
+    } else if (this.draggableList.focused[0] !== id) {
+      this.draggableList.setFocusedItem(id);
     }
   };
 
@@ -342,13 +351,12 @@ export class TasksListStore {
 
   setTaskStatus = (taskId: string, status: TaskStatus) => {
     const task = this.items[taskId];
-    const newStatus = task.status === status ? TaskStatus.TODO : status;
 
-    task.status = newStatus;
+    task.status = status;
 
     this.root.api.tasks.update({
       id: task.id,
-      fields: { status: newStatus },
+      fields: { status },
     });
   };
 
@@ -450,7 +458,7 @@ export class TasksListStore {
     onBlur: this.handleEditorBlur,
     onPreviousItem: this.draggableList.focusPrevItem,
     onNextItem: this.draggableList.focusNextItem,
-    onStatusChange: this.setTaskStatus,
+    onStatusChange: this.handleStatusChange,
     onTaskChange: this.updateTask,
     onTagCreate: this.createTag,
   };

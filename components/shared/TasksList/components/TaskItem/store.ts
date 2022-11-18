@@ -80,7 +80,6 @@ class TaskItemStore {
     const newStatus = e.target.checked ? TaskStatus.DONE : TaskStatus.TODO;
 
     this.onStatusChange(this.task.id, newStatus);
-    this.onFocus(null);
   };
 
   update = ({
