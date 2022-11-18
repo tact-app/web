@@ -1,4 +1,4 @@
-import { KeyboardEvent } from 'react';
+import { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { action, makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { GoalData } from '../../pages/Goals/types';
@@ -149,7 +149,7 @@ export class GoalsSelectionStore {
   };
 
   handleKeyDown =
-    (index: number | null) => (e: KeyboardEvent<HTMLInputElement>) => {
+    (index: number | null) => (e: ReactKeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'ArrowUp' || e.key === 'j') {
         e.stopPropagation();
         e.preventDefault();

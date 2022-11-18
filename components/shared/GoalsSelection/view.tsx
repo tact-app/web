@@ -128,6 +128,9 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
         justifyContent='space-between'
         onClick={store.callbacks.onGoalCreateClick}
         ref={store.setCreateGoalButtonRef}
+        _focus={{
+          boxShadow: 'var(--chakra-shadows-outline)',
+        }}
       >
         <LargePlusIcon />
         New goal
