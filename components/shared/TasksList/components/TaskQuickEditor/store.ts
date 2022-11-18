@@ -331,7 +331,7 @@ export class TaskQuickEditorStore {
         id: this.task ? this.task.id : uuidv4(),
         listId: this.listId,
         tags: this.modes.tag.tags.map(({ id }) => id),
-        status: TaskStatus.TODO,
+        status: this.task ? this.task.status : TaskStatus.TODO,
         priority: this.modes.priority.priority,
         spaceId: this.modes.space.selectedSpaceId || undefined,
         goalId: this.modes.goal.selectedGoalId || undefined,
