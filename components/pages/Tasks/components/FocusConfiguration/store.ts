@@ -16,7 +16,7 @@ export type FocusConfigurationProps = {
     onClose?: () => void;
     onFocus?: () => void;
     onBlur?: () => void;
-    onGoalCreateClick?: () => void;
+    onGoalCreateClick?: (cb: () => void) => void;
   };
   getItemsCount: () => number;
   goals: GoalData[];
@@ -92,6 +92,12 @@ export class FocusConfigurationStore {
   handleShowImportantChange = (e) => {
     this.data.showImportant = e.target.checked;
     this.sendChanges();
+  };
+
+  handleGoalCreateClick = () => {
+    this.callbacks.onGoalCreateClick?.(() => {
+      setTimeout(() => this.goalsSelection.focusFirst());
+    });
   };
 
   sendChanges = () => {

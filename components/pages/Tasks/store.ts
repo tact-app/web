@@ -94,7 +94,8 @@ export class TasksStore {
             onClose: this.toggleFocusMode,
             onFocus: this.list.draggableList.resetFocusedItem,
             onBlur: this.list.draggableList.focusFirstItem,
-            onGoalCreateClick: () => this.list.modals.openGoalCreationModal(),
+            onGoalCreateClick: (cb) =>
+              this.list.modals.openGoalCreationModal(cb),
           },
         });
       }
