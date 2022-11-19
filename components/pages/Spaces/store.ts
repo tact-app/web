@@ -52,9 +52,6 @@ export class SpacesStore {
     {
       width: 288,
       size: 0,
-      props: {
-        boxShadow: 'lg',
-      },
     },
     {
       size: 1,
@@ -64,9 +61,6 @@ export class SpacesStore {
     {
       size: 1,
       minWidth: 300,
-      props: {
-        boxShadow: 'lg',
-      },
     },
     {
       size: 1,
@@ -143,10 +137,9 @@ export class SpacesStore {
       this.inboxItemExpanded = true;
     }
 
-    this.resizableConfig = this.resizableConfig.map((conf, i) => ({
-      ...conf,
-      size: i === 0 || (indexes.length && !indexes.includes(i)) ? 0 : 1,
-    }));
+    this.resizableConfig.forEach((conf, i) => {
+      conf.size = i === 0 || (indexes.length && !indexes.includes(i)) ? 0 : 1;
+    });
   };
 
   resetExpanded = () => {
@@ -181,6 +174,8 @@ export class SpacesStore {
         this.focusedBlockId = SpacesFocusableBlocks.INBOX;
       }
     }
+
+    return true;
   };
 
   handleFocus = (block: SpacesFocusableBlocks) => {
@@ -302,6 +297,7 @@ export class SpacesStore {
 
   taskCallbacks: TaskProps['callbacks'] = {
     ...this.inboxItem.list.taskCallbacks,
+    onFocus: () => this.handleFocus(SpacesFocusableBlocks.INBOX_ITEM),
     onExpand: () => this.handleExpand([3]),
     onCollapse: () => this.resetExpanded(),
   };

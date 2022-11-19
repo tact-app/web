@@ -13,6 +13,7 @@ import {
   faChevronDown,
   faChevronUp,
 } from '@fortawesome/pro-solid-svg-icons';
+import { TooltipWithHotkey } from '../TooltipWithHotkey';
 
 export const ItemToolbar = ({
   isExpanded,
@@ -46,36 +47,40 @@ export const ItemToolbar = ({
   >
     <Box display='flex' alignItems='center'>
       {onExpand && !isExpanded && (
-        <IconButton
-          aria-label={'expand'}
-          size='xs'
-          variant='ghost'
-          onClick={onExpand}
-          mr={2}
-        >
-          <FontAwesomeIcon
-            fontSize={16}
-            color={`var(--chakra-colors-gray-400)`}
-            icon={faArrowUpRightAndArrowDownLeftFromCenter}
-            fixedWidth
-          />
-        </IconButton>
+        <TooltipWithHotkey label='Expand' hotkey='cmd+e' hasArrow>
+          <IconButton
+            aria-label={'expand'}
+            size='xs'
+            variant='ghost'
+            onClick={onExpand}
+            mr={2}
+          >
+            <FontAwesomeIcon
+              fontSize={16}
+              color={`var(--chakra-colors-gray-400)`}
+              icon={faArrowUpRightAndArrowDownLeftFromCenter}
+              fixedWidth
+            />
+          </IconButton>
+        </TooltipWithHotkey>
       )}
       {onCollapse && isExpanded && (
-        <IconButton
-          aria-label={'collapse'}
-          size='xs'
-          variant='ghost'
-          onClick={onCollapse}
-          mr={2}
-        >
-          <FontAwesomeIcon
-            fontSize={16}
-            color={`var(--chakra-colors-gray-400)`}
-            icon={faArrowDownLeftAndArrowUpRightToCenter}
-            fixedWidth
-          />
-        </IconButton>
+        <TooltipWithHotkey label='Collapse' hotkey='cmd+e' hasArrow>
+          <IconButton
+            aria-label={'collapse'}
+            size='xs'
+            variant='ghost'
+            onClick={onCollapse}
+            mr={2}
+          >
+            <FontAwesomeIcon
+              fontSize={16}
+              color={`var(--chakra-colors-gray-400)`}
+              icon={faArrowDownLeftAndArrowUpRightToCenter}
+              fixedWidth
+            />
+          </IconButton>
+        </TooltipWithHotkey>
       )}
       {(onCollapse || onExpand) && (
         <chakra.div h={4} bg='gray.200' w={0.5} display='inline-block' mr={2} />

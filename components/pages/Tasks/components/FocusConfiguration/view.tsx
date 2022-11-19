@@ -30,9 +30,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
   return (
     <Box
       p={4}
-      w='500px'
-      borderRight='1px'
-      borderColor='gray.100'
+      height='100%'
       display='flex'
       flexDirection='column'
       justifyContent='space-between'

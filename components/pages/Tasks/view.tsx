@@ -7,16 +7,19 @@ import 'allotment/dist/style.css';
 import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
 import {
   Box,
-  Container,
   Heading,
   HStack,
   IconButton,
   Tooltip,
+  chakra,
+  Container,
 } from '@chakra-ui/react';
 import TasksList from '../../shared/TasksList';
 import { FocusIcon } from '../../shared/Icons/FocusIcon';
 import { useTasksStore } from './store';
-import { ResizableDrawer } from '../../shared/ResizableDrawer';
+import { ResizableGroup } from '../../shared/ResizableGroup';
+import { FocusConfiguration } from './components/FocusConfiguration';
+import { ResizableGroupChild } from '../../shared/ResizableGroup/ResizableGroupChild';
 
 export const TasksView = observer(function TasksView() {
   const store = useTasksStore();
@@ -31,41 +34,69 @@ export const TasksView = observer(function TasksView() {
         <title>Tasks</title>
       </Head>
       <Box display='flex' h='100%'>
-        <Container maxW='container.lg' p={4} pb={0} h='100%'>
-          <Box display='flex' flexDirection='column' h='100%'>
-            <HStack justifyContent='space-between' pl={5} pr={5}>
-              <Heading size='lg' mt={2.5} mb={8} pt={4}>
-                Today
-              </Heading>
-              <HStack>
-                <Tooltip label='F / ⇧ F' hasArrow>
-                  <IconButton
-                    aria-label='focus'
-                    variant='ghost'
-                    onClick={store.handleToggleFocusMode}
-                    stroke={store.isFocusModeActive ? 'blue.400' : 'gray.400'}
-                  >
-                    <FocusIcon />
-                  </IconButton>
-                </Tooltip>
-              </HStack>
-            </HStack>
-            <TasksList
-              callbacks={store.tasksListCallbacks}
-              dnd={true}
-              instance={store.list}
-              highlightActiveTasks={store.isFocusModeActive}
-              checkTaskActivity={store.checkFocusModeMatch}
-            />
-          </Box>
-        </Container>
-        {store.list.openedTask && (
-          <ResizableDrawer
-            isOpen={!!store.list.openedTaskData}
-            onClose={store.list.closeTask}
-            full={store.isTaskExpanded}
+        <ResizableGroup>
+          <ResizableGroupChild
+            index={0}
+            config={store.resizableConfig[0]}
+            borderRight='1px'
+            borderColor='gray.100'
           >
-            <Box p={6} h='100%'>
+            <chakra.div h='100%'>
+              {store.isFocusModeActive && !store.isSilentFocusMode ? (
+                <FocusConfiguration
+                  callbacks={store.focusConfigurationCallbacks}
+                  getItemsCount={store.getItemsCount}
+                  goals={store.list.goals}
+                />
+              ) : null}
+            </chakra.div>
+          </ResizableGroupChild>
+          <ResizableGroupChild index={1} config={store.resizableConfig[1]}>
+            <Container
+              flex={1}
+              maxW='container.lg'
+              pt={10}
+              h='100%'
+              display='flex'
+              flexDirection='column'
+              overflow='hidden'
+            >
+              <Box display='flex' flexDirection='column' h='100%'>
+                <HStack justifyContent='space-between' pl={5} pr={5}>
+                  <Heading size='lg' mt={2.5} mb={8} pt={4}>
+                    Today
+                  </Heading>
+                  <HStack>
+                    <Tooltip label='F / ⇧ F' hasArrow>
+                      <IconButton
+                        aria-label='focus'
+                        variant='ghost'
+                        onClick={store.handleToggleFocusMode}
+                        stroke={
+                          store.isFocusModeActive ? 'blue.400' : 'gray.400'
+                        }
+                      >
+                        <FocusIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </HStack>
+                </HStack>
+                <TasksList
+                  callbacks={store.tasksListCallbacks}
+                  dnd={true}
+                  instance={store.list}
+                  highlightActiveTasks={store.isFocusModeActive}
+                  checkTaskActivity={store.checkFocusModeMatch}
+                />
+              </Box>
+            </Container>
+          </ResizableGroupChild>
+          <ResizableGroupChild
+            index={2}
+            config={store.resizableConfig[2]}
+            boxShadow='lg'
+          >
+            {store.list.openedTask && (
               <Task
                 task={store.list.openedTaskData}
                 spaces={store.list.spaces}
@@ -77,9 +108,9 @@ export const TasksView = observer(function TasksView() {
                 isEditorFocused={store.list.isEditorFocused}
                 callbacks={store.taskCallbacks}
               />
-            </Box>
-          </ResizableDrawer>
-        )}
+            )}
+          </ResizableGroupChild>
+        </ResizableGroup>
       </Box>
     </>
   );

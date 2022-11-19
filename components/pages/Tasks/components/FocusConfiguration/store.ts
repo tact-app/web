@@ -30,7 +30,6 @@ export class FocusConfigurationStore {
   goalsSelection = new GoalsSelectionStore(this.root);
 
   keyMap = {
-    FOCUS: 'left',
     FOCUS_GOAL_SELECTION: 'shift+g',
     BLUR: 'right',
     NUMBER: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
@@ -39,10 +38,6 @@ export class FocusConfigurationStore {
   };
 
   hotkeyHandlers = {
-    FOCUS: () => {
-      this.goalsSelection.focusFirst();
-      this.callbacks.onFocus?.();
-    },
     BLUR: () => {
       this.goalsSelection.removeFocus();
       this.callbacks.onBlur?.();

@@ -32,12 +32,18 @@ export const TaskView = observer(function TaskView() {
 
   return (
     <Container
+      tabIndex={0}
+      onMouseDown={store.callbacks.onFocus}
+      onKeyDown={store.handleContainerKeyDown}
       h='100%'
       maxW='container.md'
-      p={0}
+      p={6}
       display='flex'
       flexDirection='column'
       justifyContent='space-between'
+      _focus={{
+        outline: 'none',
+      }}
     >
       <TaskQuickEditorStoreProvider
         instance={store.quickEditor}

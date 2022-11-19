@@ -289,7 +289,10 @@ export class TaskQuickEditorStore {
 
     if (filledModes.length) {
       this.focusMode(filledModes[0], 'first');
+      return true;
     }
+
+    return false;
   };
 
   focusNextFilledMode = () => {
@@ -410,8 +413,6 @@ export class TaskQuickEditorStore {
   };
 
   handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-
     if (!this.isModeActive) {
       this.handleKeyDownInStdMode(e);
     } else {
@@ -511,6 +512,7 @@ export class TaskQuickEditorStore {
 
       return true;
     } else if (e.key === 'Backspace' && this.activeMode.strValue.length === 1) {
+      e.stopPropagation();
       e.preventDefault();
       this.activeMode.disable();
       return true;
@@ -523,17 +525,22 @@ export class TaskQuickEditorStore {
     const mode = this.getMatchMode(e.key);
 
     if (e.key === 'Escape') {
+      e.stopPropagation();
+
       if (this.callbacks.onNavigate?.(NavigationDirections.INVARIANT)) {
         this.leave();
       }
     } else if (e.key === 'Enter') {
+      e.stopPropagation();
       if (!this.keepFocus) {
         this.callbacks.onNavigate?.(NavigationDirections.DOWN);
       }
       this.saveTask();
     } else if (mode) {
+      e.stopPropagation();
       this.enterMode(mode, e);
     } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.stopPropagation();
       e.preventDefault();
 
       if (this.callbacks.onNavigate?.(castArrowToDirection(e.key))) {
@@ -544,6 +551,7 @@ export class TaskQuickEditorStore {
       (e.target as HTMLInputElement).selectionEnd === this.value.length &&
       this.input.selectionStart === this.input.selectionEnd
     ) {
+      e.stopPropagation();
       e.preventDefault();
       this.focusFirstFilledMode();
     }

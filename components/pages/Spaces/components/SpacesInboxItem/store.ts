@@ -4,6 +4,7 @@ import { TasksListStore } from '../../../../shared/TasksList/store';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getStubDescription } from '../../modals/SpaceCreationModal/stubs';
 import { SpacesInboxItemData } from '../../types';
+import { KeyboardEvent } from 'react';
 
 export type SpacesInboxItemProps = {
   item: SpacesInboxItemData;
@@ -27,6 +28,7 @@ export class SpacesInboxItemStore {
 
   list = new TasksListStore(this.root);
 
+  isExpanded: boolean = false;
   isHotkeysEnabled: boolean | null = null;
   item: SpacesInboxItemData | null = null;
   description: string | null = null;
@@ -38,9 +40,26 @@ export class SpacesInboxItemStore {
     }
   };
 
+  handleContainerKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && this.isExpanded) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.callbacks.onCollapse?.();
+    } else if (e.key === 'e' && e.metaKey) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (this.isExpanded) {
+        this.callbacks.onCollapse?.();
+      } else {
+        this.callbacks.onExpand?.();
+      }
+    }
+  };
+
   update = (props: SpacesInboxItemProps) => {
     this.callbacks = props.callbacks || {};
 
+    this.isExpanded = props.isExpanded || false;
     this.isHotkeysEnabled = props.isHotkeysEnabled;
 
     if (props.item) {

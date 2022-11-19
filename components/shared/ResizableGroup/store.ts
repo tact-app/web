@@ -1,20 +1,19 @@
 import { action, makeAutoObservable, reaction } from 'mobx';
-import { HTMLChakraProps } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { subscriptions } from '../../../helpers/subscriptions';
 import { MouseEvent } from 'react';
 
-export type ResizableGroupProps = PropsWithChildren<{
-  configs: ResizableGroupConfig[];
-}>;
+export type ResizableGroupProps = PropsWithChildren;
 
 export type ResizableGroupConfig = {
   size: number;
   width?: number;
   minWidth?: number;
+  onlyShrink?: boolean;
+  minFixedWidth?: number;
   flexible?: boolean;
-  props?: HTMLChakraProps<'div'>;
+  expanded?: boolean; // not supported yet
 };
 
 export class ResizableGroupStore {
@@ -25,12 +24,12 @@ export class ResizableGroupStore {
   resizingIndex: number | null = null;
   widths: number[] = [];
   containerWidth = 0;
-  childrenCount = 0;
   resizeStart: {
     widths: number[];
     x: number;
   } | null = null;
   configs: ResizableGroupConfig[] = [];
+  disabledChildren: boolean[] = [];
 
   isFirstRender = true;
   isAnimationActive: boolean = false;
@@ -51,11 +50,9 @@ export class ResizableGroupStore {
   get activeChildren() {
     return this.hasContainerWidth
       ? this.configs.map((config, index) => {
-          if (index < this.childrenCount) {
-            return this.configs[index].size || 0;
-          }
-
-          return 0;
+          return !this.disabledChildren[index]
+            ? this.configs[index].size || 0
+            : 0;
         })
       : this.configs.map(() => 0);
   }
@@ -68,15 +65,22 @@ export class ResizableGroupStore {
     return this.configs.reduce((acc, config) => acc + (config.width || 0), 0);
   }
 
+  get expandedChildren() {
+    return this.configs.map((config) => config.expanded || false);
+  }
+
+  setChildConfig = (index, config: ResizableGroupConfig) => {
+    this.configs[index] = config;
+  };
+
+  setChildActive = (index, active: boolean) => {
+    this.disabledChildren[index] = !active;
+  };
+
   getWidth = (index: number) => {
     const childWidth = this.widths[index];
-    const isFixed = this.isFixed(index);
 
-    if (this.activeChildren[index] || isFixed) {
-      return childWidth + 'px';
-    } else {
-      return 0;
-    }
+    return childWidth + 'px';
   };
 
   isFixed = (index: number) => {
@@ -107,10 +111,6 @@ export class ResizableGroupStore {
     this.containerWidth = width;
   };
 
-  setChildrenCount = (count: number) => {
-    this.childrenCount = count;
-  };
-
   updateWidths = (widths: number[]) => {
     requestAnimationFrame(
       action(() => {
@@ -125,30 +125,48 @@ export class ResizableGroupStore {
     }
 
     let offset = e.clientX - this.resizeStart.x;
+    const decrementSide = offset < 0 ? 'left' : 'right';
+
+    const shouldGrow = (index, side) =>
+      this.resizingIndex - 1 !== index
+        ? !this.configs[index].onlyShrink || decrementSide === side
+        : true;
 
     let leftSideTotal = 0;
     let rightSideTotal = 0;
 
     this.activeChildren.forEach((size, index) => {
       if (this.activeChildren[index]) {
-        if (index < this.resizingIndex) {
+        if (index < this.resizingIndex && shouldGrow(index, 'left')) {
           leftSideTotal += this.resizeStart.widths[index];
-        } else if (index >= this.resizingIndex) {
+        } else if (index >= this.resizingIndex && shouldGrow(index, 'right')) {
           rightSideTotal += this.resizeStart.widths[index];
         }
       }
     });
 
+    const getDelta = (index: number, side: 'left' | 'right') => {
+      const proportion =
+        this.resizeStart.widths[index] /
+        (side === 'left' ? leftSideTotal : rightSideTotal);
+
+      return offset * proportion;
+    };
+
     const newWidths = this.activeChildren.map((size, index) => {
       if (size) {
-        if (index < this.resizingIndex && leftSideTotal) {
-          const proportion = this.resizeStart.widths[index] / leftSideTotal;
-
-          return this.resizeStart.widths[index] + offset * proportion;
-        } else if (index >= this.resizingIndex && rightSideTotal) {
-          const proportion = this.resizeStart.widths[index] / rightSideTotal;
-
-          return this.resizeStart.widths[index] - offset * proportion;
+        if (
+          index < this.resizingIndex &&
+          leftSideTotal &&
+          shouldGrow(index, 'left')
+        ) {
+          return this.resizeStart.widths[index] + getDelta(index, 'left');
+        } else if (
+          index >= this.resizingIndex &&
+          rightSideTotal &&
+          shouldGrow(index, 'right')
+        ) {
+          return this.resizeStart.widths[index] - getDelta(index, 'right');
         }
       }
 
@@ -251,9 +269,7 @@ export class ResizableGroupStore {
       )
     );
 
-  update = (props: ResizableGroupProps) => {
-    this.configs = props.configs;
-  };
+  update = () => {};
 }
 
 export const {

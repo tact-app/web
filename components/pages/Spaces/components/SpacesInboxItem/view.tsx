@@ -12,6 +12,8 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
 
   return (
     <Container
+      tabIndex={0}
+      onKeyDown={store.handleContainerKeyDown}
       p={6}
       overflow='auto'
       h='100%'
@@ -28,7 +30,7 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
         onPreviousItem={store.callbacks.onPreviousItem}
         onNextItem={store.callbacks.onNextItem}
         onClose={store.callbacks.onClose}
-        isExpanded={props.isExpanded}
+        isExpanded={store.isExpanded}
       />
       <Box mt={6} display='flex' flexDirection='column' overflow='hidden'>
         <Heading fontSize='2xl' fontWeight='semibold' mr={1} ml={1} mb={6}>

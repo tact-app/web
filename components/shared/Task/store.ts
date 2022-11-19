@@ -1,4 +1,5 @@
 import { RootStore } from '../../../stores/RootStore';
+import { KeyboardEvent } from 'react';
 import { makeAutoObservable, reaction, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import {
@@ -29,6 +30,7 @@ export type TaskProps = {
     onStatusChange?: (taskId: string, status: TaskStatus) => void;
     onTaskChange?: (task: TaskData) => void;
     onTagCreate?: (tag: TaskTag) => void;
+    onFocus?: () => void;
   };
   spaces: SpaceData[];
   tagsMap: Record<string, TaskTag>;
@@ -127,6 +129,22 @@ class TaskStore {
     this.callbacks.onClose?.();
   };
 
+  handleContainerKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && this.isExpanded) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.callbacks.onCollapse?.();
+    } else if (e.key === 'e' && e.metaKey) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (this.isExpanded) {
+        this.callbacks.onCollapse?.();
+      } else {
+        this.callbacks.onExpand?.();
+      }
+    }
+  };
+
   handleStatusChange = (e) => {
     const newStatus = e.target.checked ? TaskStatus.DONE : TaskStatus.TODO;
 
@@ -154,7 +172,7 @@ class TaskStore {
       if (direction === NavigationDirections.DOWN) {
         this.isEditorFocused = true;
       } else if (direction === NavigationDirections.UP) {
-        this.quickEditor.focusFirstFilledMode();
+        return this.quickEditor.focusFirstFilledMode();
       }
 
       return true;

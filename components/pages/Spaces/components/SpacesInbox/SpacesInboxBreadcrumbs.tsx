@@ -20,7 +20,15 @@ const SpacesInboxBreadcrumbsItem = (props: {
     onClick={props.onClick}
     mr={2}
   >
-    <chakra.span mr={2}>{props.name}</chakra.span>
+    <chakra.span
+      mr={2}
+      maxWidth={48}
+      overflow='hidden'
+      textOverflow='ellipsis'
+      whiteSpace='nowrap'
+    >
+      {props.name}
+    </chakra.span>
     {!props.isLast ? <FontAwesomeIcon icon={faChevronRight} /> : ''}
   </chakra.span>
 );

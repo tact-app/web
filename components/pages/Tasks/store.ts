@@ -1,11 +1,16 @@
 import { RootStore } from '../../../stores/RootStore';
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { FocusConfigurationData } from './components/FocusConfiguration/store';
-import { FocusConfiguration } from './components/FocusConfiguration';
+import {
+  FocusConfigurationData,
+  FocusConfigurationProps,
+} from './components/FocusConfiguration/store';
 import { TaskData, TaskPriority } from '../../shared/TasksList/types';
 import { TasksListProps, TasksListStore } from '../../shared/TasksList/store';
 import { TaskProps } from '../../shared/Task/store';
+import { ResizableGroupConfig } from '../../shared/ResizableGroup/store';
+
+const FOCUS_MODE_WIDTH = 300;
 
 export class TasksStore {
   constructor(public root: RootStore) {
@@ -24,6 +29,23 @@ export class TasksStore {
   isTaskExpanded: boolean = false;
   isFocusModeActive: boolean = false;
   isSilentFocusMode: boolean = false;
+
+  resizableConfig: ResizableGroupConfig[] = [
+    {
+      size: 0,
+      width: 0,
+      minWidth: FOCUS_MODE_WIDTH,
+    },
+    {
+      size: 2,
+      flexible: true,
+      minWidth: 400,
+    },
+    {
+      size: 1,
+      minWidth: 200,
+    },
+  ];
 
   keyMap = {
     FOCUS_MODE: 'f',
@@ -44,6 +66,10 @@ export class TasksStore {
   get isHotkeysEnabled() {
     return this.list.isHotkeysEnabled;
   }
+
+  getItemsCount = () => {
+    return this.list.draggableList.activeItems.length;
+  };
 
   checkFocusModeMatch = (task: TaskData) => {
     const { goals, showImportant } = this.focusModeConfiguration;
@@ -70,6 +96,8 @@ export class TasksStore {
     const isOpen = !this.isFocusModeActive;
     this.isFocusModeActive = !this.isFocusModeActive;
 
+    this.resetLayout();
+
     if (isOpen) {
       this.list.draggableList.revalidateFocusedItems();
 
@@ -85,33 +113,36 @@ export class TasksStore {
       if (silent) {
         this.isSilentFocusMode = true;
         this.loadFocusModeConfiguration();
+
+        return;
       } else {
-        this.root.menu.setReplacer(FocusConfiguration, {
-          goals: this.list.goals,
-          getItemsCount: () => this.list.draggableList.activeItems.length,
-          callbacks: {
-            onChange: this.setFocusModeConfiguration,
-            onClose: this.toggleFocusMode,
-            onFocus: this.list.draggableList.resetFocusedItem,
-            onBlur: this.list.draggableList.focusFirstItem,
-            onGoalCreateClick: (cb) =>
-              this.list.modals.openGoalCreationModal(cb),
-          },
-        });
+        this.resizableConfig[0].width = FOCUS_MODE_WIDTH;
       }
     } else {
-      this.root.menu.resetReplacer();
+      this.isSilentFocusMode = false;
+      this.resizableConfig[0].width = 0;
     }
+  };
 
-    this.isSilentFocusMode = false;
+  resetLayout = () => {
+    this.isTaskExpanded = false;
+    this.resizableConfig[2].size = 1;
+    this.resizableConfig[1].size = 2;
+    this.resizableConfig[0].width =
+      this.isFocusModeActive && !this.isSilentFocusMode ? FOCUS_MODE_WIDTH : 0;
   };
 
   handleExpandTask = () => {
     this.isTaskExpanded = true;
+    this.resizableConfig[2].size = 1;
+    this.resizableConfig[1].size = 0;
+    this.resizableConfig[0].width = 0;
   };
 
   handleCollapseTask = () => {
+    console.log('reset');
     this.isTaskExpanded = false;
+    this.resetLayout();
   };
 
   handleToggleFocusMode = () => {
@@ -149,6 +180,15 @@ export class TasksStore {
 
   tasksListCallbacks: TasksListProps['callbacks'] = {
     onInit: this.setFirstFocus,
+    onCloseTask: this.handleCollapseTask,
+  };
+
+  focusConfigurationCallbacks: FocusConfigurationProps['callbacks'] = {
+    onChange: this.setFocusModeConfiguration,
+    onClose: this.toggleFocusMode,
+    onFocus: this.list.draggableList.resetFocusedItem,
+    onBlur: this.list.draggableList.focusFirstItem,
+    onGoalCreateClick: (cb) => this.list.modals.openGoalCreationModal(cb),
   };
 }
 
