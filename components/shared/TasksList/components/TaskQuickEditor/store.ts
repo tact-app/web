@@ -413,10 +413,11 @@ export class TaskQuickEditorStore {
   };
 
   handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+
     if (!this.isModeActive) {
       this.handleKeyDownInStdMode(e);
     } else {
-      this.activeMode.handleKeyDown?.(e);
       this.handleKeyDownWithActiveMode(e);
     }
   };
@@ -586,7 +587,7 @@ export class TaskQuickEditorStore {
     if (task) {
       if (
         (this.task === null && task) ||
-        (task && this.task && this.task?.id !== task.id)
+        (task && this.task && this.task.id !== task.id)
       ) {
         this.savedCaretPosition = task.title.length;
       }
