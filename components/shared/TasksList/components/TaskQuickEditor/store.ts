@@ -111,7 +111,7 @@ export class TaskQuickEditorStore {
   focused: boolean = false;
   input: HTMLInputElement | null = null;
 
-  savedCaretPosition: number = 0;
+  savedCaretPosition: number = this.task ? this.task.title.length : 0;
 
   get isModeActive() {
     return this.activeModeType !== Modes.DEFAULT;
@@ -546,14 +546,16 @@ export class TaskQuickEditorStore {
       if (this.callbacks.onNavigate?.(castArrowToDirection(e.key))) {
         this.leave();
       }
-    } else if (
-      e.key === 'ArrowRight' &&
-      (e.target as HTMLInputElement).selectionEnd === this.value.length &&
-      this.input.selectionStart === this.input.selectionEnd
-    ) {
+    } else if (e.key === 'ArrowRight') {
       e.stopPropagation();
-      e.preventDefault();
-      this.focusFirstFilledMode();
+      if (
+        (e.target as HTMLInputElement).selectionEnd === this.value.length &&
+        this.input.selectionStart === this.input.selectionEnd
+      ) {
+        this.focusFirstFilledMode();
+      }
+    } else if (e.key === 'ArrowLeft') {
+      e.stopPropagation();
     }
   };
 
@@ -582,6 +584,13 @@ export class TaskQuickEditorStore {
     this.modes.goal.goals = goals;
 
     if (task) {
+      if (
+        (this.task === null && task) ||
+        (task && this.task && this.task?.id !== task.id)
+      ) {
+        this.savedCaretPosition = task.title.length;
+      }
+
       this.reset();
       this.task = task;
       this.value = task.title;

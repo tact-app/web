@@ -91,7 +91,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                   bg: color + '.75',
                 }}
               >
-                <Box display='flex' alignItems='center' minWidth={0}>
+                <Box display='flex' alignItems='center' minWidth={10}>
                   <SpacesSmallIcon space={space} />
                   <Text
                     ml={2}
