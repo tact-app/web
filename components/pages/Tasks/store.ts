@@ -4,8 +4,13 @@ import { getProvider } from '../../../helpers/StoreProvider';
 import {
   FocusConfigurationData,
   FocusConfigurationProps,
+  FocusConfigurationStore,
 } from './components/FocusConfiguration/store';
-import { TaskData, TaskPriority } from '../../shared/TasksList/types';
+import {
+  NavigationDirections,
+  TaskData,
+  TaskPriority,
+} from '../../shared/TasksList/types';
 import { TasksListProps, TasksListStore } from '../../shared/TasksList/store';
 import { TaskProps } from '../../shared/Task/store';
 import { ResizableGroupConfig } from '../../shared/ResizableGroup/store';
@@ -18,6 +23,7 @@ export class TasksStore {
   }
 
   list = new TasksListStore(this.root);
+  focusConfiguration = new FocusConfigurationStore(this.root);
 
   listId: string = 'default';
   focusModeConfiguration: FocusConfigurationData = {
@@ -26,6 +32,8 @@ export class TasksStore {
     showImportant: false,
   };
 
+  isTasksListFocusSaved: boolean = false;
+  isTasksListHotkeysEnabled: boolean = true;
   isTaskExpanded: boolean = false;
   isFocusModeActive: boolean = false;
   isSilentFocusMode: boolean = false;
@@ -112,6 +120,7 @@ export class TasksStore {
 
       if (silent) {
         this.isSilentFocusMode = true;
+        this.resizableConfig[0].width = 0;
         this.loadFocusModeConfiguration();
 
         return;
@@ -140,7 +149,6 @@ export class TasksStore {
   };
 
   handleCollapseTask = () => {
-    console.log('reset');
     this.isTaskExpanded = false;
     this.resetLayout();
   };
@@ -150,6 +158,33 @@ export class TasksStore {
     // it doesn't show focus on elements after mouse click
     document.dispatchEvent(new KeyboardEvent('keyup'));
     this.toggleFocusMode();
+  };
+
+  handleTasksListFocusLeave = (direction: NavigationDirections) => {
+    if (
+      direction === NavigationDirections.LEFT &&
+      this.isFocusModeActive &&
+      !this.isSilentFocusMode
+    ) {
+      this.isTasksListHotkeysEnabled = false;
+      this.isTasksListFocusSaved = true;
+      this.list.draggableList.saveFocusedItems();
+      this.focusConfiguration.focus();
+      return true;
+    }
+  };
+
+  handleFocusTasksList = () => {
+    if (this.isTasksListFocusSaved) {
+      this.list.draggableList.restoreSavedFocusedItems();
+    }
+
+    this.isTasksListHotkeysEnabled = true;
+    this.isTasksListFocusSaved = false;
+  };
+
+  handleFocusConfigurationGoalFocus = () => {
+    this.isTasksListHotkeysEnabled = false;
   };
 
   loadFocusModeConfiguration = async () => {
@@ -180,6 +215,7 @@ export class TasksStore {
 
   tasksListCallbacks: TasksListProps['callbacks'] = {
     onInit: this.setFirstFocus,
+    onFocusLeave: this.handleTasksListFocusLeave,
     onCloseTask: this.handleCollapseTask,
   };
 
@@ -187,7 +223,8 @@ export class TasksStore {
     onChange: this.setFocusModeConfiguration,
     onClose: this.toggleFocusMode,
     onFocus: this.list.draggableList.resetFocusedItem,
-    onBlur: this.list.draggableList.focusFirstItem,
+    onBlur: this.handleFocusTasksList,
+    onGoalFocused: this.handleFocusConfigurationGoalFocus,
     onGoalCreateClick: (cb) => this.list.modals.openGoalCreationModal(cb),
   };
 }

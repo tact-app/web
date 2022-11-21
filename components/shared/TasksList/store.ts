@@ -22,7 +22,7 @@ export type TasksListProps = {
   input?: SpacesInboxItemData;
   dnd?: boolean;
   callbacks?: {
-    onFocusLeave?: (direction: 'left' | 'right') => boolean;
+    onFocusLeave?: (direction: NavigationDirections) => boolean;
     onOpenTask?: (hasOpenedTask: boolean) => void;
     onCloseTask?: () => void;
     onInit?: () => void | Promise<void>;
@@ -124,7 +124,7 @@ export class TasksListStore {
     FOCUS_LEAVE_LEFT: () => {
       if (this.openedTask) {
         this.closeTask();
-      } else if (this.callbacks.onFocusLeave?.('left')) {
+      } else if (this.callbacks.onFocusLeave?.(NavigationDirections.LEFT)) {
         this.draggableList.resetFocusedItem();
       }
     },
@@ -176,7 +176,7 @@ export class TasksListStore {
         return true;
       }
 
-      return this.callbacks.onFocusLeave?.('left');
+      return this.callbacks.onFocusLeave?.(NavigationDirections.INVARIANT);
     },
   };
 
@@ -205,7 +205,7 @@ export class TasksListStore {
 
   handleNavigation = (direction: NavigationDirections) => {
     if (direction === NavigationDirections.LEFT) {
-      this.callbacks.onFocusLeave?.('left');
+      this.callbacks.onFocusLeave?.(NavigationDirections.LEFT);
     } else if (
       direction === NavigationDirections.DOWN ||
       direction === NavigationDirections.UP

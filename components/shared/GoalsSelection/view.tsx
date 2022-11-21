@@ -7,10 +7,11 @@ import {
   List,
   ListItem,
   Button,
+  useOutsideClick,
 } from '@chakra-ui/react';
 import { useGoalsSelectionStore } from './store';
 import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
-import React from 'react';
+import React, { MutableRefObject } from 'react';
 import { LargePlusIcon } from '../Icons/LargePlusIcon';
 import { GoalIcon } from '../../pages/Goals/components/GoalIcon';
 
@@ -87,6 +88,11 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
 
   const ref = useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
+  useOutsideClick({
+    ref: ref as MutableRefObject<HTMLElement>,
+    handler: () => store.handleBlur(),
+  });
+
   return store.goals.length ? (
     <List
       ref={(el) => (ref.current = el)}
@@ -94,6 +100,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
       overflowY='auto'
       pl={1}
       pr={1}
+      onMouseDown={store.handleMouseDown}
     >
       {!store.multiple && (
         <GoalSelectionListItem
@@ -115,7 +122,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
       ))}
     </List>
   ) : (
-    <Box ref={(el) => (ref.current = el)}>
+    <Box ref={(el) => (ref.current = el)} onMouseDown={store.handleMouseDown}>
       <Button
         h={36}
         w='100%'

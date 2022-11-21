@@ -148,6 +148,13 @@ export class GoalsSelectionStore {
     }
   };
 
+  handleMouseDown = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.isFocused = true;
+  };
+
   handleKeyDown =
     (index: number | null) => (e: ReactKeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'ArrowUp' || e.key === 'j') {

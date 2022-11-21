@@ -34,6 +34,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
       display='flex'
       flexDirection='column'
       justifyContent='space-between'
+      onMouseDown={store.handleMouseDown}
     >
       <Box width='100%' minH={0} display='flex' flexDirection='column'>
         <HStack
@@ -79,6 +80,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
             callbacks={{
               onSelect: store.handleSelectGoal,
               onGoalCreateClick: store.handleGoalCreateClick,
+              onFocus: store.handleGoalsSelectionFocus,
             }}
           >
             <GoalsSelectionView />

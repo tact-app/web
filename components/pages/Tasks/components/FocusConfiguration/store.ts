@@ -15,7 +15,9 @@ export type FocusConfigurationProps = {
     onChange?: (data: FocusConfigurationData) => void;
     onClose?: () => void;
     onFocus?: () => void;
+    onGoalFocused?: () => void;
     onBlur?: () => void;
+    onMouseDown?: () => void;
     onGoalCreateClick?: (cb: () => void) => void;
   };
   getItemsCount: () => number;
@@ -35,12 +37,16 @@ export class FocusConfigurationStore {
     NUMBER: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     CLEAR: ['shift+backspace', 'shift+delete', 'shift+c'],
     SHOW_IMPORTANT: 'i',
+    ESCAPE: 'esc',
   };
 
   hotkeyHandlers = {
-    BLUR: () => {
-      this.goalsSelection.removeFocus();
-      this.callbacks.onBlur?.();
+    BLUR: (e) => {
+      if (this.isFocused) {
+        e.stopPropagation();
+        this.goalsSelection.removeFocus();
+        this.callbacks.onBlur?.();
+      }
     },
     NUMBER: (e: KeyboardEvent) => {
       if (this.goalsSelection.isFocused) {
@@ -62,10 +68,18 @@ export class FocusConfigurationStore {
       this.goalsSelection.focusFirst();
       this.callbacks.onFocus?.();
     },
+    ESCAPE: () => {
+      if (this.isFocused) {
+        this.goalsSelection.removeFocus();
+        this.callbacks.onBlur?.();
+      }
+    },
   };
 
   callbacks: FocusConfigurationProps['callbacks'] = {};
   goals: FocusConfigurationProps['goals'] = [];
+
+  isBlockFocused: boolean = false;
 
   data: FocusConfigurationData = {
     id: 'default',
@@ -73,11 +87,18 @@ export class FocusConfigurationStore {
     showImportant: false,
   };
 
-  isFocused: boolean = false;
+  get isFocused() {
+    return this.isBlockFocused || this.goalsSelection.isFocused;
+  }
 
   get hasConfiguration() {
     return this.data.goals.length > 0 || this.data.showImportant;
   }
+
+  focus = () => {
+    this.goalsSelection.focusFirst();
+    this.callbacks.onFocus?.();
+  };
 
   handleSelectGoal = () => {
     this.data.goals = this.goalsSelection.checked;
@@ -93,6 +114,16 @@ export class FocusConfigurationStore {
     this.callbacks.onGoalCreateClick?.(() => {
       setTimeout(() => this.goalsSelection.focusFirst());
     });
+  };
+
+  handleGoalsSelectionFocus = () => {
+    this.isBlockFocused = true;
+    this.callbacks.onGoalFocused?.();
+  };
+
+  handleMouseDown = () => {
+    this.isBlockFocused = true;
+    this.callbacks.onMouseDown?.();
   };
 
   sendChanges = () => {

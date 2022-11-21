@@ -20,6 +20,7 @@ import {
   getRandomOrigins,
   getStubItems,
 } from './modals/SpaceCreationModal/stubs';
+import { NavigationDirections } from '../../shared/TasksList/types';
 
 export type SpacesProps = {};
 
@@ -157,20 +158,24 @@ export class SpacesStore {
     this.resizableConfig = [...this.resizableConfig];
   };
 
-  handleFocusLeave = (direction: 'left' | 'right') => {
+  handleFocusLeave = (direction: NavigationDirections) => {
     this.resetExpanded();
 
     if (this.focusedBlockId === SpacesFocusableBlocks.TREE) {
       this.focusedBlockId = SpacesFocusableBlocks.INBOX;
     } else if (this.focusedBlockId === SpacesFocusableBlocks.INBOX) {
-      if (direction === 'left') {
+      if (direction === NavigationDirections.LEFT) {
         this.focusedBlockId = SpacesFocusableBlocks.TREE;
       } else if (this.openedItem) {
         this.focusedBlockId = SpacesFocusableBlocks.INBOX_ITEM;
         this.inboxItem.list.creator.setFocus(true);
       }
     } else if (this.focusedBlockId === SpacesFocusableBlocks.INBOX_ITEM) {
-      if (direction === 'left') {
+      if (
+        direction === NavigationDirections.LEFT ||
+        direction === NavigationDirections.INVARIANT
+      ) {
+        this.inboxItem.list.draggableList.resetFocusedItem();
         this.focusedBlockId = SpacesFocusableBlocks.INBOX;
       }
     }
@@ -246,7 +251,7 @@ export class SpacesStore {
     onSpaceChange: this.handleSpaceChange,
     onPathChange: this.handlePathSelect,
     onFocus: () => this.handleFocus(SpacesFocusableBlocks.TREE),
-    onFocusLeave: () => this.handleFocusLeave('right'),
+    onFocusLeave: () => this.handleFocusLeave(NavigationDirections.RIGHT),
     onSpaceCreationClick: this.handleSpaceCreationClick,
     onSpaceSettingsClick: this.handleSpaceSettingsClick,
     onSpaceOriginAddClick: this.handleSpaceAddOriginClick,

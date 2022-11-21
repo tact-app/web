@@ -48,6 +48,7 @@ export class DraggableListStore {
   checkItemActivity?: (id: string) => boolean;
 
   lastFocusedItemId: string | null = null;
+  savedFocusedItemIds: string[] = [];
   focusedItemIds: string[] = [];
   items: string[] = [];
 
@@ -447,6 +448,20 @@ export class DraggableListStore {
           block: 'nearest',
         });
       });
+    }
+  };
+
+  saveFocusedItems = () => {
+    this.savedFocusedItemIds = [...this.focusedItemIds];
+  };
+
+  restoreSavedFocusedItems = () => {
+    this.resetFocusedItem();
+
+    if (this.savedFocusedItemIds.length) {
+      this.addFocusedItems(this.savedFocusedItemIds);
+    } else {
+      this.focusFirstItem();
     }
   };
 

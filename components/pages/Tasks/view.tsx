@@ -24,9 +24,7 @@ import { ResizableGroupChild } from '../../shared/ResizableGroup/ResizableGroupC
 export const TasksView = observer(function TasksView() {
   const store = useTasksStore();
 
-  useHotkeysHandler(store.keyMap, store.hotkeyHandlers, {
-    enabled: store.isHotkeysEnabled,
-  });
+  useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
   return (
     <>
@@ -44,6 +42,7 @@ export const TasksView = observer(function TasksView() {
             <chakra.div h='100%'>
               {store.isFocusModeActive && !store.isSilentFocusMode ? (
                 <FocusConfiguration
+                  instance={store.focusConfiguration}
                   callbacks={store.focusConfigurationCallbacks}
                   getItemsCount={store.getItemsCount}
                   goals={store.list.goals}
@@ -83,6 +82,7 @@ export const TasksView = observer(function TasksView() {
                 </HStack>
                 <TasksList
                   callbacks={store.tasksListCallbacks}
+                  isHotkeysEnabled={store.isTasksListHotkeysEnabled}
                   dnd={true}
                   instance={store.list}
                   highlightActiveTasks={store.isFocusModeActive}

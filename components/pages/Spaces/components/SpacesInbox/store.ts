@@ -2,13 +2,14 @@ import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { RootStore } from '../../../../../stores/RootStore';
 import { SpaceData, SpacesInboxItemData } from '../../types';
+import { NavigationDirections } from '../../../../shared/TasksList/types';
 
 export type SpacesInboxProps = {
   space: SpaceData;
   selectedPath: string[];
   itemsLoader: () => Promise<SpacesInboxItemData[]>;
   callbacks: {
-    onFocusLeave?: (direction: 'left' | 'right') => void;
+    onFocusLeave?: (direction: NavigationDirections) => void;
     onFocus?: () => void;
     onTodayHelpClick?: () => void;
     onPathChange?: (path: string[]) => void;
@@ -41,11 +42,11 @@ export class SpacesInboxStore {
       this.navigate('down');
     },
     LEAVE_LEFT: () => {
-      this.callbacks.onFocusLeave?.('left');
+      this.callbacks.onFocusLeave?.(NavigationDirections.LEFT);
     },
     LEAVE_RIGHT: () => {
       this.selectFocusedItem();
-      this.callbacks.onFocusLeave?.('right');
+      this.callbacks.onFocusLeave?.(NavigationDirections.RIGHT);
     },
     SELECT: () => this.selectFocusedItem(),
     UNSELECT: () => this.selectItem(null),

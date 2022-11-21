@@ -108,7 +108,7 @@ export class SpaceModeStore {
 
   reset = () => {
     this.strValue = '';
-    this.selectedSpaceId = this.defaultSpace.id;
+    this.selectedSpaceId = this.defaultSpace?.id || null;
   };
 
   handleSuggestionSelect = (index: number) => {
