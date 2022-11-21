@@ -130,6 +130,7 @@ export class TasksStore {
     } else {
       this.isSilentFocusMode = false;
       this.resizableConfig[0].width = 0;
+      this.handleFocusTasksList();
     }
   };
 
