@@ -52,6 +52,10 @@ export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({
       }}
       {...rest}
     >
+      <TaskQuickEditorMenu
+        items={store.modes.priority.suggestions}
+        openForMode={Modes.PRIORITY}
+      />
       <chakra.div flex={1}>
         <TaskPriorityIcon priority={store.modes.priority.priority} />
       </chakra.div>
@@ -60,10 +64,6 @@ export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({
           {TaskPriorityNames[store.modes.priority.priority]}
         </chakra.span>
       ) : null}
-      <TaskQuickEditorMenu
-        items={store.modes.priority.suggestions}
-        openForMode={Modes.PRIORITY}
-      />
     </Button>
   ) : null;
 });

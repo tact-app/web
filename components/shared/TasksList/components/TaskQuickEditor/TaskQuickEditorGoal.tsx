@@ -40,6 +40,10 @@ export const TaskQuickEditorGoal = observer(function TaskQuickEditorGoal({
       }}
       {...rest}
     >
+      <TaskQuickEditorMenu
+        items={store.modes.goal.suggestions}
+        openForMode={Modes.GOAL}
+      />
       <chakra.div
         flex={1}
         display='flex'
@@ -61,10 +65,6 @@ export const TaskQuickEditorGoal = observer(function TaskQuickEditorGoal({
           {goal.title}
         </chakra.span>
       ) : null}
-      <TaskQuickEditorMenu
-        items={store.modes.goal.suggestions}
-        openForMode={Modes.GOAL}
-      />
     </Button>
   ) : null;
 });

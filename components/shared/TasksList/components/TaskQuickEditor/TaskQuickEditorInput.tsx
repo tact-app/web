@@ -18,8 +18,18 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
 
   return (
     <Box w='100%' position='relative'>
-      <chakra.div position='absolute' overflow='hidden' w='100%' display='flex'>
-        <chakra.span visibility='hidden' overflow='hidden' whiteSpace='nowrap'>
+      <chakra.div
+        position='absolute'
+        overflow='hidden'
+        maxW='100%'
+        display='flex'
+      >
+        <chakra.span
+          visibility='hidden'
+          overflow='hidden'
+          whiteSpace='nowrap'
+          {...rest}
+        >
           {store.isModeActive
             ? store.value.slice(0, store.modeStartPos)
             : store.value}

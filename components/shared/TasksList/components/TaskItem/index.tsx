@@ -14,7 +14,7 @@ import {
 
 const useTasksItemStoreInstance = () => useTaskItemStore().quickEdit;
 
-const modesOrder = [Modes.TAG];
+const modesOrder = [Modes.PRIORITY, Modes.TAG];
 
 const TaskItem = observer(function TaskItem(
   props: TaskItemProps & TaskQuickEditorProps

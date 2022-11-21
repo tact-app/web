@@ -7,7 +7,7 @@ import {
   Portal,
   chakra,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React, { PropsWithChildren, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Modes, useTaskQuickEditorStore } from './store';
 
@@ -16,10 +16,11 @@ export const SUGGESTIONS_MENU_ID = 'task-quick-editor-suggestions';
 export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
   items,
   openForMode,
-}: {
+  children,
+}: PropsWithChildren<{
   items: React.ReactNode[];
   openForMode?: Modes;
-}) {
+}>) {
   const store = useTaskQuickEditorStore();
   const isOpen = openForMode
     ? store.suggestionsMenu.openForMode === openForMode
@@ -29,31 +30,24 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
     if (isOpen && items.length !== store.suggestionsMenu.itemsCount) {
       store.suggestionsMenu.setCount(items.length);
     }
-  }, [
-    isOpen,
-    items.length,
-    store.suggestionsMenu,
-    store.suggestionsMenu.itemsCount,
-  ]);
+  }, [isOpen, items.length, store.suggestionsMenu, store.suggestionsMenu.itemsCount]);
 
   return (
     <Popover
       isOpen={isOpen}
-      placement={openForMode ? 'bottom' : 'bottom-start'}
-      offset={[0, 40]}
+      placement={'bottom-start'}
+      offset={[0, openForMode ? 24 : 8]}
       isLazy
       autoFocus={false}
     >
-      <PopoverTrigger>
-        <chakra.span />
-      </PopoverTrigger>
+      <PopoverTrigger>{children ? children : <chakra.span />}</PopoverTrigger>
       <Portal>
         <PopoverContent
           data-id={SUGGESTIONS_MENU_ID}
           onClick={(e) => e.stopPropagation()}
           p={0}
           boxShadow='lg'
-          onFocus={store.handleFocus}
+          onFocus={store.handleFocusMenu}
           minW={32}
           maxW={72}
           width='auto'
@@ -84,6 +78,10 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
                     ? (el) => store.suggestionsMenu.setRef(el)
                     : undefined
                 }
+                _focus={{
+                  outline: 'none',
+                  boxShadow: 'none',
+                }}
               >
                 {child}
               </Button>

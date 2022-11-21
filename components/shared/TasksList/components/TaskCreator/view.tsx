@@ -43,6 +43,7 @@ export const TaskCreatorView = observer(function TaskCreator(
   const ref = useRef(null);
 
   useOutsideClick({
+    enabled: store.isInputFocused,
     ref: ref,
     handler: store.handleClickOutside,
   });
@@ -50,7 +51,7 @@ export const TaskCreatorView = observer(function TaskCreator(
   return (
     <Box position='relative'>
       <InputWrapper
-        variant={!store.focused ? 'primary' : 'focused'}
+        variant={!store.isInputFocused ? 'primary' : 'focused'}
         size='md'
         alignItems='center'
         display='flex'
@@ -89,7 +90,7 @@ export const TaskCreatorView = observer(function TaskCreator(
         </InputGroup>
       </InputWrapper>
       <HStack h={5} mt={2} mb={1} ml={5}>
-        <Fade in={store.focused}>
+        <Fade in={store.isInputFocused}>
           <Text color='gray.400' fontSize='xs' fontWeight='normal'>
             Type
             <HotkeyHint>#</HotkeyHint> for tags,

@@ -23,6 +23,8 @@ export class TaskQuickEditorSuggestionsMenu {
 
   openFor = (mode: Modes) => {
     this.openForMode = mode;
+
+    setTimeout(() => this.focusFirst());
   };
 
   closeForMode = () => {
@@ -81,6 +83,11 @@ export class TaskQuickEditorSuggestionsMenu {
     if (this.itemRef) {
       this.itemRef.click();
     }
+  };
+
+  focusFirst = () => {
+    this.setIndex(0);
+    this.itemRef?.focus();
   };
 
   setRef = (el: HTMLButtonElement) => {

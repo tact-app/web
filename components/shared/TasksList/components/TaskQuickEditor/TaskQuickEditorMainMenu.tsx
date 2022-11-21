@@ -15,7 +15,7 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
   const store = useTaskQuickEditorStore();
 
   return (
-    <chakra.div visibility={store.focused ? 'visible' : 'hidden'}>
+    <chakra.div visibility={store.isInputFocused ? 'visible' : 'hidden'}>
       <Menu
         isOpen={store.isMenuOpen}
         onClose={store.closeMenu}

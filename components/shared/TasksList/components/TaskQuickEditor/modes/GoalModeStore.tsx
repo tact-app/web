@@ -3,6 +3,8 @@ import { makeAutoObservable } from 'mobx';
 import { GoalData } from '../../../../../pages/Goals/types';
 import { chakra } from '@chakra-ui/react';
 import { GoalIcon } from '../../../../../pages/Goals/components/GoalIcon';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashCan } from '@fortawesome/pro-regular-svg-icons';
 
 export type GoalModeCallbacks = {
   onExit: () => void;
@@ -67,13 +69,24 @@ export class GoalModeStore {
       </chakra.div>
     ));
 
-    if (goals.length) {
-      return goals;
-    } else if (this.goals.length) {
-      return [<>Goal not found</>];
-    } else {
-      return [<>You haven&apos;t created any goal yet</>];
+    if (!goals.length) {
+      if (this.goals.length && this.strValue.length > 1) {
+        goals.push(<>Goal not found</>);
+      } else if (!this.goals.length) {
+        goals.push(<>You haven&apos;t created any goal yet</>);
+      }
     }
+
+    if (this.selectedGoalId && this.strValue.length <= 1) {
+      goals.push(
+        <chakra.span>
+          <FontAwesomeIcon icon={faTrashCan} fixedWidth />
+          <chakra.span ml={1}>Unlink goal</chakra.span>
+        </chakra.span>
+      );
+    }
+
+    return goals;
   }
 
   setButtonRef = (ref: HTMLButtonElement | null) => {

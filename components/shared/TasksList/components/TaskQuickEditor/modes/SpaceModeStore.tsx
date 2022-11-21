@@ -3,6 +3,8 @@ import { makeAutoObservable } from 'mobx';
 import { SpaceData } from '../../../../../pages/Spaces/types';
 import { chakra } from '@chakra-ui/react';
 import { SpacesSmallIcon } from '../../../../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashCan } from '@fortawesome/pro-regular-svg-icons';
 
 export type SpaceModeCallbacks = {
   onExit: () => void;
@@ -67,13 +69,24 @@ export class SpaceModeStore {
       </chakra.div>
     ));
 
-    if (spaces.length) {
-      return spaces;
-    } else if (this.spaces.length) {
-      return [<>Space not found</>];
-    } else {
-      return [<>You haven&apos;t created any space yet</>];
+    if (!spaces.length) {
+      if (this.spaces.length && this.strValue.length > 1) {
+        spaces.push(<>Space not found</>);
+      } else if (!this.spaces.length) {
+        spaces.push(<>You haven&apos;t created any space yet</>);
+      }
     }
+
+    if (this.selectedSpaceId && this.strValue.length <= 1) {
+      spaces.push(
+        <chakra.span>
+          <FontAwesomeIcon icon={faTrashCan} fixedWidth />
+          <chakra.span ml={1}>Unlink space</chakra.span>
+        </chakra.span>
+      );
+    }
+
+    return spaces;
   }
 
   setButtonRef = (ref: HTMLButtonElement | null) => {
@@ -99,8 +112,10 @@ export class SpaceModeStore {
   };
 
   handleSuggestionSelect = (index: number) => {
-    if (this.filteredSpaces.length) {
+    if (this.filteredSpaces.length && index < this.filteredSpaces.length) {
       this.selectedSpaceId = this.filteredSpaces[index].id;
+    } else if (this.selectedSpaceId && index === this.filteredSpaces.length) {
+      this.selectedSpaceId = null;
     }
 
     this.disable();

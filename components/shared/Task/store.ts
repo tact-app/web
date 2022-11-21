@@ -172,7 +172,9 @@ class TaskStore {
       if (direction === NavigationDirections.DOWN) {
         this.isEditorFocused = true;
       } else if (direction === NavigationDirections.UP) {
-        return this.quickEditor.focusFirstFilledMode();
+        this.quickEditor.focusFirstFilledMode();
+
+        return false;
       }
 
       return true;

@@ -50,6 +50,8 @@ const castArrowToDirection = (key: string): NavigationDirections => {
   switch (key) {
     case 'ArrowDown':
       return NavigationDirections.DOWN;
+    case 'Tab':
+      return NavigationDirections.DOWN;
     case 'ArrowUp':
       return NavigationDirections.UP;
     case 'ArrowLeft':
@@ -108,7 +110,8 @@ export class TaskQuickEditorStore {
   task: TaskQuickEditorProps['task'] = null;
   listId: string;
   value: string = '';
-  focused: boolean = false;
+  isInputFocused: boolean = false;
+  isMenuFocused: boolean = false;
   input: HTMLInputElement | null = null;
 
   savedCaretPosition: number = this.task ? this.task.title.length : 0;
@@ -178,10 +181,10 @@ export class TaskQuickEditorStore {
   };
 
   exitMode = (silent?: boolean) => {
-    this.activeModeType = Modes.DEFAULT;
-    this.suggestionsMenu.close();
+    if (!silent && this.activeMode) {
+      this.activeModeType = Modes.DEFAULT;
+      this.suggestionsMenu.close();
 
-    if (!silent) {
       this.value =
         this.value.slice(0, this.modeStartPos) +
         this.value.slice(this.modeEndPos);
@@ -198,7 +201,7 @@ export class TaskQuickEditorStore {
   };
 
   openMenu = () => {
-    this.focused = true;
+    this.isInputFocused = true;
     this.isMenuOpen = true;
   };
 
@@ -211,7 +214,7 @@ export class TaskQuickEditorStore {
   };
 
   setFocus = (focusInput?: boolean) => {
-    this.focused = true;
+    this.isInputFocused = true;
 
     if (this.isModeActive) {
       this.suggestionsMenu.open();
@@ -231,7 +234,8 @@ export class TaskQuickEditorStore {
   };
 
   removeFocus = () => {
-    this.focused = false;
+    this.isInputFocused = false;
+    this.isMenuFocused = false;
     this.input?.blur();
 
     this.closeMenu();
@@ -242,7 +246,7 @@ export class TaskQuickEditorStore {
   handleClickOutside = (e: Event) => {
     let currentElem = e.target as HTMLElement;
 
-    if (this.focused) {
+    if (this.isInputFocused || this.isMenuFocused) {
       while (currentElem) {
         const attr = currentElem.getAttribute('data-id');
 
@@ -258,6 +262,8 @@ export class TaskQuickEditorStore {
       this.suggestionsMenu.close();
       this.suggestionsMenu.closeForMode();
     }
+
+    this.isMenuFocused = false;
   };
 
   leave = () => {
@@ -341,10 +347,10 @@ export class TaskQuickEditorStore {
       });
 
       if (this.keepFocus) {
-        this.focused = true;
+        this.isInputFocused = true;
         this.value = '';
         this.resetModes();
-      } else if (this.focused) {
+      } else if (this.isInputFocused) {
         this.removeFocus();
       }
     }
@@ -355,6 +361,10 @@ export class TaskQuickEditorStore {
     this.focusedMode = null;
     this.suggestionsMenu.closeForMode();
     this.callbacks.onFocus?.();
+  };
+
+  handleFocusMenu = () => {
+    this.isMenuFocused = true;
   };
 
   handleSuggestionSelect = (index: number) => {
@@ -368,8 +378,10 @@ export class TaskQuickEditorStore {
       );
       this.suggestionsMenu.closeForMode();
 
-      if (this.focused) {
+      if (this.isInputFocused) {
         this.setFocus(true);
+      } else if (!this.keepFocus) {
+        this.saveTask();
       }
     }
   };
@@ -413,26 +425,30 @@ export class TaskQuickEditorStore {
   };
 
   handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-
-    if (!this.isModeActive) {
-      this.handleKeyDownInStdMode(e);
+    if (e.key === 'e' && e.metaKey) {
+      return;
     } else {
-      this.handleKeyDownWithActiveMode(e);
+      e.stopPropagation();
+
+      if (!this.isModeActive) {
+        this.handleKeyDownInStdMode(e);
+      } else {
+        this.handleKeyDownWithActiveMode(e);
+      }
     }
   };
 
   handleSuggestionMenuNavigation = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowDown') {
-      e.stopPropagation();
-      e.preventDefault();
-      this.suggestionsMenu.next();
-
-      return true;
-    } else if (e.key === 'ArrowUp') {
+    if (e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey)) {
       e.stopPropagation();
       e.preventDefault();
       this.suggestionsMenu.prev();
+
+      return true;
+    } else if (e.key === 'ArrowDown' || e.key === 'Tab') {
+      e.stopPropagation();
+      e.preventDefault();
+      this.suggestionsMenu.next();
 
       return true;
     } else if (e.key === 'Enter') {
@@ -464,6 +480,7 @@ export class TaskQuickEditorStore {
 
         if (this.suggestionsMenu.openForMode !== Modes.DEFAULT) {
           this.suggestionsMenu.closeForMode();
+          this.focusMode(modeType, 'first');
         } else {
           this.setFocus(true);
         }
@@ -475,26 +492,32 @@ export class TaskQuickEditorStore {
         this.modes[modeType].reset();
         this.setFocus(true);
         return true;
-      } else if (
-        this.suggestionsMenu.openForMode === Modes.DEFAULT &&
-        (e.key === 'ArrowDown' ||
+      } else if (this.suggestionsMenu.openForMode === Modes.DEFAULT) {
+        if (
+          e.key === 'ArrowDown' ||
           e.key === 'ArrowUp' ||
           e.key === 'ArrowLeft' ||
-          e.key === 'ArrowRight')
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.key === 'ArrowRight' && this.focusNextFilledMode()) {
-          return true;
-        } else if (e.key === 'ArrowLeft' && this.focusPrevFilledMode()) {
-          return true;
-        } else if (
-          this.callbacks.onModeNavigate?.(modeType, castArrowToDirection(e.key))
+          e.key === 'ArrowRight'
         ) {
-          return true;
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.key === 'ArrowRight' && this.focusNextFilledMode()) {
+            return true;
+          } else if (e.key === 'ArrowLeft' && this.focusPrevFilledMode()) {
+            return true;
+          } else if (
+            this.callbacks.onModeNavigate?.(
+              modeType,
+              castArrowToDirection(e.key)
+            )
+          ) {
+            return true;
+          } else {
+            this.setFocus(true);
+            return true;
+          }
         } else {
-          this.setFocus(true);
-          return true;
+          return false;
         }
       }
 
@@ -540,7 +563,11 @@ export class TaskQuickEditorStore {
     } else if (mode) {
       e.stopPropagation();
       this.enterMode(mode, e);
-    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    } else if (
+      e.key === 'ArrowDown' ||
+      e.key === 'ArrowUp' ||
+      e.key === 'Tab'
+    ) {
       e.stopPropagation();
       e.preventDefault();
 
