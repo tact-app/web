@@ -125,7 +125,7 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
           </Container>
         </ModalBody>
         <ModalFooter>
-          {store.existedSpace && (
+          {store.existedSpace && store.existedSpace.type !== 'personal' && (
             <Container maxW='2xl'>
               <Divider />
               <Box

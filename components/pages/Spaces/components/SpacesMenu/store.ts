@@ -595,6 +595,7 @@ export class SpacesMenuStore {
       this.spaces.unshift({
         id: 'all',
         color: 'gray',
+        type: 'all',
         name: 'All spaces',
         shortName: 'A',
         children: [],
@@ -635,6 +636,7 @@ export class SpacesMenuStore {
     if (spaces.length > 1) {
       spaces.unshift({
         id: 'all',
+        type: 'all',
         color: 'gray',
         name: 'All spaces',
         shortName: 'A',

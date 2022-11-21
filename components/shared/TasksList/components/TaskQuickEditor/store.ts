@@ -623,12 +623,15 @@ export class TaskQuickEditorStore {
       this.task = task;
       this.value = task.title;
       this.modes.priority.priority = task.priority;
-      this.modes.space.selectedSpaceId = task.spaceId;
+      this.modes.space.selectedSpaceId =
+        task.spaceId || this.modes.space.defaultSpace.id;
       this.modes.goal.selectedGoalId = task.goalId;
       this.modes.tag.tags = task.tags.map((tag) => ({
         id: tag,
         title: tagsMap[tag] && tagsMap[tag].title,
       }));
+    } else if (spaces.length) {
+      this.modes.space.selectedSpaceId = this.modes.space.defaultSpace.id;
     }
   };
 }

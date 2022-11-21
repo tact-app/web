@@ -4,7 +4,7 @@ import { GoalData } from '../../../../../pages/Goals/types';
 import { chakra } from '@chakra-ui/react';
 import { GoalIcon } from '../../../../../pages/Goals/components/GoalIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashCan } from '@fortawesome/pro-regular-svg-icons';
+import { faXmark } from '@fortawesome/pro-regular-svg-icons';
 
 export type GoalModeCallbacks = {
   onExit: () => void;
@@ -79,8 +79,8 @@ export class GoalModeStore {
 
     if (this.selectedGoalId && this.strValue.length <= 1) {
       goals.push(
-        <chakra.span>
-          <FontAwesomeIcon icon={faTrashCan} fixedWidth />
+        <chakra.span display='flex' alignItems='center'>
+          <FontAwesomeIcon icon={faXmark} fixedWidth />
           <chakra.span ml={1}>Unlink goal</chakra.span>
         </chakra.span>
       );
@@ -112,7 +112,9 @@ export class GoalModeStore {
   };
 
   handleSuggestionSelect = (index: number) => {
-    if (this.filteredGoals.length) {
+    if (this.selectedGoalId && index === this.filteredGoals.length) {
+      this.selectedGoalId = null;
+    } else if (this.filteredGoals.length) {
       this.selectedGoalId = this.filteredGoals[index].id;
     }
 

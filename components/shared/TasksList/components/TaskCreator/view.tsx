@@ -67,25 +67,27 @@ export const TaskCreatorView = observer(function TaskCreator(
             pb={1}
           />
           <InputRightAddon maxW='50%' minWidth={0} justifyContent='end'>
-            <HStack w='100%'>
-              <TaskQuickEditorTags
-                collapsable
-                boxProps={{
-                  minWidth: 0,
-                  p: 1,
-                  css: {
-                    scrollbarWidth: 'none',
-                    '&::-webkit-scrollbar': {
-                      display: 'none',
+            <Fade in={store.isInputFocused}>
+              <HStack w='100%'>
+                <TaskQuickEditorTags
+                  collapsable
+                  boxProps={{
+                    minWidth: 0,
+                    p: 1,
+                    css: {
+                      scrollbarWidth: 'none',
+                      '&::-webkit-scrollbar': {
+                        display: 'none',
+                      },
                     },
-                  },
-                }}
-              />
-              <TaskQuickEditorSpace />
-              <TaskQuickEditorGoal />
-              <TaskQuickEditorPriority />
-              <TaskQuickEditorMainMenu />
-            </HStack>
+                  }}
+                />
+                <TaskQuickEditorSpace />
+                <TaskQuickEditorGoal />
+                <TaskQuickEditorPriority />
+                <TaskQuickEditorMainMenu />
+              </HStack>
+            </Fade>
           </InputRightAddon>
         </InputGroup>
       </InputWrapper>

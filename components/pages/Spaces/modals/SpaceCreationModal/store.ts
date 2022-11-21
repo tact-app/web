@@ -5,6 +5,7 @@ import { SpaceData } from '../../types';
 import { SyntheticEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { getRandomOrigins } from './stubs';
+import { colors } from '../../constants';
 
 export type SpaceCreationModalProps = {
   callbacks: {
@@ -15,17 +16,6 @@ export type SpaceCreationModalProps = {
   editMode?: boolean;
   space?: SpaceData;
 };
-
-export const colors = [
-  'orange',
-  'yellow',
-  'green',
-  'teal',
-  'blue',
-  'cyan',
-  'purple',
-  'pink',
-];
 
 export class SpaceCreationModalStore {
   constructor(public root: RootStore) {
@@ -135,6 +125,7 @@ export class SpaceCreationModalStore {
       this.callbacks.onSave?.({
         id,
         name: this.name,
+        type: 'private',
         shortName: this.shortName,
         color: this.color,
         children: getRandomOrigins(id, 3),

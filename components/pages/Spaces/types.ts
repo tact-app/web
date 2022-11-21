@@ -20,6 +20,7 @@ export type OriginData = {
 
 export type SpaceData = {
   id: string;
+  type: 'personal' | 'private' | 'all';
   name: string;
   color: string;
   shortName: string;

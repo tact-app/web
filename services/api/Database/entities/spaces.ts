@@ -1,10 +1,29 @@
 import { DB } from '../index';
 import { SpaceData } from '../../../../components/pages/Spaces/types';
+import { colors } from '../../../../components/pages/Spaces/constants';
+import { v4 as uuidv4 } from 'uuid';
 
 const data = {
   get: {
     '/api/spaces': async (db: DB) => {
-      return await db.getAll('spaces');
+      const spaces = await db.getAll('spaces');
+
+      if (!spaces.some((space) => space.type === 'personal')) {
+        const personalSpace: SpaceData = {
+          id: uuidv4(),
+          name: 'Personal',
+          shortName: 'P',
+          type: 'personal',
+          color: colors[Math.floor(Math.random() * colors.length)],
+          children: [],
+        };
+
+        await db.add('spaces', personalSpace);
+
+        spaces.unshift(personalSpace);
+      }
+
+      return spaces;
     },
   },
   post: {

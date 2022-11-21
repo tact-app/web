@@ -4,7 +4,7 @@ import { SpaceData } from '../../../../../pages/Spaces/types';
 import { chakra } from '@chakra-ui/react';
 import { SpacesSmallIcon } from '../../../../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashCan } from '@fortawesome/pro-regular-svg-icons';
+import { faCheck } from '@fortawesome/pro-solid-svg-icons';
 
 export type SpaceModeCallbacks = {
   onExit: () => void;
@@ -27,6 +27,10 @@ export class SpaceModeStore {
   strValue: string = '';
   selectedSpaceId: string | null = null;
 
+  get defaultSpace() {
+    return this.spaces.find(({ type }) => type === 'personal');
+  }
+
   get isFilled() {
     return this.selectedSpaceId != null;
   }
@@ -34,9 +38,8 @@ export class SpaceModeStore {
   get filteredSpaces() {
     const spaceName = this.strValue.slice(1).toLowerCase();
 
-    return this.spaces.filter(
-      ({ name, id }) =>
-        name.toLowerCase().startsWith(spaceName) && id !== this.selectedSpaceId
+    return this.spaces.filter(({ name, id }) =>
+      name.toLowerCase().startsWith(spaceName)
     );
   }
 
@@ -61,11 +64,17 @@ export class SpaceModeStore {
         w='100%'
         display='flex'
         alignItems='center'
+        justifyContent='space-between'
       >
-        <SpacesSmallIcon space={space} />
-        <chakra.span ml={3} overflow='hidden' textOverflow='ellipsis'>
-          {space.name}
+        <chakra.span display='flex' alignItems='center'>
+          <SpacesSmallIcon space={space} />
+          <chakra.span ml={3} mr={3} overflow='hidden' textOverflow='ellipsis'>
+            {space.name}
+          </chakra.span>
         </chakra.span>
+        {space.id === this.selectedSpaceId ? (
+          <FontAwesomeIcon icon={faCheck} fixedWidth />
+        ) : null}
       </chakra.div>
     ));
 
@@ -75,15 +84,6 @@ export class SpaceModeStore {
       } else if (!this.spaces.length) {
         spaces.push(<>You haven&apos;t created any space yet</>);
       }
-    }
-
-    if (this.selectedSpaceId && this.strValue.length <= 1) {
-      spaces.push(
-        <chakra.span>
-          <FontAwesomeIcon icon={faTrashCan} fixedWidth />
-          <chakra.span ml={1}>Unlink space</chakra.span>
-        </chakra.span>
-      );
     }
 
     return spaces;
@@ -108,14 +108,20 @@ export class SpaceModeStore {
 
   reset = () => {
     this.strValue = '';
-    this.selectedSpaceId = null;
+    this.selectedSpaceId = this.defaultSpace.id;
   };
 
   handleSuggestionSelect = (index: number) => {
     if (this.filteredSpaces.length && index < this.filteredSpaces.length) {
-      this.selectedSpaceId = this.filteredSpaces[index].id;
-    } else if (this.selectedSpaceId && index === this.filteredSpaces.length) {
-      this.selectedSpaceId = null;
+      if (this.filteredSpaces[index].id === this.selectedSpaceId) {
+        const newId = this.defaultSpace.id;
+
+        if (newId !== this.selectedSpaceId) {
+          this.selectedSpaceId = newId;
+        }
+      } else {
+        this.selectedSpaceId = this.filteredSpaces[index].id;
+      }
     }
 
     this.disable();

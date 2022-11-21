@@ -22,6 +22,7 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
         position='absolute'
         overflow='hidden'
         maxW='100%'
+        h='100%'
         display='flex'
       >
         <chakra.span

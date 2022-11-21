@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { colors, useSpaceCreationModalStore } from '../store';
+import { useSpaceCreationModalStore } from '../store';
 import {
   Box,
   Button,
@@ -10,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@chakra-ui/react';
+import { colors } from '../../../constants';
 
 export const SpaceCreationColorSelect = observer(
   function SpaceCreationEmojiSelect() {
