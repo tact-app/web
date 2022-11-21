@@ -43,7 +43,7 @@ export class TasksStore {
     },
     {
       size: 1,
-      minWidth: 200,
+      minWidth: 340,
     },
   ];
 

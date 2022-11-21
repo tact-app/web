@@ -67,18 +67,24 @@ export const TaskView = observer(function TaskView() {
           />
           <Box mt={6}>
             <TaskModesMenu />
-            <HStack ref={ref}>
-              <Checkbox
-                variant='indeterminateUnfilled'
-                bg='white'
-                size='lg'
-                cursor='pointer'
-                isChecked={store.data.status === TaskStatus.DONE}
-                isIndeterminate={store.data.status === TaskStatus.WONT_DO}
-                onChange={store.handleStatusChange}
-                name='task-status'
+            <HStack ref={ref} alignItems='start'>
+              <Box h={9} display='flex' alignItems='center'>
+                <Checkbox
+                  variant='indeterminateUnfilled'
+                  bg='white'
+                  size='lg'
+                  cursor='pointer'
+                  isChecked={store.data.status === TaskStatus.DONE}
+                  isIndeterminate={store.data.status === TaskStatus.WONT_DO}
+                  onChange={store.handleStatusChange}
+                  name='task-status'
+                />
+              </Box>
+              <TaskQuickEditorInput
+                fontSize='2xl'
+                fontWeight='semibold'
+                multiline
               />
-              <TaskQuickEditorInput fontSize='2xl' fontWeight='semibold' />
             </HStack>
           </Box>
           <Box mt={4} id='editor' overflow='auto'>

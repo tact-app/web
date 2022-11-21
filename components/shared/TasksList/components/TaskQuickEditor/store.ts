@@ -501,6 +501,7 @@ export class TaskQuickEditorStore {
         ) {
           e.preventDefault();
           e.stopPropagation();
+
           if (e.key === 'ArrowRight' && this.focusNextFilledMode()) {
             return true;
           } else if (e.key === 'ArrowLeft' && this.focusPrevFilledMode()) {
@@ -547,6 +548,7 @@ export class TaskQuickEditorStore {
 
   handleKeyDownInStdMode = (e: KeyboardEvent<HTMLInputElement>) => {
     const mode = this.getMatchMode(e.key);
+    const target = e.target as HTMLInputElement;
 
     if (e.key === 'Escape') {
       e.stopPropagation();
@@ -569,15 +571,23 @@ export class TaskQuickEditorStore {
       e.key === 'Tab'
     ) {
       e.stopPropagation();
-      e.preventDefault();
 
-      if (this.callbacks.onNavigate?.(castArrowToDirection(e.key))) {
-        this.leave();
+      const hasRange = target.selectionStart !== target.selectionEnd;
+      const isCorner =
+        (target.selectionStart === 0 && e.key === 'ArrowUp') ||
+        (target.selectionStart === this.value.length && e.key === 'ArrowDown');
+
+      if (!hasRange && isCorner) {
+        e.preventDefault();
+
+        if (this.callbacks.onNavigate?.(castArrowToDirection(e.key))) {
+          this.leave();
+        }
       }
     } else if (e.key === 'ArrowRight') {
       e.stopPropagation();
       if (
-        (e.target as HTMLInputElement).selectionEnd === this.value.length &&
+        target.selectionEnd === this.value.length &&
         this.input.selectionStart === this.input.selectionEnd
       ) {
         this.focusFirstFilledMode();

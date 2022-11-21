@@ -3,18 +3,20 @@ import { useTaskQuickEditorStore } from './store';
 import { Box, chakra, Input, InputProps } from '@chakra-ui/react';
 import React from 'react';
 import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
+import { TextareaAutofit } from '../../../TextareaAutofit';
 
 export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
   placeholder,
   autofocus,
+  multiline,
   ...rest
 }: {
   placeholder?: string;
   autofocus?: boolean;
+  multiline?: boolean;
 } & InputProps) {
   const store = useTaskQuickEditorStore();
-
-  let items = store.activeMode ? store.activeMode.suggestions : [];
+  const items = store.activeMode ? store.activeMode.suggestions : [];
 
   return (
     <Box w='100%' position='relative'>
@@ -37,21 +39,43 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
         </chakra.span>
         <TaskQuickEditorMenu items={items} />
       </chakra.div>
-      <Input
-        size='md'
-        type='text'
-        maxLength={store.maxLength}
-        autoFocus={autofocus}
-        variant='unstyled'
-        placeholder={placeholder}
-        value={store.value}
-        onChange={store.handleChange}
-        onFocus={store.handleFocus}
-        onKeyDown={store.handleKeyDown}
-        onSelect={store.handleSelect}
-        ref={store.inputRef}
-        {...rest}
-      />
+      {multiline ? (
+        <TextareaAutofit
+          minH={9}
+          ref={store.inputRef}
+          type='text'
+          maxLength={store.maxLength}
+          autoFocus={autofocus}
+          variant='unstyled'
+          placeholder={placeholder}
+          value={store.value}
+          onChange={store.handleChange}
+          onFocus={store.handleFocus}
+          onKeyDown={store.handleKeyDown}
+          onSelect={store.handleSelect}
+          resize='none'
+          border='none'
+          wordBreak='break-word'
+          overflow='hidden'
+          {...rest}
+        />
+      ) : (
+        <Input
+          size='md'
+          type='text'
+          maxLength={store.maxLength}
+          autoFocus={autofocus}
+          variant='unstyled'
+          placeholder={placeholder}
+          value={store.value}
+          onChange={store.handleChange}
+          onFocus={store.handleFocus}
+          onKeyDown={store.handleKeyDown}
+          onSelect={store.handleSelect}
+          ref={store.inputRef}
+          {...rest}
+        />
+      )}
     </Box>
   );
 });
