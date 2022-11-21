@@ -50,7 +50,11 @@ export const TasksView = observer(function TasksView() {
               ) : null}
             </chakra.div>
           </ResizableGroupChild>
-          <ResizableGroupChild index={1} config={store.resizableConfig[1]}>
+          <ResizableGroupChild
+            index={1}
+            config={store.resizableConfig[1]}
+            onMouseDown={store.handleTasksListMouseDown}
+          >
             <Container
               flex={1}
               maxW='container.lg'
@@ -95,6 +99,7 @@ export const TasksView = observer(function TasksView() {
             index={2}
             config={store.resizableConfig[2]}
             boxShadow='lg'
+            onMouseDown={store.handleTasksListMouseDown}
           >
             {store.list.openedTask && (
               <Task

@@ -126,6 +126,8 @@ export class TasksStore {
         return;
       } else {
         this.resizableConfig[0].width = FOCUS_MODE_WIDTH;
+
+        setTimeout(this.focusFocusConfiguration);
       }
     } else {
       this.isSilentFocusMode = false;
@@ -140,6 +142,13 @@ export class TasksStore {
     this.resizableConfig[1].size = 2;
     this.resizableConfig[0].width =
       this.isFocusModeActive && !this.isSilentFocusMode ? FOCUS_MODE_WIDTH : 0;
+  };
+
+  focusFocusConfiguration = () => {
+    this.isTasksListHotkeysEnabled = false;
+    this.isTasksListFocusSaved = true;
+    this.list.draggableList.saveFocusedItems();
+    this.focusConfiguration.focus();
   };
 
   handleExpandTask = () => {
@@ -161,16 +170,17 @@ export class TasksStore {
     this.toggleFocusMode();
   };
 
+  handleTasksListMouseDown = () => {
+    this.isTasksListHotkeysEnabled = true;
+  };
+
   handleTasksListFocusLeave = (direction: NavigationDirections) => {
     if (
       direction === NavigationDirections.LEFT &&
       this.isFocusModeActive &&
       !this.isSilentFocusMode
     ) {
-      this.isTasksListHotkeysEnabled = false;
-      this.isTasksListFocusSaved = true;
-      this.list.draggableList.saveFocusedItems();
-      this.focusConfiguration.focus();
+      this.focusFocusConfiguration();
       return true;
     }
   };

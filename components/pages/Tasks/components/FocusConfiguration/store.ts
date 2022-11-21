@@ -116,9 +116,11 @@ export class FocusConfigurationStore {
     });
   };
 
-  handleGoalsSelectionFocus = () => {
-    this.isBlockFocused = true;
-    this.callbacks.onGoalFocused?.();
+  handleGoalsSelectionFocus = (goalId: string | null) => {
+    if (goalId) {
+      this.isBlockFocused = true;
+      this.callbacks.onGoalFocused?.();
+    }
   };
 
   handleMouseDown = () => {

@@ -61,8 +61,10 @@ export class GoalsSelectionStore {
     });
 
   handleBlur = () => {
-    this.isFocused = false;
-    this.callbacks.onFocus?.(null);
+    if (this.isFocused) {
+      this.isFocused = false;
+      this.callbacks.onFocus?.(null);
+    }
   };
 
   handleGoalCheck = (index: number | null) => {
