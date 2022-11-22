@@ -256,6 +256,16 @@ export class TasksListStore {
     this.isEditorFocused = false;
   };
 
+  handleNextTask = () => {
+    this.draggableList.focusNextItem(this.openedTask);
+    this.isEditorFocused = true;
+  };
+
+  handlePrevTask = () => {
+    this.draggableList.focusPrevItem(this.openedTask);
+    this.isEditorFocused = true;
+  };
+
   assignGoal = (taskIds: string[], goalId: string) => {
     taskIds.forEach((id) => {
       this.items[id].goalId = goalId;
@@ -467,8 +477,8 @@ export class TasksListStore {
   taskCallbacks: TaskProps['callbacks'] = {
     onClose: this.closeTask,
     onBlur: this.handleEditorBlur,
-    onPreviousItem: this.draggableList.focusPrevItem,
-    onNextItem: this.draggableList.focusNextItem,
+    onPreviousItem: this.handlePrevTask,
+    onNextItem: this.handleNextTask,
     onStatusChange: this.handleStatusChange,
     onTaskChange: this.updateTask,
     onTagCreate: this.createTag,
