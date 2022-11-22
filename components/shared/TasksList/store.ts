@@ -261,12 +261,10 @@ export class TasksListStore {
 
   handleNextTask = () => {
     this.draggableList.focusNextItem(this.openedTask);
-    this.isEditorFocused = true;
   };
 
   handlePrevTask = () => {
     this.draggableList.focusPrevItem(this.openedTask);
-    this.isEditorFocused = true;
   };
 
   assignGoal = (taskIds: string[], goalId: string) => {
