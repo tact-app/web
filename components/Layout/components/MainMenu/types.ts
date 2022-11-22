@@ -1,4 +1,4 @@
-import { IconDefinition } from '@fortawesome/pro-regular-svg-icons';
+import { IconDefinition } from '@fortawesome/pro-solid-svg-icons';
 
 export interface NavItem {
   label: string;

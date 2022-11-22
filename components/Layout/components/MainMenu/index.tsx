@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export function MainMenu({ items }: { items: NavItem[] }) {
   return (
-    <Stack direction='column' p={2}>
+    <Stack direction='column'>
       {items.map((navItem) => (
         <Tooltip
           key={navItem.label}
@@ -25,8 +25,8 @@ export function MainMenu({ items }: { items: NavItem[] }) {
             <NavLink href={navItem.href}>
               {({ isActive }) => (
                 <chakra.span
-                  w={8}
-                  h={8}
+                  w={10}
+                  h={10}
                   fontWeight={400}
                   bg={isActive ? 'gray.300' : 'transparent'}
                   borderRadius='lg'
@@ -40,7 +40,7 @@ export function MainMenu({ items }: { items: NavItem[] }) {
                   <FontAwesomeIcon
                     fixedWidth
                     icon={navItem.icon}
-                    fontSize={18}
+                    fontSize={20}
                   />
                 </chakra.span>
               )}
