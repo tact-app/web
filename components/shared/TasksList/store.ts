@@ -221,7 +221,10 @@ export class TasksListStore {
       this.setEditingTask(null);
 
       return true;
-    } else {
+    } else if (
+      direction === NavigationDirections.DOWN ||
+      direction === NavigationDirections.UP
+    ) {
       return this.draggableList.handleNavigation(direction);
     }
   };

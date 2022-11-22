@@ -23,6 +23,7 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
       >
         <MenuButton
           as={IconButton}
+          onKeyDown={store.handleKeyDownMainMenu}
           aria-label='Task options'
           variant='outline'
           borderColor='white'

@@ -560,7 +560,7 @@ export class TaskQuickEditorStore {
     } else if (e.key === 'Enter') {
       e.stopPropagation();
       if (!this.keepFocus) {
-        this.callbacks.onNavigate?.(NavigationDirections.DOWN);
+        this.callbacks.onNavigate?.(NavigationDirections.ENTER);
       }
       this.saveTask();
     } else if (mode) {
@@ -595,6 +595,12 @@ export class TaskQuickEditorStore {
       }
     } else if (e.key === 'ArrowLeft') {
       e.stopPropagation();
+    }
+  };
+
+  handleKeyDownMainMenu = (e: KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === 'Tab') {
+      this.removeFocus();
     }
   };
 

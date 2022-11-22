@@ -169,7 +169,10 @@ class TaskStore {
 
   quickEditorCallbacks: TaskQuickEditorProps['callbacks'] = {
     onNavigate: (direction: NavigationDirections) => {
-      if (direction === NavigationDirections.DOWN) {
+      if (
+        direction === NavigationDirections.DOWN ||
+        direction === NavigationDirections.ENTER
+      ) {
         this.isEditorFocused = true;
       } else if (direction === NavigationDirections.UP) {
         this.quickEditor.focusFirstFilledMode();
