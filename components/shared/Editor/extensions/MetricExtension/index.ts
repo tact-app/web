@@ -71,6 +71,23 @@ export const MetricExtension = Node.create({
 
         return false;
       },
+      ArrowDown: ({ editor }) => {
+        const anchor = editor.state.selection.$anchor;
+        const nextNodePos =
+          anchor.pos - anchor.parentOffset + anchor.parent.content.size + 1;
+
+        if (
+          editor.isActive('metric') &&
+          anchor.parent.type.name === 'metric' &&
+          !anchor.doc.childAfter(nextNodePos).node
+        ) {
+          editor.chain().focus().selectTextblockEnd().run();
+
+          return true;
+        } else {
+          return false;
+        }
+      },
     };
   },
 
