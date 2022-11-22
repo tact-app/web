@@ -1,17 +1,20 @@
 import { observer } from 'mobx-react-lite';
 import { Modes, useTaskQuickEditorStore } from './store';
 import { TaskPriorityIcon } from '../../../Icons/TaskPriorityIcon';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, ButtonProps, chakra } from '@chakra-ui/react';
 import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
 import { TaskPriority, TaskPriorityNames } from '../../types';
+import { TaskQuickEditorEmptyButton } from './TaskQuickEditorEmptyButton';
 
 export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({
   withTitle,
+  showEmpty,
   disabled,
   ...rest
 }: {
   withTitle?: boolean;
+  showEmpty?: boolean;
   disabled?: boolean;
 } & ButtonProps) {
   const store = useTaskQuickEditorStore();
@@ -23,6 +26,12 @@ export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({
       ? 'orange'
       : 'blue';
 
+  useEffect(() => {
+    if (showEmpty) {
+      store.modes.priority.setAlwaysFilled(true);
+    }
+  }, [store, showEmpty]);
+
   return priority !== TaskPriority.NONE ? (
     <Button
       ref={store.modes.priority.setButtonRef}
@@ -31,7 +40,7 @@ export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({
         e.stopPropagation();
         store.suggestionsMenu.openFor(Modes.PRIORITY);
       }}
-      onKeyDown={store.handleKeyDownWithModeMenu(Modes.PRIORITY)}
+      onKeyDown={store.handleKeyDownModeButton(Modes.PRIORITY)}
       onFocus={store.handleModeFocus(Modes.PRIORITY)}
       variant='ghost'
       borderRadius='md'
@@ -65,5 +74,12 @@ export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({
         </chakra.span>
       ) : null}
     </Button>
+  ) : showEmpty ? (
+    <TaskQuickEditorEmptyButton
+      {...rest}
+      mode={Modes.PRIORITY}
+      disabled={disabled}
+      title='Set priority'
+    />
   ) : null;
 });

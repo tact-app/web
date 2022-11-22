@@ -13,6 +13,7 @@ export const TaskModesMenu = observer(function TaskModesMenu() {
     <HStack mb={4} spacing={6} h={10}>
       <TaskQuickEditorPriority
         withTitle
+        showEmpty
         w='auto'
         h={8}
         pt={1.5}
@@ -22,6 +23,7 @@ export const TaskModesMenu = observer(function TaskModesMenu() {
       />
       <TaskQuickEditorGoal
         withTitle
+        showEmpty
         w='auto'
         h='auto'
         iconFontSize='lg'

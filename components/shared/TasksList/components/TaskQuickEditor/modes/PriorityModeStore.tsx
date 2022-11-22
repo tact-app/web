@@ -24,6 +24,7 @@ export class PriorityModeStore {
   startSymbol = '!';
   exitSymbol = /[^!]/;
 
+  isAlwaysFilled: boolean = false;
   callbacks: PriorityCallbacks;
   buttonRef: HTMLButtonElement | null = null;
 
@@ -32,7 +33,7 @@ export class PriorityModeStore {
   priority: TaskPriority = TaskPriority.NONE;
 
   get isFilled() {
-    return this.priority !== TaskPriority.NONE;
+    return this.priority !== TaskPriority.NONE || this.isAlwaysFilled;
   }
 
   get suggestions() {
@@ -43,6 +44,10 @@ export class PriorityModeStore {
       </HStack>
     ));
   }
+
+  setAlwaysFilled = (isAlwaysFilled: boolean) => {
+    this.isAlwaysFilled = isAlwaysFilled;
+  };
 
   setButtonRef = (ref: HTMLButtonElement | null) => {
     this.buttonRef = ref;

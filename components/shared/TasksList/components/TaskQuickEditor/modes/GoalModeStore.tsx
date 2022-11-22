@@ -20,6 +20,7 @@ export class GoalModeStore {
 
   callbacks: GoalModeCallbacks;
 
+  isAlwaysFilled: boolean = false;
   buttonRef: HTMLButtonElement | null = null;
   isMenuOpen = false;
 
@@ -28,7 +29,7 @@ export class GoalModeStore {
   selectedGoalId: string | null = null;
 
   get isFilled() {
-    return this.selectedGoalId != null;
+    return this.selectedGoalId != null || this.isAlwaysFilled;
   }
 
   get filteredGoals() {
@@ -88,6 +89,10 @@ export class GoalModeStore {
 
     return goals;
   }
+
+  setAlwaysFilled = (isAlwaysFilled: boolean) => {
+    this.isAlwaysFilled = isAlwaysFilled;
+  };
 
   setButtonRef = (ref: HTMLButtonElement | null) => {
     this.buttonRef = ref;

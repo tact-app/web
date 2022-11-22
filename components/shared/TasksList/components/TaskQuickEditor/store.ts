@@ -462,7 +462,7 @@ export class TaskQuickEditorStore {
     return false;
   };
 
-  handleKeyDownWithModeMenu =
+  handleKeyDownModeButton =
     (modeType: Modes) => (e: KeyboardEvent<HTMLInputElement>) => {
       if (
         e.key === 'Enter' &&

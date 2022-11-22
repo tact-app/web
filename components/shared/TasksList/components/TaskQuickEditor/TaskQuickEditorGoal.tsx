@@ -1,22 +1,31 @@
 import { observer } from 'mobx-react-lite';
 import { Modes, useTaskQuickEditorStore } from './store';
 import { Button, ButtonProps, chakra } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
 import { GoalIcon } from '../../../../pages/Goals/components/GoalIcon';
+import { TaskQuickEditorEmptyButton } from './TaskQuickEditorEmptyButton';
 
 export const TaskQuickEditorGoal = observer(function TaskQuickEditorGoal({
   withTitle,
+  showEmpty,
   iconSize = 5,
   iconFontSize = 'sm',
   ...rest
 }: {
   withTitle?: boolean;
+  showEmpty?: boolean;
   iconSize?: number;
   iconFontSize?: string;
 } & ButtonProps) {
   const store = useTaskQuickEditorStore();
   const goal = store.modes.goal.selectedGoal;
+
+  useEffect(() => {
+    if (showEmpty) {
+      store.modes.goal.setAlwaysFilled(true);
+    }
+  }, [store, showEmpty]);
 
   return goal ? (
     <Button
@@ -25,7 +34,7 @@ export const TaskQuickEditorGoal = observer(function TaskQuickEditorGoal({
         e.stopPropagation();
         store.suggestionsMenu.openFor(Modes.GOAL);
       }}
-      onKeyDown={store.handleKeyDownWithModeMenu(Modes.GOAL)}
+      onKeyDown={store.handleKeyDownModeButton(Modes.GOAL)}
       onFocus={store.handleModeFocus(Modes.GOAL)}
       display='flex'
       h={6}
@@ -66,5 +75,12 @@ export const TaskQuickEditorGoal = observer(function TaskQuickEditorGoal({
         </chakra.span>
       ) : null}
     </Button>
+  ) : showEmpty ? (
+    <TaskQuickEditorEmptyButton
+      p={1}
+      {...rest}
+      mode={Modes.GOAL}
+      title='Set goal'
+    />
   ) : null;
 });

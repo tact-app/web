@@ -21,6 +21,7 @@ export class SpaceModeStore {
   callbacks: SpaceModeCallbacks;
 
   isMenuOpen = false;
+  isAlwaysFilled: boolean = true;
   buttonRef: HTMLButtonElement | null = null;
 
   spaces: SpaceData[] = [];
@@ -32,7 +33,7 @@ export class SpaceModeStore {
   }
 
   get isFilled() {
-    return this.selectedSpaceId != null;
+    return this.selectedSpaceId != null || this.isAlwaysFilled;
   }
 
   get filteredSpaces() {

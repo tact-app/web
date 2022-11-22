@@ -41,6 +41,7 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
       </chakra.div>
       {multiline ? (
         <TextareaAutofit
+          borderRadius='none'
           minH={9}
           ref={store.inputRef}
           type='text'
