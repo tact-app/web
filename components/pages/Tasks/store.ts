@@ -80,6 +80,7 @@ export class TasksStore {
   };
 
   checkFocusModeMatch = (task: TaskData) => {
+    // ToDo remove this function due to performance issues
     const { goals, showImportant } = this.focusModeConfiguration;
 
     if (this.isFocusModeActive && task) {

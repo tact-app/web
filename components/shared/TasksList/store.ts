@@ -2,7 +2,10 @@ import { RootStore } from '../../../stores/RootStore';
 import { makeAutoObservable, reaction, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { NavigationDirections, TaskData, TaskStatus, TaskTag } from './types';
-import { TaskQuickEditorStore } from './components/TaskQuickEditor/store';
+import {
+  TaskQuickEditorProps,
+  TaskQuickEditorStore,
+} from './components/TaskQuickEditor/store';
 import {
   DraggableListCallbacks,
   DraggableListStore,
@@ -509,6 +512,12 @@ export class TasksListStore {
     onNextItem: this.handleNextTask,
     onStatusChange: this.handleStatusChange,
     onTaskChange: this.updateTask,
+    onTagCreate: this.createTag,
+  };
+
+  taskListItemCallbacks: TaskQuickEditorProps['callbacks'] = {
+    onNavigate: this.handleTaskItemNavigation,
+    onSave: this.updateTask,
     onTagCreate: this.createTag,
   };
 }
