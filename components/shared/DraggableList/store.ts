@@ -86,11 +86,13 @@ export class DraggableListStore {
   keymap = {
     UP: ['j', 'up'],
     DOWN: ['k', 'down'],
+    FORCE_UP: ['cmd+j', 'cmd+up'],
+    FORCE_DOWN: ['cmd+k', 'cmd+down'],
     DONE: 'd',
     WONT_DO: ['w', 'cmd+w'],
     EDIT: 'space',
-    MOVE_UP: ['cmd+j', 'cmd+up', 'cmd+shift+j', 'cmd+shift+up'],
-    MOVE_DOWN: ['cmd+k', 'cmd+down', 'cmd+shift+k', 'cmd+shift+down'],
+    MOVE_UP: ['cmd+shift+j', 'cmd+shift+up'],
+    MOVE_DOWN: ['cmd+shift+k', 'cmd+shift+down'],
     SELECT_UP: ['shift+j', 'shift+up'],
     SELECT_DOWN: ['shift+k', 'shift+down'],
     ESC: 'esc',
@@ -106,6 +108,22 @@ export class DraggableListStore {
     DOWN: (e) => {
       e.preventDefault();
       this.handleNavigation(NavigationDirections.DOWN);
+    },
+    FORCE_DOWN: (e) => {
+      e.preventDefault();
+      const lastItem = this.getLastActiveItem();
+
+      if (!this.isAlreadySingleFocused(lastItem)) {
+        this.setFocusedItem(lastItem);
+      }
+    },
+    FORCE_UP: (e) => {
+      e.preventDefault();
+      const firstItem = this.getFirstActiveItem();
+
+      if (!this.isAlreadySingleFocused(firstItem)) {
+        this.setFocusedItem(firstItem);
+      }
     },
     DELETE: () => {
       if (this.focusedItemIds.length) {
@@ -365,6 +383,10 @@ export class DraggableListStore {
     } else {
       return this.items[index - 1] || null;
     }
+  };
+
+  isAlreadySingleFocused = (id: string) => {
+    return this.focusedItemIds.length === 1 && this.focusedItemIds.includes(id);
   };
 
   hasNextTask(taskId: string) {
