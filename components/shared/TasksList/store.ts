@@ -64,7 +64,8 @@ export class TasksListStore {
   keyMap = {
     DONE: 'd',
     GOAL: 'g',
-    WONT_DO: ['w', 'cmd+w'],
+    WONT_DO: ['w'],
+    FORCE_WONT_DO: ['shift+w'],
     EDIT: 'space',
     OPEN_AND_EDIT: 'enter',
     FOCUS_LEAVE_LEFT: 'left',
@@ -79,6 +80,21 @@ export class TasksListStore {
       }
     },
     WONT_DO: () => {
+      if (this.draggableList.focused.length) {
+        const hasAnotherStatus = this.draggableList.focused.some(
+          (id) => this.items[id].status !== TaskStatus.WONT_DO
+        );
+
+        if (hasAnotherStatus) {
+          this.modals.openWontDoModal(this.draggableList.focused, () => {
+            this.setTasksStatus(this.draggableList.focused, TaskStatus.WONT_DO);
+          });
+        } else {
+          this.setTasksStatus(this.draggableList.focused, TaskStatus.WONT_DO);
+        }
+      }
+    },
+    FORCE_WONT_DO: () => {
       if (this.draggableList.focused.length) {
         this.setTasksStatus(this.draggableList.focused, TaskStatus.WONT_DO);
       }
@@ -379,6 +395,17 @@ export class TasksListStore {
     this.root.api.tasks.update({
       id: task.id,
       fields: { status },
+    });
+  };
+
+  setTaskWontDoReason = (ids: string[], reason: string) => {
+    ids.forEach((id) => {
+      this.items[id].wontDoReason = reason;
+
+      this.root.api.tasks.update({
+        id: ids[0],
+        fields: { wontDoReason: reason },
+      });
     });
   };
 

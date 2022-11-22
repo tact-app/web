@@ -59,6 +59,7 @@ export type TaskData = {
   descriptionId?: string;
   status: TaskStatus;
   priority: TaskPriority;
+  wontDoReason?: string;
 };
 
 export type TaskTag = { title: string; id: string };

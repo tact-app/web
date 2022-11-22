@@ -6,10 +6,11 @@ import { TasksListStore } from '../store';
 import { GoalData } from '../../../pages/Goals/types';
 import { runInAction, toJS } from 'mobx';
 import { DescriptionData } from '../../../../types/description';
+import { TaskWontDoModal } from './TaskWontDoModal';
 
 export enum ModalsTypes {
   DELETE_TASK,
-  WONTDO_TASK,
+  WONT_DO_TASK,
   GOAL_ASSIGN,
   GOAL_CREATION,
 }
@@ -19,6 +20,7 @@ export class TasksModals {
 
   controller = new ModalsController({
     [ModalsTypes.DELETE_TASK]: TaskDeleteModal,
+    [ModalsTypes.WONT_DO_TASK]: TaskWontDoModal,
     [ModalsTypes.GOAL_ASSIGN]: TaskGoalAssignModal,
     [ModalsTypes.GOAL_CREATION]: GoalCreationModal,
   });
@@ -29,6 +31,20 @@ export class TasksModals {
       props: {
         onDelete: () => {
           this.parent.deleteTasks(ids);
+          this.controller.close();
+          done?.();
+        },
+        onClose: this.controller.close,
+      },
+    });
+  };
+
+  openWontDoModal = (ids: string[], done?: () => void) => {
+    this.controller.open({
+      type: ModalsTypes.WONT_DO_TASK,
+      props: {
+        onSave: (reason: string) => {
+          this.parent.setTaskWontDoReason(ids, reason);
           this.controller.close();
           done?.();
         },
