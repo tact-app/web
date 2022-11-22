@@ -67,7 +67,7 @@ export const TaskCreatorView = observer(function TaskCreator(
             pb={1}
           />
           <InputRightAddon maxW='50%' minWidth={0} justifyContent='end'>
-            <Fade in={store.isInputFocused}>
+            <Fade in={store.isInputFocused} unmountOnExit>
               <HStack w='100%'>
                 <TaskQuickEditorTags
                   collapsable

@@ -566,11 +566,7 @@ export class TaskQuickEditorStore {
     } else if (mode) {
       e.stopPropagation();
       this.enterMode(mode, e);
-    } else if (
-      e.key === 'ArrowDown' ||
-      e.key === 'ArrowUp' ||
-      e.key === 'Tab'
-    ) {
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.stopPropagation();
 
       const hasRange = target.selectionStart !== target.selectionEnd;
@@ -585,6 +581,8 @@ export class TaskQuickEditorStore {
           this.leave();
         }
       }
+    } else if (e.key === 'Tab' && e.shiftKey) {
+      this.leave();
     } else if (e.key === 'ArrowRight') {
       e.stopPropagation();
       if (
