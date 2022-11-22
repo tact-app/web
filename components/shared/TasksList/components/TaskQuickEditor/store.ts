@@ -266,10 +266,10 @@ export class TaskQuickEditorStore {
     this.isMenuFocused = false;
   };
 
-  leave = () => {
+  leave = (withoutSaving: boolean = false) => {
     this.removeFocus();
 
-    if (!this.keepFocus) {
+    if (!this.keepFocus && !withoutSaving) {
       this.saveTask();
     }
   };
@@ -554,7 +554,8 @@ export class TaskQuickEditorStore {
       e.stopPropagation();
 
       if (this.callbacks.onNavigate?.(NavigationDirections.INVARIANT)) {
-        this.leave();
+        this.leave(true);
+        this.restoreTask();
       }
     } else if (e.key === 'Enter') {
       e.stopPropagation();
@@ -603,6 +604,18 @@ export class TaskQuickEditorStore {
     this.activeModeType = Modes.DEFAULT;
   };
 
+  restoreTask = () => {
+    this.value = this.task.title;
+    this.modes.priority.priority = this.task.priority;
+    this.modes.space.selectedSpaceId =
+      this.task.spaceId || this.modes.space.defaultSpace.id;
+    this.modes.goal.selectedGoalId = this.task.goalId;
+    this.modes.tag.tags = this.task.tags.map((tag) => ({
+      id: tag,
+      title: this.modes.tag.tagsMap[tag] && this.modes.tag.tagsMap[tag].title,
+    }));
+  };
+
   update = ({
     callbacks,
     listId,
@@ -631,15 +644,7 @@ export class TaskQuickEditorStore {
 
       this.reset();
       this.task = task;
-      this.value = task.title;
-      this.modes.priority.priority = task.priority;
-      this.modes.space.selectedSpaceId =
-        task.spaceId || this.modes.space.defaultSpace.id;
-      this.modes.goal.selectedGoalId = task.goalId;
-      this.modes.tag.tags = task.tags.map((tag) => ({
-        id: tag,
-        title: tagsMap[tag] && tagsMap[tag].title,
-      }));
+      this.restoreTask();
     } else if (spaces.length) {
       this.modes.space.selectedSpaceId = this.modes.space.defaultSpace.id;
     }

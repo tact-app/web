@@ -216,6 +216,16 @@ export class TasksListStore {
     return true;
   };
 
+  handleTaskItemNavigation = (direction: NavigationDirections) => {
+    if (direction === NavigationDirections.INVARIANT && this.editingTaskId) {
+      this.setEditingTask(null);
+
+      return true;
+    } else {
+      return this.draggableList.handleNavigation(direction);
+    }
+  };
+
   handleStatusChange = (id: string, status: TaskStatus) => {
     const task = this.items[id];
     const newStatus = task.status === status ? TaskStatus.TODO : status;
