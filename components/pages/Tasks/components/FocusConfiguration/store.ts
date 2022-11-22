@@ -2,7 +2,10 @@ import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { RootStore } from '../../../../../stores/RootStore';
 import { GoalData } from '../../../Goals/types';
-import { GoalsSelectionStore } from '../../../../shared/GoalsSelection/store';
+import {
+  GoalsSelectionProps,
+  GoalsSelectionStore,
+} from '../../../../shared/GoalsSelection/store';
 
 export type FocusConfigurationData = {
   id: string;
@@ -155,6 +158,12 @@ export class FocusConfigurationStore {
     } else {
       await this.root.api.focusConfigurations.add(toJS(this.data));
     }
+  };
+
+  goalsSelectionCallbacks: GoalsSelectionProps['callbacks'] = {
+    onSelect: this.handleSelectGoal,
+    onGoalCreateClick: this.handleGoalCreateClick,
+    onFocus: this.handleGoalsSelectionFocus,
   };
 }
 

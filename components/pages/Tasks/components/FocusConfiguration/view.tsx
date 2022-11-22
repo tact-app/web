@@ -77,11 +77,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
             instance={store.goalsSelection}
             goals={store.goals}
             checked={store.data.goals}
-            callbacks={{
-              onSelect: store.handleSelectGoal,
-              onGoalCreateClick: store.handleGoalCreateClick,
-              onFocus: store.handleGoalsSelectionFocus,
-            }}
+            callbacks={store.goalsSelectionCallbacks}
           >
             <GoalsSelectionView />
           </GoalsSelectionStoreProvider>
