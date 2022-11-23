@@ -13,6 +13,7 @@ export type TaskItemProps = {
   isFocused?: boolean;
   isDragging?: boolean;
   isEditMode?: boolean;
+  isMultiselect?: boolean;
   onFocus?: (taskId: string, multiselect?: 'single' | 'many') => void;
   onStatusChange?: (taskId: string, status: TaskStatus) => void;
   onWontDoWithComment?: (taskId: string) => void;
@@ -30,19 +31,42 @@ class TaskItemStore {
 
   task: TaskData;
   tags: Record<string, TaskTag>;
+
+  isMenuOpen: boolean = false;
   isMouseDown: boolean = false;
   isDisabled: boolean = false;
   isFocused: boolean = false;
   isEditMode: boolean = false;
   isDragging: boolean = false;
   isReadOnly: boolean = false;
-  skipClick: boolean = false;
+  isMultiselect: boolean = false;
+
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
   onWontDoWithComment: TaskItemProps['onWontDoWithComment'];
 
+  keyMap = {
+    OPEN_MENU: ['alt', 'option'],
+  };
+
+  hotkeysHandlers = {
+    OPEN_MENU: (e: KeyboardEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.isMenuOpen = !this.isMenuOpen;
+    },
+  };
+
   setBoxRef = (ref: HTMLDivElement | null) => {
     this.boxRef = ref;
+  };
+
+  openMenu = () => {
+    this.isMenuOpen = true;
+  };
+
+  closeMenu = () => {
+    this.isMenuOpen = false;
   };
 
   handleMouseDown = () => {
@@ -68,8 +92,6 @@ class TaskItemStore {
         e.metaKey ? 'single' : e.shiftKey ? 'many' : undefined
       );
     }
-
-    this.skipClick = false;
   };
 
   handleFocus = () => {
@@ -124,6 +146,7 @@ class TaskItemStore {
     isDragging,
     isReadOnly,
     isEditMode,
+    isMultiselect,
   }: TaskItemProps) => {
     const prevIsFocused = this.isFocused;
     this.isFocused = isFocused;
@@ -143,6 +166,7 @@ class TaskItemStore {
     this.isDragging = isDragging;
     this.isEditMode = isEditMode;
     this.isReadOnly = isReadOnly;
+    this.isMultiselect = isMultiselect;
   };
 }
 

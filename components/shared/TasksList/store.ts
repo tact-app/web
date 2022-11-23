@@ -65,10 +65,10 @@ export class TasksListStore {
   callbacks: TasksListProps['callbacks'] = {};
 
   keyMap = {
-    DONE: 'd',
-    GOAL: 'g',
-    WONT_DO: ['shift+w'],
-    FORCE_WONT_DO: ['w'],
+    DONE: 'alt+d',
+    GOAL: 'alt+g',
+    WONT_DO: ['alt+shift+w'],
+    FORCE_WONT_DO: ['alt+w'],
     EDIT: 'space',
     OPEN_AND_EDIT: 'enter',
     FOCUS_LEAVE_LEFT: 'left',
@@ -206,6 +206,10 @@ export class TasksListStore {
       !this.draggableList.isControlDraggingActive &&
       !this.modals.controller.isOpen
     );
+  }
+
+  get isMultiselect() {
+    return this.draggableList.focused.length > 1;
   }
 
   get openedTaskData() {

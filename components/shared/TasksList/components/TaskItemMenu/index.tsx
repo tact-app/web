@@ -19,7 +19,9 @@ import { Modes } from '../TaskQuickEditor/store';
 export const TaskItemMenu = observer(function TaskItemMenu() {
   const store = useTaskItemStore();
   const tasksStore = useTasksListStore();
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure({
+    isOpen: store.isMenuOpen,
+  });
   const [isAnimationInProcess, setIsAnimationInProcess] = useState(false);
 
   const stopAnimation = useCallback(() => {
@@ -29,14 +31,16 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
   const close = useCallback(() => {
     setIsAnimationInProcess(true);
     onClose();
+    store.closeMenu();
     tasksStore.closeItemMenu();
-  }, [onClose, tasksStore]);
+  }, [onClose, tasksStore, store]);
 
   const open = useCallback(() => {
     setIsAnimationInProcess(true);
     onOpen();
+    store.openMenu();
     tasksStore.openItemMenu();
-  }, [onOpen, tasksStore]);
+  }, [onOpen, tasksStore, store]);
 
   return (
     <Menu
@@ -52,7 +56,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
         _focus={{
           bg: 'gray.100',
         }}
-        visibility={store.isDragging || store.isFocused ? 'visible' : 'hidden'}
+        visibility={store.isDragging ? 'visible' : 'hidden'}
       >
         <TaskItemMenuIcon />
       </MenuButton>

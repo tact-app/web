@@ -9,6 +9,9 @@ import { useRouter } from 'next/router';
 const theme = extendTheme({
   styles: {
     global: (props) => ({
+      'html, body': {
+        lineHeight: 'normal',
+      },
       body: {
         '.clear': {
           clear: 'both',
@@ -204,6 +207,11 @@ const theme = extendTheme({
   },
   components: {
     ...InputWrapperStyles,
+    Text: {
+      baseStyle: {
+        lineHeight: 6,
+      },
+    },
     Radio: {
       baseStyle: {
         label: {

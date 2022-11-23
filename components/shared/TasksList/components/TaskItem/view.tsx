@@ -1,13 +1,6 @@
 import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import {
-  Box,
-  Checkbox,
-  Text,
-  chakra,
-  Tag,
-  useOutsideClick,
-} from '@chakra-ui/react';
+import { Box, Checkbox, chakra, Tag, useOutsideClick } from '@chakra-ui/react';
 import { TaskStatus } from '../../types';
 import { TaskItemProps, useTaskItemStore } from './store';
 import { TaskItemMenu } from '../TaskItemMenu';
@@ -15,6 +8,7 @@ import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
 import { TaskQuickEditorPriority } from '../TaskQuickEditor/TaskQuickEditorPriority';
 import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
+import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 
 export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
   const store = useTaskItemStore();
@@ -49,6 +43,10 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
     enabled: store.isEditMode || store.quickEdit.isMenuFocused,
     ref: ref,
     handler: quickEditStore.handleClickOutside,
+  });
+
+  useHotkeysHandler(store.keyMap, store.hotkeysHandlers, {
+    enabled: store.isFocused && !store.isMultiselect,
   });
 
   return (
@@ -114,7 +112,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
             <TaskQuickEditorInput autofocus />
           ) : (
             <Box position='relative' overflow='hidden'>
-              <Text
+              <chakra.span
                 transition='color 0.2s ease-in-out'
                 color={isTodoTask ? 'gray.700' : 'gray.400'}
                 whiteSpace='nowrap'
@@ -122,11 +120,11 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
                 overflow='hidden'
               >
                 {store.task.title}
-              </Text>
+              </chakra.span>
               <chakra.div
                 h='1px'
                 bg='gray.400'
-                bottom='0.675rem'
+                bottom='0.5rem'
                 transition='width 0.2s ease-in-out'
                 position='absolute'
                 w={isTodoTask ? 0 : '100%'}
