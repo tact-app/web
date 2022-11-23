@@ -46,7 +46,7 @@ export class SpacesMenuStore {
   checkState: OriginCheckStateTree = {};
 
   keyMap = {
-    UP: ['j', 'up'],
+    UP: ['j', 'arrowup'],
     FORCE_UP: ['meta+j', 'meta+arrowup', 'ctrl+j', 'ctrl+arrowup'],
     DOWN: ['k', 'arrowdown'],
     FORCE_DOWN: ['meta+k', 'meta+arrowdown', 'ctrl+k', 'ctrl+arrowdown'],
