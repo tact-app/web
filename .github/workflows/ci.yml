@@ -26,15 +26,14 @@ jobs:
         with: { fetch-depth: 0 }
       - uses: actions/setup-node@v3
         with: { node-version: 16, cache: npm }
+
       - uses: actions/cache@v3
         with:
-          path: |
-            ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: ${{ runner.os }}-npm-
-      # todo:review: https://www.voorhoede.nl/en/blog/super-fast-npm-install-on-github-actions/
-
-      - run: npm ci --include=dev
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+        id: cache
+      - run: npm ci --ignore-scripts --include=dev
+        if: steps.cache.outputs.cache-hit != 'true'
         env: { FONTAWESOME_NPM_AUTH_TOKEN: '${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}' }
       - run: npm run build
 
