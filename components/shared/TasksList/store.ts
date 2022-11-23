@@ -67,8 +67,8 @@ export class TasksListStore {
   keyMap = {
     DONE: 'd',
     GOAL: 'g',
-    WONT_DO: ['w'],
-    FORCE_WONT_DO: ['shift+w'],
+    WONT_DO: ['shift+w'],
+    FORCE_WONT_DO: ['w'],
     EDIT: 'space',
     OPEN_AND_EDIT: 'enter',
     FOCUS_LEAVE_LEFT: 'left',
@@ -89,9 +89,7 @@ export class TasksListStore {
         );
 
         if (hasAnotherStatus) {
-          this.modals.openWontDoModal(this.draggableList.focused, () => {
-            this.setTasksStatus(this.draggableList.focused, TaskStatus.WONT_DO);
-          });
+          this.openWontDoModal(this.draggableList.focused);
         } else {
           this.setTasksStatus(this.draggableList.focused, TaskStatus.WONT_DO);
         }
@@ -248,6 +246,10 @@ export class TasksListStore {
     }
   };
 
+  handleWontDoWithComment = (id: string) => {
+    this.openWontDoModal([id]);
+  };
+
   handleStatusChange = (id: string, status: TaskStatus) => {
     const task = this.items[id];
     const newStatus = task.status === status ? TaskStatus.TODO : status;
@@ -398,6 +400,12 @@ export class TasksListStore {
     this.root.api.tasks.update({
       id: task.id,
       fields: { status },
+    });
+  };
+
+  openWontDoModal = (ids: string[]) => {
+    this.modals.openWontDoModal(ids, () => {
+      this.setTasksStatus(ids, TaskStatus.WONT_DO);
     });
   };
 

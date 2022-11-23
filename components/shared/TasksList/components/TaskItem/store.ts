@@ -15,6 +15,7 @@ export type TaskItemProps = {
   isEditMode?: boolean;
   onFocus?: (taskId: string, multiselect?: 'single' | 'many') => void;
   onStatusChange?: (taskId: string, status: TaskStatus) => void;
+  onWontDoWithComment?: (taskId: string) => void;
   tagsMap: Record<string, TaskTag>;
 };
 
@@ -38,6 +39,7 @@ class TaskItemStore {
   skipClick: boolean = false;
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
+  onWontDoWithComment: TaskItemProps['onWontDoWithComment'];
 
   setBoxRef = (ref: HTMLDivElement | null) => {
     this.boxRef = ref;
@@ -77,7 +79,36 @@ class TaskItemStore {
   };
 
   handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newStatus = e.target.checked ? TaskStatus.DONE : TaskStatus.TODO;
+    const nativeEvent = e.nativeEvent as PointerEvent;
+    let newStatus;
+
+    if (this.task.status === TaskStatus.TODO) {
+      if (nativeEvent.metaKey || nativeEvent.ctrlKey) {
+        newStatus = TaskStatus.WONT_DO;
+
+        if (nativeEvent.shiftKey) {
+          this.onWontDoWithComment(this.task.id);
+          return;
+        }
+      } else {
+        newStatus = TaskStatus.DONE;
+      }
+    } else {
+      if (nativeEvent.metaKey || nativeEvent.ctrlKey) {
+        if (this.task.status === TaskStatus.DONE) {
+          newStatus = TaskStatus.WONT_DO;
+
+          if (nativeEvent.shiftKey) {
+            this.onWontDoWithComment(this.task.id);
+            return;
+          }
+        } else {
+          newStatus = TaskStatus.TODO;
+        }
+      } else {
+        newStatus = TaskStatus.DONE;
+      }
+    }
 
     this.onStatusChange(this.task.id, newStatus);
   };
@@ -86,6 +117,7 @@ class TaskItemStore {
     task,
     onFocus,
     onStatusChange,
+    onWontDoWithComment,
     tagsMap,
     isFocused,
     isDisabled,
@@ -101,9 +133,11 @@ class TaskItemStore {
     }
 
     this.task = task;
-    this.onFocus = onFocus;
     this.tags = tagsMap;
+
+    this.onFocus = onFocus;
     this.onStatusChange = onStatusChange;
+    this.onWontDoWithComment = onWontDoWithComment;
 
     this.isDisabled = isDisabled;
     this.isDragging = isDragging;

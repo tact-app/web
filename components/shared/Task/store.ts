@@ -66,6 +66,10 @@ class TaskStore {
     return this.spaces.find((space) => space.id === this.data?.input.spaceId);
   }
 
+  get isWontDo() {
+    return this.data?.status === TaskStatus.WONT_DO;
+  }
+
   handleDescriptionChange = (content: JSONContent) => {
     this.description.content = content;
   };
@@ -93,6 +97,10 @@ class TaskStore {
     }
   };
 
+  handleDescriptionFocus = () => {
+    this.isEditorFocused = true;
+  };
+
   handleDescriptionBlur = () => {
     if (this.description.content) {
       this.root.api.descriptions.update({
@@ -103,6 +111,7 @@ class TaskStore {
       });
     }
 
+    this.isEditorFocused = false;
     this.callbacks.onBlur?.();
   };
 

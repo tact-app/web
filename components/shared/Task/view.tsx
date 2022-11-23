@@ -67,35 +67,57 @@ export const TaskView = observer(function TaskView() {
           />
           <Box mt={6}>
             <TaskModesMenu />
-            <HStack ref={ref} alignItems='start'>
-              <Box h={9} display='flex' alignItems='center'>
-                <Checkbox
-                  variant='indeterminateUnfilled'
-                  bg='white'
-                  size='lg'
-                  cursor='pointer'
-                  isChecked={store.data.status === TaskStatus.DONE}
-                  isIndeterminate={store.data.status === TaskStatus.WONT_DO}
-                  onChange={store.handleStatusChange}
-                  name='task-status'
+            <Box
+              transition='opacity 0.2s ease-in-out'
+              opacity={
+                store.isWontDo &&
+                !store.isEditorFocused &&
+                !store.quickEditor.isInputFocused
+                  ? 0.5
+                  : 1
+              }
+            >
+              <HStack ref={ref} alignItems='start'>
+                <Box h={9} display='flex' alignItems='center'>
+                  <Checkbox
+                    variant='indeterminateUnfilled'
+                    bg='white'
+                    size='lg'
+                    cursor='pointer'
+                    isChecked={store.data.status === TaskStatus.DONE}
+                    isIndeterminate={store.data.status === TaskStatus.WONT_DO}
+                    onChange={store.handleStatusChange}
+                    name='task-status'
+                  />
+                </Box>
+                <TaskQuickEditorInput
+                  fontSize='2xl'
+                  fontWeight='semibold'
+                  multiline
                 />
+              </HStack>
+              <Box mt={4} id='editor' overflow='auto'>
+                {store.isDescriptionLoading ? (
+                  <Center>
+                    <CircularProgress isIndeterminate size='24px' />
+                  </Center>
+                ) : (
+                  <TaskEditor />
+                )}
               </Box>
-              <TaskQuickEditorInput
-                fontSize='2xl'
-                fontWeight='semibold'
-                multiline
-              />
-            </HStack>
+            </Box>
           </Box>
-          <Box mt={4} id='editor' overflow='auto'>
-            {store.isDescriptionLoading ? (
-              <Center>
-                <CircularProgress isIndeterminate size='24px' />
-              </Center>
-            ) : (
-              <TaskEditor />
-            )}
-          </Box>
+          {store.isWontDo && store.data.wontDoReason && (
+            <Box>
+              <Divider mt={8} mb={6} />
+              <Text fontSize='md' fontWeight='semibold'>
+                Why you weren&apos;t able to manage this task?
+              </Text>
+              <Text fontSize='sm' fontWeight='normal' mt={2}>
+                {store.data.wontDoReason}
+              </Text>
+            </Box>
+          )}
         </Box>
         {store.data.input && store.inputSpace ? (
           <Box>

@@ -11,6 +11,7 @@ export const TaskEditor = observer(function TaskEditor() {
       content={store.description ? store.description.content : undefined}
       isFocused={store.isEditorFocused}
       onUpdate={store.handleDescriptionChange}
+      onFocus={store.handleDescriptionFocus}
       onBlur={store.handleDescriptionBlur}
       onLeave={() => store.quickEditor.setFocus(true)}
     />

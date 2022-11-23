@@ -336,6 +336,7 @@ export class TaskQuickEditorStore {
   saveTask = () => {
     if (this.callbacks.onSave && this.value) {
       this.callbacks.onSave({
+        ...(this.task || {}),
         title: this.value,
         id: this.task ? this.task.id : uuidv4(),
         listId: this.listId,
