@@ -1,6 +1,43 @@
 import { Options, useHotkeys } from 'react-hotkeys-hook';
-import { HotkeysEvent } from 'hotkeys-js';
 import { useMemo } from 'react';
+import { HotkeysEvent } from 'react-hotkeys-hook/src/types';
+
+const normalizeKey = (key: string) => {
+  const arr = key.split('+');
+  const keyName = arr.pop();
+
+  return arr.sort().concat(keyName).join('+');
+};
+
+const getNormalizedKeyFromEvent = (e: HotkeysEvent) => {
+  const { keys, mod, ctrl, meta, alt, shift } = e;
+  const items = [];
+
+  if (mod) {
+    items.push('mod');
+  }
+
+  if (ctrl) {
+    items.push('ctrl');
+  }
+
+  if (meta) {
+    items.push('meta');
+  }
+
+  if (alt) {
+    items.push('alt');
+  }
+
+  if (shift) {
+    items.push('shift');
+  }
+
+  items.sort();
+  items.push(...keys);
+
+  return items.join('+');
+};
 
 export const useHotkeysHandler = (
   keymap: Record<string, string[] | string>,
@@ -18,26 +55,30 @@ export const useHotkeysHandler = (
     Object.entries(keymap).forEach(([name, keysOrKey]) => {
       if (Array.isArray(keysOrKey)) {
         keysOrKey.forEach((key) => {
-          if (!result[key]) {
-            result[key] = [];
+          const normalizedKey = normalizeKey(key);
+
+          if (!result[normalizedKey]) {
+            result[normalizedKey] = [];
           }
 
-          if (!allKeys.includes(key)) {
-            allKeys.push(key);
+          if (!allKeys.includes(normalizedKey)) {
+            allKeys.push(normalizedKey);
           }
 
-          result[key].push(name);
+          result[normalizedKey].push(name);
         });
       } else {
-        if (!result[keysOrKey]) {
-          result[keysOrKey] = [];
+        const normalizedKey = normalizeKey(keysOrKey);
+
+        if (!result[normalizedKey]) {
+          result[normalizedKey] = [];
         }
 
-        if (!allKeys.includes(keysOrKey)) {
-          allKeys.push(keysOrKey);
+        if (!allKeys.includes(normalizedKey)) {
+          allKeys.push(normalizedKey);
         }
 
-        result[keysOrKey].push(name);
+        result[normalizedKey].push(name);
       }
     });
 
@@ -49,20 +90,21 @@ export const useHotkeysHandler = (
 
   return useHotkeys(
     keys.join(', '),
-    (event, handler) => {
-      const matchedHandlerName = revertedKeymap[handler.key];
+    (event, hotkeysEvent) => {
+      const matchedHandlerName =
+        revertedKeymap[getNormalizedKeyFromEvent(hotkeysEvent)];
 
       if (matchedHandlerName) {
         matchedHandlerName.forEach((name) => {
           if (handlers[name]) {
-            handlers[name](event, handler);
+            handlers[name](event, hotkeysEvent);
           }
         });
       }
     },
     {
       ...options,
-      enableOnTags: ['INPUT', 'TEXTAREA', 'SELECT'],
+      enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'],
     },
     [...deps, revertedKeymap]
   );

@@ -84,20 +84,33 @@ export class DraggableListStore {
   }
 
   keymap = {
-    UP: ['j', 'up'],
-    DOWN: ['k', 'down'],
-    FORCE_UP: ['cmd+j', 'cmd+up'],
-    FORCE_DOWN: ['cmd+k', 'cmd+down'],
-    DONE: 'd',
-    WONT_DO: ['w', 'cmd+w'],
+    UP: ['j', 'arrowup'],
+    DOWN: ['k', 'arrowdown'],
+    FORCE_UP: ['meta+j', 'meta+arrowup', 'ctrl+j', 'ctrl+arrowup'],
+    FORCE_DOWN: ['meta+k', 'meta+arrowdown', 'ctrl+k', 'ctrl+arrowdown'],
     EDIT: 'space',
-    MOVE_UP: ['cmd+shift+j', 'cmd+shift+up'],
-    MOVE_DOWN: ['cmd+shift+k', 'cmd+shift+down'],
-    SELECT_UP: ['shift+j', 'shift+up'],
-    SELECT_DOWN: ['shift+k', 'shift+down'],
-    SELECT_ALL: ['cmd+a', 'ctrl+a'],
+    MOVE_UP: [
+      'meta+shift+j',
+      'meta+shift+arrowup',
+      'ctrl+shift+j',
+      'ctrl+shift+arrowup',
+    ],
+    MOVE_DOWN: [
+      'meta+shift+k',
+      'meta+shift+arrowdown',
+      'ctrl+shift+k',
+      'ctrl+shift+arrowdown',
+    ],
+    SELECT_UP: ['shift+j', 'shift+arrowup'],
+    SELECT_DOWN: ['shift+k', 'shift+arrowdown'],
+    SELECT_ALL: ['meta+a', 'ctrl+a'],
     ESC: 'esc',
-    FORCE_DELETE: ['cmd+backspace', 'cmd+delete'],
+    FORCE_DELETE: [
+      'meta+backspace',
+      'meta+delete',
+      'ctrl+backspace',
+      'ctrl+delete',
+    ],
     DELETE: ['del', 'backspace'],
   };
 
