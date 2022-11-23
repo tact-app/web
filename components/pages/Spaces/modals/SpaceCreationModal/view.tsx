@@ -30,7 +30,7 @@ import { faTrash } from '@fortawesome/pro-regular-svg-icons';
 
 const keyMap = {
   CREATE: ['meta+enter', 'meta+s', 'ctrl+enter', 'ctrl+s'],
-  CANCEL: ['esc'],
+  CANCEL: ['escape'],
 };
 
 export const SpaceCreationModalView = observer(function SpaceCreationModal() {

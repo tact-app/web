@@ -104,7 +104,7 @@ export class DraggableListStore {
     SELECT_UP: ['shift+j', 'shift+arrowup'],
     SELECT_DOWN: ['shift+k', 'shift+arrowdown'],
     SELECT_ALL: ['meta+a', 'ctrl+a'],
-    ESC: 'esc',
+    ESC: 'escape',
     FORCE_DELETE: [
       'meta+backspace',
       'meta+delete',

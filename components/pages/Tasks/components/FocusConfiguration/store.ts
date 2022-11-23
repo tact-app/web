@@ -36,11 +36,11 @@ export class FocusConfigurationStore {
 
   keyMap = {
     FOCUS_GOAL_SELECTION: 'shift+g',
-    BLUR: 'right',
+    BLUR: 'arrowright',
     NUMBER: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     CLEAR: ['shift+backspace', 'shift+delete', 'shift+c'],
     SHOW_IMPORTANT: 'i',
-    ESCAPE: 'esc',
+    ESCAPE: 'escape',
   };
 
   hotkeyHandlers = {

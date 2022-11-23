@@ -49,7 +49,7 @@ export class GoalCreationModalStore {
 
   keyMap = {
     CREATE: ['meta+enter', 'meta+s', 'ctrl+enter', 'ctrl+s'],
-    CANCEL: ['esc'],
+    CANCEL: ['escape'],
   };
 
   hotkeyHandlers = {

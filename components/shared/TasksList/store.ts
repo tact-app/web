@@ -71,9 +71,9 @@ export class TasksListStore {
     FORCE_WONT_DO: ['alt+w'],
     EDIT: 'space',
     OPEN_AND_EDIT: 'enter',
-    FOCUS_LEAVE_LEFT: 'left',
+    FOCUS_LEAVE_LEFT: 'arrowleft',
     FOCUS_INPUT: 'n',
-    OPEN: 'right',
+    OPEN: 'arrowright',
   };
 
   hotkeyHandlers = {

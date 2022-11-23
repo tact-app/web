@@ -48,11 +48,11 @@ export class SpacesMenuStore {
   keyMap = {
     UP: ['j', 'up'],
     FORCE_UP: ['meta+j', 'meta+arrowup', 'ctrl+j', 'ctrl+arrowup'],
-    DOWN: ['k', 'down'],
+    DOWN: ['k', 'arrowdown'],
     FORCE_DOWN: ['meta+k', 'meta+arrowdown', 'ctrl+k', 'ctrl+arrowdown'],
-    COLLAPSE: 'left',
-    EXPAND: 'right',
-    LEAVE: ['esc'],
+    COLLAPSE: 'arrowleft',
+    EXPAND: 'arrowright',
+    LEAVE: ['escape'],
     SELECT: ['space', 'enter'],
   };
 
