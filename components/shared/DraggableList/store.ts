@@ -95,6 +95,7 @@ export class DraggableListStore {
     MOVE_DOWN: ['cmd+shift+k', 'cmd+shift+down'],
     SELECT_UP: ['shift+j', 'shift+up'],
     SELECT_DOWN: ['shift+k', 'shift+down'],
+    SELECT_ALL: ['cmd+a', 'ctrl+a'],
     ESC: 'esc',
     FORCE_DELETE: ['cmd+backspace', 'cmd+delete'],
     DELETE: ['del', 'backspace'],
@@ -167,6 +168,10 @@ export class DraggableListStore {
     },
     SELECT_UP: () => this.shiftSelect('up'),
     SELECT_DOWN: () => this.shiftSelect('down'),
+    SELECT_ALL: (e) => {
+      e.preventDefault();
+      this.selectAll();
+    },
     ESC: () => {
       if (!this.callbacks.onEscape?.()) {
         this.resetFocusedItem();
@@ -210,6 +215,11 @@ export class DraggableListStore {
         }
       }
     }
+  };
+
+  selectAll = () => {
+    this.resetFocusedItem();
+    this.addFocusedItems(this.activeItems);
   };
 
   runControlsMoveAction = (action: (lift) => void) => {
