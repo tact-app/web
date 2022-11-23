@@ -11,7 +11,6 @@
 .eslintrc.json
 .gitignore
 .gitmodules
-.npmrc
 .prettierrc
 .vercelignore
 
