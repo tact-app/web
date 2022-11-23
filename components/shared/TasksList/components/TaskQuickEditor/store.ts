@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from 'react';
 import { SyntheticEvent } from 'react';
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, toJS } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import {
@@ -336,7 +336,7 @@ export class TaskQuickEditorStore {
   saveTask = () => {
     if (this.callbacks.onSave && this.value) {
       this.callbacks.onSave({
-        ...(this.task || {}),
+        ...(toJS(this.task) || {}),
         title: this.value,
         id: this.task ? this.task.id : uuidv4(),
         listId: this.listId,
