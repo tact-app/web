@@ -37,12 +37,10 @@ jobs:
         env: { FONTAWESOME_NPM_AUTH_TOKEN: '${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}' }
       - run: npm run build
 
-  # temporary solution for https://vercel.com/guides/why-aren-t-commits-triggering-deployments-on-vercel
-  # see https://vercel.com/guides/how-can-i-use-github-actions-with-vercel
   deploy:
-    needs: [ build ]
-    if: github.event_name == 'push' && github.actor != 'kamilsk' && success()
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.actor != 'kamilsk'
+    needs: [ build ]
 
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -61,9 +59,9 @@ jobs:
       - run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
 
   notify:
-    needs: [ build ]
-    if: github.event_name == 'push' && (failure() || success())
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    needs: [ deploy ]
 
     steps:
       - uses: rtCamp/action-slack-notify@v2
