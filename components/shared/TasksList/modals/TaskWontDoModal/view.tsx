@@ -37,7 +37,7 @@ export const TaskWontDoModalView = observer(function TaskWontDoModalView({
           <Box pr={1} pl={1}>
             <Text mb={4}>Chose reason</Text>
             {WontDoReasons.map((reason, index) => (
-              <Box key={reason}>
+              <Box key={reason} mb={2}>
                 <Checkbox
                   size='lg'
                   ref={(el) => store.setCheckboxRef(el, index)}
