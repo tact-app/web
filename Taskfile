@@ -76,40 +76,74 @@ env() {
   #    sudo killall -HUP mDNSResponder; echo DNS Cache Reset
   #  https://web.dev/how-to-use-local-https/
   #  https://github.com/FiloSottile/mkcert
-  return 1
+  cat <<EOF > .env
+FONTAWESOME_TOKEN=$(git config fontawesome.token)
+OKTETO_TOKEN=$(git config okteto.token)
+VERCEL_TOKEN=$(git config vercel.token)
+EOF
 }
 
-# Example: run node npm ci --include=dev
+# Example: run node npm ci --ignore-scripts --include=dev
 node() {
   docker run --rm -it \
-    --entrypoint=/bin/sh \
     -e FONTAWESOME_NPM_AUTH_TOKEN="$(git config fontawesome.token)" \
     -v "$(pwd)":/app \
     -w /app \
     "${@:2}" \
+    --entrypoint=/bin/sh \
     node:16-alpine -c "${1}"
 }
 
+# Example: run install --from-scratch
 install() {
   [ "${1:-}" == '--from-scratch' ] && rm -rf node_modules
-  local cmd='npm install --include=dev'
+  local cmd='npm install'
   if [ -t package-lock.json ]; then
-    cmd='npm ci --include=dev'
+    cmd='npm ci'
   fi
-  node "${cmd}"
+  node "${cmd} --ignore-scripts --include=dev"
 }
 
+# Example: run build --from-scratch
+# Example: run build docker --from-scratch
 build() {
+  # docker way
+  if [ "${1:-}" == 'docker' ]; then
+    if [ "${2:-}" == '--from-scratch' ]; then
+      docker rmi tact:latest || true
+    fi
+    docker build \
+      --build-arg token="$(git config fontawesome.token)" \
+      -f k8s/Dockerfile \
+      -t tact:latest .
+    return $?
+  fi
+
+  # local way
   [ "${1:-}" == '--from-scratch' ] && rm -rf .next && install "${@}"
   node 'npm run build'
 }
 
+# Example: run server --from-scratch
+# Example: run server docker --from-scratch
 server() {
+  # docker way
+  if [ "${1:-}" == 'docker' ]; then
+    [ "${2:-}" == '--from-scratch' ] && build docker "${@:2}"
+    docker run \
+      --rm -it \
+      -p 127.0.0.1:3000:3000 \
+      tact:latest
+    return $?
+  fi
+
+  # local way
   [ "${1:-}" == '--from-scratch' ] && build "${@}"
   node 'npm run start' -p 127.0.0.1:3000:3000
 }
 
 # Example: run tools npm i vercel@latest
+# Example: run tools go
 tools() {
   case "${1}" in
   npm)
