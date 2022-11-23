@@ -5,7 +5,7 @@ ENV FONTAWESOME_NPM_AUTH_TOKEN=${token}
 
 WORKDIR /app
 
-COPY .. .
+COPY . .
 RUN npm ci --ignore-scripts --include=dev && npm run build
 
 

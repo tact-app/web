@@ -10,11 +10,16 @@
 
 .babelrc
 .dockerignore
+.env
 .eslintrc.json
 .gitignore
 .gitmodules
 .prettierrc
+.stignore
 .vercelignore
+
+next-env.d.ts
+tsconfig.tsbuildinfo
 
 docker-compose.yml
 Taskfile

@@ -114,7 +114,7 @@ build() {
     fi
     docker build \
       --build-arg token="$(git config fontawesome.token)" \
-      -f k8s/Dockerfile \
+      -f k8s/app/Dockerfile \
       -t tact:latest .
     return $?
   fi
