@@ -48,7 +48,7 @@ export class GoalCreationModalStore {
   }
 
   keyMap = {
-    CREATE: ['cmd+enter', 'cmd+s'],
+    CREATE: ['meta+enter', 'meta+s', 'ctrl+enter', 'ctrl+s'],
     CANCEL: ['esc'],
   };
 

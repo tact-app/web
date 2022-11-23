@@ -29,7 +29,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/pro-regular-svg-icons';
 
 const keyMap = {
-  CREATE: ['cmd+enter', 'cmd+s'],
+  CREATE: ['meta+enter', 'meta+s', 'ctrl+enter', 'ctrl+s'],
   CANCEL: ['esc'],
 };
 

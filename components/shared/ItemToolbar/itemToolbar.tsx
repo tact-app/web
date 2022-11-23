@@ -47,7 +47,7 @@ export const ItemToolbar = ({
   >
     <Box display='flex' alignItems='center'>
       {onExpand && !isExpanded && (
-        <TooltipWithHotkey label='Expand' hotkey='cmd+e' hasArrow>
+        <TooltipWithHotkey label='Expand' hotkey='⌘+E' hasArrow>
           <IconButton
             aria-label={'expand'}
             size='xs'
@@ -65,7 +65,7 @@ export const ItemToolbar = ({
         </TooltipWithHotkey>
       )}
       {onCollapse && isExpanded && (
-        <TooltipWithHotkey label='Collapse' hotkey='cmd+e' hasArrow>
+        <TooltipWithHotkey label='Collapse' hotkey='⌘+E' hasArrow>
           <IconButton
             aria-label={'collapse'}
             size='xs'
