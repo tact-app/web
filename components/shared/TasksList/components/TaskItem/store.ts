@@ -14,6 +14,8 @@ export type TaskItemProps = {
   isDragging?: boolean;
   isEditMode?: boolean;
   isMultiselect?: boolean;
+
+  onToggleMenu?: (isOpen: boolean) => void;
   onFocus?: (taskId: string, multiselect?: 'single' | 'many') => void;
   onStatusChange?: (taskId: string, status: TaskStatus) => void;
   onWontDoWithComment?: (taskId: string) => void;
@@ -43,30 +45,56 @@ class TaskItemStore {
 
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
+  onToggleMenu: TaskItemProps['onToggleMenu'];
   onWontDoWithComment: TaskItemProps['onWontDoWithComment'];
 
-  keyMap = {
-    OPEN_MENU: ['alt', 'option'],
-  };
+  setHotkeysHandlers = () => {
+    let isAltPressed = false;
 
-  hotkeysHandlers = {
-    OPEN_MENU: (e: KeyboardEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.isMenuOpen = !this.isMenuOpen;
-    },
+    const keyDownListener = (e: KeyboardEvent) => {
+      if (e.key === 'Alt') {
+        isAltPressed = true;
+      } else if (isAltPressed) {
+        isAltPressed = false;
+      }
+    };
+
+    const keyUpListener = (e: KeyboardEvent) => {
+      if (e.key === 'Alt') {
+        if (isAltPressed) {
+          this.toggleMenu();
+        }
+
+        isAltPressed = false;
+      }
+    };
+
+    document.addEventListener('keydown', keyDownListener);
+    document.addEventListener('keyup', keyUpListener);
+
+    return () => {
+      document.removeEventListener('keydown', keyDownListener);
+      document.removeEventListener('keyup', keyUpListener);
+    };
   };
 
   setBoxRef = (ref: HTMLDivElement | null) => {
     this.boxRef = ref;
   };
 
+  toggleMenu = () => {
+    this.isMenuOpen = !this.isMenuOpen;
+    this.onToggleMenu(this.isMenuOpen);
+  };
+
   openMenu = () => {
     this.isMenuOpen = true;
+    this.onToggleMenu(true);
   };
 
   closeMenu = () => {
     this.isMenuOpen = false;
+    this.onToggleMenu(false);
   };
 
   handleMouseDown = () => {
@@ -140,6 +168,7 @@ class TaskItemStore {
     onFocus,
     onStatusChange,
     onWontDoWithComment,
+    onToggleMenu,
     tagsMap,
     isFocused,
     isDisabled,
@@ -161,6 +190,7 @@ class TaskItemStore {
     this.onFocus = onFocus;
     this.onStatusChange = onStatusChange;
     this.onWontDoWithComment = onWontDoWithComment;
+    this.onToggleMenu = onToggleMenu;
 
     this.isDisabled = isDisabled;
     this.isDragging = isDragging;

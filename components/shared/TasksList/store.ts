@@ -303,12 +303,8 @@ export class TasksListStore {
     });
   };
 
-  openItemMenu = () => {
-    this.isItemMenuOpen = true;
-  };
-
-  closeItemMenu = () => {
-    this.isItemMenuOpen = false;
+  handleToggleMenu = (isOpen: boolean) => {
+    this.isItemMenuOpen = isOpen;
   };
 
   openTask = (taskId: string) => {

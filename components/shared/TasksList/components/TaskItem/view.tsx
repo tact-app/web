@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Box, Checkbox, chakra, Tag, useOutsideClick } from '@chakra-ui/react';
 import { TaskStatus } from '../../types';
@@ -8,7 +8,6 @@ import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
 import { TaskQuickEditorPriority } from '../TaskQuickEditor/TaskQuickEditorPriority';
 import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
-import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 
 export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
   const store = useTaskItemStore();
@@ -45,9 +44,11 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
     handler: quickEditStore.handleClickOutside,
   });
 
-  useHotkeysHandler(store.keyMap, store.hotkeysHandlers, {
-    enabled: store.isFocused && !store.isMultiselect,
-  });
+  useEffect(() => {
+    if (store.isFocused && !store.isMultiselect) {
+      return store.setHotkeysHandlers();
+    }
+  }, [store, store.isFocused, store.isMultiselect]);
 
   return (
     <Box
