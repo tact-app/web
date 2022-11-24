@@ -15,7 +15,6 @@ import {
 import { GoalsSelectionStoreProvider } from '../../../../shared/GoalsSelection/store';
 import { GoalsSelectionView } from '../../../../shared/GoalsSelection/view';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
-import { useNavigationByRefs } from '../../../../../helpers/useNavigationByRefs';
 import { useEffect, useRef } from 'react';
 
 export const FocusConfigurationView = observer(function FocusConfigurationView(
@@ -26,13 +25,11 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
 
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
-  const { handleFocus, handleKeyDown, setRefs, focus } = useNavigationByRefs();
-
   useEffect(() => {
     if (store.isFocused) {
-      focus(0);
+      store.navigation.focus(0);
     }
-  }, [store.isFocused, focus]);
+  }, [store.isFocused, store.navigation]);
 
   useOutsideClick({
     ref,
@@ -75,8 +72,8 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           minH={0}
           display='flex'
           flexDirection='column'
-          onKeyDown={handleKeyDown}
-          onFocus={handleFocus}
+          onKeyDown={store.navigation.handleKeyDown}
+          onFocus={store.navigation.handleFocus}
         >
           <HStack pb={2} alignItems='baseline' pl={1}>
             <Text fontSize='lg' fontWeight='semibold'>
@@ -93,7 +90,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
             checked={store.data.goals}
             callbacks={store.goalsSelectionCallbacks}
           >
-            <GoalsSelectionView setRefs={setRefs} />
+            <GoalsSelectionView setRefs={store.navigation.setRefs} />
           </GoalsSelectionStoreProvider>
         </Box>
         <FormControl display='flex' alignItems='center' ml={4} mt={7}>

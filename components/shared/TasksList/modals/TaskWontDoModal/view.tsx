@@ -22,21 +22,19 @@ import {
   useTaskWontDoModalStore,
   WontDoReasons,
 } from './store';
-import { useNavigationByRefs } from '../../../../../helpers/useNavigationByRefs';
 
 export const TaskWontDoModalView = observer(function TaskWontDoModalView({
   onClose,
 }: TaskWontDoModalProps) {
   const store = useTaskWontDoModalStore();
 
-  const { handleKeyDown, setRefs, handleFocus } = useNavigationByRefs(
-    store.navigationCallbacks
-  );
-
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent onKeyDown={handleKeyDown} onFocus={handleFocus}>
+      <ModalContent
+        onKeyDown={store.navigation.handleKeyDown}
+        onFocus={store.navigation.handleFocus}
+      >
         <ModalHeader>Why you won&apos;t do this task?</ModalHeader>
         <ModalBody pb={6} pl={5} pr={5}>
           <Box pr={1} pl={1}>
@@ -45,7 +43,7 @@ export const TaskWontDoModalView = observer(function TaskWontDoModalView({
               <Box key={reason} mb={2}>
                 <Checkbox
                   size='lg'
-                  ref={(el) => setRefs(index, el)}
+                  ref={(el) => store.navigation.setRefs(index, el)}
                   onChange={store.handleCheckboxChange}
                   isChecked={store.predefinedReasonIndex === index}
                   value={index}
@@ -61,7 +59,7 @@ export const TaskWontDoModalView = observer(function TaskWontDoModalView({
             <Box p={1}>
               <Textarea
                 ref={(el) => {
-                  setRefs(WontDoReasons.length, el);
+                  store.navigation.setRefs(WontDoReasons.length, el);
                   store.setTextareaRef(el);
                 }}
                 onKeyDown={store.handleTextareaKeyDown}

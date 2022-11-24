@@ -6,6 +6,7 @@ import {
   GoalsSelectionProps,
   GoalsSelectionStore,
 } from '../../../../shared/GoalsSelection/store';
+import { ListNavigation } from '../../../../../helpers/ListNavigation';
 
 export type FocusConfigurationData = {
   id: string;
@@ -32,6 +33,7 @@ export class FocusConfigurationStore {
     makeAutoObservable(this);
   }
 
+  navigation = new ListNavigation();
   goalsSelection = new GoalsSelectionStore(this.root);
 
   keyMap = {

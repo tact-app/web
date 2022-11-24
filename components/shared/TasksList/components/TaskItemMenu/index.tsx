@@ -18,7 +18,6 @@ import { useTasksListStore } from '../../store';
 import React, { PropsWithChildren, useCallback, useState } from 'react';
 import { TaskStatus } from '../../types';
 import { Modes } from '../TaskQuickEditor/store';
-import { useNavigationByRefs } from '../../../../../helpers/useNavigationByRefs';
 
 const TaskItemMenuItem = forwardRef(
   (
@@ -186,7 +185,6 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
   isOpen: boolean;
   stopAnimation: () => void;
 }) {
-  const { handleKeyDown, setRefs, handleFocus } = useNavigationByRefs();
   const store = useTaskItemStore();
   const tasksStore = useTasksListStore();
 
@@ -199,12 +197,12 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
           overflow='hidden'
           w='auto'
           minW={64}
-          onKeyDown={handleKeyDown}
-          onFocus={handleFocus}
+          onKeyDown={store.menuNavigation.handleKeyDown}
+          onFocus={store.menuNavigation.handleFocus}
         >
           <PopoverBody p={0}>
             <TaskItemMenuItems
-              refs={setRefs}
+              refs={store.menuNavigation.setRefs}
               items={singleTaskItems(store, tasksStore)}
             />
           </PopoverBody>

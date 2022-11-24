@@ -10,32 +10,32 @@ import {
 import { Button, Text } from '@chakra-ui/react';
 import { useTaskGoalAssignModalStore } from './store';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GoalsSelection } from '../../../GoalsSelection';
-import { useNavigationByRefs } from '../../../../../helpers/useNavigationByRefs';
 
 export const TaskGoalAssignModalView = observer(
   function TaskGoalAssignModalView() {
     const store = useTaskGoalAssignModalStore();
 
     const ref = useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
-    const { handleFocus, handleKeyDown, setRefs } = useNavigationByRefs(
-      store.navigationCallbacks
-    );
+
+    useEffect(() => {
+      store.navigation.init();
+    }, []);
 
     return (
       <Modal isCentered isOpen={true} onClose={store.callbacks.onClose}>
         <ModalOverlay />
         <ModalContent
           ref={(el) => (ref.current = el)}
-          onFocus={handleFocus}
-          onKeyDown={handleKeyDown}
+          onFocus={store.navigation.handleFocus}
+          onKeyDown={store.navigation.handleKeyDown}
         >
           <ModalHeader>My goals</ModalHeader>
           <ModalBody maxH={80} overflow='scroll' pl={5} pr={5}>
             <GoalsSelection
               goals={store.goals}
-              setRefs={setRefs}
+              setRefs={store.navigation.setRefs}
               checked={store.selectedGoalId ? [store.selectedGoalId] : []}
               callbacks={{
                 onSelect: store.handleSelect,

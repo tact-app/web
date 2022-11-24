@@ -3,6 +3,7 @@ import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { GoalsSelectionStore } from '../../../GoalsSelection/store';
 import { GoalData } from '../../../../pages/Goals/types';
+import { ListNavigation } from '../../../../../helpers/ListNavigation';
 
 export type TaskGoalAssignModalProps = {
   callbacks: {
@@ -58,9 +59,9 @@ export class TaskGoalAssignModalStore {
     this.goals = props.goals;
   };
 
-  navigationCallbacks = {
+  navigation = new ListNavigation({
     onForceEnter: this.handleSubmit,
-  };
+  });
 }
 
 export const {
