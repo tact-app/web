@@ -1,20 +1,18 @@
-name: checking
+name: continuous integration
 
 on:
   pull_request:
-    branches: [ '*' ]
+    branches: [ main ]
     paths:
-      - '.github/workflows/ci.yml'
-      - '**.js'
-      - '**.ts'
-      - 'package*.json'
+      - .github/workflows/ci.yml
+      - package*.json
+      - '**.{js,ts}'
   push:
-    branches: [ '*' ]
+    branches: [ main ]
     paths:
-      - '.github/workflows/ci.yml'
-      - '**.js'
-      - '**.ts'
-      - 'package*.json'
+      - .github/workflows/ci.yml
+      - package*.json
+      - '**.{js,ts}'
     tags: [ '!*' ]
 
 jobs:
@@ -60,14 +58,15 @@ jobs:
 
   notify:
     runs-on: ubuntu-latest
-    if: ${{ always() }} && github.event_name == 'push'
+    if: ${{ always() }}
     needs: [ deploy ]
 
     steps:
       - uses: rtCamp/action-slack-notify@v2
+        if: github.event_name == 'push'
         env:
           SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
           SLACK_ICON: https://github.com/github.png?size=64
-          SLACK_TITLE: '${{ github.repository }}: ${{ github.workflow }}'
+          SLACK_TITLE: '♻️ ${{ github.repository }}: ${{ github.workflow }}'
           SLACK_USERNAME: GitHub Actions
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
