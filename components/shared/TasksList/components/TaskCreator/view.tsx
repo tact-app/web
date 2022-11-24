@@ -27,6 +27,7 @@ const HotkeyHint = ({ children }) => (
     borderRadius='md'
     borderWidth='1px'
     minW={5}
+    lineHeight={5}
     h={5}
     display='inline-block'
     textAlign='center'

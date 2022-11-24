@@ -122,6 +122,7 @@ export class TasksListStore {
     },
     FOCUS_INPUT: () => {
       this.draggableList.resetFocusedItem();
+      this.setEditingTask(null);
       this.closeTask();
       this.creator.setFocus(true);
     },
@@ -143,6 +144,7 @@ export class TasksListStore {
         this.closeTask();
       } else if (this.callbacks.onFocusLeave?.(NavigationDirections.LEFT)) {
         this.draggableList.resetFocusedItem();
+        this.setEditingTask(null);
       }
     },
   };
@@ -292,6 +294,7 @@ export class TasksListStore {
 
   handleCreatorFocus = () => {
     this.draggableList.resetFocusedItem();
+    this.setEditingTask(null);
     this.closeTask();
   };
 
