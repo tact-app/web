@@ -71,8 +71,8 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           outline: 'none',
         }}
         flex={1}
-        borderBottom='1px'
         overflow='hidden'
+        borderBottom='1px'
         borderColor={
           props.highlightActiveTasks && !store.isDisabled
             ? 'transparent'

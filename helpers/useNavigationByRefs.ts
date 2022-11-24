@@ -11,7 +11,9 @@ export const useNavigationByRefs = () => {
         e.preventDefault();
 
         setFocusedIndex((index) => {
-          if (index !== null) {
+          if (e.metaKey || e.ctrlKey) {
+            return filteredRefs.length - 1;
+          } else if (index !== null) {
             const nextIndex = index + 1;
 
             if (nextIndex >= filteredRefs.length) {
@@ -27,7 +29,9 @@ export const useNavigationByRefs = () => {
         e.preventDefault();
 
         setFocusedIndex((index) => {
-          if (index !== null) {
+          if (e.metaKey || e.ctrlKey) {
+            return 0;
+          } else if (index !== null) {
             const nextIndex = index - 1;
 
             if (nextIndex < 0) {
@@ -39,6 +43,10 @@ export const useNavigationByRefs = () => {
             return filteredRefs.length - 1;
           }
         });
+      } else if (e.key === 'l') {
+        e.preventDefault();
+
+        setFocusedIndex(filteredRefs.length - 1);
       }
     },
     [filteredRefs.length]

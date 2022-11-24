@@ -7,8 +7,8 @@ const getTasksApi = (apiService: ApiService) => ({
       `/api/tasks`,
       { id, filter }
     ),
-  create: (task: TaskData) =>
-    apiService.post<TaskData[]>(`/api/tasks/create`, task),
+  create: (task: TaskData, placement: 'top' | 'bottom') =>
+    apiService.post<TaskData[]>(`/api/tasks/create`, { task, placement }),
   delete: (listId: string, ids: string[]) =>
     apiService.delete<TaskData[]>(`/api/tasks/delete`, { ids, listId }),
   order: (data: { listId: string; taskIds: string[]; destination: number }) =>

@@ -22,12 +22,7 @@ export const TasksListView = observer(function TasksListView(
     <>
       {store.isCreatorEnabled && (
         <TaskCreator
-          callbacks={{
-            onSave: store.createTask,
-            onTagCreate: store.createTag,
-            onNavigate: store.handleNavigation,
-            onFocus: store.handleCreatorFocus,
-          }}
+          callbacks={store.taskCreatorCallbacks}
           tagsMap={store.tagsMap}
           spaces={store.spaces}
           goals={store.goals}
@@ -50,7 +45,6 @@ export const TasksListView = observer(function TasksListView(
           wrapperProps={
             props.dnd
               ? {
-                  pr: 5,
                   pl: 5,
                 }
               : {}

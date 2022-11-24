@@ -247,15 +247,31 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
       <PopoverTrigger>
         <Button
           size='xs'
+          h='auto'
+          minW={5}
+          w={5}
           p={0}
           variant='unstyled'
-          h='auto'
           borderRadius='none'
           _groupHover={{
             visibility: 'visible',
           }}
+          _before={{
+            content: '""',
+            h: '1px',
+            left: 0,
+            bg: 'transparent',
+            transitionProperty: 'background-color',
+            transitionDuration: 'normal',
+            position: 'absolute',
+            top: '-1px',
+            w: '100%',
+          }}
           _hover={{
             bg: 'gray.100',
+            '&:before': {
+              bg: 'gray.100',
+            },
           }}
           _focus={{
             bg: 'gray.100',

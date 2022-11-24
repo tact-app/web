@@ -51,12 +51,19 @@ const data = {
     },
   },
   post: {
-    '/api/tasks/create': async (db: DB, data: TaskData) => {
-      await db.add('tasks', data);
-      const taskLists = await db.get('taskLists', data.listId);
+    '/api/tasks/create': async (
+      db: DB,
+      data: { task: TaskData; placement: 'top' | 'bottom' }
+    ) => {
+      await db.add('tasks', data.task);
+      const taskLists = await db.get('taskLists', data.task.listId);
 
       if (taskLists) {
-        taskLists.taskIds.push(data.id);
+        if (data.placement === 'top') {
+          taskLists.taskIds.unshift(data.task.id);
+        } else {
+          taskLists.taskIds.push(data.task.id);
+        }
 
         await db.put('taskLists', taskLists);
       }

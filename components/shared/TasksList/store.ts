@@ -338,7 +338,9 @@ export class TasksListStore {
     this.openedTask = null;
   };
 
-  createTask = (task: TaskData) => {
+  createTask = (task: TaskData, withShift: boolean) => {
+    const placement = withShift ? 'bottom' : 'top';
+
     task.title = task.title.trim();
 
     if (this.input) {
@@ -347,9 +349,14 @@ export class TasksListStore {
     }
 
     this.items[task.id] = task;
-    this.order.push(task.id);
 
-    this.root.api.tasks.create(task);
+    if (placement === 'top') {
+      this.order.unshift(task.id);
+    } else {
+      this.order.push(task.id);
+    }
+
+    this.root.api.tasks.create(task, placement);
   };
 
   deleteTasks = (ids: string[]) => {
@@ -530,6 +537,17 @@ export class TasksListStore {
     onNavigate: this.handleTaskItemNavigation,
     onSave: this.updateTask,
     onTagCreate: this.createTag,
+  };
+
+  taskCreatorCallbacks: TaskQuickEditorProps['callbacks'] = {
+    onSave: this.createTask,
+    onForceSave: (taskId: string) => {
+      this.openTask(taskId);
+      this.isEditorFocused = true;
+    },
+    onTagCreate: this.createTag,
+    onNavigate: this.handleNavigation,
+    onFocus: this.handleCreatorFocus,
   };
 }
 

@@ -1,6 +1,6 @@
 export const TaskItemMenuIcon = () => (
   <svg
-    width='24'
+    width='20'
     height='24'
     viewBox='0 0 24 24'
     fill='none'

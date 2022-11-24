@@ -22,7 +22,8 @@ import { GoalData } from '../../../../pages/Goals/types';
 
 export type TaskQuickEditorProps = {
   callbacks: {
-    onSave?: (task: TaskData) => void;
+    onSave?: (task: TaskData, withShift?: boolean) => void;
+    onForceSave?: (taskId: string) => void;
     onFocus?: () => void;
     onSuggestionsMenuOpen?: (isOpen: boolean) => void;
     onTagCreate?: (tag: TaskTag) => void;
@@ -333,9 +334,9 @@ export class TaskQuickEditorStore {
     return false;
   };
 
-  saveTask = () => {
+  saveTask = (withShift?: boolean, force?: boolean) => {
     if (this.callbacks.onSave && this.value) {
-      this.callbacks.onSave({
+      const task = {
         ...(toJS(this.task) || {}),
         title: this.value,
         id: this.task ? this.task.id : uuidv4(),
@@ -345,14 +346,25 @@ export class TaskQuickEditorStore {
         priority: this.modes.priority.priority,
         spaceId: this.modes.space.selectedSpaceId || undefined,
         goalId: this.modes.goal.selectedGoalId || undefined,
-      });
+      };
+
+      this.callbacks.onSave(task, withShift);
 
       if (this.keepFocus) {
-        this.isInputFocused = true;
+        if (force) {
+          this.removeFocus();
+        } else {
+          this.isInputFocused = true;
+        }
+
         this.value = '';
         this.resetModes();
       } else if (this.isInputFocused) {
         this.removeFocus();
+      }
+
+      if (force) {
+        this.callbacks.onForceSave?.(task.id);
       }
     }
   };
@@ -563,7 +575,8 @@ export class TaskQuickEditorStore {
       if (!this.keepFocus) {
         this.callbacks.onNavigate?.(NavigationDirections.ENTER);
       }
-      this.saveTask();
+
+      this.saveTask(e.shiftKey, e.metaKey || e.ctrlKey);
     } else if (mode) {
       e.stopPropagation();
       this.enterMode(mode, e);
