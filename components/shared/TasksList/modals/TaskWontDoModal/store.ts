@@ -20,10 +20,8 @@ export class TaskWontDoModalStore {
   }
 
   isFocused = false;
-  checkboxRefs: HTMLInputElement[] = [];
   textareaRef: HTMLTextAreaElement | null = null;
   predefinedReasonIndex: number = null;
-  predefinedReasonFocusIndex: number = 0;
   otherReason: string = '';
 
   onSave: TaskWontDoModalProps['onSave'];
@@ -37,15 +35,6 @@ export class TaskWontDoModalStore {
       ? !!this.otherReason
       : this.predefinedReasonIndex !== null;
   }
-
-  setCheckboxRef = (ref, index: number) => {
-    this.checkboxRefs[index] = ref;
-
-    if (index === 0 && ref && !this.isFocused) {
-      ref.focus();
-      this.isFocused = true;
-    }
-  };
 
   setTextareaRef = (ref) => {
     this.textareaRef = ref;
@@ -75,99 +64,35 @@ export class TaskWontDoModalStore {
     }
   };
 
+  handleTextareaKeyDown = (e) => {
+    if (e.key === 'ArrowUp') {
+      if (
+        e.target.selectionStart !== e.target.selectionEnd ||
+        e.target.selectionStart !== 0
+      ) {
+        e.stopPropagation();
+      }
+    } else if (e.key === 'Enter') {
+      if (!(e.metaKey || e.ctrlKey)) {
+        e.stopPropagation();
+      }
+    } else {
+      e.stopPropagation();
+    }
+  };
+
   handleOtherReasonChange = (e) => {
     this.otherReason = e.target.value;
   };
 
-  handleFocus = (e) => {
-    const index = parseInt(e.target.value);
-
-    this.predefinedReasonFocusIndex = index;
-  };
-
-  handleCheckboxKeyDown = (e) => {
-    const index = parseInt(e.target.value);
-
-    if (e.key === 'ArrowDown' || e.key === 'k') {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (
-        index === this.checkboxRefs.length - 1 &&
-        this.isOtherReasonSelected
-      ) {
-        this.textareaRef?.focus();
-      } else if (index < this.checkboxRefs.length - 1) {
-        this.checkboxRefs[this.predefinedReasonFocusIndex + 1]?.focus();
-      }
-    } else if (e.key === 'ArrowUp' || e.key === 'j') {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (this.predefinedReasonFocusIndex > 0) {
-        this.checkboxRefs[this.predefinedReasonFocusIndex - 1]?.focus();
-      }
-    } else if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) {
-      e.preventDefault();
-
-      if (this.predefinedReasonIndex === index) {
-        this.predefinedReasonIndex = null;
-      } else {
-        this.predefinedReasonIndex = index;
-
-        if (this.isOtherReasonSelected) {
-          setTimeout(() => this.textareaRef?.focus());
-        }
-      }
-    }
-  };
-
-  handleModalKeyDown = (e) => {
-    if (e.key === 'ArrowDown' || e.key === 'k') {
-      e.preventDefault();
-
-      this.checkboxRefs[0]?.focus();
-    } else if (e.key === 'ArrowUp' || e.key === 'j') {
-      e.preventDefault();
-
-      if (this.isOtherReasonSelected) {
-        this.textareaRef?.focus();
-      } else {
-        this.checkboxRefs[this.checkboxRefs.length - 1]?.focus();
-      }
-    } else if (e.key === 'Enter') {
-      e.stopPropagation();
-
-      if (e.ctrlKey || e.metaKey) {
-        this.handleSave();
-      }
-    }
-  };
-
-  handleTextAreaKeyDown = (e) => {
-    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      this.handleSave();
-    } else if (e.key === 'ArrowUp') {
-      e.stopPropagation();
-
-      if (
-        e.target.selectionStart === e.target.selectionEnd &&
-        e.target.selectionStart === 0
-      ) {
-        e.preventDefault();
-
-        this.checkboxRefs[this.checkboxRefs.length - 1]?.focus();
-      }
-    } else if (e.key === 'ArrowDown') {
-      e.stopPropagation();
-    }
-  };
-
   update = (props: TaskWontDoModalProps) => {
     this.onSave = props.onSave;
+  };
+
+  navigationCallbacks = {
+    onForceEnter: () => {
+      this.handleSave();
+    },
   };
 }
 

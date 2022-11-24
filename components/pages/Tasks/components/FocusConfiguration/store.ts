@@ -47,7 +47,7 @@ export class FocusConfigurationStore {
     BLUR: (e) => {
       if (this.isFocused) {
         e.stopPropagation();
-        this.goalsSelection.removeFocus();
+        this.isBlockFocused = false;
         this.callbacks.onBlur?.();
       }
     },
@@ -68,12 +68,12 @@ export class FocusConfigurationStore {
       this.sendChanges();
     },
     FOCUS_GOAL_SELECTION: () => {
-      this.goalsSelection.focusFirst();
-      this.callbacks.onFocus?.();
+      this.isBlockFocused = true;
+      this.callbacks.onGoalFocused?.();
     },
     ESCAPE: () => {
       if (this.isFocused) {
-        this.goalsSelection.removeFocus();
+        this.isBlockFocused = false;
         this.callbacks.onBlur?.();
       }
     },
@@ -91,7 +91,7 @@ export class FocusConfigurationStore {
   };
 
   get isFocused() {
-    return this.isBlockFocused || this.goalsSelection.isFocused;
+    return this.isBlockFocused;
   }
 
   get hasConfiguration() {
@@ -99,8 +99,13 @@ export class FocusConfigurationStore {
   }
 
   focus = () => {
-    this.goalsSelection.focusFirst();
+    this.isBlockFocused = true;
     this.callbacks.onFocus?.();
+  };
+
+  handleBlur = () => {
+    this.isBlockFocused = false;
+    this.callbacks.onBlur?.();
   };
 
   handleSelectGoal = () => {
@@ -128,7 +133,7 @@ export class FocusConfigurationStore {
 
   handleMouseDown = () => {
     this.isBlockFocused = true;
-    this.callbacks.onMouseDown?.();
+    this.callbacks.onFocus?.();
   };
 
   sendChanges = () => {

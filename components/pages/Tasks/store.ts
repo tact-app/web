@@ -72,7 +72,7 @@ export class TasksStore {
   };
 
   get isHotkeysEnabled() {
-    return this.list.isHotkeysEnabled;
+    return !this.list.modals.controller.isOpen;
   }
 
   getItemsCount = () => {

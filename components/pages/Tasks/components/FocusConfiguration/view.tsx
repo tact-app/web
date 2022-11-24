@@ -10,31 +10,43 @@ import {
   HStack,
   Switch,
   Text,
+  useOutsideClick,
 } from '@chakra-ui/react';
 import { GoalsSelectionStoreProvider } from '../../../../shared/GoalsSelection/store';
 import { GoalsSelectionView } from '../../../../shared/GoalsSelection/view';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
-import { useEffect } from 'react';
+import { useNavigationByRefs } from '../../../../../helpers/useNavigationByRefs';
+import { useEffect, useRef } from 'react';
 
 export const FocusConfigurationView = observer(function FocusConfigurationView(
   props: FocusConfigurationProps
 ) {
+  const ref = useRef(null);
   const store = useFocusConfigurationStore();
 
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
+  const { handleFocus, handleKeyDown, setRefs, focus } = useNavigationByRefs();
+
   useEffect(() => {
-    store.goalsSelection.focusFirst();
-  }, [store.goalsSelection]);
+    if (store.isFocused) {
+      focus(0);
+    }
+  }, [store.isFocused, focus]);
+
+  useOutsideClick({
+    ref,
+    handler: store.handleBlur,
+  });
 
   return (
     <Box
+      ref={ref}
       p={4}
       height='100%'
       display='flex'
       flexDirection='column'
       justifyContent='space-between'
-      onMouseDown={store.handleMouseDown}
     >
       <Box width='100%' minH={0} display='flex' flexDirection='column'>
         <HStack
@@ -58,11 +70,13 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           p={2}
           pl={1}
           borderRadius='md'
-          bg={store.goalsSelection.isFocused ? 'gray.50' : 'white'}
+          bg={store.isFocused ? 'gray.50' : 'white'}
           ml={2}
           minH={0}
           display='flex'
           flexDirection='column'
+          onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
         >
           <HStack pb={2} alignItems='baseline' pl={1}>
             <Text fontSize='lg' fontWeight='semibold'>
@@ -79,7 +93,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
             checked={store.data.goals}
             callbacks={store.goalsSelectionCallbacks}
           >
-            <GoalsSelectionView />
+            <GoalsSelectionView setRefs={setRefs} />
           </GoalsSelectionStoreProvider>
         </Box>
         <FormControl display='flex' alignItems='center' ml={4} mt={7}>

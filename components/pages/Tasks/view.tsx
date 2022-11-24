@@ -24,7 +24,9 @@ import { ResizableGroupChild } from '../../shared/ResizableGroup/ResizableGroupC
 export const TasksView = observer(function TasksView() {
   const store = useTasksStore();
 
-  useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
+  useHotkeysHandler(store.keyMap, store.hotkeyHandlers, {
+    enabled: store.isHotkeysEnabled,
+  });
 
   return (
     <>

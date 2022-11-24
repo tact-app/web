@@ -186,7 +186,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
   isOpen: boolean;
   stopAnimation: () => void;
 }) {
-  const { handleKeyDown, setRefs } = useNavigationByRefs();
+  const { handleKeyDown, setRefs, handleFocus } = useNavigationByRefs();
   const store = useTaskItemStore();
   const tasksStore = useTasksListStore();
 
@@ -200,6 +200,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
           w='auto'
           minW={64}
           onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
         >
           <PopoverBody p={0}>
             <TaskItemMenuItems

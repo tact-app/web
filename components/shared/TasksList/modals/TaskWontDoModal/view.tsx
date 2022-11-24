@@ -22,16 +22,21 @@ import {
   useTaskWontDoModalStore,
   WontDoReasons,
 } from './store';
+import { useNavigationByRefs } from '../../../../../helpers/useNavigationByRefs';
 
 export const TaskWontDoModalView = observer(function TaskWontDoModalView({
   onClose,
 }: TaskWontDoModalProps) {
   const store = useTaskWontDoModalStore();
 
+  const { handleKeyDown, setRefs, handleFocus } = useNavigationByRefs(
+    store.navigationCallbacks
+  );
+
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent onKeyDown={store.handleModalKeyDown}>
+      <ModalContent onKeyDown={handleKeyDown} onFocus={handleFocus}>
         <ModalHeader>Why you won&apos;t do this task?</ModalHeader>
         <ModalBody pb={6} pl={5} pr={5}>
           <Box pr={1} pl={1}>
@@ -40,10 +45,8 @@ export const TaskWontDoModalView = observer(function TaskWontDoModalView({
               <Box key={reason} mb={2}>
                 <Checkbox
                   size='lg'
-                  ref={(el) => store.setCheckboxRef(el, index)}
-                  onFocus={store.handleFocus}
+                  ref={(el) => setRefs(index, el)}
                   onChange={store.handleCheckboxChange}
-                  onKeyDown={store.handleCheckboxKeyDown}
                   isChecked={store.predefinedReasonIndex === index}
                   value={index}
                 >
@@ -54,12 +57,15 @@ export const TaskWontDoModalView = observer(function TaskWontDoModalView({
               </Box>
             ))}
           </Box>
-          <Collapse in={store.isOtherReasonSelected}>
+          <Collapse in={store.isOtherReasonSelected} unmountOnExit>
             <Box p={1}>
               <Textarea
-                ref={store.setTextareaRef}
+                ref={(el) => {
+                  setRefs(WontDoReasons.length, el);
+                  store.setTextareaRef(el);
+                }}
+                onKeyDown={store.handleTextareaKeyDown}
                 onChange={store.handleOtherReasonChange}
-                onKeyDown={store.handleTextAreaKeyDown}
                 value={store.otherReason}
                 maxH={80}
                 _focus={{

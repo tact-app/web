@@ -25,42 +25,23 @@ export class TaskGoalAssignModalStore {
   goalsSelection = new GoalsSelectionStore(this.root);
   goals: TaskGoalAssignModalProps['goals'] = [];
 
+  emptyRef: HTMLInputElement | null = null;
   selectedGoalId: string | null = null;
   multiple: boolean = false;
 
   keyMap = {
-    UP: 'arrowup',
-    DOWN: 'arrowdown',
-    NUMBER: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-'],
+    RESET: ['backspace', 'delete'],
   };
 
   hotkeyHandlers = {
-    UP: () => {
-      if (!this.goalsSelection.isFocused) {
-        this.goalsSelection.focusLast();
-      }
-    },
-    DOWN: () => {
-      if (!this.goalsSelection.isFocused) {
-        this.goalsSelection.focusFirst();
-      }
-    },
-    NUMBER: (e: KeyboardEvent) => {
-      const number = parseInt(e.key, 10);
-
-      if (number && number <= this.goals.length) {
-        this.selectedGoalId = this.goals[number - 1].id;
-        this.goalsSelection.focus(number - 1);
-      } else if (e.key === '-') {
-        this.selectedGoalId = null;
-        this.goalsSelection.focusFirst();
-      }
+    RESET: (e: KeyboardEvent) => {
+      this.selectedGoalId = null;
     },
   };
 
   handleSelect = (goalIds: string[]) => {
     if (goalIds.includes(this.selectedGoalId)) {
-      this.callbacks.onSelect?.(this.selectedGoalId);
+      this.selectedGoalId = null;
     } else {
       this.selectedGoalId = goalIds[0];
     }
@@ -75,6 +56,10 @@ export class TaskGoalAssignModalStore {
     this.multiple = props.multiple;
     this.selectedGoalId = props.value;
     this.goals = props.goals;
+  };
+
+  navigationCallbacks = {
+    onForceEnter: this.handleSubmit,
   };
 }
 
