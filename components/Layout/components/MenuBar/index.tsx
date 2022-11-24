@@ -15,19 +15,19 @@ const NAV_ITEMS: Array<NavItem> = [
   {
     label: 'Today',
     icon: faCalendarWeek,
-    hotkey: 'Ctrl+Shift+T',
+    hotkey: 'Alt+Shift+T',
     href: routes.TODAY,
   },
   {
     label: 'Inbox',
     icon: faMailboxFlagUp,
-    hotkey: 'Ctrl+Shift+I',
+    hotkey: 'Alt+Shift+I',
     href: routes.INBOX,
   },
   {
     label: 'Goals',
     icon: faBullseyePointer,
-    hotkey: 'Ctrl+Shift+G',
+    hotkey: 'Alt+Shift+G',
     href: routes.GOALS,
   },
 ];
