@@ -287,6 +287,9 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
           _focus={{
             bg: 'gray.100',
             boxShadow: 'none',
+            '&:before': {
+              bg: 'gray.100',
+            },
           }}
           visibility={store.isDragging ? 'visible' : 'hidden'}
         >
