@@ -22,7 +22,7 @@ const data = {
         await db.add('taskLists', { id, taskIds: [] });
 
         return {
-          tasks: [],
+          tasks: {},
           order: [],
         };
       }

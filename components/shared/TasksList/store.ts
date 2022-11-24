@@ -275,6 +275,21 @@ export class TasksListStore {
     }
   };
 
+  setTasksStatus = (ids: string[], status: TaskStatus) => {
+    const hasAnotherStatus = ids.some((id) => this.items[id].status !== status);
+    const newStatus = hasAnotherStatus ? status : TaskStatus.TODO;
+
+    if (ids.length === 1 && newStatus !== TaskStatus.TODO) {
+      this.draggableList.focusNextWithFilter((id: string) => {
+        return this.items[id].status === TaskStatus.TODO;
+      });
+    }
+
+    ids.forEach((id) => {
+      this.setTaskStatus(id, newStatus);
+    });
+  };
+
   handleCreatorFocus = () => {
     this.draggableList.resetFocusedItem();
     this.closeTask();
@@ -374,21 +389,6 @@ export class TasksListStore {
       listId: this.listId,
       taskIds: changedItemIds,
       destination: destinationIndex,
-    });
-  };
-
-  setTasksStatus = (ids: string[], status: TaskStatus) => {
-    const hasAnotherStatus = ids.some((id) => this.items[id].status !== status);
-    const newStatus = hasAnotherStatus ? status : TaskStatus.TODO;
-
-    if (ids.length === 1 && newStatus !== TaskStatus.TODO) {
-      this.draggableList.focusNextWithFilter((id: string) => {
-        return this.items[id].status === TaskStatus.TODO;
-      });
-    }
-
-    ids.forEach((id) => {
-      this.setTaskStatus(id, newStatus);
     });
   };
 
