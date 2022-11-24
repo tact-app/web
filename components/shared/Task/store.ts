@@ -84,16 +84,12 @@ class TaskStore {
       };
 
       this.data.descriptionId = this.description.id;
-      this.root.api.tasks.update({
-        id: this.data.id,
-        fields: {
-          descriptionId: this.description.id,
-        },
-      });
       this.root.api.descriptions.add({
         id: this.description.id,
         content: toJS(this.description.content),
       });
+
+      this.callbacks.onTaskChange?.(this.data);
     }
   };
 

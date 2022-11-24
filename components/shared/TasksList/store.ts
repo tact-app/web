@@ -354,7 +354,7 @@ export class TasksListStore {
 
     this.items[task.id] = task;
 
-    this.root.api.tasks.update({ id: task.id, fields: task });
+    this.root.api.tasks.update({ id: task.id, fields: toJS(task) });
   };
 
   createTag = (tag: TaskTag) => {
