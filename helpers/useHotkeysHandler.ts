@@ -1,6 +1,9 @@
-import { Options, useHotkeys } from 'react-hotkeys-hook';
-import { useMemo } from 'react';
-import { HotkeysEvent } from 'react-hotkeys-hook/src/types';
+import { Options, useHotkeys } from 'react-hotkeys-hook/src';
+import { useCallback, useMemo } from 'react';
+import {
+  HotkeysEvent,
+  OptionsOrDependencyArray,
+} from 'react-hotkeys-hook/src/types';
 
 const normalizeKey = (key: string) => {
   const arr = key.split('+');
@@ -45,8 +48,7 @@ export const useHotkeysHandler = (
     string,
     (event: KeyboardEvent, handler: HotkeysEvent) => void
   >,
-  options: Options = {},
-  deps: any[] = []
+  options: Options = {}
 ) => {
   const { revertedKeymap, keys } = useMemo(() => {
     const result: Record<string, string[]> = {};
@@ -88,8 +90,7 @@ export const useHotkeysHandler = (
     };
   }, [keymap]);
 
-  return useHotkeys(
-    keys.join(', '),
+  const handleHotkey = useCallback(
     (event, hotkeysEvent) => {
       const matchedHandlerName =
         revertedKeymap[getNormalizedKeyFromEvent(hotkeysEvent)];
@@ -102,10 +103,15 @@ export const useHotkeysHandler = (
         });
       }
     },
-    {
+    [revertedKeymap, handlers]
+  );
+
+  const optionsWithTags: OptionsOrDependencyArray = useMemo(() => {
+    return {
       ...options,
       enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'],
-    },
-    [...deps, revertedKeymap]
-  );
+    };
+  }, [options]);
+
+  return useHotkeys(keys, handleHotkey, optionsWithTags);
 };

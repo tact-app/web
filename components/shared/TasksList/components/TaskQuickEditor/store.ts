@@ -610,15 +610,17 @@ export class TaskQuickEditorStore {
   };
 
   restoreTask = () => {
-    this.value = this.task.title;
-    this.modes.priority.priority = this.task.priority;
-    this.modes.space.selectedSpaceId =
-      this.task.spaceId || this.modes.space.defaultSpace.id;
-    this.modes.goal.selectedGoalId = this.task.goalId;
-    this.modes.tag.tags = this.task.tags.map((tag) => ({
-      id: tag,
-      title: this.modes.tag.tagsMap[tag] && this.modes.tag.tagsMap[tag].title,
-    }));
+    if (this.task) {
+      this.value = this.task.title;
+      this.modes.priority.priority = this.task.priority;
+      this.modes.space.selectedSpaceId =
+        this.task.spaceId || this.modes.space.defaultSpace.id;
+      this.modes.goal.selectedGoalId = this.task.goalId;
+      this.modes.tag.tags = this.task.tags.map((tag) => ({
+        id: tag,
+        title: this.modes.tag.tagsMap[tag] && this.modes.tag.tagsMap[tag].title,
+      }));
+    }
   };
 
   update = ({

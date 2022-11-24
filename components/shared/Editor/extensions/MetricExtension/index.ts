@@ -57,9 +57,11 @@ export const MetricExtension = Node.create({
       Tab: ({ editor }) => {
         if (editor.isActive('metric')) {
           editor.commands.updateAttributes('metric', { focus: true });
+
+          return true;
         }
 
-        return true;
+        return false;
       },
       Enter: ({ editor }) => {
         if (

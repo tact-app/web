@@ -24,7 +24,7 @@ export const TextareaAutofit = observer(
       onResize: fitHeight,
     });
 
-    useEffect(fitHeight, [props.value]);
+    useEffect(fitHeight, [props.value, fitHeight]);
 
     return <Textarea {...props} p={0} overflowY='hidden' ref={refs} />;
   })
