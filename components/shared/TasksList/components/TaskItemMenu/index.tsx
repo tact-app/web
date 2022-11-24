@@ -15,7 +15,12 @@ import {
 import { TaskItemMenuIcon } from '../../../Icons/TaskItemMenuIcon';
 import { useTaskItemStore } from '../TaskItem/store';
 import { useTasksListStore } from '../../store';
-import React, { PropsWithChildren, useCallback, useState } from 'react';
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { TaskStatus } from '../../types';
 import { Modes } from '../TaskQuickEditor/store';
 
@@ -188,10 +193,17 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
   const store = useTaskItemStore();
   const tasksStore = useTasksListStore();
 
+  useEffect(() => {
+    setTimeout(() => {
+      store.menuNavigation.focus(0);
+    });
+  }, [store]);
+
   return (
     <Portal>
       <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
         <PopoverContent
+          tabIndex={-1}
           p={0}
           shadow='lg'
           overflow='hidden'
