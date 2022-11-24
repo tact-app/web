@@ -12,13 +12,13 @@ export function MainMenu({ items }: { items: NavItem[] }) {
           label={
             <Box display='flex' alignItems='center' flexDirection='column'>
               {navItem.label}
-              <Text fontSize='xs' color='gray.400'>
+              <Text fontSize='xs' color='gray.400' fontWeight='normal'>
                 {navItem.hotkey}
               </Text>
             </Box>
           }
           placement='right'
-          offset={[0, 20]}
+          offset={[0, 10]}
           hasArrow
         >
           <Box>

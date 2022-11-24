@@ -24,9 +24,21 @@ export class RootStore {
   };
 
   hotkeysHandlers = {
-    GOTO_TODAY: () => this.router.push('/today'),
-    GOTO_INBOX: () => this.router.push('/inbox'),
-    GOTO_GOALS: () => this.router.push('/goals'),
+    GOTO_TODAY: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.router.push('/today');
+    },
+    GOTO_INBOX: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.router.push('/inbox');
+    },
+    GOTO_GOALS: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.router.push('/goals');
+    },
   };
 
   isLoading = true;

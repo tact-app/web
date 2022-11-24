@@ -289,6 +289,14 @@ const theme = extendTheme({
         },
       },
     },
+    Tooltip: {
+      baseStyle: {
+        borderRadius: 'md',
+        '.chakra-tooltip__arrow': {
+          borderBottomLeftRadius: '2px',
+        },
+      },
+    },
   },
 });
 
