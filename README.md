@@ -50,4 +50,16 @@ it's substituted automatically under the hood.
 - [Okteto CLI](https://www.okteto.com/docs/cloud/okteto-cli/).
 - [Vercel CLI](https://vercel.com/docs/cli).
 
+## Tips and tricks
+
+### Vercel shows inconsistent state of dependencies
+
+You can drop vercel's cache by running:
+
+```bash
+$ run vercel --force
+```
+
+It will be useful if you encounter a build problem.
+
 <p align="right">made with ❤️ for everyone</p>
