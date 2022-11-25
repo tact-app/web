@@ -25,11 +25,6 @@ export class ListNavigation {
 
   setRefs = (index: number, ref: HTMLElement) => {
     this.savedRefs[index] = ref;
-
-    if (index === 0 && ref && this.focusedIndex === null) {
-      this.setFocusedIndex(0);
-      ref.focus();
-    }
   };
 
   setFocusedIndex = (index: number | null) => {
@@ -86,6 +81,7 @@ export class ListNavigation {
         this.refs[this.focusedIndex].click();
       } else if (index < this.refs.length) {
         this.setFocusedIndex(index);
+        this.refs[this.focusedIndex].click();
         this.callbacks.onNumber?.(index);
       }
     } else if (e.key === 'Enter') {
@@ -126,10 +122,12 @@ export class ListNavigation {
   };
 
   init = () => {
-    const ref = this.refs[this.focusedIndex];
+    setTimeout(() => {
+      const ref = this.refs[this.focusedIndex];
 
-    if (ref) {
-      ref.focus();
-    }
+      if (ref) {
+        ref.focus();
+      }
+    });
   };
 }

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Modal,
   ModalBody,
@@ -27,6 +27,10 @@ export const TaskWontDoModalView = observer(function TaskWontDoModalView({
   onClose,
 }: TaskWontDoModalProps) {
   const store = useTaskWontDoModalStore();
+
+  useEffect(() => {
+    store.navigation.init();
+  }, [store]);
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>
