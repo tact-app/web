@@ -113,6 +113,17 @@ const singleTaskItems = (store: TaskItemStore) => [
     command: '↵',
   },
   {
+    onClick: () => {
+      store.parent.setEditingTask(store.task.id);
+
+      if (!store.isFocused) {
+        store.parent.draggableList.setFocusedItem(store.task.id);
+      }
+    },
+    title: 'Edit task',
+    command: '␣',
+  },
+  {
     onClick: () => store.parent.deleteWithVerify([store.task.id]),
     title: 'Delete task',
     command: '⌫ / ⌘⌫',

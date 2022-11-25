@@ -27,6 +27,7 @@ export const TasksListView = observer(function TasksListView(
           spaces={store.spaces}
           goals={store.goals}
           listId={store.listId}
+          defaultSpaceId={store.input ? store.input.spaceId : undefined}
           keepFocus
           wrapperProps={{
             ml: props.dnd ? 5 : 0,

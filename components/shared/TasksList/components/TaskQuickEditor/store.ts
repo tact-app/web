@@ -31,6 +31,7 @@ export type TaskQuickEditorProps = {
     onModeNavigate?: (mode: Modes, direction: NavigationDirections) => boolean;
   };
   tagsMap: Record<string, TaskTag>;
+  defaultSpaceId?: string;
   spaces: SpaceData[];
   order?: Modes[];
   goals: GoalData[];
@@ -646,6 +647,7 @@ export class TaskQuickEditorStore {
     spaces,
     goals,
     keepFocus,
+    defaultSpaceId,
   }: TaskQuickEditorProps) => {
     this.callbacks = callbacks || {};
     this.listId = task ? task.listId : listId;
@@ -667,7 +669,11 @@ export class TaskQuickEditorStore {
       this.task = task;
       this.restoreTask();
     } else if (spaces.length) {
-      this.modes.space.selectedSpaceId = this.modes.space.defaultSpace.id;
+      if (defaultSpaceId) {
+        this.modes.space.selectedSpaceId = defaultSpaceId;
+      } else {
+        this.modes.space.selectedSpaceId = this.modes.space.defaultSpace.id;
+      }
     }
   };
 }

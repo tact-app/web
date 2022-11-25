@@ -157,7 +157,7 @@ export class TasksListStore {
       this.creator.setFocus(true);
     },
     onItemSecondClick: (id: string) => {
-      this.setEditingTask(id);
+      this.openTask(id, true);
     },
     onFocusedItemsChange: (ids: string[]) => {
       if (!ids.length) {
