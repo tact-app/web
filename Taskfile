@@ -32,10 +32,9 @@ __fontawesome_token() {
   if [ "${#token}" -lt 36 ]; then
     echo 'Token is invalid.'
     return 1
-  else
-    git config fontawesome.token "${token}"
-    echo 'Token saved.'
   fi
+  git config fontawesome.token "${token}"
+  echo 'Token saved.'
 }
 
 __okteto_token() {
@@ -48,10 +47,9 @@ __okteto_token() {
   if [ "${#token}" -lt 48 ]; then
     echo 'Token is invalid.'
     return 1
-  else
-    git config okteto.token "${token}"
-    echo 'Token saved.'
   fi
+  git config okteto.token "${token}"
+  echo 'Token saved.'
 }
 
 __vercel_token() {
@@ -64,10 +62,9 @@ __vercel_token() {
   if [ "${#token}" -lt 24 ]; then
     echo 'Token is invalid.'
     return 1
-  else
-    git config vercel.token "${token}"
-    echo 'Token saved.'
   fi
+  git config vercel.token "${token}"
+  echo 'Token saved.'
 }
 
 env() {
@@ -87,7 +84,12 @@ EOF
 # Example: run node inside
 #   - alias run=./Taskfile
 #   - source bin/activate
-#   - run deploy # or `run deploy prod`
+#  Deploy to staging
+#   - run deploy
+#  Deploy to production
+#   - run tools okteto
+#   - run okteto context use https://cloud.okteto.com
+#   - run deploy prod
 node() {
   if [ "${1:-}" == 'inside' ]; then
     docker run --rm -it \
@@ -98,6 +100,7 @@ node() {
       node:16
     return $?
   fi
+
   docker run --rm -it \
     -e FONTAWESOME_NPM_AUTH_TOKEN="$(git config fontawesome.token)" \
     -v "$(pwd)":/app \
@@ -141,16 +144,17 @@ build() {
 deploy() {
   if [ "${1:-}" == 'prod' ]; then
     vercel pull --yes --environment=production
-    vercel build
-    vercel deploy --prebuilt --prod
+    vercel build --yes --prod
+    vercel deploy --yes --prebuilt --prod
 
     okteto build
     okteto deploy
     return $?
   fi
+
   vercel pull --yes --environment=preview
-  vercel build
-  vercel deploy --prebuilt
+  vercel build --yes
+  vercel deploy --yes --prebuilt
 }
 
 # Example: run server --from-scratch
