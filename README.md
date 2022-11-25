@@ -30,7 +30,7 @@ $ run okteto up
 $ run tools npm ci
 # install npm tools
 
-$ run tools go
+$ run tools okteto
 # install okteto
 ```
 

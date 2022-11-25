@@ -39,7 +39,7 @@ _realpath() {
 deactivate nondestructive
 
 _OS=$(uname -s | tr '[:upper:]' '[:lower:]')
-_ARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
+_ARCH=$(uname -m | tr '[:upper:]' '[:lower:]') && _ARCH=${_ARCH/aarch64/arm64}
 _BINPATH=$(_realpath "$(dirname "${BASH_SOURCE[0]:-$0}")")/"${_OS}/${_ARCH}"
 _NPMPATH=$(dirname "$(_realpath "$(dirname "${BASH_SOURCE[0]:-$0}")")")/tools/node_modules/.bin
 

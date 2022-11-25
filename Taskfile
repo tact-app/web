@@ -10,7 +10,7 @@ setup() {
   tools npm ci
   vercel link
 
-  tools go
+  tools okteto
   okteto context use https://cloud.okteto.com
 
   build --from-scratch
@@ -87,7 +87,7 @@ EOF
 # Example: run node inside
 #   - alias run=./Taskfile
 #   - source bin/activate
-#   - run deploy
+#   - run deploy # or `run deploy prod`
 node() {
   if [ "${1:-}" == 'inside' ]; then
     docker run --rm -it \
@@ -172,7 +172,7 @@ server() {
 }
 
 # Example: run tools npm i vercel@latest
-# Example: run tools go
+# Example: run tools okteto
 tools() {
   case "${1}" in
   npm)
@@ -182,10 +182,10 @@ tools() {
       --entrypoint=/bin/sh \
       node:16-alpine -c "${*}"
     ;;
-  go)
+  okteto)
     local os arch bin version
     os=$(uname -s)
-    arch=$(uname -m)
+    arch=$(uname -m) && arch=${arch/aarch64/arm64}
     bin=$(echo bin/"${os}"/"${arch}" | tr '[:upper:]' '[:lower:]')
     version=2.9.0
 
