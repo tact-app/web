@@ -8,13 +8,10 @@
 /node_modules/
 /tools/
 
-.babelrc
 .dockerignore
 .env
-.eslintrc.json
 .gitignore
 .gitmodules
-.prettierrc
 .stignore
 .vercelignore
 

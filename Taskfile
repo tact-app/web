@@ -83,7 +83,7 @@ VERCEL_TOKEN=$(git config vercel.token)
 EOF
 }
 
-# Example: run node npm ci --ignore-scripts --include=dev
+# Example: run node 'npm ci --ignore-scripts --include=dev'
 node() {
   docker run --rm -it \
     -e FONTAWESOME_NPM_AUTH_TOKEN="$(git config fontawesome.token)" \
