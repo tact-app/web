@@ -544,6 +544,7 @@ export class TasksListStore {
     onSave: this.createTask,
     onForceSave: (taskId: string) => {
       this.openTask(taskId);
+      this.draggableList.setFocusedItem(taskId);
       this.isEditorFocused = true;
     },
     onTagCreate: this.createTag,

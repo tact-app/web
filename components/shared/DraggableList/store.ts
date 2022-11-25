@@ -492,7 +492,7 @@ export class DraggableListStore {
           behavior: 'smooth',
           block: 'nearest',
         });
-      });
+      }, 100);
     }
   };
 
