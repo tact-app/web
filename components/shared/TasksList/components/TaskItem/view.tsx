@@ -105,7 +105,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
             />
           </div>
           {store.isEditMode ? (
-            <TaskQuickEditorInput autofocus />
+            <TaskQuickEditorInput autoFocus />
           ) : (
             <Box position='relative' overflow='hidden'>
               <chakra.span

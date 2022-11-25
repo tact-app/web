@@ -46,11 +46,7 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
             instance={store.list}
             input={store.item}
             isHotkeysEnabled={store.isHotkeysEnabled}
-            callbacks={{
-              onFocusLeave: props.callbacks.onFocusLeave,
-              onOpenTask: props.callbacks.onOpenTask,
-              onCloseTask: props.callbacks.onCloseTask,
-            }}
+            callbacks={store.tasksListCallbacks}
           />
         </Box>
       </Box>

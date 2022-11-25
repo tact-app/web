@@ -481,13 +481,16 @@ export class DraggableListStore {
         return index;
       }
     }, -1);
-    const nextItemId =
-      lastItemIndex !== -1 && lastItemIndex !== this.items.length - 1
-        ? this.getNextActiveItem(this.items[lastItemIndex])
-        : null;
 
-    if (nextItemId !== null) {
-      this.setFocusedItem(nextItemId);
+    const item =
+      this.items
+        .slice(lastItemIndex + 1)
+        .concat(this.items.slice(0, lastItemIndex))
+        .find((id) => !this.checkItemActivity || this.checkItemActivity(id)) ||
+      null;
+
+    if (item !== null) {
+      this.setFocusedItem(item);
     }
   };
 

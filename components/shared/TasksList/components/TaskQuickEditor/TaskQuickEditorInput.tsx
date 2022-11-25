@@ -7,12 +7,10 @@ import { TextareaAutofit } from '../../../TextareaAutofit';
 
 export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
   placeholder,
-  autofocus,
   multiline,
   ...rest
 }: {
   placeholder?: string;
-  autofocus?: boolean;
   multiline?: boolean;
 } & InputProps) {
   const store = useTaskQuickEditorStore();
@@ -46,7 +44,6 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
           ref={store.inputRef}
           type='text'
           maxLength={store.maxLength}
-          autoFocus={autofocus}
           variant='unstyled'
           placeholder={placeholder}
           value={store.value}
@@ -65,7 +62,6 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
           size='md'
           type='text'
           maxLength={store.maxLength}
-          autoFocus={autofocus}
           variant='unstyled'
           placeholder={placeholder}
           value={store.value}

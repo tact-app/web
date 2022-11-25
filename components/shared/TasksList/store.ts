@@ -379,6 +379,10 @@ export class TasksListStore {
 
     this.order = this.order.filter((id) => !ids.includes(id));
     this.root.api.tasks.delete(this.listId, ids);
+
+    if (!this.order.length) {
+      this.creator.setFocus(true);
+    }
   };
 
   deleteWithVerify = (ids: string[]) => {

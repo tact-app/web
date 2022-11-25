@@ -1,6 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { TasksListStore } from '../../../../shared/TasksList/store';
+import {
+  TasksListProps,
+  TasksListStore,
+} from '../../../../shared/TasksList/store';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getStubDescription } from '../../modals/SpaceCreationModal/stubs';
 import { SpacesInboxItemData } from '../../types';
@@ -72,6 +75,12 @@ export class SpacesInboxItemStore {
       this.item = null;
       this.description = null;
     }
+  };
+
+  tasksListCallbacks: TasksListProps['callbacks'] = {
+    onFocusLeave: this.callbacks.onFocusLeave,
+    onOpenTask: this.callbacks.onOpenTask,
+    onCloseTask: this.callbacks.onCloseTask,
   };
 }
 

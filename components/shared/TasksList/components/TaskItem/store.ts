@@ -218,7 +218,7 @@ export class TaskItemStore {
       reaction(
         () => this.isMenuOpen,
         () => {
-          if (!this.isMenuOpen) {
+          if (!this.isMenuOpen && !this.isEditMode) {
             this.boxRef?.focus();
           }
         }
