@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Box, Checkbox, chakra, Tag, useOutsideClick } from '@chakra-ui/react';
 import { TaskStatus } from '../../types';
@@ -12,6 +12,7 @@ import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
 export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
   const store = useTaskItemStore();
   const quickEditStore = useTaskQuickEditorStore();
+
   const isTodoTask = store.task.status === TaskStatus.TODO;
   const ref = useRef(null);
   const hasTags = Boolean(
@@ -44,12 +45,6 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
     handler: quickEditStore.handleClickOutside,
   });
 
-  useEffect(() => {
-    if (store.isFocused && !store.isMultiselect) {
-      return store.setHotkeysHandlers();
-    }
-  }, [store, store.isFocused, store.isMultiselect]);
-
   return (
     <Box
       ref={ref}
@@ -61,12 +56,12 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
       pointerEvents={store.isDisabled ? 'none' : 'auto'}
     >
       <Box
+        tabIndex={store.isDisabled || store.isReadOnly ? -1 : 0}
         ref={store.setBoxRef}
         onClick={store.handleClick}
         onMouseDown={store.handleMouseDown}
         onMouseUp={store.handleMouseUp}
         onFocus={store.handleFocus}
-        tabIndex={store.isDisabled || store.isReadOnly ? -1 : 0}
         _focus={{
           outline: 'none',
         }}
@@ -109,13 +104,15 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
               name='task-status'
             />
           </div>
-          {store.isEditMode && isTodoTask ? (
+          {store.isEditMode ? (
             <TaskQuickEditorInput autofocus />
           ) : (
             <Box position='relative' overflow='hidden'>
               <chakra.span
                 transition='color 0.2s ease-in-out'
-                color={isTodoTask ? 'gray.700' : 'gray.400'}
+                color={
+                  isTodoTask && !store.isEditMode ? 'gray.700' : 'gray.400'
+                }
                 whiteSpace='nowrap'
                 textOverflow='ellipsis'
                 overflow='hidden'
@@ -128,7 +125,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
                 bottom='0.5rem'
                 transition='width 0.2s ease-in-out'
                 position='absolute'
-                w={isTodoTask ? 0 : '100%'}
+                w={isTodoTask && !store.isEditMode ? 0 : '100%'}
               />
             </Box>
           )}

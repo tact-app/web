@@ -16,7 +16,7 @@ export interface Store<PropsType> {
 }
 
 export interface StoreConstructor<StoreType> {
-  new (root: RootStore): StoreType;
+  new (root: RootStore, parent: Store<unknown>): StoreType;
 }
 
 type TypeOfClassMethod<T, M extends keyof T> = T[M] extends Function
@@ -37,6 +37,7 @@ export const getProvider = <PropsType, StoreType extends Store<PropsType>>(
 
   type Props = StorePropsType<StoreType> & {
     instance?: StoreType;
+    parent?: Store<unknown>;
     useInstance?: () => StoreType;
   };
 
@@ -48,7 +49,7 @@ export const getProvider = <PropsType, StoreType extends Store<PropsType>>(
       ? props.useInstance()
       : undefined;
     const store = useMemo(() => {
-      const res = existedStore || new StoreClass(rootStore);
+      const res = existedStore || new StoreClass(rootStore, props.parent);
 
       res.update?.(props as PropsType);
 

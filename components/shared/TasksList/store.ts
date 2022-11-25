@@ -225,6 +225,16 @@ export class TasksListStore {
     return this.draggableList.hasPrevTask(this.openedTask);
   }
 
+  canUnsetStatus = (status: TaskStatus) => {
+    if (this.draggableList.focused.length) {
+      return this.draggableList.focused.every(
+        (id) => this.items[id].status === status
+      );
+    }
+
+    return false;
+  };
+
   handleNavigation = (direction: NavigationDirections) => {
     if (direction === NavigationDirections.LEFT) {
       this.callbacks.onFocusLeave?.(NavigationDirections.LEFT);
@@ -373,6 +383,7 @@ export class TasksListStore {
 
   deleteWithVerify = (ids: string[]) => {
     this.modals.openVerifyDeleteModal(ids, () => {
+      this.draggableList.focusAfterItems(ids);
       this.deleteTasks(ids);
     });
   };

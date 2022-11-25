@@ -12,19 +12,14 @@ export const TaskListItem = observer(function TaskListItem({
 }) {
   const store = useTasksListStore();
   const task = store.items[id];
-  const focusMatch = store.checkTask(id);
 
   return (
     task && (
       <TaskItem
+        parent={store}
         task={task}
         highlightActiveTasks={store.highlightActiveTasks}
-        isReadOnly={store.isReadOnly}
-        isDisabled={!focusMatch}
-        isMultiselect={store.isMultiselect}
-        isFocused={store.draggableList.focused.includes(task.id)}
         isDragging={snapshot.isDragging}
-        isEditMode={store.editingTaskId && task.id === store.editingTaskId}
         tagsMap={store.tagsMap}
         spaces={store.spaces}
         goals={store.goals}

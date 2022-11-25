@@ -11,13 +11,14 @@ import {
   TaskQuickEditorProps,
   TaskQuickEditorStoreProvider,
 } from '../TaskQuickEditor/store';
+import { TasksListStore } from '../../store';
 
 const useTasksItemStoreInstance = () => useTaskItemStore().quickEdit;
 
 const modesOrder = [Modes.PRIORITY, Modes.TAG];
 
 const TaskItem = observer(function TaskItem(
-  props: TaskItemProps & TaskQuickEditorProps
+  props: TaskItemProps & TaskQuickEditorProps & { parent: TasksListStore }
 ) {
   return (
     <TaskItemStoreProvider {...props}>

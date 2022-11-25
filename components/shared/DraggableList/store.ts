@@ -472,10 +472,18 @@ export class DraggableListStore {
   };
 
   focusAfterItems = (ids: string[]) => {
-    const itemIndex = ids.length === 1 ? this.items.indexOf(ids[0]) : -1;
+    const lastItemIndex = ids.reduce((index, id) => {
+      const currentIndex = this.items.indexOf(id);
+
+      if (currentIndex > index) {
+        return currentIndex;
+      } else {
+        return index;
+      }
+    }, -1);
     const nextItemId =
-      itemIndex !== -1 && itemIndex !== this.items.length - 1
-        ? this.getNextActiveItem(this.items[itemIndex])
+      lastItemIndex !== -1 && lastItemIndex !== this.items.length - 1
+        ? this.getNextActiveItem(this.items[lastItemIndex])
         : null;
 
     if (nextItemId !== null) {

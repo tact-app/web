@@ -1,10 +1,12 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, reaction } from 'mobx';
 import { TaskData, TaskStatus, TaskTag } from '../../types';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import React, { MouseEvent } from 'react';
 import { TaskQuickEditorStore } from '../TaskQuickEditor/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
+import { TasksListStore } from '../../store';
+import { subscriptions } from '../../../../../helpers/subscriptions';
 
 export type TaskItemProps = {
   task?: TaskData | null;
@@ -14,7 +16,6 @@ export type TaskItemProps = {
   isFocused?: boolean;
   isDragging?: boolean;
   isEditMode?: boolean;
-  isMultiselect?: boolean;
 
   onToggleMenu?: (isOpen: boolean) => void;
   onFocus?: (taskId: string, multiselect?: 'single' | 'many') => void;
@@ -23,8 +24,8 @@ export type TaskItemProps = {
   tagsMap: Record<string, TaskTag>;
 };
 
-class TaskItemStore {
-  constructor(public root: RootStore) {
+export class TaskItemStore {
+  constructor(public root: RootStore, public parent: TasksListStore) {
     makeAutoObservable(this);
   }
 
@@ -36,48 +37,65 @@ class TaskItemStore {
   task: TaskData;
   tags: Record<string, TaskTag>;
 
+  hasListeners: boolean = false;
+  isAltPressed: boolean = false;
   isMenuOpen: boolean = false;
   isMouseDown: boolean = false;
-  isDisabled: boolean = false;
-  isFocused: boolean = false;
-  isEditMode: boolean = false;
   isDragging: boolean = false;
-  isReadOnly: boolean = false;
-  isMultiselect: boolean = false;
 
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
   onToggleMenu: TaskItemProps['onToggleMenu'];
   onWontDoWithComment: TaskItemProps['onWontDoWithComment'];
 
-  setHotkeysHandlers = () => {
-    let isAltPressed = false;
+  get isMultiSelected() {
+    return this.parent.draggableList.focused.length > 1;
+  }
 
-    const keyDownListener = (e: KeyboardEvent) => {
-      if (e.key === 'Alt') {
-        isAltPressed = true;
-      } else if (isAltPressed) {
-        isAltPressed = false;
+  get isFocused() {
+    return this.parent.draggableList.focused.includes(this.task.id);
+  }
+
+  get isDisabled() {
+    return !this.parent.checkTask(this.task.id);
+  }
+
+  get isReadOnly() {
+    return this.parent.isReadOnly;
+  }
+
+  get isEditMode() {
+    return (
+      this.parent.editingTaskId && this.task.id === this.parent.editingTaskId
+    );
+  }
+
+  handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Alt') {
+      this.isAltPressed = true;
+    } else if (this.isAltPressed) {
+      this.isAltPressed = false;
+    }
+  };
+
+  handleKeyUp = (e: KeyboardEvent) => {
+    if (e.key === 'Alt') {
+      if (this.isAltPressed) {
+        this.toggleMenu();
       }
-    };
 
-    const keyUpListener = (e: KeyboardEvent) => {
-      if (e.key === 'Alt') {
-        if (isAltPressed) {
-          this.toggleMenu();
-        }
+      this.isAltPressed = false;
+    }
+  };
 
-        isAltPressed = false;
-      }
-    };
+  setKeyDownListeners = () => {
+    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keyup', this.handleKeyUp);
+  };
 
-    document.addEventListener('keydown', keyDownListener);
-    document.addEventListener('keyup', keyUpListener);
-
-    return () => {
-      document.removeEventListener('keydown', keyDownListener);
-      document.removeEventListener('keyup', keyUpListener);
-    };
+  removeKeyDownListeners = () => {
+    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keyup', this.handleKeyUp);
   };
 
   setBoxRef = (ref: HTMLDivElement | null) => {
@@ -165,6 +183,48 @@ class TaskItemStore {
     this.onStatusChange(this.task.id, newStatus);
   };
 
+  subscribe = () =>
+    subscriptions(
+      reaction(
+        () => [this.isFocused, this.isMultiSelected],
+        () => {
+          if (this.isFocused && !this.isMultiSelected) {
+            this.boxRef?.focus();
+          }
+        }
+      ),
+      reaction(
+        () => [
+          this.isFocused,
+          this.parent.draggableList.focused.length,
+          this.isMultiSelected,
+        ],
+        () => {
+          const isSingleFocused = this.isFocused && !this.isMultiSelected;
+          const isTopFocused =
+            this.isFocused &&
+            this.isMultiSelected &&
+            this.parent.draggableList.focused[0] === this.task.id;
+
+          if (!this.hasListeners && (isSingleFocused || isTopFocused)) {
+            this.hasListeners = true;
+            this.setKeyDownListeners();
+          } else if (this.hasListeners && !isTopFocused && !isSingleFocused) {
+            this.hasListeners = false;
+            this.removeKeyDownListeners();
+          }
+        }
+      ),
+      reaction(
+        () => this.isMenuOpen,
+        () => {
+          if (!this.isMenuOpen) {
+            this.boxRef?.focus();
+          }
+        }
+      )
+    );
+
   update = ({
     task,
     onFocus,
@@ -172,20 +232,8 @@ class TaskItemStore {
     onWontDoWithComment,
     onToggleMenu,
     tagsMap,
-    isFocused,
-    isDisabled,
     isDragging,
-    isReadOnly,
-    isEditMode,
-    isMultiselect,
   }: TaskItemProps) => {
-    const prevIsFocused = this.isFocused;
-    this.isFocused = isFocused;
-
-    if (isFocused !== prevIsFocused && isFocused) {
-      this.boxRef?.focus();
-    }
-
     this.task = task;
     this.tags = tagsMap;
 
@@ -194,11 +242,7 @@ class TaskItemStore {
     this.onWontDoWithComment = onWontDoWithComment;
     this.onToggleMenu = onToggleMenu;
 
-    this.isDisabled = isDisabled;
     this.isDragging = isDragging;
-    this.isEditMode = isEditMode;
-    this.isReadOnly = isReadOnly;
-    this.isMultiselect = isMultiselect;
   };
 }
 

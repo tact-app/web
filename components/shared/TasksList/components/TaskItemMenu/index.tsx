@@ -1,24 +1,123 @@
 import { observer } from 'mobx-react-lite';
 import {
   Button,
+  chakra,
+  Divider,
   Fade,
+  forwardRef,
   Popover,
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
   Portal,
   useDisclosure,
-  chakra,
-  Divider,
-  forwardRef,
 } from '@chakra-ui/react';
 import { TaskItemMenuIcon } from '../../../Icons/TaskItemMenuIcon';
-import { useTaskItemStore } from '../TaskItem/store';
-import { useTasksListStore } from '../../store';
+import { TaskItemStore, useTaskItemStore } from '../TaskItem/store';
 import React, { PropsWithChildren, useCallback, useState } from 'react';
 import { TaskStatus } from '../../types';
 import { Modes } from '../TaskQuickEditor/store';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
+
+const multiTaskItems = (store: TaskItemStore) => [
+  {
+    onClick: () => {
+      store.parent.modals.openGoalAssignModal();
+    },
+    command: '⌥G',
+    title: 'Assign to goal',
+  },
+  null,
+  {
+    onClick: () =>
+      store.parent.setTasksStatus(
+        store.parent.draggableList.focused,
+        TaskStatus.DONE
+      ),
+    title: store.parent.canUnsetStatus(TaskStatus.DONE)
+      ? 'Unmark as done'
+      : 'Mark as done',
+    command: '⌥D',
+  },
+  {
+    onClick: () =>
+      store.parent.setTasksStatus(
+        store.parent.draggableList.focused,
+        TaskStatus.WONT_DO
+      ),
+    title: store.parent.canUnsetStatus(TaskStatus.WONT_DO)
+      ? 'Unmark as won’t do'
+      : 'Mark as won’t do',
+    command: '⌥W / ⌥⇧W',
+  },
+  null,
+  {
+    onClick: () =>
+      store.parent.deleteWithVerify(store.parent.draggableList.focused),
+    title: 'Delete tasks',
+    command: '⌫ / ⌘⌫',
+  },
+];
+
+const singleTaskItems = (store: TaskItemStore) => [
+  {
+    onClick: () => {
+      store.parent.setEditingTask(store.task.id);
+      setTimeout(() => store.quickEdit.activateMode(Modes.PRIORITY));
+    },
+    title: 'Change priority',
+  },
+  {
+    onClick: () => {
+      store.parent.setEditingTask(store.task.id);
+      setTimeout(() => store.quickEdit.activateMode(Modes.TAG));
+    },
+    title: 'Add tag',
+  },
+  {
+    onClick: () => {
+      store.parent.modals.openGoalAssignModal(store.task.id);
+    },
+    command: '⌥G',
+    title: 'Assign to goal',
+  },
+  null,
+  {
+    onClick: () =>
+      store.parent.handleStatusChange(store.task.id, TaskStatus.DONE),
+    title: store.parent.canUnsetStatus(TaskStatus.DONE)
+      ? 'Unmark as done'
+      : 'Mark as done',
+    command: '⌥D',
+  },
+  {
+    onClick: () =>
+      store.parent.handleStatusChange(store.task.id, TaskStatus.WONT_DO),
+    title: store.parent.canUnsetStatus(TaskStatus.WONT_DO)
+      ? 'Unmark as won’t do'
+      : 'Mark as won’t do',
+    command: store.parent.canUnsetStatus(TaskStatus.WONT_DO)
+      ? '⌥W'
+      : '⌥W / ⌥⇧W',
+  },
+  null,
+  {
+    onClick: () => {
+      store.parent.openTask(store.task.id, true);
+
+      if (!store.isFocused) {
+        store.parent.draggableList.setFocusedItem(store.task.id);
+      }
+    },
+    title: 'Open task',
+    command: '↵',
+  },
+  {
+    onClick: () => store.parent.deleteWithVerify([store.task.id]),
+    title: 'Delete task',
+    command: '⌫ / ⌘⌫',
+  },
+];
 
 const TaskItemMenuItem = forwardRef(
   (
@@ -92,96 +191,6 @@ const TaskItemMenuItems = ({
   );
 };
 
-const multiTaskItems = (store, tasksStore) => [
-  {
-    onClick: () => {
-      tasksStore.setEditingTask(store.task.id);
-      setTimeout(() => store.quickEdit.activateMode(Modes.PRIORITY));
-    },
-    title: 'Change priority',
-  },
-  {
-    onClick: () => {
-      tasksStore.modals.openGoalAssignModal(store.task.id);
-    },
-    command: '⌥G',
-    title: 'Assign to goal',
-  },
-  null,
-  {
-    onClick: () =>
-      tasksStore.handleStatusChange(store.task.id, TaskStatus.DONE),
-    title: 'Mark as done',
-    command: '⌥D',
-  },
-  {
-    onClick: () =>
-      tasksStore.handleStatusChange(store.task.id, TaskStatus.WONT_DO),
-    title: 'Mark as won’t do',
-    command: '⌥W / ⌥⇧W',
-  },
-  null,
-  {
-    onClick: () => tasksStore.deleteWithVerify([store.task.id]),
-    title: 'Delete task',
-    command: '⌫ / ⌘⌫',
-  },
-];
-
-const singleTaskItems = (store, tasksStore) => [
-  {
-    onClick: () => {
-      tasksStore.setEditingTask(store.task.id);
-      setTimeout(() => store.quickEdit.activateMode(Modes.PRIORITY));
-    },
-    title: 'Change priority',
-  },
-  {
-    onClick: () => {
-      tasksStore.setEditingTask(store.task.id);
-      setTimeout(() => store.quickEdit.activateMode(Modes.TAG));
-    },
-    title: 'Add tag',
-  },
-  {
-    onClick: () => {
-      tasksStore.modals.openGoalAssignModal(store.task.id);
-    },
-    command: '⌥G',
-    title: 'Assign to goal',
-  },
-  null,
-  {
-    onClick: () =>
-      tasksStore.handleStatusChange(store.task.id, TaskStatus.DONE),
-    title: 'Mark as done',
-    command: '⌥D',
-  },
-  {
-    onClick: () =>
-      tasksStore.handleStatusChange(store.task.id, TaskStatus.WONT_DO),
-    title: 'Mark as won’t do',
-    command: '⌥W / ⌥⇧W',
-  },
-  null,
-  {
-    onClick: () => {
-      tasksStore.openTask(store.task.id, true);
-
-      if (!store.isFocused) {
-        tasksStore.draggableList.setFocusedItem(store.task.id);
-      }
-    },
-    title: 'Open task',
-    command: '↵',
-  },
-  {
-    onClick: () => tasksStore.deleteWithVerify([store.task.id]),
-    title: 'Delete task',
-    command: '⌫ / ⌘⌫',
-  },
-];
-
 const TaskItemMenuContent = observer(function TaskItemMenuContent({
   isOpen,
   stopAnimation,
@@ -190,7 +199,6 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
   stopAnimation: () => void;
 }) {
   const store = useTaskItemStore();
-  const tasksStore = useTasksListStore();
 
   const ref = useListNavigation(store.menuNavigation);
 
@@ -210,7 +218,11 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
           <PopoverBody p={0}>
             <TaskItemMenuItems
               refs={store.menuNavigation.setRefs}
-              items={singleTaskItems(store, tasksStore)}
+              items={
+                store.isMultiSelected
+                  ? multiTaskItems(store)
+                  : singleTaskItems(store)
+              }
             />
           </PopoverBody>
         </PopoverContent>
