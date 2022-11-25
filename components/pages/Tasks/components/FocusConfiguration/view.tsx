@@ -15,7 +15,8 @@ import {
 import { GoalsSelectionStoreProvider } from '../../../../shared/GoalsSelection/store';
 import { GoalsSelectionView } from '../../../../shared/GoalsSelection/view';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
+import { useListNavigation } from '../../../../../helpers/ListNavigation';
 
 export const FocusConfigurationView = observer(function FocusConfigurationView(
   props: FocusConfigurationProps
@@ -25,11 +26,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
 
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
-  useEffect(() => {
-    if (store.isFocused) {
-      store.navigation.focus(0);
-    }
-  }, [store.isFocused, store.navigation]);
+  const hotkeysRef = useListNavigation(store.navigation);
 
   useOutsideClick({
     ref,
@@ -44,6 +41,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
       display='flex'
       flexDirection='column'
       justifyContent='space-between'
+      onMouseDown={store.handleMouseDown}
     >
       <Box width='100%' minH={0} display='flex' flexDirection='column'>
         <HStack
@@ -64,6 +62,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           Press ⇧ C to clear
         </Text>
         <Box
+          ref={hotkeysRef}
           p={2}
           pl={1}
           borderRadius='md'
@@ -72,7 +71,6 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           minH={0}
           display='flex'
           flexDirection='column'
-          onKeyDown={store.navigation.handleKeyDown}
           onFocus={store.navigation.handleFocus}
         >
           <HStack pb={2} alignItems='baseline' pl={1}>

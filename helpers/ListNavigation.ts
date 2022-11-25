@@ -1,7 +1,8 @@
-import { KeyboardEvent } from 'react';
 import { makeAutoObservable } from 'mobx';
+import { useHotkeysHandler } from './useHotkeysHandler';
+import { useEffect } from 'react';
 
-const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 export type NavigationCallbacks = {
   onForceEnter?: () => void;
@@ -11,68 +12,94 @@ export type NavigationCallbacks = {
 
 const defaultCallbacks: NavigationCallbacks = {};
 
+export const useListNavigation = (listNavigation: ListNavigation) => {
+  useEffect(() => {
+    listNavigation.init();
+  }, [listNavigation]);
+
+  return useHotkeysHandler(
+    listNavigation.keyMap,
+    listNavigation.hotkeyHandlers,
+    { enabled: listNavigation.isEnabled }
+  );
+};
+
 export class ListNavigation {
   constructor(public callbacks: NavigationCallbacks = defaultCallbacks) {
     makeAutoObservable(this);
   }
 
+  isEnabled = true;
   savedRefs: HTMLElement[] = [];
-  focusedIndex: number | null = null;
+  focusedIndex: number | null = 0;
 
-  get refs() {
-    return this.savedRefs.filter(Boolean);
-  }
-
-  setRefs = (index: number, ref: HTMLElement) => {
-    this.savedRefs[index] = ref;
+  keyMap = {
+    UP: ['arrowup', 'j'],
+    DOWN: ['arrowdown', 'k'],
+    ENTER: ['enter'],
+    FORCE_ENTER: ['meta+enter', 'ctrl+enter'],
+    FIRST: ['meta+arrowup', 'meta+j', 'ctrl+arrowup', 'ctrl+j', 'h'],
+    LAST: ['meta+arrowdown', 'meta+k', 'ctrl+arrowdown', 'ctrl+k', 'l'],
+    NUMBERS: numbers,
   };
 
-  setFocusedIndex = (index: number | null) => {
-    this.focusedIndex = index;
-
-    if (index !== null) {
-      this.refs[index]?.focus();
-    }
-  };
-
-  handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'ArrowDown' || e.key === 'k') {
+  hotkeyHandlers = {
+    UP: (e) => {
       e.preventDefault();
 
-      if (e.metaKey || e.ctrlKey) {
-        this.setFocusedIndex(this.refs.length - 1);
-      } else if (this.focusedIndex !== null) {
-        const nextIndex = this.focusedIndex + 1;
-
-        if (nextIndex >= this.refs.length) {
-          this.setFocusedIndex(0);
-        }
-
-        this.setFocusedIndex(nextIndex);
-      } else {
-        this.setFocusedIndex(0);
-      }
-    } else if (e.key === 'ArrowUp' || e.key === 'j') {
-      e.preventDefault();
-
-      if (e.metaKey || e.ctrlKey) {
-        this.setFocusedIndex(0);
-      } else if (this.focusedIndex !== null) {
+      if (this.focusedIndex !== null) {
         const nextIndex = this.focusedIndex - 1;
 
         if (nextIndex < 0) {
           this.setFocusedIndex(this.refs.length - 1);
+        } else {
+          this.setFocusedIndex(nextIndex);
         }
-
-        this.setFocusedIndex(nextIndex);
       } else {
         this.setFocusedIndex(this.refs.length - 1);
       }
-    } else if (e.key === 'l') {
+    },
+    DOWN: (e) => {
+      e.preventDefault();
+
+      if (this.focusedIndex !== null) {
+        const nextIndex = this.focusedIndex + 1;
+
+        if (nextIndex >= this.refs.length) {
+          this.setFocusedIndex(0);
+        } else {
+          this.setFocusedIndex(nextIndex);
+        }
+      } else {
+        this.setFocusedIndex(0);
+      }
+    },
+    ENTER: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (this.callbacks.onEnter) {
+        this.callbacks.onEnter();
+      } else if (this.focusedIndex !== null) {
+        this.refs[this.focusedIndex]?.click();
+      }
+    },
+    FORCE_ENTER: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.callbacks.onForceEnter?.();
+    },
+    LAST: (e) => {
       e.preventDefault();
 
       this.setFocusedIndex(this.refs.length - 1);
-    } else if (numbers.includes(e.key)) {
+    },
+    FIRST: (e) => {
+      e.preventDefault();
+
+      this.setFocusedIndex(0);
+    },
+    NUMBERS: (e) => {
       e.preventDefault();
 
       const index = parseInt(e.key) - 1;
@@ -84,18 +111,30 @@ export class ListNavigation {
         this.refs[this.focusedIndex].click();
         this.callbacks.onNumber?.(index);
       }
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
+    },
+  };
 
-      if (e.metaKey || e.ctrlKey) {
-        this.callbacks.onForceEnter?.();
-      } else {
-        if (this.callbacks.onEnter) {
-          this.callbacks.onEnter();
-        } else if (this.focusedIndex !== null) {
-          this.refs[this.focusedIndex].click();
-        }
-      }
+  get refs() {
+    return this.savedRefs.filter(Boolean);
+  }
+
+  disable = () => {
+    this.isEnabled = false;
+  };
+
+  enable = () => {
+    this.isEnabled = true;
+  };
+
+  setRefs = (index: number, ref: HTMLElement) => {
+    this.savedRefs[index] = ref;
+  };
+
+  setFocusedIndex = (index: number | null) => {
+    this.focusedIndex = index;
+
+    if (index !== null) {
+      this.refs[index]?.focus();
     }
   };
 
@@ -113,21 +152,13 @@ export class ListNavigation {
     this.setFocusedIndex(null);
   };
 
-  focus = (index: number) => {
-    if (index !== null) {
-      this.refs[index].focus();
-    }
-
-    this.setFocusedIndex(index);
+  focus = () => {
+    this.setFocusedIndex(0);
   };
 
   init = () => {
     setTimeout(() => {
-      const ref = this.refs[this.focusedIndex];
-
-      if (ref) {
-        ref.focus();
-      }
+      this.setFocusedIndex(0);
     });
   };
 }

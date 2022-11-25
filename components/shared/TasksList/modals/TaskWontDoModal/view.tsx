@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   Modal,
   ModalBody,
@@ -22,23 +22,18 @@ import {
   useTaskWontDoModalStore,
   WontDoReasons,
 } from './store';
+import { useListNavigation } from '../../../../../helpers/ListNavigation';
 
 export const TaskWontDoModalView = observer(function TaskWontDoModalView({
   onClose,
 }: TaskWontDoModalProps) {
   const store = useTaskWontDoModalStore();
-
-  useEffect(() => {
-    store.navigation.init();
-  }, [store]);
+  const ref = useListNavigation(store.navigation);
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent
-        onKeyDown={store.navigation.handleKeyDown}
-        onFocus={store.navigation.handleFocus}
-      >
+      <ModalContent ref={ref} onFocus={store.navigation.handleFocus}>
         <ModalHeader>Why you won&apos;t do this task?</ModalHeader>
         <ModalBody pb={6} pl={5} pr={5}>
           <Box pr={1} pl={1}>
@@ -66,7 +61,7 @@ export const TaskWontDoModalView = observer(function TaskWontDoModalView({
                   store.navigation.setRefs(WontDoReasons.length, el);
                   store.setTextareaRef(el);
                 }}
-                onKeyDown={store.handleTextareaKeyDown}
+                onKeyDownCapture={store.handleTextareaKeyDown}
                 onChange={store.handleOtherReasonChange}
                 value={store.otherReason}
                 maxH={80}

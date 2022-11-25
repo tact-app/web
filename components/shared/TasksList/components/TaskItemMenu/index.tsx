@@ -15,14 +15,10 @@ import {
 import { TaskItemMenuIcon } from '../../../Icons/TaskItemMenuIcon';
 import { useTaskItemStore } from '../TaskItem/store';
 import { useTasksListStore } from '../../store';
-import React, {
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { PropsWithChildren, useCallback, useState } from 'react';
 import { TaskStatus } from '../../types';
 import { Modes } from '../TaskQuickEditor/store';
+import { useListNavigation } from '../../../../../helpers/ListNavigation';
 
 const TaskItemMenuItem = forwardRef(
   (
@@ -170,8 +166,11 @@ const singleTaskItems = (store, tasksStore) => [
   null,
   {
     onClick: () => {
-      tasksStore.openTask(store.task.id);
-      tasksStore.draggableList.setFocusedItem(store.task.id);
+      tasksStore.openTask(store.task.id, true);
+
+      if (!store.isFocused) {
+        tasksStore.draggableList.setFocusedItem(store.task.id);
+      }
     },
     title: 'Open task',
     command: '↵',
@@ -193,11 +192,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
   const store = useTaskItemStore();
   const tasksStore = useTasksListStore();
 
-  useEffect(() => {
-    setTimeout(() => {
-      store.menuNavigation.focus(0);
-    });
-  }, [store]);
+  const ref = useListNavigation(store.menuNavigation);
 
   return (
     <Portal>
@@ -209,7 +204,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
           overflow='hidden'
           w='auto'
           minW={64}
-          onKeyDown={store.menuNavigation.handleKeyDown}
+          ref={ref}
           onFocus={store.menuNavigation.handleFocus}
         >
           <PopoverBody p={0}>

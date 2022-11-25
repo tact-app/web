@@ -6,7 +6,6 @@ import { getProvider } from '../../../helpers/StoreProvider';
 export type GoalsSelectionProps = {
   callbacks?: {
     onSelect?: (goalIds: string[]) => void;
-    onFocus?: (goalId: string | null) => void;
     onGoalCreateClick?: () => void;
   };
 
@@ -25,7 +24,6 @@ export class GoalsSelectionStore {
 
   goals: GoalsSelectionProps['goals'];
 
-  firstItemRef: HTMLElement | null = null;
   checkedGoals: Record<string, boolean> = {};
   isFocused: boolean = false;
   multiple: boolean = false;
@@ -33,14 +31,6 @@ export class GoalsSelectionStore {
   get checked() {
     return Object.keys(this.checkedGoals);
   }
-
-  focusFirst = () => {
-    this.firstItemRef?.focus();
-  };
-
-  setFirstItemRef = (ref: HTMLElement) => {
-    this.firstItemRef = ref;
-  };
 
   handleGoalCheck = (index: number | null) => {
     const goalId = index === null ? null : this.goals[index].id;

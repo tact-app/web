@@ -19,7 +19,6 @@ export type FocusConfigurationProps = {
     onChange?: (data: FocusConfigurationData) => void;
     onClose?: () => void;
     onFocus?: () => void;
-    onGoalFocused?: () => void;
     onBlur?: () => void;
     onMouseDown?: () => void;
     onGoalCreateClick?: (cb: () => void) => void;
@@ -70,8 +69,7 @@ export class FocusConfigurationStore {
       this.sendChanges();
     },
     FOCUS_GOAL_SELECTION: () => {
-      this.isBlockFocused = true;
-      this.callbacks.onGoalFocused?.();
+      this.focus();
     },
     ESCAPE: () => {
       if (this.isFocused) {
@@ -101,11 +99,14 @@ export class FocusConfigurationStore {
   }
 
   focus = () => {
+    this.navigation.enable();
+    this.navigation.focus();
     this.isBlockFocused = true;
     this.callbacks.onFocus?.();
   };
 
   handleBlur = () => {
+    this.navigation.disable();
     this.isBlockFocused = false;
     this.callbacks.onBlur?.();
   };
@@ -121,21 +122,18 @@ export class FocusConfigurationStore {
   };
 
   handleGoalCreateClick = () => {
+    this.handleBlur();
     this.callbacks.onGoalCreateClick?.(() => {
-      setTimeout(() => this.goalsSelection.focusFirst());
+      setTimeout(() => {
+        this.navigation.enable();
+        this.navigation.focus();
+      }, 10);
     });
   };
 
-  handleGoalsSelectionFocus = (goalId: string | null) => {
-    if (goalId) {
-      this.isBlockFocused = true;
-      this.callbacks.onGoalFocused?.();
-    }
-  };
-
   handleMouseDown = () => {
-    this.isBlockFocused = true;
-    this.callbacks.onFocus?.();
+    this.isBlockFocused = false;
+    this.callbacks.onBlur?.();
   };
 
   sendChanges = () => {
@@ -170,7 +168,6 @@ export class FocusConfigurationStore {
   goalsSelectionCallbacks: GoalsSelectionProps['callbacks'] = {
     onSelect: this.handleSelectGoal,
     onGoalCreateClick: this.handleGoalCreateClick,
-    onFocus: this.handleGoalsSelectionFocus,
   };
 }
 

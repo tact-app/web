@@ -110,8 +110,7 @@ export class TasksListStore {
     },
     OPEN_AND_EDIT: () => {
       if (this.draggableList.focused.length) {
-        this.openTask(this.draggableList.focused[0]);
-        this.isEditorFocused = true;
+        this.openTask(this.draggableList.focused[0], true);
       }
     },
     GOAL: (e) => {
@@ -325,9 +324,13 @@ export class TasksListStore {
     this.isItemMenuOpen = isOpen;
   };
 
-  openTask = (taskId: string) => {
+  openTask = (taskId: string, withEditor?: boolean) => {
     this.callbacks.onOpenTask?.(!!this.openedTask);
     this.openedTask = taskId;
+
+    if (withEditor) {
+      this.isEditorFocused = true;
+    }
   };
 
   closeTask = (silent?: boolean) => {
@@ -543,9 +546,8 @@ export class TasksListStore {
   taskCreatorCallbacks: TaskQuickEditorProps['callbacks'] = {
     onSave: this.createTask,
     onForceSave: (taskId: string) => {
-      this.openTask(taskId);
+      this.openTask(taskId, true);
       this.draggableList.setFocusedItem(taskId);
-      this.isEditorFocused = true;
     },
     onTagCreate: this.createTag,
     onNavigate: this.handleNavigation,

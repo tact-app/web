@@ -66,6 +66,10 @@ export class TaskWontDoModalStore {
   };
 
   handleTextareaKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      return;
+    }
+
     if (e.key === 'ArrowUp') {
       if (
         e.target.selectionStart !== e.target.selectionEnd ||

@@ -183,9 +183,6 @@ export class TaskQuickEditorStore {
 
   exitMode = (silent?: boolean) => {
     if (!silent && this.activeMode) {
-      this.activeModeType = Modes.DEFAULT;
-      this.suggestionsMenu.close();
-
       this.value =
         this.value.slice(0, this.modeStartPos) +
         this.value.slice(this.modeEndPos);
@@ -199,6 +196,9 @@ export class TaskQuickEditorStore {
         )
       );
     }
+
+    this.activeModeType = Modes.DEFAULT;
+    this.suggestionsMenu.close();
   };
 
   openMenu = () => {
@@ -546,6 +546,7 @@ export class TaskQuickEditorStore {
     if (e.key === 'Escape') {
       e.stopPropagation();
       e.preventDefault();
+
       this.exitMode(true);
 
       return true;

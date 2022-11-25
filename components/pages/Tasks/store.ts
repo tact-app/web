@@ -195,8 +195,11 @@ export class TasksStore {
     this.isTasksListFocusSaved = false;
   };
 
-  handleFocusConfigurationGoalFocus = () => {
+  handleFocusConfigurationFocus = () => {
     this.isTasksListHotkeysEnabled = false;
+    this.isTasksListFocusSaved = true;
+    this.list.draggableList.saveFocusedItems();
+    this.list.draggableList.resetFocusedItem();
   };
 
   loadFocusModeConfiguration = async () => {
@@ -234,9 +237,8 @@ export class TasksStore {
   focusConfigurationCallbacks: FocusConfigurationProps['callbacks'] = {
     onChange: this.setFocusModeConfiguration,
     onClose: this.toggleFocusMode,
-    onFocus: this.list.draggableList.resetFocusedItem,
+    onFocus: this.handleFocusConfigurationFocus,
     onBlur: this.handleFocusTasksList,
-    onGoalFocused: this.handleFocusConfigurationGoalFocus,
     onGoalCreateClick: (cb) => this.list.modals.openGoalCreationModal(cb),
   };
 }

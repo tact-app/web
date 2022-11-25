@@ -88,13 +88,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView(
     <List ref={ref} h='100%' overflowY='auto' pl={1} pr={1}>
       {store.goals.map(({ id, icon, title }, index) => (
         <GoalSelectionListItem
-          ref={(el) => {
-            props.setRefs(index + 1, el);
-
-            if (index === 0) {
-              store.setFirstItemRef(el);
-            }
-          }}
+          ref={(el) => props.setRefs(index + 1, el)}
           key={id}
           id={id}
           index={index}
