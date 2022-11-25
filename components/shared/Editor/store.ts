@@ -14,6 +14,7 @@ import { TaskItem } from '@tiptap/extension-task-item';
 import { MetricExtension } from './extensions/MetricExtension';
 import { BlockTypesOptions } from './slashCommands';
 import { NavigationDirections } from '../TasksList/types';
+import { TrailingNode } from './extensions/TrailingNode';
 
 export type EditorProps = {
   content: JSONContent;
@@ -82,6 +83,7 @@ class EditorStore {
           };
         },
       }),
+      TrailingNode,
     ];
   }
 
