@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import Head from 'next/head';
 import { Task } from '../../shared/Task';
@@ -27,6 +27,12 @@ export const TasksView = observer(function TasksView() {
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers, {
     enabled: store.isHotkeysEnabled,
   });
+
+  useEffect(() => {
+    if (store.shouldSetFirstFocus) {
+      store.setFirstFocus();
+    }
+  }, [store, store.shouldSetFirstFocus]);
 
   return (
     <>

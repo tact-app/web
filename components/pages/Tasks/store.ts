@@ -32,6 +32,7 @@ export class TasksStore {
     showImportant: false,
   };
 
+  shouldSetFirstFocus: boolean = false;
   isTasksListFocusSaved: boolean = false;
   isTasksListHotkeysEnabled: boolean = true;
   isTaskExpanded: boolean = false;
@@ -214,12 +215,18 @@ export class TasksStore {
 
   update = () => null;
 
+  setShouldSetFirstFocus = () => {
+    this.shouldSetFirstFocus = true;
+  };
+
   setFirstFocus = () => {
     if (this.list.order.length) {
       this.list.draggableList.focusFirstItem();
     } else {
       this.list.creator.setFocus(true);
     }
+
+    this.shouldSetFirstFocus = false;
   };
 
   taskCallbacks: TaskProps['callbacks'] = {
@@ -229,7 +236,7 @@ export class TasksStore {
   };
 
   tasksListCallbacks: TasksListProps['callbacks'] = {
-    onInit: this.setFirstFocus,
+    onInit: this.setShouldSetFirstFocus,
     onFocusLeave: this.handleTasksListFocusLeave,
     onCloseTask: this.handleCollapseTask,
   };
