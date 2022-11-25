@@ -76,7 +76,7 @@ env() {
   #    sudo killall -HUP mDNSResponder; echo DNS Cache Reset
   #  https://web.dev/how-to-use-local-https/
   #  https://github.com/FiloSottile/mkcert
-  cat <<EOF > .env
+  cat <<EOF >.env
 FONTAWESOME_TOKEN=$(git config fontawesome.token)
 OKTETO_TOKEN=$(git config okteto.token)
 VERCEL_TOKEN=$(git config vercel.token)
@@ -84,7 +84,20 @@ EOF
 }
 
 # Example: run node 'npm ci --ignore-scripts --include=dev'
+# Example: run node inside
+#   - alias run=./Taskfile
+#   - source bin/activate
+#   - run deploy
 node() {
+  if [ "${1:-}" == 'inside' ]; then
+    docker run --rm -it \
+      -e FONTAWESOME_NPM_AUTH_TOKEN="$(git config fontawesome.token)" \
+      -v "$(pwd)":/app \
+      -w /app \
+      --entrypoint=/bin/bash \
+      node:16
+    return $?
+  fi
   docker run --rm -it \
     -e FONTAWESOME_NPM_AUTH_TOKEN="$(git config fontawesome.token)" \
     -v "$(pwd)":/app \
@@ -122,6 +135,12 @@ build() {
   # local way
   [ "${1:-}" == '--from-scratch' ] && rm -rf .next && install "${@}"
   node 'npm run build'
+}
+
+deploy() {
+  vercel pull --yes --environment=preview
+  vercel build
+  vercel deploy --prebuilt
 }
 
 # Example: run server --from-scratch
