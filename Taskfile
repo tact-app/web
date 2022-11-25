@@ -137,7 +137,17 @@ build() {
   node 'npm run build'
 }
 
+# Example: run deploy prod
 deploy() {
+  if [ "${1:-}" == 'prod' ]; then
+    vercel pull --yes --environment=production
+    vercel build
+    vercel deploy --prebuilt --prod
+
+    okteto build
+    okteto deploy
+    return $?
+  fi
   vercel pull --yes --environment=preview
   vercel build
   vercel deploy --prebuilt
