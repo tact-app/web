@@ -5,6 +5,6 @@ export interface NavItem {
   icon?: IconDefinition;
   subLabel?: string;
   children?: Array<NavItem>;
-  hotkey: string;
+  hotkey: () => string;
   href?: string;
 }

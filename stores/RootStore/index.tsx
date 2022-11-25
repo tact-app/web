@@ -18,9 +18,9 @@ export class RootStore {
   }
 
   keymap = {
-    GOTO_TODAY: 'alt+shift+t',
-    GOTO_INBOX: 'alt+shift+i',
-    GOTO_GOALS: 'alt+shift+g',
+    GOTO_TODAY: ['alt+shift+t', 'option+shift+t'],
+    GOTO_INBOX: ['alt+shift+i', 'option+shift+i'],
+    GOTO_GOALS: ['alt+shift+g', 'option+shift+g'],
   };
 
   hotkeysHandlers = {

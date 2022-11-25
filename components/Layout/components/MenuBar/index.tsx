@@ -10,24 +10,25 @@ import {
   faCalendarWeek,
   faMailboxFlagUp,
 } from '@fortawesome/pro-light-svg-icons';
+import { isMac } from '../../../../helpers/os';
 
 const NAV_ITEMS: Array<NavItem> = [
   {
     label: 'Today',
     icon: faCalendarWeek,
-    hotkey: 'Alt+Shift+T',
+    hotkey: () => (isMac() ? '⌥⇧T' : 'Alt+Shift+T'),
     href: routes.TODAY,
   },
   {
     label: 'Inbox',
     icon: faMailboxFlagUp,
-    hotkey: 'Alt+Shift+I',
+    hotkey: () => (isMac() ? '⌥⇧I' : 'Alt+Shift+I'),
     href: routes.INBOX,
   },
   {
     label: 'Goals',
     icon: faBullseyePointer,
-    hotkey: 'Alt+Shift+G',
+    hotkey: () => (isMac() ? '⌥⇧G' : 'Alt+Shift+G'),
     href: routes.GOALS,
   },
 ];
