@@ -190,10 +190,6 @@ export class MetricExtensionStore {
     if (props.node.attrs.focus) {
       this.isFocused = true;
       this.inputRef?.focus();
-
-      props.updateAttributes({
-        focus: false,
-      });
     }
   };
 }

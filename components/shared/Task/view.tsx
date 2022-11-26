@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Box,
@@ -29,6 +29,8 @@ export const TaskView = observer(function TaskView() {
     ref,
     handler: store.quickEditor.handleClickOutside,
   });
+
+  useEffect(() => store.saveDescription, [store]);
 
   return (
     <Container

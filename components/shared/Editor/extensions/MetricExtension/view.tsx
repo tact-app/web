@@ -204,7 +204,7 @@ const MetricExtensionValueSwitcher = observer(
 export const MetricExtensionView = observer(function MetricExtensionView() {
   return (
     <NodeViewWrapper className='react-component'>
-      <HStack justifyContent='space-between' h={8}>
+      <HStack justifyContent='space-between' minH={8}>
         <NodeViewContent
           style={{
             minWidth: '2px',

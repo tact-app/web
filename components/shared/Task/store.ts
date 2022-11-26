@@ -14,10 +14,11 @@ import {
   TaskQuickEditorStore,
 } from '../TasksList/components/TaskQuickEditor/store';
 import { DescriptionData } from '../../../types/description';
-import { JSONContent } from '@tiptap/core';
+import { Editor, JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
 import { SpaceData } from '../../pages/Spaces/types';
 import { GoalData } from '../../pages/Goals/types';
+import { subscriptions } from '../../../helpers/subscriptions';
 
 export type TaskProps = {
   callbacks: {
@@ -42,6 +43,18 @@ export type TaskProps = {
   task: TaskData;
 };
 
+class DescriptionStore {
+  content: JSONContent;
+
+  set(content: JSONContent) {
+    this.content = content;
+  }
+
+  get() {
+    return this.content;
+  }
+}
+
 class TaskStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
@@ -49,6 +62,8 @@ class TaskStore {
 
   quickEditor: TaskQuickEditorStore = new TaskQuickEditorStore(this.root);
 
+  editor: Editor;
+  descriptionBlurTimeout: number = null;
   hasPrevious = true;
   hasNext = true;
   isExpanded: boolean = false;
@@ -59,7 +74,8 @@ class TaskStore {
   tagsMap: Record<string, TaskTag> = {};
   goals: GoalData[] = [];
   isDescriptionLoading: boolean = true;
-  description: DescriptionData | null = null;
+  descriptionId: string = '';
+  descriptionContent: DescriptionStore = new DescriptionStore();
   modesOrder = [Modes.PRIORITY, Modes.GOAL, Modes.SPACE, Modes.TAG];
 
   get inputSpace() {
@@ -70,23 +86,29 @@ class TaskStore {
     return this.data?.status === TaskStatus.WONT_DO;
   }
 
+  setEditor = (editor) => {
+    this.editor = editor;
+
+    if (this.isEditorFocused) {
+      this.editor.commands.focus();
+    }
+  };
+
   handleDescriptionChange = (content: JSONContent) => {
-    this.description.content = content;
+    this.descriptionContent.set(content);
   };
 
   setDescription = (description?: DescriptionData) => {
     if (description) {
-      this.description = description;
+      this.descriptionId = description.id;
+      this.descriptionContent.set(description.content);
     } else {
-      this.description = {
-        id: uuidv4(),
-        content: undefined,
-      };
+      this.descriptionId = uuidv4();
 
-      this.data.descriptionId = this.description.id;
+      this.data.descriptionId = this.descriptionId;
       this.root.api.descriptions.add({
-        id: this.description.id,
-        content: toJS(this.description.content),
+        id: this.descriptionId,
+        content: this.descriptionContent.get(),
       });
 
       this.callbacks.onTaskChange?.(this.data);
@@ -94,19 +116,29 @@ class TaskStore {
   };
 
   handleDescriptionFocus = () => {
-    this.isEditorFocused = true;
+    clearTimeout(this.descriptionBlurTimeout);
   };
 
   handleDescriptionBlur = () => {
-    if (this.description.content) {
+    this.descriptionBlurTimeout = setTimeout(
+      this.saveAndExit,
+      200
+    ) as unknown as number;
+  };
+
+  saveDescription = () => {
+    if (this.descriptionContent.get() && this.descriptionId) {
       this.root.api.descriptions.update({
-        id: this.description.id,
+        id: this.descriptionId,
         fields: {
-          content: toJS(this.description.content),
+          content: toJS(this.descriptionContent.get()),
         },
       });
     }
+  };
 
+  saveAndExit = () => {
+    this.saveDescription();
     this.isEditorFocused = false;
     this.callbacks.onBlur?.();
   };
@@ -167,6 +199,7 @@ class TaskStore {
       ? await this.root.api.descriptions.get(this.data.descriptionId)
       : null;
 
+    this.saveDescription();
     this.setDescription(description);
 
     runInAction(() => (this.isDescriptionLoading = false));
@@ -199,9 +232,19 @@ class TaskStore {
   };
 
   subscribe = () =>
-    reaction(() => this.data?.id, this.loadDescription, {
-      fireImmediately: true,
-    });
+    subscriptions(
+      reaction(() => this.data?.id, this.loadDescription, {
+        fireImmediately: true,
+      }),
+      reaction(
+        () => [this.isEditorFocused, this.descriptionId],
+        () => {
+          if (this.isEditorFocused && this.editor) {
+            this.editor.commands.focus(true);
+          }
+        }
+      )
+    );
 
   update = (props: TaskProps) => {
     this.data = props.task;
@@ -211,8 +254,8 @@ class TaskStore {
     this.hasPrevious = props.hasPrevious;
     this.hasNext = props.hasNext;
     this.isExpanded = props.isExpanded;
-    this.isEditorFocused = props.isEditorFocused;
     this.callbacks = props.callbacks;
+    this.isEditorFocused = props.isEditorFocused;
   };
 }
 

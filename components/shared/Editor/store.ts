@@ -18,7 +18,6 @@ import { TrailingNode } from './extensions/TrailingNode';
 
 export type EditorProps = {
   content: JSONContent;
-  isFocused?: boolean;
 
   editorRef?: (editor: Editor) => void;
   onFocus?: () => void;
@@ -96,8 +95,6 @@ class EditorStore {
   onLeave: EditorProps['onLeave'];
   editorRef: EditorProps['editorRef'];
 
-  isBlocksMenuOpen: boolean = false;
-
   content: JSONContent = undefined;
   isFocused = false;
   ref: HTMLDivElement;
@@ -105,14 +102,6 @@ class EditorStore {
   editor: Editor | null = null;
 
   extensions: Extensions;
-
-  openBlocksMenu = () => {
-    this.isBlocksMenuOpen = true;
-  };
-
-  closeBlocksMenu = () => {
-    this.isBlocksMenuOpen = false;
-  };
 
   handleClick = () => {
     this.onFocus?.();
@@ -149,11 +138,6 @@ class EditorStore {
 
   update = (props: EditorProps) => {
     this.content = props.content;
-    this.isFocused = props.isFocused;
-
-    if (this.isFocused && this.editor) {
-      this.editor.commands.focus();
-    }
 
     this.onUpdate = props.onUpdate;
     this.onFocus = props.onFocus;

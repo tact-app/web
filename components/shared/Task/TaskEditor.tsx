@@ -8,12 +8,12 @@ export const TaskEditor = observer(function TaskEditor() {
 
   return (
     <Editor
-      content={store.description ? store.description.content : undefined}
-      isFocused={store.isEditorFocused}
+      content={store.descriptionId ? store.descriptionContent.get() : undefined}
+      editorRef={store.setEditor}
       onUpdate={store.handleDescriptionChange}
+      onLeave={() => store.quickEditor.setFocus(true)}
       onFocus={store.handleDescriptionFocus}
       onBlur={store.handleDescriptionBlur}
-      onLeave={() => store.quickEditor.setFocus(true)}
     />
   );
 });

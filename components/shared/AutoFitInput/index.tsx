@@ -1,9 +1,10 @@
 import { chakra, Input, InputProps } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 
-export const AutoFitInput = (
-  props: InputProps & { inputRef?: (el: HTMLInputElement) => void }
-) => {
+export const AutoFitInput = ({
+  inputRef,
+  ...props
+}: InputProps & { inputRef?: (el: HTMLInputElement) => void }) => {
   const ref = useRef<HTMLSpanElement>(null);
   const [width, setWidth] = useState(0);
 
@@ -21,6 +22,8 @@ export const AutoFitInput = (
         position='absolute'
         visibility='hidden'
         ref={ref}
+        fontSize={props.fontSize || 'md'}
+        fontWeight={props.fontWeight || 'normal'}
       >
         {props.value}
       </chakra.span>
@@ -28,7 +31,7 @@ export const AutoFitInput = (
         textAlign='center'
         minW={width + 'px'}
         w={width + 'px'}
-        ref={(el) => props.inputRef?.(el)}
+        ref={inputRef}
         {...props}
       />
     </>

@@ -28,7 +28,7 @@ export const ResizableGroupChild = observer(function ResizableGroupChild({
   return (
     <chakra.div
       name='resizable-child'
-      overflow='hidden'
+      overflow='clip'
       position='relative'
       style={{
         width: store.widths.length ? store.getWidth(i) : config.width || 0,

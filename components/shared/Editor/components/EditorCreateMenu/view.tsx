@@ -20,7 +20,7 @@ export const EditorCreateMenuView = observer(function EditorCreateMenu({
         {store.items
           .filter(({ options }) => options.length)
           .map(({ options, name }) => (
-            <>
+            <Box key={name}>
               {options.map(({ icon, label }, index) => {
                 const isMatch = store.getLocalIndexMatch(name, index);
                 return (
@@ -57,7 +57,7 @@ export const EditorCreateMenuView = observer(function EditorCreateMenu({
                 );
               })}
               <Divider />
-            </>
+            </Box>
           ))}
       </Box>
     </Box>
