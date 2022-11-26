@@ -1,0 +1,39 @@
+name: continuous delivery (okteto)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ prod ]
+    paths:
+      - .github/workflows/cd.okteto.yml
+      - package*.json
+      - '**.js'
+      - '**.ts'
+    tags: [ '!*' ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v3
+        with: { node-version: 16, cache: npm }
+
+      - uses: okteto/context@latest
+        with: { token: ${{ secrets.OKTETO_TOKEN }} }
+      - uses: okteto/build@latest
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [ deploy ]
+
+    steps:
+      - uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+          SLACK_ICON: https://github.com/github.png?size=64
+          SLACK_TITLE: '🚀 ${{ github.repository }}: ${{ github.workflow }}'
+          SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
