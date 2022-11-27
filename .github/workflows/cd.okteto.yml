@@ -6,6 +6,14 @@ on:
     branches: [ prod ]
     paths:
       - .github/workflows/cd.okteto.yml
+      - k8s/**
+      - .dockerignore
+      - .stignore
+      - docker-compose.yml
+      - .babelrc
+      - .eslintrc.json
+      - .npmrc
+      - .prettierrc
       - package*.json
       - '**.js'
       - '**.ts'

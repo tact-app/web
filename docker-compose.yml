@@ -7,6 +7,10 @@ services:
     depends_on:
       - app
     restart: always
+    labels:
+      dev.okteto.com/auto-ingress: domain
+      dev.okteto.com/custom-domain: true
+      dev.okteto.com/domain: cloud.tact.run
 
   app:
     build:

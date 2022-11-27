@@ -6,6 +6,11 @@ on:
     branches: [ main ]
     paths:
       - .github/workflows/cd.vercel.yml
+      - .vercelignore
+      - .babelrc
+      - .eslintrc.json
+      - .npmrc
+      - .prettierrc
       - package*.json
       - '**.js'
       - '**.ts'
