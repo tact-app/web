@@ -37,11 +37,14 @@ export function MainMenu({ items }: { items: NavItem[] }) {
                     bg: isActive ? 'gray.300' : 'gray.200',
                   }}
                 >
-                  <FontAwesomeIcon
-                    fixedWidth
-                    icon={navItem.icon}
-                    fontSize={20}
-                  />
+                  <chakra.span h={5}>
+                    <FontAwesomeIcon
+                      fixedWidth
+                      icon={navItem.icon}
+                      fontSize={20}
+                      height={20}
+                    />
+                  </chakra.span>
                 </chakra.span>
               )}
             </NavLink>
