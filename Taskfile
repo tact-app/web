@@ -93,7 +93,7 @@ EOF
 node() {
   if [ "${1:-}" == 'inside' ]; then
     docker run --rm -it \
-      -e FONTAWESOME_NPM_AUTH_TOKEN="$(git config fontawesome.token)" \
+      -e FONTAWESOME_TOKEN="$(git config fontawesome.token)" \
       -v "$(pwd)":/app \
       -w /app \
       --entrypoint=/bin/bash \
@@ -102,7 +102,7 @@ node() {
   fi
 
   docker run --rm -it \
-    -e FONTAWESOME_NPM_AUTH_TOKEN="$(git config fontawesome.token)" \
+    -e FONTAWESOME_TOKEN="$(git config fontawesome.token)" \
     -v "$(pwd)":/app \
     -w /app \
     "${@:2}" \

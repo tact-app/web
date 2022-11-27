@@ -35,7 +35,7 @@ jobs:
         id: cache
       - run: npm ci --ignore-scripts --include=dev
         if: steps.cache.outputs.cache-hit != 'true'
-        env: { FONTAWESOME_NPM_AUTH_TOKEN: '${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}' }
+        env: { FONTAWESOME_TOKEN: '${{ secrets.FONTAWESOME_TOKEN }}' }
       - run: npm run build
 
   notify:

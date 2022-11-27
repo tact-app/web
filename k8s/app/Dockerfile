@@ -1,7 +1,7 @@
 FROM node:16-alpine AS build
 
 ARG token
-ENV FONTAWESOME_NPM_AUTH_TOKEN=${token}
+ENV FONTAWESOME_TOKEN=${token}
 
 WORKDIR /app
 
