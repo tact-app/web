@@ -22,9 +22,9 @@ jobs:
         with: { node-version: 16, cache: npm }
 
       - uses: okteto/context@latest
-        with:
-          token: ${{ secrets.OKTETO_TOKEN }}
-      - uses: okteto/build@latest
+        with: { token: '${{ secrets.OKTETO_TOKEN }}' }
+      - uses: okteto/deploy-stack@latest
+        with: { build: true }
 
   notify:
     runs-on: ubuntu-latest
