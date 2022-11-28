@@ -1,31 +1,49 @@
 import { observer } from 'mobx-react-lite';
-import { Box, BoxProps } from '@chakra-ui/react';
-import React, { PropsWithChildren, useRef } from 'react';
+import { Box, BoxProps, chakra } from '@chakra-ui/react';
+import React, { PropsWithChildren } from 'react';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { TaskDragIcon } from '../Icons/TaskDragIcon';
 import { DraggableListComponentProps, useDraggableListStore } from './store';
 import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
 
-const DraggableListWrapper = observer(function TaskListWrapper({
+export const DraggableListContext = observer(function DraggableListContext({
+  onDragStart,
+  onDragEnd,
+  sensors,
   children,
-}: PropsWithChildren) {
-  const store = useDraggableListStore();
-
+}: PropsWithChildren<{
+  onDragStart: () => void;
+  onDragEnd: (result) => void;
+  sensors: any[];
+}>) {
   return (
     <DragDropContext
-      onDragStart={store.startDragging}
-      onDragEnd={store.endDragging}
-      sensors={[store.setDnDApi]}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      sensors={sensors}
     >
-      <Droppable droppableId='droppable'>
-        {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
-            {children}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
+      {children}
     </DragDropContext>
+  );
+});
+
+const DraggableListWrapper = observer(function TaskListWrapper({
+  children,
+  id,
+}: PropsWithChildren<{ id: string }>) {
+  return (
+    <Droppable droppableId={id}>
+      {(provided) => (
+        <chakra.div
+          {...provided.droppableProps}
+          ref={provided.innerRef}
+          minH={8}
+        >
+          {children}
+          {provided.placeholder}
+        </chakra.div>
+      )}
+    </Droppable>
   );
 });
 
@@ -105,22 +123,23 @@ export const DraggableListView = observer(function DraggableListView({
   prefix,
   dragHandler = DefaultDraggableListDragHandler,
   content,
+  id: droppableId,
   wrapperProps,
   boxProps,
 }: DraggableListComponentProps & {
+  id: string;
   boxProps?: BoxProps;
   wrapperProps?: BoxProps;
 }) {
   const store = useDraggableListStore();
-  const ref = useRef(null);
 
   useHotkeysHandler(store.keymap, store.hotkeyHandlers, {
     enabled: store.isHotkeysActive,
   });
 
   return (
-    <Box ref={ref} overflow='auto' {...wrapperProps}>
-      <DraggableListWrapper>
+    <Box {...wrapperProps}>
+      <DraggableListWrapper id={droppableId}>
         {store.items.map((id, index) => {
           return (
             <Draggable draggableId={id} index={index} key={id}>

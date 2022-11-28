@@ -32,6 +32,7 @@ export type DraggableListComponentProps = {
 };
 
 export type DraggableListProps = {
+  id: string;
   callbacks?: DraggableListCallbacks;
   checkItemActivity?: (id: string) => boolean;
   isHotkeysEnabled?: boolean;
@@ -47,6 +48,7 @@ export class DraggableListStore {
   callbacks: DraggableListCallbacks = {};
   checkItemActivity?: (id: string) => boolean;
 
+  id: string = '';
   lastFocusedItemId: string | null = null;
   savedFocusedItemIds: string[] = [];
   focusedItemIds: string[] = [];
@@ -246,16 +248,18 @@ export class DraggableListStore {
 
     const preDrag = this.DnDApi.tryGetLock(this.focusedItemIds[0], () => {});
 
-    this.isControlDraggingActive = true;
+    if (preDrag) {
+      this.isControlDraggingActive = true;
 
-    const lift = preDrag.snapLift();
+      const lift = preDrag.snapLift();
 
-    action(lift);
+      action(lift);
 
-    this.dropTimeout = setTimeout(() => {
-      lift.drop();
-      this.dropTimeout = null;
-    }, 200) as unknown as number;
+      this.dropTimeout = setTimeout(() => {
+        lift.drop();
+        this.dropTimeout = null;
+      }, 200) as unknown as number;
+    }
   };
 
   controlsMultiMoveAction = (direction: 'up' | 'down') => {
@@ -285,11 +289,11 @@ export class DraggableListStore {
     this.isDraggingActive = true;
   };
 
-  endDragging = (result) => {
+  endDragging = (result?: any) => {
     this.isDraggingActive = false;
     this.isControlDraggingActive = false;
 
-    if (!result.destination) {
+    if (!result?.destination) {
       return;
     }
 
@@ -586,6 +590,7 @@ export class DraggableListStore {
 
   update = (props: DraggableListProps) => {
     this.callbacks = props.callbacks || {};
+    this.id = props.id;
     this.items = props.items;
     this.isDndActive = props.dndActive;
     this.isForceHotkeysActive = props.isHotkeysEnabled ?? true;

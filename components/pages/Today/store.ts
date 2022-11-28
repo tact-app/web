@@ -14,15 +14,17 @@ import {
 import { TasksListProps, TasksListStore } from '../../shared/TasksList/store';
 import { TaskProps } from '../../shared/Task/store';
 import { ResizableGroupConfig } from '../../shared/ResizableGroup/store';
+import { TasksListWithCreatorStore } from '../../shared/TasksListWithCreator/store';
 
 const FOCUS_MODE_WIDTH = 300;
 
-export class TasksStore {
+export class TodayStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
   }
 
-  list = new TasksListStore(this.root);
+  listWithCreator = new TasksListWithCreatorStore(this.root);
+  weekList = new TasksListStore(this.root);
   focusConfiguration = new FocusConfigurationStore(this.root);
 
   listId: string = 'default';
@@ -33,6 +35,7 @@ export class TasksStore {
   };
 
   shouldSetFirstFocus: boolean = false;
+  isWeekExpanded: boolean = true;
   isTasksListFocusSaved: boolean = false;
   isTasksListHotkeysEnabled: boolean = true;
   isTaskExpanded: boolean = false;
@@ -57,11 +60,17 @@ export class TasksStore {
   ];
 
   keyMap = {
+    FOCUS_INPUT: 'n',
     FOCUS_MODE: 'f',
     SILENT_FOCUS_MODE: 'shift+f',
   };
 
   hotkeyHandlers = {
+    FOCUS_INPUT: () => {
+      this.listWithCreator.list.removeFocus();
+      this.weekList.removeFocus();
+      this.listWithCreator.creator.setFocus(true);
+    },
     FOCUS_MODE: (e) => {
       e.preventDefault();
       this.toggleFocusMode();
@@ -73,11 +82,15 @@ export class TasksStore {
   };
 
   get isHotkeysEnabled() {
-    return !this.list.modals.controller.isOpen;
+    return !this.listWithCreator.list.modals.controller.isOpen;
   }
 
+  toggleWeekList = () => {
+    this.isWeekExpanded = !this.isWeekExpanded;
+  };
+
   getItemsCount = () => {
-    return this.list.draggableList.activeItems.length;
+    return this.listWithCreator.list.draggableList.activeItems.length;
   };
 
   checkFocusModeMatch = (task: TaskData) => {
@@ -109,15 +122,15 @@ export class TasksStore {
     this.resetLayout();
 
     if (isOpen) {
-      this.list.draggableList.revalidateFocusedItems();
+      this.listWithCreator.list.draggableList.revalidateFocusedItems();
 
       const isOpenedTaskFocused = Boolean(
-        this.list.openedTask &&
-          this.checkFocusModeMatch(this.list.openedTaskData)
+        this.listWithCreator.list.openedTask &&
+          this.checkFocusModeMatch(this.listWithCreator.list.openedTaskData)
       );
 
       if (!isOpenedTaskFocused) {
-        this.list.closeTask();
+        this.listWithCreator.list.closeTask();
       }
 
       if (silent) {
@@ -149,7 +162,7 @@ export class TasksStore {
   focusFocusConfiguration = () => {
     this.isTasksListHotkeysEnabled = false;
     this.isTasksListFocusSaved = true;
-    this.list.draggableList.saveFocusedItems();
+    this.listWithCreator.list.draggableList.saveFocusedItems();
     this.focusConfiguration.focus();
   };
 
@@ -189,7 +202,7 @@ export class TasksStore {
 
   handleFocusTasksList = () => {
     if (this.isTasksListFocusSaved) {
-      this.list.draggableList.restoreSavedFocusedItems();
+      this.listWithCreator.list.draggableList.restoreSavedFocusedItems();
     }
 
     this.isTasksListHotkeysEnabled = true;
@@ -199,9 +212,55 @@ export class TasksStore {
   handleFocusConfigurationFocus = () => {
     this.isTasksListHotkeysEnabled = false;
     this.isTasksListFocusSaved = true;
-    this.list.draggableList.saveFocusedItems();
-    this.list.draggableList.resetFocusedItem();
+    this.listWithCreator.list.draggableList.saveFocusedItems();
+    this.listWithCreator.list.draggableList.resetFocusedItem();
   };
+
+  handleDragStart = () => {
+    this.listWithCreator.list.draggableList.startDragging();
+    this.weekList.draggableList.startDragging();
+  };
+
+  handleDragEnd = (result) => {
+    if (result?.destination) {
+      if (result.destination.droppableId === result.source.droppableId) {
+        if (result.destination.droppableId === 'default') {
+          this.listWithCreator.list.draggableList.endDragging(result);
+          this.weekList.draggableList.endDragging();
+        } else {
+          this.weekList.draggableList.endDragging(result);
+          this.listWithCreator.list.draggableList.endDragging();
+        }
+      } else {
+        if (result.destination.droppableId === 'default') {
+          this.listWithCreator.list.swapTasks(
+            this.weekList,
+            result.draggableId,
+            result.destination.index
+          );
+        } else {
+          this.weekList.swapTasks(
+            this.listWithCreator.list,
+            result.draggableId,
+            result.destination.index
+          );
+        }
+
+        this.listWithCreator.list.draggableList.endDragging();
+        this.weekList.draggableList.endDragging();
+      }
+    }
+  };
+
+  get sensors() {
+    return [
+      (api) => {
+        console.log(api);
+        this.listWithCreator.list.draggableList.setDnDApi(api);
+        this.weekList.draggableList.setDnDApi(api);
+      },
+    ];
+  }
 
   loadFocusModeConfiguration = async () => {
     this.focusModeConfiguration = await this.root.api.focusConfigurations.get(
@@ -220,17 +279,17 @@ export class TasksStore {
   };
 
   setFirstFocus = () => {
-    if (this.list.order.length) {
-      this.list.draggableList.focusFirstItem();
+    if (this.listWithCreator.list.order.length) {
+      this.listWithCreator.list.draggableList.focusFirstItem();
     } else {
-      this.list.creator.setFocus(true);
+      this.listWithCreator.creator.setFocus(true);
     }
 
     this.shouldSetFirstFocus = false;
   };
 
   taskCallbacks: TaskProps['callbacks'] = {
-    ...this.list.taskCallbacks,
+    ...this.listWithCreator.list.taskCallbacks,
     onExpand: this.handleExpandTask,
     onCollapse: this.handleCollapseTask,
   };
@@ -246,9 +305,10 @@ export class TasksStore {
     onClose: this.toggleFocusMode,
     onFocus: this.handleFocusConfigurationFocus,
     onBlur: this.handleFocusTasksList,
-    onGoalCreateClick: (cb) => this.list.modals.openGoalCreationModal(cb),
+    onGoalCreateClick: (cb) =>
+      this.listWithCreator.list.modals.openGoalCreationModal(cb),
   };
 }
 
-export const { useStore: useTasksStore, StoreProvider: TasksStoreProvider } =
-  getProvider(TasksStore);
+export const { useStore: useTodayStore, StoreProvider: TodayStoreProvider } =
+  getProvider(TodayStore);

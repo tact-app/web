@@ -19,7 +19,10 @@ import { TaskQuickEditorMainMenu } from '../TaskQuickEditor/TaskQuickEditorMainM
 import { TaskQuickEditorSpace } from '../TaskQuickEditor/TaskQuickEditorSpace';
 import { TaskQuickEditorGoal } from '../TaskQuickEditor/TaskQuickEditorGoal';
 
-export type TaskCreatorProps = { wrapperProps: InputWrapperProps };
+export type TaskCreatorProps = {
+  wrapperProps: InputWrapperProps;
+  isHotkeysEnabled?: boolean;
+};
 
 const HotkeyHint = ({ children }) => (
   <chakra.span

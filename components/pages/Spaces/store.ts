@@ -120,12 +120,12 @@ export class SpacesStore {
 
     if (this.openedItem && item && this.openedItem.id === item.id) {
       this.focusedBlockId = SpacesFocusableBlocks.INBOX_ITEM;
-      this.inboxItem.list.creator.setFocus(true);
+      this.inboxItem.listWithCreator.creator.setFocus(true);
     }
 
     if (item === null && this.openedItem) {
       this.resetExpanded();
-      this.inboxItem.list.closeTask();
+      this.inboxItem.listWithCreator.list.closeTask();
     }
 
     this.openedItem = item;
@@ -168,14 +168,14 @@ export class SpacesStore {
         this.focusedBlockId = SpacesFocusableBlocks.TREE;
       } else if (this.openedItem) {
         this.focusedBlockId = SpacesFocusableBlocks.INBOX_ITEM;
-        this.inboxItem.list.creator.setFocus(true);
+        this.inboxItem.listWithCreator.creator.setFocus(true);
       }
     } else if (this.focusedBlockId === SpacesFocusableBlocks.INBOX_ITEM) {
       if (
         direction === NavigationDirections.LEFT ||
         direction === NavigationDirections.INVARIANT
       ) {
-        this.inboxItem.list.draggableList.resetFocusedItem();
+        this.inboxItem.listWithCreator.list.draggableList.resetFocusedItem();
         this.focusedBlockId = SpacesFocusableBlocks.INBOX;
       }
     }
@@ -269,7 +269,7 @@ export class SpacesStore {
 
   itemCallbacks: SpacesInboxItemProps['callbacks'] = {
     onExpand: () => {
-      this.inboxItem.list.closeTask();
+      this.inboxItem.listWithCreator.list.closeTask();
       this.handleExpand([2]);
     },
     onCollapse: () => this.resetExpanded(),
@@ -301,7 +301,7 @@ export class SpacesStore {
   };
 
   taskCallbacks: TaskProps['callbacks'] = {
-    ...this.inboxItem.list.taskCallbacks,
+    ...this.inboxItem.listWithCreator.list.taskCallbacks,
     onFocus: () => this.handleFocus(SpacesFocusableBlocks.INBOX_ITEM),
     onExpand: () => this.handleExpand([3]),
     onCollapse: () => this.resetExpanded(),

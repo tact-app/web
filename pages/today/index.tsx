@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import { PageLoader } from '../../components/shared/PageLoader';
 
-const DynamicTaskPage = dynamic(() => import('../../components/pages/Tasks'), {
+const DynamicTaskPage = dynamic(() => import('../../components/pages/Today'), {
   loading: () => <PageLoader />,
   ssr: false,
 });

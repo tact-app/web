@@ -8,6 +8,7 @@ import { RootStore } from '../../../../../stores/RootStore';
 import { getStubDescription } from '../../modals/SpaceCreationModal/stubs';
 import { SpacesInboxItemData } from '../../types';
 import { KeyboardEvent } from 'react';
+import { TasksListWithCreatorStore } from '../../../../shared/TasksListWithCreator/store';
 
 export type SpacesInboxItemProps = {
   item: SpacesInboxItemData;
@@ -29,7 +30,7 @@ export class SpacesInboxItemStore {
     makeAutoObservable(this);
   }
 
-  list = new TasksListStore(this.root);
+  listWithCreator = new TasksListWithCreatorStore(this.root);
 
   isExpanded: boolean = false;
   isHotkeysEnabled: boolean | null = null;
@@ -68,7 +69,7 @@ export class SpacesInboxItemStore {
     if (props.item) {
       if (this.item === null || this.item.id !== props.item.id) {
         this.item = props.item;
-        this.list.reset();
+        this.listWithCreator.reset();
         this.loadDescription();
       }
     } else {
