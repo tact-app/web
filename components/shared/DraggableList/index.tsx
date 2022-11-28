@@ -11,6 +11,7 @@ import { BoxProps } from '@chakra-ui/react';
 export const DraggableList = observer(function DraggableList(
   props: DraggableListProps &
     DraggableListComponentProps & { instance?: DraggableListStore } & {
+      id: string;
       boxProps?: BoxProps;
       wrapperProps?: BoxProps;
     }

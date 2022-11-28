@@ -13,6 +13,12 @@ const getTasksApi = (apiService: ApiService) => ({
     apiService.delete<TaskData[]>(`/api/tasks/delete`, { ids, listId }),
   order: (data: { listId: string; taskIds: string[]; destination: number }) =>
     apiService.put<TaskData[]>(`/api/tasks/order`, data),
+  swap: (data: {
+    fromListId: string;
+    toListId: string;
+    taskIds: string[];
+    destination: number;
+  }) => apiService.put<TaskData[]>(`/api/tasks/swap`, data),
   update: (data: { id: string; fields: Partial<TaskData> }) =>
     apiService.put<TaskData[]>(`/api/tasks/update`, data),
   assignGoal: (data: { taskIds: string[]; goalId: string | null }) =>

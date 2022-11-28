@@ -1,5 +1,5 @@
 import { DB } from '../index';
-import { FocusConfigurationData } from '../../../../components/pages/Tasks/components/FocusConfiguration/store';
+import { FocusConfigurationData } from '../../../../components/pages/Today/components/FocusConfiguration/store';
 
 const data = {
   get: {

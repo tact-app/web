@@ -2,10 +2,7 @@ import { RootStore } from '../../../stores/RootStore';
 import { makeAutoObservable, reaction, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { NavigationDirections, TaskData, TaskStatus, TaskTag } from './types';
-import {
-  TaskQuickEditorProps,
-  TaskQuickEditorStore,
-} from './components/TaskQuickEditor/store';
+import { TaskQuickEditorProps } from './components/TaskQuickEditor/store';
 import {
   DraggableListCallbacks,
   DraggableListStore,
@@ -20,8 +17,8 @@ export type TasksListProps = {
   checkTaskActivity?: (task: TaskData) => boolean;
   highlightActiveTasks?: boolean;
   isHotkeysEnabled?: boolean;
-  isCreatorEnabled?: boolean;
   isReadOnly?: boolean;
+  listId?: string;
   input?: SpacesInboxItemData;
   dnd?: boolean;
   callbacks?: {
@@ -29,6 +26,7 @@ export type TasksListProps = {
     onOpenTask?: (hasOpenedTask: boolean) => void;
     onCloseTask?: () => void;
     onInit?: () => void | Promise<void>;
+    onReset?: () => void;
   };
 };
 
@@ -39,7 +37,6 @@ export class TasksListStore {
 
   modals = new TasksModals(this);
   draggableList = new DraggableListStore(this.root);
-  creator = new TaskQuickEditorStore(this.root);
 
   input: SpacesInboxItemData | null = null;
   checkTaskActivity: TasksListProps['checkTaskActivity'];
@@ -56,7 +53,6 @@ export class TasksListStore {
 
   highlightActiveTasks: boolean = false;
   isReadOnly: boolean = false;
-  isCreatorEnabled: boolean = true;
   isForceHotkeysEnabled = true;
   isLoading: boolean = true;
   isItemMenuOpen: boolean = false;
@@ -72,7 +68,6 @@ export class TasksListStore {
     EDIT: 'space',
     OPEN_AND_EDIT: 'enter',
     FOCUS_LEAVE_LEFT: 'arrowleft',
-    FOCUS_INPUT: 'n',
     OPEN: 'arrowright',
   };
 
@@ -119,12 +114,6 @@ export class TasksListStore {
         this.modals.openGoalAssignModal();
       }
     },
-    FOCUS_INPUT: () => {
-      this.draggableList.resetFocusedItem();
-      this.setEditingTask(null);
-      this.closeTask();
-      this.creator.setFocus(true);
-    },
     OPEN: () => {
       if (!this.openedTask) {
         if (this.draggableList.focused.length) {
@@ -153,8 +142,8 @@ export class TasksListStore {
       this.order = order;
       this.deleteTasks(ids);
     },
-    onFocusLeave: () => {
-      this.creator.setFocus(true);
+    onFocusLeave: (direction: NavigationDirections) => {
+      this.callbacks.onFocusLeave?.(direction);
     },
     onItemSecondClick: (id: string) => {
       this.openTask(id, true);
@@ -201,7 +190,6 @@ export class TasksListStore {
   get isHotkeysEnabled() {
     return !!(
       this.isForceHotkeysEnabled &&
-      !this.creator.isMenuOpen &&
       !this.isItemMenuOpen &&
       !this.draggableList.isDraggingActive &&
       !this.draggableList.isControlDraggingActive &&
@@ -233,6 +221,12 @@ export class TasksListStore {
     }
 
     return false;
+  };
+
+  removeFocus = () => {
+    this.draggableList.resetFocusedItem();
+    this.setEditingTask(null);
+    this.closeTask();
   };
 
   handleNavigation = (direction: NavigationDirections) => {
@@ -299,12 +293,6 @@ export class TasksListStore {
     ids.forEach((id) => {
       this.setTaskStatus(id, newStatus);
     });
-  };
-
-  handleCreatorFocus = () => {
-    this.draggableList.resetFocusedItem();
-    this.setEditingTask(null);
-    this.closeTask();
   };
 
   handleEditorBlur = () => {
@@ -381,7 +369,7 @@ export class TasksListStore {
     this.root.api.tasks.delete(this.listId, ids);
 
     if (!this.order.length) {
-      this.creator.setFocus(true);
+      this.callbacks.onFocusLeave?.(NavigationDirections.UP);
     }
   };
 
@@ -405,6 +393,44 @@ export class TasksListStore {
     this.tags.push(tag);
     this.tagsMap[tag.id] = tag;
     this.root.api.tags.create(tag);
+  };
+
+  swapTasks = (
+    fromStore: TasksListStore,
+    taskId: string,
+    destination: number
+  ) => {
+    const fromTask = fromStore.items[taskId];
+
+    fromTask.listId = this.listId;
+
+    this.addTask(fromTask, destination);
+
+    fromStore.detachTask(taskId);
+
+    this.root.api.tasks.swap({
+      fromListId: fromStore.listId,
+      toListId: this.listId,
+      taskIds: [taskId],
+      destination,
+    });
+
+    this.root.api.tasks.update({
+      id: taskId,
+      fields: {
+        listId: this.listId,
+      },
+    });
+  };
+
+  addTask = (task: TaskData, position: number) => {
+    this.items[task.id] = task;
+    this.order.splice(position, 0, task.id);
+  };
+
+  detachTask = (taskId: string) => {
+    this.order = this.order.filter((id) => id !== taskId);
+    delete this.items[taskId];
   };
 
   changeOrder = (
@@ -515,7 +541,7 @@ export class TasksListStore {
   reset = () => {
     this.editingTaskId = null;
     this.openedTask = null;
-    this.creator.reset();
+    this.callbacks.onReset?.();
   };
 
   load = async () => {
@@ -537,8 +563,8 @@ export class TasksListStore {
     this.checkTaskActivity = props.checkTaskActivity;
     this.highlightActiveTasks = props.highlightActiveTasks;
     this.isForceHotkeysEnabled = props.isHotkeysEnabled ?? true;
-    this.isCreatorEnabled = props.isCreatorEnabled ?? true;
     this.isReadOnly = props.isReadOnly ?? false;
+    this.listId = props.listId;
     this.input = props.input;
   };
 
@@ -556,17 +582,6 @@ export class TasksListStore {
     onNavigate: this.handleTaskItemNavigation,
     onSave: this.updateTask,
     onTagCreate: this.createTag,
-  };
-
-  taskCreatorCallbacks: TaskQuickEditorProps['callbacks'] = {
-    onSave: this.createTask,
-    onForceSave: (taskId: string) => {
-      this.openTask(taskId, true);
-      this.draggableList.setFocusedItem(taskId);
-    },
-    onTagCreate: this.createTag,
-    onNavigate: this.handleNavigation,
-    onFocus: this.handleCreatorFocus,
   };
 }
 

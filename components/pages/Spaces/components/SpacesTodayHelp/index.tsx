@@ -32,11 +32,7 @@ export const SpacesTodayHelp = observer(function SpacesTodayHelp() {
         />
       </DrawerHeader>
       <DrawerBody overflow='auto'>
-        <TasksList
-          isHotkeysEnabled={false}
-          isCreatorEnabled={false}
-          isReadOnly
-        />
+        <TasksList isHotkeysEnabled={false} isReadOnly />
         <chakra.div />
       </DrawerBody>
     </ResizableDrawer>

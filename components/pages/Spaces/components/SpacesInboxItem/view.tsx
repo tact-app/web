@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite';
 import { SpacesInboxItemProps, useSpacesInboxItemStore } from './store';
 import { Box, Container, Divider, Heading, Text } from '@chakra-ui/react';
-import TasksList from '../../../../shared/TasksList';
 import { ItemToolbar } from '../../../../shared/ItemToolbar/itemToolbar';
 import { SpacesInboxItemFields } from './SpacesInboxItemFields';
+import { TasksListWithCreator } from '../../../../shared/TasksListWithCreator';
 
 export const SpacesInboxItemView = observer(function SpacesInboxItemView(
   props: SpacesInboxItemProps
@@ -42,8 +42,8 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
             <Text>{store.description}</Text>
           </Box>
           <Divider mt={6} mb={8} />
-          <TasksList
-            instance={store.list}
+          <TasksListWithCreator
+            instance={store.listWithCreator}
             input={store.item}
             isHotkeysEnabled={store.isHotkeysEnabled}
             callbacks={store.tasksListCallbacks}

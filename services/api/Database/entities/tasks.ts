@@ -103,6 +103,28 @@ const data = {
         await db.put('taskLists', existedList);
       }
     },
+    '/api/tasks/swap': async (
+      db: DB,
+      data: {
+        fromListId: string;
+        toListId: string;
+        taskIds: string[];
+        destination: number;
+      }
+    ) => {
+      const existedListFrom = await db.get('taskLists', data.fromListId);
+      const existedListTo = await db.get('taskLists', data.toListId);
+
+      if (existedListFrom && existedListTo) {
+        existedListFrom.taskIds = existedListFrom.taskIds.filter(
+          (id) => !data.taskIds.includes(id)
+        );
+        existedListTo.taskIds.splice(data.destination, 0, ...data.taskIds);
+
+        await db.put('taskLists', existedListFrom);
+        await db.put('taskLists', existedListTo);
+      }
+    },
     '/api/tasks/update': async (
       db: DB,
       data: { id: string; fields: Partial<TaskData> }

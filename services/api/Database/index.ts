@@ -2,7 +2,7 @@ import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { TaskData, TaskTag } from '../../../components/shared/TasksList/types';
 import { GoalData } from '../../../components/pages/Goals/types';
 import { JSONContent } from '@tiptap/core';
-import { FocusConfigurationData } from '../../../components/pages/Tasks/components/FocusConfiguration/store';
+import { FocusConfigurationData } from '../../../components/pages/Today/components/FocusConfiguration/store';
 import { SpaceData } from '../../../components/pages/Spaces/types';
 
 interface MyDB extends DBSchema {

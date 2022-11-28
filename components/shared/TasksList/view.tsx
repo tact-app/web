@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { TasksListProps, useTasksListStore } from './store';
 
-import { TaskCreator } from './components/TaskCreator';
 import React from 'react';
 import { TaskListItem } from './components/TaskListItem';
 import { ModalsSwitcher } from '../../../helpers/ModalsController';
@@ -20,27 +19,13 @@ export const TasksListView = observer(function TasksListView(
 
   return (
     <>
-      {store.isCreatorEnabled && (
-        <TaskCreator
-          callbacks={store.taskCreatorCallbacks}
-          tagsMap={store.tagsMap}
-          spaces={store.spaces}
-          goals={store.goals}
-          listId={store.listId}
-          defaultSpaceId={store.input ? store.input.spaceId : undefined}
-          keepFocus
-          wrapperProps={{
-            ml: props.dnd ? 5 : 0,
-            mr: props.dnd ? 5 : 0,
-          }}
-        />
-      )}
       {store.isLoading ? (
         <Center>
           <Spinner />
         </Center>
       ) : (
         <DraggableList
+          id={store.listId}
           isHotkeysEnabled={store.isHotkeysEnabled}
           dndActive={props.dnd}
           wrapperProps={

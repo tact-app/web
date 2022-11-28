@@ -61,15 +61,17 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
           )}
         </ResizableGroupChild>
         <ResizableGroupChild index={3} config={store.resizableConfig[3]}>
-          {store.inboxItem.list.openedTask && (
+          {store.inboxItem.listWithCreator.list.openedTask && (
             <Task
-              task={store.inboxItem.list.openedTaskData}
-              spaces={store.inboxItem.list.spaces}
-              tagsMap={store.inboxItem.list.tagsMap}
-              goals={store.inboxItem.list.goals}
-              hasNext={store.inboxItem.list.hasNextTask}
-              hasPrevious={store.inboxItem.list.hasPrevTask}
-              isEditorFocused={store.inboxItem.list.isEditorFocused}
+              task={store.inboxItem.listWithCreator.list.openedTaskData}
+              spaces={store.inboxItem.listWithCreator.list.spaces}
+              tagsMap={store.inboxItem.listWithCreator.list.tagsMap}
+              goals={store.inboxItem.listWithCreator.list.goals}
+              hasNext={store.inboxItem.listWithCreator.list.hasNextTask}
+              hasPrevious={store.inboxItem.listWithCreator.list.hasPrevTask}
+              isEditorFocused={
+                store.inboxItem.listWithCreator.list.isEditorFocused
+              }
               isExpanded={store.isInboxItemTaskExpanded}
               callbacks={store.taskCallbacks}
             />

@@ -14,15 +14,19 @@ import {
   chakra,
   Container,
 } from '@chakra-ui/react';
-import TasksList from '../../shared/TasksList';
 import { FocusIcon } from '../../shared/Icons/FocusIcon';
-import { useTasksStore } from './store';
+import { useTodayStore } from './store';
 import { ResizableGroup } from '../../shared/ResizableGroup';
 import { FocusConfiguration } from './components/FocusConfiguration';
 import { ResizableGroupChild } from '../../shared/ResizableGroup/ResizableGroupChild';
+import { TasksListWeekly } from './components/TasksListWeekly';
+import { DraggableListContext } from '../../shared/DraggableList/view';
+import { TaskCreator } from '../../shared/TasksList/components/TaskCreator';
+import TasksList from '../../shared/TasksList';
+import { TasksListWithCreatorStoreProvider } from '../../shared/TasksListWithCreator/store';
 
-export const TasksView = observer(function TasksView() {
-  const store = useTasksStore();
+export const TodayView = observer(function TodayView() {
+  const store = useTodayStore();
 
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers, {
     enabled: store.isHotkeysEnabled,
@@ -37,7 +41,7 @@ export const TasksView = observer(function TasksView() {
   return (
     <>
       <Head>
-        <title>Tasks</title>
+        <title>Today</title>
       </Head>
       <Box display='flex' h='100%'>
         <ResizableGroup>
@@ -53,7 +57,7 @@ export const TasksView = observer(function TasksView() {
                   instance={store.focusConfiguration}
                   callbacks={store.focusConfigurationCallbacks}
                   getItemsCount={store.getItemsCount}
-                  goals={store.list.goals}
+                  goals={store.listWithCreator.list.goals}
                 />
               ) : null}
             </chakra.div>
@@ -92,14 +96,47 @@ export const TasksView = observer(function TasksView() {
                     </Tooltip>
                   </HStack>
                 </HStack>
-                <TasksList
+                <TasksListWithCreatorStoreProvider
+                  instance={store.listWithCreator}
                   callbacks={store.tasksListCallbacks}
-                  isHotkeysEnabled={store.isTasksListHotkeysEnabled}
-                  dnd={true}
-                  instance={store.list}
-                  highlightActiveTasks={store.isFocusModeActive}
-                  checkTaskActivity={store.checkFocusModeMatch}
-                />
+                >
+                  <TaskCreator
+                    instance={store.listWithCreator.creator}
+                    callbacks={store.listWithCreator.taskCreatorCallbacks}
+                    tagsMap={store.listWithCreator.list.tagsMap}
+                    spaces={store.listWithCreator.list.spaces}
+                    goals={store.listWithCreator.list.goals}
+                    listId={store.listWithCreator.list.listId}
+                    defaultSpaceId={
+                      store.listWithCreator.list.input
+                        ? store.listWithCreator.list.input.spaceId
+                        : undefined
+                    }
+                    keepFocus
+                    wrapperProps={{
+                      ml: 5,
+                      mr: 5,
+                    }}
+                  />
+                  <Box overflow='auto'>
+                    <DraggableListContext
+                      onDragStart={store.handleDragStart}
+                      onDragEnd={store.handleDragEnd}
+                      sensors={store.sensors}
+                    >
+                      <TasksList
+                        instance={store.listWithCreator.list}
+                        listId='default'
+                        isHotkeysEnabled={store.isTasksListHotkeysEnabled}
+                        dnd={true}
+                        highlightActiveTasks={store.isFocusModeActive}
+                        checkTaskActivity={store.checkFocusModeMatch}
+                        callbacks={store.listWithCreator.tasksListCallbacks}
+                      />
+                      <TasksListWeekly />
+                    </DraggableListContext>
+                  </Box>
+                </TasksListWithCreatorStoreProvider>
               </Box>
             </Container>
           </ResizableGroupChild>
@@ -109,16 +146,16 @@ export const TasksView = observer(function TasksView() {
             boxShadow='lg'
             onMouseDown={store.handleTasksListMouseDown}
           >
-            {store.list.openedTask && (
+            {store.listWithCreator.list.openedTask && (
               <Task
-                task={store.list.openedTaskData}
-                spaces={store.list.spaces}
-                tagsMap={store.list.tagsMap}
-                goals={store.list.goals}
-                hasNext={store.list.hasNextTask}
-                hasPrevious={store.list.hasPrevTask}
+                task={store.listWithCreator.list.openedTaskData}
+                spaces={store.listWithCreator.list.spaces}
+                tagsMap={store.listWithCreator.list.tagsMap}
+                goals={store.listWithCreator.list.goals}
+                hasNext={store.listWithCreator.list.hasNextTask}
+                hasPrevious={store.listWithCreator.list.hasPrevTask}
                 isExpanded={store.isTaskExpanded}
-                isEditorFocused={store.list.isEditorFocused}
+                isEditorFocused={store.listWithCreator.list.isEditorFocused}
                 callbacks={store.taskCallbacks}
               />
             )}
