@@ -7,9 +7,9 @@ on:
     paths:
       - .github/workflows/cd.okteto.yml
       - k8s/**
+      - docker-compose.yml
       - .dockerignore
       - .stignore
-      - docker-compose.yml
       - .babelrc
       - .eslintrc.json
       - .npmrc
@@ -26,8 +26,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with: { fetch-depth: 0 }
-      - uses: actions/setup-node@v3
-        with: { node-version: 16, cache: npm }
 
       - uses: okteto/context@latest
         with: { token: '${{ secrets.OKTETO_TOKEN }}' }
