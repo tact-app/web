@@ -35,8 +35,8 @@ export class TasksListWithCreatorStore {
     return this.list.isHotkeysEnabled && !this.creator.isMenuOpen;
   }
 
-  buildTasksListCallbacks = () => {
-    this.tasksListCallbacks = {
+  get tasksListCallbacks(): TasksListProps['callbacks'] {
+    return {
       ...this.callbacks,
       onReset: () => {
         this.creator.reset();
@@ -54,7 +54,7 @@ export class TasksListWithCreatorStore {
         }
       },
     };
-  };
+  }
 
   reset = () => {
     this.creator.reset();
@@ -63,10 +63,7 @@ export class TasksListWithCreatorStore {
 
   update = (props: TasksListWithCreatorProps) => {
     this.callbacks = props.callbacks;
-    this.buildTasksListCallbacks();
   };
-
-  tasksListCallbacks: TasksListProps['callbacks'];
 
   taskCreatorCallbacks: TaskQuickEditorProps['callbacks'] = {
     onSave: this.list.createTask,
