@@ -3,21 +3,7 @@ name: continuous delivery (okteto)
 on:
   workflow_dispatch:
   push:
-    branches: [ prod ]
-    paths:
-      - .github/workflows/cd.okteto.yml
-      - k8s/**
-      - docker-compose.yml
-      - .dockerignore
-      - .stignore
-      - .babelrc
-      - .eslintrc.json
-      - .npmrc
-      - .prettierrc
-      - package*.json
-      - '**.js'
-      - '**.ts'
-    tags: [ '!*' ]
+    tags: [ 'v*' ]
 
 jobs:
   deploy:
@@ -34,6 +20,7 @@ jobs:
 
   notify:
     runs-on: ubuntu-latest
+    if: failure() || success()
     needs: [ deploy ]
 
     steps:

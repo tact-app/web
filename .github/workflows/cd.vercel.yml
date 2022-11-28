@@ -39,6 +39,7 @@ jobs:
 
   notify:
     runs-on: ubuntu-latest
+    if: failure() || success()
     needs: [ deploy ]
 
     steps:
