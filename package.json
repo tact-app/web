@@ -60,7 +60,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.20.2",
+    "@babel/core": "7.20.5",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
