@@ -14,10 +14,16 @@ import {
 } from '@chakra-ui/react';
 import { TaskItemMenuIcon } from '../../../Icons/TaskItemMenuIcon';
 import { TaskItemStore, useTaskItemStore } from '../TaskItem/store';
-import React, { PropsWithChildren, useCallback, useState } from 'react';
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { TaskStatus } from '../../types';
 import { Modes } from '../TaskQuickEditor/store';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
+import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 
 const multiTaskItems = (store: TaskItemStore) => [
   {
@@ -25,6 +31,7 @@ const multiTaskItems = (store: TaskItemStore) => [
       store.parent.modals.openGoalAssignModal();
     },
     command: '⌥G',
+    hotkey: 'g',
     title: 'Assign to goal',
   },
   null,
@@ -37,6 +44,7 @@ const multiTaskItems = (store: TaskItemStore) => [
     title: store.parent.canUnsetStatus(TaskStatus.DONE)
       ? 'Unmark as done'
       : 'Mark as done',
+    hotkey: 'd',
     command: '⌥D',
   },
   {
@@ -48,6 +56,7 @@ const multiTaskItems = (store: TaskItemStore) => [
     title: store.parent.canUnsetStatus(TaskStatus.WONT_DO)
       ? 'Unmark as won’t do'
       : 'Mark as won’t do',
+    hotkey: ['w', 'shift+w'],
     command: '⌥W / ⌥⇧W',
   },
   null,
@@ -55,6 +64,7 @@ const multiTaskItems = (store: TaskItemStore) => [
     onClick: () =>
       store.parent.deleteWithVerify(store.parent.draggableList.focused),
     title: 'Delete tasks',
+    hotkey: ['backspace', 'meta+backspace', 'ctrl+backspace'],
     command: '⌫ / ⌘⌫',
   },
 ];
@@ -79,6 +89,7 @@ const singleTaskItems = (store: TaskItemStore) => [
       store.parent.modals.openGoalAssignModal(store.task.id);
     },
     command: '⌥G',
+    hotkey: 'g',
     title: 'Assign to goal',
   },
   null,
@@ -88,6 +99,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     title: store.parent.canUnsetStatus(TaskStatus.DONE)
       ? 'Unmark as done'
       : 'Mark as done',
+    hotkey: 'd',
     command: '⌥D',
   },
   {
@@ -96,6 +108,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     title: store.parent.canUnsetStatus(TaskStatus.WONT_DO)
       ? 'Unmark as won’t do'
       : 'Mark as won’t do',
+    hotkey: ['w', 'shift+w'],
     command: store.parent.canUnsetStatus(TaskStatus.WONT_DO)
       ? '⌥W'
       : '⌥W / ⌥⇧W',
@@ -121,11 +134,13 @@ const singleTaskItems = (store: TaskItemStore) => [
       }
     },
     title: 'Edit task',
+    hotkey: 'space',
     command: '␣',
   },
   {
     onClick: () => store.parent.deleteWithVerify([store.task.id]),
     title: 'Delete task',
+    hotkey: ['backspace', 'meta+backspace', 'ctrl+backspace'],
     command: '⌫ / ⌘⌫',
   },
 ];
@@ -212,6 +227,28 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
   const store = useTaskItemStore();
 
   const ref = useListNavigation(store.menuNavigation);
+  const items = store.isMultiSelected
+    ? multiTaskItems(store)
+    : singleTaskItems(store);
+
+  const { keyMap, hotkeyHandlers } = useMemo(() => {
+    const keyMap = {};
+    const hotkeyHandlers = {};
+
+    items.forEach((item, index) => {
+      if (item && item.hotkey) {
+        keyMap[index] = item.hotkey;
+        hotkeyHandlers[index] = () => {
+          store.closeMenu();
+          item.onClick();
+        };
+      }
+    });
+
+    return { keyMap, hotkeyHandlers };
+  }, [items, store]);
+
+  useHotkeysHandler(keyMap, hotkeyHandlers);
 
   return (
     <Portal>
@@ -229,11 +266,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
           <PopoverBody p={0}>
             <TaskItemMenuItems
               refs={store.menuNavigation.setRefs}
-              items={
-                store.isMultiSelected
-                  ? multiTaskItems(store)
-                  : singleTaskItems(store)
-              }
+              items={items}
             />
           </PopoverBody>
         </PopoverContent>

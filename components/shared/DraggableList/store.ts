@@ -86,8 +86,8 @@ export class DraggableListStore {
   keymap = {
     UP: ['j', 'arrowup'],
     DOWN: ['k', 'arrowdown'],
-    FORCE_UP: ['meta+j', 'meta+arrowup', 'ctrl+j', 'ctrl+arrowup'],
-    FORCE_DOWN: ['meta+k', 'meta+arrowdown', 'ctrl+k', 'ctrl+arrowdown'],
+    FORCE_UP: ['meta+j', 'meta+arrowup', 'ctrl+j', 'ctrl+arrowup', 'h'],
+    FORCE_DOWN: ['meta+k', 'meta+arrowdown', 'ctrl+k', 'ctrl+arrowdown', 'l'],
     EDIT: 'space',
     MOVE_UP: [
       'meta+shift+j',
