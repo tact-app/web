@@ -24,6 +24,7 @@ import { DraggableListContext } from '../../shared/DraggableList/view';
 import { TaskCreator } from '../../shared/TasksList/components/TaskCreator';
 import TasksList from '../../shared/TasksList';
 import { TasksListWithCreatorStoreProvider } from '../../shared/TasksListWithCreator/store';
+import { TasksListStoreProvider } from '../../shared/TasksList/store';
 
 export const TodayView = observer(function TodayView() {
   const store = useTodayStore();
@@ -62,11 +63,7 @@ export const TodayView = observer(function TodayView() {
               ) : null}
             </chakra.div>
           </ResizableGroupChild>
-          <ResizableGroupChild
-            index={1}
-            config={store.resizableConfig[1]}
-            onMouseDown={store.handleTasksListMouseDown}
-          >
+          <ResizableGroupChild index={1} config={store.resizableConfig[1]}>
             <Container
               flex={1}
               maxW='container.lg'
@@ -132,8 +129,19 @@ export const TodayView = observer(function TodayView() {
                         highlightActiveTasks={store.isFocusModeActive}
                         checkTaskActivity={store.checkFocusModeMatch}
                         callbacks={store.listWithCreator.tasksListCallbacks}
+                        tasksReceiverName='Week'
                       />
-                      <TasksListWeekly />
+                      <TasksListStoreProvider
+                        listId='week'
+                        instance={store.weekList}
+                        isHotkeysEnabled={store.isWeekListHotkeysEnabled}
+                        highlightActiveTasks={store.isFocusModeActive}
+                        checkTaskActivity={store.checkFocusModeMatch}
+                        callbacks={store.weekTasksListCallbacks}
+                        tasksReceiverName='Today'
+                      >
+                        <TasksListWeekly />
+                      </TasksListStoreProvider>
                     </DraggableListContext>
                   </Box>
                 </TasksListWithCreatorStoreProvider>
@@ -144,21 +152,9 @@ export const TodayView = observer(function TodayView() {
             index={2}
             config={store.resizableConfig[2]}
             boxShadow='lg'
-            onMouseDown={store.handleTasksListMouseDown}
+            onMouseDown={store.handleTaskMouseDown}
           >
-            {store.listWithCreator.list.openedTask && (
-              <Task
-                task={store.listWithCreator.list.openedTaskData}
-                spaces={store.listWithCreator.list.spaces}
-                tagsMap={store.listWithCreator.list.tagsMap}
-                goals={store.listWithCreator.list.goals}
-                hasNext={store.listWithCreator.list.hasNextTask}
-                hasPrevious={store.listWithCreator.list.hasPrevTask}
-                isExpanded={store.isTaskExpanded}
-                isEditorFocused={store.listWithCreator.list.isEditorFocused}
-                callbacks={store.taskCallbacks}
-              />
-            )}
+            {store.taskProps.task && <Task {...store.taskProps} />}
           </ResizableGroupChild>
         </ResizableGroup>
       </Box>

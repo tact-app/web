@@ -85,6 +85,10 @@ export class DraggableListStore {
     );
   }
 
+  get hasSavedFocusedItems() {
+    return this.savedFocusedItemIds.length > 0;
+  }
+
   keymap = {
     UP: ['j', 'arrowup'],
     DOWN: ['k', 'arrowdown'],
@@ -337,9 +341,9 @@ export class DraggableListStore {
         }
       } else {
         if (direction === NavigationDirections.DOWN) {
-          this.setFocusedItem(this.getFirstActiveItem());
+          this.focusFirstItem();
         } else if (direction === NavigationDirections.UP) {
-          this.setFocusedItem(this.getLastActiveItem());
+          this.focusLastItem();
         }
       }
 
@@ -475,6 +479,10 @@ export class DraggableListStore {
     this.setFocusedItem(this.getFirstActiveItem());
   };
 
+  focusLastItem = () => {
+    this.setFocusedItem(this.getLastActiveItem());
+  };
+
   focusAfterItems = (ids: string[]) => {
     const lastItemIndex = ids.reduce((index, id) => {
       const currentIndex = this.items.indexOf(id);
@@ -520,9 +528,14 @@ export class DraggableListStore {
 
     if (this.savedFocusedItemIds.length) {
       this.addFocusedItems(this.savedFocusedItemIds);
+      this.resetSavedFocusedItems();
     } else {
       this.focusFirstItem();
     }
+  };
+
+  resetSavedFocusedItems = () => {
+    this.savedFocusedItemIds = [];
   };
 
   setFocusedItem = (id: string, mode?: 'single' | 'many') => {

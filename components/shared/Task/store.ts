@@ -242,7 +242,7 @@ class TaskStore {
       reaction(
         () => [this.isEditorFocused, this.descriptionId],
         () => {
-          if (this.isEditorFocused && this.editor?.commands) {
+          if (this.isEditorFocused && this.editor && !this.editor.isDestroyed) {
             this.editor.commands.focus(true);
           }
         }

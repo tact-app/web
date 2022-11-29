@@ -71,7 +71,7 @@ export class TaskItemStore {
   }
 
   handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Alt') {
+    if (e.key === 'Alt' && !e.metaKey && !e.shiftKey && !e.ctrlKey) {
       this.isAltPressed = true;
     } else if (this.isAltPressed) {
       this.isAltPressed = false;

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { Box, BoxProps, chakra } from '@chakra-ui/react';
+import { Box, BoxProps, chakra, ChakraProps } from '@chakra-ui/react';
 import React, { PropsWithChildren } from 'react';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { TaskDragIcon } from '../Icons/TaskDragIcon';
@@ -27,17 +27,18 @@ export const DraggableListContext = observer(function DraggableListContext({
   );
 });
 
-const DraggableListWrapper = observer(function TaskListWrapper({
+export const DraggableListDroppable = observer(function TaskListWrapper({
   children,
   id,
-}: PropsWithChildren<{ id: string }>) {
+  ...rest
+}: PropsWithChildren<{ id: string } & ChakraProps>) {
   return (
     <Droppable droppableId={id}>
       {(provided) => (
         <chakra.div
           {...provided.droppableProps}
           ref={provided.innerRef}
-          minH={8}
+          {...rest}
         >
           {children}
           {provided.placeholder}
@@ -119,6 +120,17 @@ export const DefaultDraggableListDragHandler = observer(
   }
 );
 
+function getStyle(style, snapshot) {
+  if (!snapshot.isDropAnimating) {
+    return style;
+  }
+  return {
+    ...style,
+    // cannot be 0, but make it super tiny
+    transitionDuration: `0.001s`,
+  };
+}
+
 export const DraggableListView = observer(function DraggableListView({
   prefix,
   dragHandler = DefaultDraggableListDragHandler,
@@ -139,7 +151,7 @@ export const DraggableListView = observer(function DraggableListView({
 
   return (
     <Box {...wrapperProps}>
-      <DraggableListWrapper id={droppableId}>
+      <DraggableListDroppable id={droppableId}>
         {store.items.map((id, index) => {
           return (
             <Draggable draggableId={id} index={index} key={id}>
@@ -150,7 +162,7 @@ export const DraggableListView = observer(function DraggableListView({
                   position='relative'
                   role='group'
                   display='flex'
-                  style={provided.draggableProps.style}
+                  style={getStyle(provided.draggableProps.style, snapshot)}
                   {...provided.draggableProps}
                   {...boxProps}
                 >
@@ -167,7 +179,7 @@ export const DraggableListView = observer(function DraggableListView({
             </Draggable>
           );
         })}
-      </DraggableListWrapper>
+      </DraggableListDroppable>
     </Box>
   );
 });

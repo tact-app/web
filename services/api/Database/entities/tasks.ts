@@ -109,7 +109,7 @@ const data = {
         fromListId: string;
         toListId: string;
         taskIds: string[];
-        destination: number;
+        destination?: number;
       }
     ) => {
       const existedListFrom = await db.get('taskLists', data.fromListId);
@@ -119,7 +119,12 @@ const data = {
         existedListFrom.taskIds = existedListFrom.taskIds.filter(
           (id) => !data.taskIds.includes(id)
         );
-        existedListTo.taskIds.splice(data.destination, 0, ...data.taskIds);
+
+        if (data.destination !== undefined) {
+          existedListTo.taskIds.splice(data.destination, 0, ...data.taskIds);
+        } else {
+          existedListTo.taskIds.push(...data.taskIds);
+        }
 
         await db.put('taskLists', existedListFrom);
         await db.put('taskLists', existedListTo);
