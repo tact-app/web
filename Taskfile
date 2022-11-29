@@ -3,9 +3,10 @@
 set -euo pipefail
 
 setup() {
-  __fontawesome_token
-  __okteto_token
-  __vercel_token
+  set_fontawesome_token
+  set_okteto_token
+  set_vercel_token
+  env
 
   tools npm ci
   vercel link
@@ -22,7 +23,7 @@ setup() {
   printf '└─ run whoami \t\t- to show meta information about your environment\n'
 }
 
-__fontawesome_token() {
+set_fontawesome_token() {
   local token
   echo Please enter Font Awesome token:
   read -rs token
@@ -37,7 +38,7 @@ __fontawesome_token() {
   echo 'Token saved.'
 }
 
-__okteto_token() {
+set_okteto_token() {
   local token
   echo Please enter Okteto token:
   read -rs token
@@ -52,7 +53,7 @@ __okteto_token() {
   echo 'Token saved.'
 }
 
-__vercel_token() {
+set_vercel_token() {
   local token
   echo Please enter Vercel token:
   read -rs token
@@ -68,11 +69,6 @@ __vercel_token() {
 }
 
 env() {
-  # TODO:improve support custom host with https
-  #    sudo code /etc/hosts <- 127.0.0.1  tact.dev tact.local
-  #    sudo killall -HUP mDNSResponder; echo DNS Cache Reset
-  #  https://web.dev/how-to-use-local-https/
-  #  https://github.com/FiloSottile/mkcert
   cat <<EOF >.env
 FONTAWESOME_TOKEN=$(git config fontawesome.token)
 OKTETO_TOKEN=$(git config okteto.token)
@@ -93,7 +89,7 @@ EOF
 node() {
   if [ "${1:-}" == 'inside' ]; then
     docker run --rm -it \
-      -e FONTAWESOME_TOKEN="$(git config fontawesome.token)" \
+      --env-file .env \
       -v "$(pwd)":/app \
       -w /app \
       --entrypoint=/bin/bash \
@@ -102,7 +98,7 @@ node() {
   fi
 
   docker run --rm -it \
-    -e FONTAWESOME_TOKEN="$(git config fontawesome.token)" \
+    --env-file .env \
     -v "$(pwd)":/app \
     -w /app \
     "${@:2}" \
@@ -131,7 +127,7 @@ build() {
     docker build \
       --build-arg token="$(git config fontawesome.token)" \
       -f k8s/app/Dockerfile \
-      -t tact:latest .
+      -t tact-app/frontend:local .
     return $?
   fi
 
@@ -166,7 +162,7 @@ server() {
     docker run \
       --rm -it \
       -p 127.0.0.1:3000:3000 \
-      tact:latest
+      tact-app/frontend:local
     return $?
   fi
 
@@ -199,6 +195,10 @@ tools() {
     chmod +x "${bin}"/okteto
     ;;
   esac
+}
+
+compose() {
+  docker compose -p tact-app "${@}"
 }
 
 _okteto=$(which okteto || true)
@@ -239,7 +239,11 @@ vercel() {
 
 whoami() {
   echo "You are $(git config user.name) <$(git config user.email)>"
-  okteto version
+  echo "* Docker Compose ----------------------------------"
+  compose ls
+  echo "* Okteto ------------------------------------------"
+  okteto context
+  echo "* Vercel ------------------------------------------"
   vercel whoami
 }
 
