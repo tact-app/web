@@ -116,6 +116,11 @@ install() {
   node "${cmd} --ignore-scripts --include=dev"
 }
 
+# Example: run dev
+dev() {
+  node 'npm run dev' -p 3000:3000
+}
+
 # Example: run build --from-scratch
 # Example: run build docker --from-scratch
 build() {
@@ -136,23 +141,6 @@ build() {
   node 'npm run build'
 }
 
-# Example: run deploy prod
-deploy() {
-  if [ "${1:-}" == 'prod' ]; then
-    vercel pull --yes --environment=production
-    vercel build --yes --prod
-    vercel deploy --yes --prebuilt --prod
-
-    okteto build
-    okteto deploy
-    return $?
-  fi
-
-  vercel pull --yes --environment=preview
-  vercel build --yes
-  vercel deploy --yes --prebuilt
-}
-
 # Example: run server --from-scratch
 # Example: run server docker --from-scratch
 server() {
@@ -169,6 +157,23 @@ server() {
   # local way
   [ "${1:-}" == '--from-scratch' ] && build "${@}"
   node 'npm run start' -p 127.0.0.1:3000:3000
+}
+
+# Example: run deploy prod
+deploy() {
+  if [ "${1:-}" == 'prod' ]; then
+    vercel pull --yes --environment=production
+    vercel build --yes --prod
+    vercel deploy --yes --prebuilt --prod
+
+    okteto build
+    okteto deploy
+    return $?
+  fi
+
+  vercel pull --yes --environment=preview
+  vercel build --yes
+  vercel deploy --yes --prebuilt
 }
 
 # Example: run tools npm i vercel@latest
