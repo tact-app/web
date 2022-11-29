@@ -61,6 +61,12 @@ const multiTaskItems = (store: TaskItemStore) => [
   },
   null,
   {
+    onClick: () => store.parent.sendTasks(store.parent.draggableList.focused),
+    title: 'Move to ' + store.parent.tasksReceiverName,
+    hotkey: 'm',
+    command: '⌥M',
+  },
+  {
     onClick: () =>
       store.parent.deleteWithVerify(store.parent.draggableList.focused),
     title: 'Delete tasks',
@@ -114,6 +120,12 @@ const singleTaskItems = (store: TaskItemStore) => [
       : '⌥W / ⌥⇧W',
   },
   null,
+  {
+    onClick: () => store.parent.sendTasks([store.task.id]),
+    title: 'Move to ' + store.parent.tasksReceiverName,
+    hotkey: 'm',
+    command: '⌥M',
+  },
   {
     onClick: () => {
       store.parent.openTask(store.task.id, true);

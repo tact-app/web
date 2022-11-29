@@ -17,7 +17,7 @@ const getTasksApi = (apiService: ApiService) => ({
     fromListId: string;
     toListId: string;
     taskIds: string[];
-    destination: number;
+    destination?: number;
   }) => apiService.put<TaskData[]>(`/api/tasks/swap`, data),
   update: (data: { id: string; fields: Partial<TaskData> }) =>
     apiService.put<TaskData[]>(`/api/tasks/update`, data),

@@ -19,12 +19,15 @@ export type TasksListProps = {
   isHotkeysEnabled?: boolean;
   isReadOnly?: boolean;
   listId?: string;
+  tasksReceiverName?: string;
   input?: SpacesInboxItemData;
   dnd?: boolean;
   callbacks?: {
     onFocusLeave?: (direction: NavigationDirections) => boolean;
+    onFocusChange?: (ids: string[]) => void;
     onOpenTask?: (hasOpenedTask: boolean) => void;
     onCloseTask?: () => void;
+    onSendTask?: (tasks: TaskData[]) => boolean;
     onInit?: () => void | Promise<void>;
     onReset?: () => void;
   };
@@ -51,6 +54,8 @@ export class TasksListStore {
   editingTaskId: null | string = null;
   openedTask: null | string = null;
 
+  tasksReceiverName: string = '';
+
   highlightActiveTasks: boolean = false;
   isReadOnly: boolean = false;
   isForceHotkeysEnabled = true;
@@ -63,6 +68,7 @@ export class TasksListStore {
   keyMap = {
     DONE: 'alt+d',
     GOAL: 'alt+g',
+    MOVE: 'alt+m',
     WONT_DO: ['alt+shift+w'],
     FORCE_WONT_DO: ['alt+w'],
     EDIT: 'space',
@@ -127,6 +133,9 @@ export class TasksListStore {
         this.isEditorFocused = true;
       }
     },
+    MOVE: () => {
+      this.sendTasks(this.draggableList.focused);
+    },
     FOCUS_LEAVE_LEFT: () => {
       if (this.openedTask) {
         this.closeTask();
@@ -165,6 +174,8 @@ export class TasksListStore {
           }
         }
       }
+
+      this.callbacks.onFocusChange?.(ids);
     },
     onOrderChange: (
       order: string[],
@@ -211,6 +222,10 @@ export class TasksListStore {
 
   get hasPrevTask() {
     return this.draggableList.hasPrevTask(this.openedTask);
+  }
+
+  get hasTasks() {
+    return this.order.length > 0;
   }
 
   canUnsetStatus = (status: TaskStatus) => {
@@ -339,8 +354,16 @@ export class TasksListStore {
     this.openedTask = null;
   };
 
+  focusEditor = () => {
+    this.isEditorFocused = true;
+  };
+
+  blurEditor = () => {
+    this.isEditorFocused = false;
+  };
+
   createTask = (task: TaskData, withShift: boolean) => {
-    const placement = withShift ? 'bottom' : 'top';
+    const placement = withShift ? 'top' : 'bottom';
 
     task.title = task.title.trim();
 
@@ -395,42 +418,57 @@ export class TasksListStore {
     this.root.api.tags.create(tag);
   };
 
-  swapTasks = (
-    fromStore: TasksListStore,
-    taskId: string,
-    destination: number
+  receiveTasks = (
+    fromListId: string,
+    tasks: TaskData[],
+    destination?: number
   ) => {
-    const fromTask = fromStore.items[taskId];
-
-    fromTask.listId = this.listId;
-
-    this.addTask(fromTask, destination);
-
-    fromStore.detachTask(taskId);
-
     this.root.api.tasks.swap({
-      fromListId: fromStore.listId,
+      fromListId: fromListId,
       toListId: this.listId,
-      taskIds: [taskId],
+      taskIds: tasks.map(({ id }) => id),
       destination,
     });
 
+    tasks.forEach((task) => this.addTask(task, destination));
+  };
+
+  addTask = (task: TaskData, position?: number) => {
+    task.listId = this.listId;
+
+    this.items[task.id] = task;
+
+    if (position !== undefined) {
+      this.order.splice(position, 0, task.id);
+    } else {
+      this.order.push(task.id);
+    }
+
     this.root.api.tasks.update({
-      id: taskId,
+      id: task.id,
       fields: {
         listId: this.listId,
       },
     });
   };
 
-  addTask = (task: TaskData, position: number) => {
-    this.items[task.id] = task;
-    this.order.splice(position, 0, task.id);
-  };
-
   detachTask = (taskId: string) => {
+    const task = this.items[taskId];
+
     this.order = this.order.filter((id) => id !== taskId);
     delete this.items[taskId];
+
+    return task;
+  };
+
+  sendTasks = (taskIds: string[]) => {
+    const tasks = taskIds.map((id) => this.items[id]);
+
+    if (this.callbacks.onSendTask?.(tasks)) {
+      this.draggableList.focusAfterItems(taskIds);
+
+      taskIds.forEach((taskId) => this.detachTask(taskId));
+    }
   };
 
   changeOrder = (
@@ -566,6 +604,7 @@ export class TasksListStore {
     this.isReadOnly = props.isReadOnly ?? false;
     this.listId = props.listId;
     this.input = props.input;
+    this.tasksReceiverName = props.tasksReceiverName;
   };
 
   taskCallbacks: TaskProps['callbacks'] = {

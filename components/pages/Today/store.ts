@@ -12,11 +12,16 @@ import {
   TaskPriority,
 } from '../../shared/TasksList/types';
 import { TasksListProps, TasksListStore } from '../../shared/TasksList/store';
-import { TaskProps } from '../../shared/Task/store';
 import { ResizableGroupConfig } from '../../shared/ResizableGroup/store';
 import { TasksListWithCreatorStore } from '../../shared/TasksListWithCreator/store';
 
 const FOCUS_MODE_WIDTH = 300;
+
+export enum TodayBlocks {
+  FOCUS_CONFIGURATION = 'FOCUS_CONFIGURATION',
+  TASKS_LIST = 'TASKS_LIST',
+  WEEK_LIST = 'WEEK_LIST',
+}
 
 export class TodayStore {
   constructor(public root: RootStore) {
@@ -34,10 +39,11 @@ export class TodayStore {
     showImportant: false,
   };
 
+  openedTaskBlock: TodayBlocks = TodayBlocks.TASKS_LIST;
+  focusedBlock: TodayBlocks = TodayBlocks.TASKS_LIST;
   shouldSetFirstFocus: boolean = false;
   isWeekExpanded: boolean = true;
   isTasksListFocusSaved: boolean = false;
-  isTasksListHotkeysEnabled: boolean = true;
   isTaskExpanded: boolean = false;
   isFocusModeActive: boolean = false;
   isSilentFocusMode: boolean = false;
@@ -63,6 +69,9 @@ export class TodayStore {
     FOCUS_INPUT: 'n',
     FOCUS_MODE: 'f',
     SILENT_FOCUS_MODE: 'shift+f',
+    SWITCH_LIST_TODAY: ['t', 'alt+shift+arrowup'],
+    SWITCH_LIST_WEEK: ['w', 'alt+shift+arrowdown'],
+    MOVE_TASK: ['alt+s'],
   };
 
   hotkeyHandlers = {
@@ -79,10 +88,56 @@ export class TodayStore {
       e.preventDefault();
       this.toggleFocusMode(true);
     },
+    SWITCH_LIST_TODAY: () => {
+      this.switchList(TodayBlocks.TASKS_LIST, true);
+    },
+    SWITCH_LIST_WEEK: () => {
+      this.switchList(TodayBlocks.WEEK_LIST, true);
+    },
   };
+
+  get sensors() {
+    return [
+      (api) => {
+        this.listWithCreator.list.draggableList.setDnDApi(api);
+        this.weekList.draggableList.setDnDApi(api);
+      },
+    ];
+  }
 
   get isHotkeysEnabled() {
     return !this.listWithCreator.list.modals.controller.isOpen;
+  }
+
+  get isTasksListHotkeysEnabled() {
+    return this.focusedBlock === TodayBlocks.TASKS_LIST;
+  }
+
+  get isWeekListHotkeysEnabled() {
+    return this.focusedBlock === TodayBlocks.WEEK_LIST;
+  }
+
+  get taskProps() {
+    const store =
+      this.openedTaskBlock === TodayBlocks.TASKS_LIST
+        ? this.listWithCreator.list
+        : this.weekList;
+
+    return {
+      task: store.openedTaskData,
+      spaces: store.spaces,
+      tagsMap: store.tagsMap,
+      goals: store.goals,
+      hasNext: store.hasNextTask,
+      hasPrevious: store.hasPrevTask,
+      isEditorFocused: store.isEditorFocused,
+      isExpanded: this.isTaskExpanded,
+      callbacks: {
+        ...store.taskCallbacks,
+        onExpand: this.handleExpandTask,
+        onCollapse: this.handleCollapseTask,
+      },
+    };
   }
 
   toggleWeekList = () => {
@@ -160,7 +215,7 @@ export class TodayStore {
   };
 
   focusFocusConfiguration = () => {
-    this.isTasksListHotkeysEnabled = false;
+    this.focusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
     this.isTasksListFocusSaved = true;
     this.listWithCreator.list.draggableList.saveFocusedItems();
     this.focusConfiguration.focus();
@@ -185,12 +240,29 @@ export class TodayStore {
     this.toggleFocusMode();
   };
 
-  handleTasksListMouseDown = () => {
-    this.isTasksListHotkeysEnabled = true;
+  handleTaskMouseDown = () => {
+    this.focusedBlock = this.openedTaskBlock;
   };
 
   handleTasksListFocusLeave = (direction: NavigationDirections) => {
     if (
+      direction === NavigationDirections.LEFT &&
+      this.isFocusModeActive &&
+      !this.isSilentFocusMode
+    ) {
+      this.focusFocusConfiguration();
+      return true;
+    }
+  };
+
+  handleWeekListFocusLeave = (direction: NavigationDirections) => {
+    if (direction === NavigationDirections.UP) {
+      this.weekList.draggableList.focusLastItem();
+      return true;
+    } else if (direction === NavigationDirections.DOWN) {
+      this.weekList.draggableList.focusFirstItem();
+      return true;
+    } else if (
       direction === NavigationDirections.LEFT &&
       this.isFocusModeActive &&
       !this.isSilentFocusMode
@@ -205,12 +277,12 @@ export class TodayStore {
       this.listWithCreator.list.draggableList.restoreSavedFocusedItems();
     }
 
-    this.isTasksListHotkeysEnabled = true;
+    this.focusedBlock = TodayBlocks.TASKS_LIST;
     this.isTasksListFocusSaved = false;
   };
 
   handleFocusConfigurationFocus = () => {
-    this.isTasksListHotkeysEnabled = false;
+    this.focusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
     this.isTasksListFocusSaved = true;
     this.listWithCreator.list.draggableList.saveFocusedItems();
     this.listWithCreator.list.draggableList.resetFocusedItem();
@@ -233,15 +305,19 @@ export class TodayStore {
         }
       } else {
         if (result.destination.droppableId === 'default') {
-          this.listWithCreator.list.swapTasks(
-            this.weekList,
-            result.draggableId,
+          const task = this.weekList.detachTask(result.draggableId);
+
+          this.listWithCreator.list.receiveTasks(
+            this.weekList.listId,
+            [task],
             result.destination.index
           );
         } else {
-          this.weekList.swapTasks(
-            this.listWithCreator.list,
-            result.draggableId,
+          const task = this.listWithCreator.list.detachTask(result.draggableId);
+
+          this.weekList.receiveTasks(
+            this.listWithCreator.list.listId,
+            [task],
             result.destination.index
           );
         }
@@ -252,15 +328,70 @@ export class TodayStore {
     }
   };
 
-  get sensors() {
-    return [
-      (api) => {
-        console.log(api);
-        this.listWithCreator.list.draggableList.setDnDApi(api);
-        this.weekList.draggableList.setDnDApi(api);
-      },
-    ];
-  }
+  switchList = (blockName: TodayBlocks, saveState?: boolean) => {
+    if (blockName !== this.focusedBlock) {
+      if (blockName === TodayBlocks.WEEK_LIST) {
+        this.isWeekExpanded = true;
+      }
+
+      const fromList =
+        this.focusedBlock === TodayBlocks.TASKS_LIST
+          ? this.listWithCreator.list
+          : this.weekList;
+      const toList =
+        blockName === TodayBlocks.TASKS_LIST
+          ? this.listWithCreator.list
+          : this.weekList;
+
+      this.focusedBlock = blockName;
+
+      const isTaskOpened = Boolean(fromList.openedTask);
+      const isEditorFocused = Boolean(fromList.isEditorFocused);
+
+      if (saveState) {
+        fromList.draggableList.saveFocusedItems();
+
+        if (toList.draggableList.hasSavedFocusedItems) {
+          toList.draggableList.restoreSavedFocusedItems();
+        } else {
+          toList.draggableList.focusFirstItem();
+        }
+      } else {
+        fromList.draggableList.resetSavedFocusedItems();
+        toList.draggableList.resetSavedFocusedItems();
+      }
+
+      fromList.draggableList.resetFocusedItem();
+
+      this.openedTaskBlock = blockName;
+
+      if (isTaskOpened) {
+        fromList.closeTask();
+        toList.openTask(toList.draggableList.focused[0]);
+
+        if (isEditorFocused) {
+          toList.focusEditor();
+        } else {
+          toList.blurEditor();
+        }
+      }
+    }
+  };
+
+  sendTasks = (blockName: TodayBlocks, tasks: TaskData[]) => {
+    const fromList =
+      blockName === TodayBlocks.WEEK_LIST
+        ? this.listWithCreator.list
+        : this.weekList;
+    const toList =
+      blockName === TodayBlocks.WEEK_LIST
+        ? this.weekList
+        : this.listWithCreator.list;
+
+    toList.receiveTasks(fromList.listId, tasks);
+
+    return true;
+  };
 
   loadFocusModeConfiguration = async () => {
     this.focusModeConfiguration = await this.root.api.focusConfigurations.get(
@@ -288,16 +419,20 @@ export class TodayStore {
     this.shouldSetFirstFocus = false;
   };
 
-  taskCallbacks: TaskProps['callbacks'] = {
-    ...this.listWithCreator.list.taskCallbacks,
-    onExpand: this.handleExpandTask,
-    onCollapse: this.handleCollapseTask,
-  };
-
   tasksListCallbacks: TasksListProps['callbacks'] = {
     onInit: this.setShouldSetFirstFocus,
     onFocusLeave: this.handleTasksListFocusLeave,
     onCloseTask: this.handleCollapseTask,
+    onFocusChange: () => this.switchList(TodayBlocks.TASKS_LIST),
+    onSendTask: (tasks: TaskData[]) =>
+      this.sendTasks(TodayBlocks.WEEK_LIST, tasks),
+  };
+
+  weekTasksListCallbacks: TasksListProps['callbacks'] = {
+    onFocusLeave: this.handleWeekListFocusLeave,
+    onFocusChange: () => this.switchList(TodayBlocks.WEEK_LIST),
+    onSendTask: (tasks: TaskData[]) =>
+      this.sendTasks(TodayBlocks.TASKS_LIST, tasks),
   };
 
   focusConfigurationCallbacks: FocusConfigurationProps['callbacks'] = {
