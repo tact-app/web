@@ -21,7 +21,7 @@
     "@chakra-ui/icons": "^2.0.12",
     "@chakra-ui/react": "^2.4.1",
     "@chakra-ui/shared-utils": "^2.0.3",
-    "@chakra-ui/theme-tools": "^2.0.12",
+    "@chakra-ui/theme-tools": "^2.0.14",
     "@emoji-mart/data": "^1.0.8",
     "@emoji-mart/react": "^1.0.1",
     "@emotion/react": "^11.10.5",
