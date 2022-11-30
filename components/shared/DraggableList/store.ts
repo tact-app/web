@@ -199,6 +199,10 @@ export class DraggableListStore {
     },
   };
 
+  get hasFocusableItems() {
+    return this.activeItems.length > 0;
+  }
+
   shiftSelect = (direction: 'up' | 'down', count: number = 1) => {
     if (this.focusedItemIds.length) {
       const isUp = direction === 'up';

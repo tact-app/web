@@ -30,6 +30,7 @@ export type TasksListProps = {
     onSendTask?: (tasks: TaskData[]) => boolean;
     onInit?: () => void | Promise<void>;
     onReset?: () => void;
+    onEmpty?: () => void;
   };
 };
 
@@ -247,14 +248,20 @@ export class TasksListStore {
   handleNavigation = (direction: NavigationDirections) => {
     if (direction === NavigationDirections.LEFT) {
       this.callbacks.onFocusLeave?.(NavigationDirections.LEFT);
+
+      return true;
     } else if (
       direction === NavigationDirections.DOWN ||
       direction === NavigationDirections.UP
     ) {
-      this.draggableList.handleNavigation(direction);
-    }
+      if (this.hasTasks) {
+        this.draggableList.handleNavigation(direction);
+      } else {
+        this.callbacks.onFocusLeave?.(direction);
+      }
 
-    return true;
+      return true;
+    }
   };
 
   handleTaskItemNavigation = (direction: NavigationDirections) => {
@@ -391,8 +398,8 @@ export class TasksListStore {
     this.order = this.order.filter((id) => !ids.includes(id));
     this.root.api.tasks.delete(this.listId, ids);
 
-    if (!this.order.length) {
-      this.callbacks.onFocusLeave?.(NavigationDirections.UP);
+    if (!this.draggableList.hasFocusableItems) {
+      this.callbacks.onEmpty?.();
     }
   };
 
@@ -455,8 +462,12 @@ export class TasksListStore {
   detachTask = (taskId: string) => {
     const task = this.items[taskId];
 
-    this.order = this.order.filter((id) => id !== taskId);
-    delete this.items[taskId];
+    if (task) {
+      const taskIndex = this.order.indexOf(taskId);
+
+      this.order.splice(taskIndex, 1);
+      delete this.items[taskId];
+    }
 
     return task;
   };
@@ -468,6 +479,10 @@ export class TasksListStore {
       this.draggableList.focusAfterItems(taskIds);
 
       taskIds.forEach((taskId) => this.detachTask(taskId));
+    }
+
+    if (!this.draggableList.hasFocusableItems) {
+      this.callbacks.onEmpty?.();
     }
   };
 

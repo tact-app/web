@@ -53,6 +53,9 @@ export class TasksListWithCreatorStore {
           return this.callbacks.onFocusLeave?.(direction);
         }
       },
+      onEmpty: () => {
+        this.creator.setFocus(true);
+      },
     };
   }
 
