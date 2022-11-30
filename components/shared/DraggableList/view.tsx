@@ -30,8 +30,9 @@ export const DraggableListContext = observer(function DraggableListContext({
 export const DraggableListDroppable = observer(function TaskListWrapper({
   children,
   id,
+  hidePlaceholder,
   ...rest
-}: PropsWithChildren<{ id: string } & ChakraProps>) {
+}: PropsWithChildren<{ id: string; hidePlaceholder?: boolean } & ChakraProps>) {
   return (
     <Droppable droppableId={id}>
       {(provided) => (
@@ -41,7 +42,7 @@ export const DraggableListDroppable = observer(function TaskListWrapper({
           {...rest}
         >
           {children}
-          {provided.placeholder}
+          {!hidePlaceholder && provided.placeholder}
         </chakra.div>
       )}
     </Droppable>

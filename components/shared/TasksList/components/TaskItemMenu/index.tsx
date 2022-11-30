@@ -24,15 +24,29 @@ import { TaskStatus } from '../../types';
 import { Modes } from '../TaskQuickEditor/store';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import {
+  faBan,
+  faBullseyePointer,
+  faCalendarCheck,
+  faCircleCheck,
+  faCircleExclamation,
+  faHashtag,
+  faICursor,
+  faSquareArrowUpRight,
+  faXmark,
+} from '@fortawesome/pro-light-svg-icons';
+import { IconDefinition } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const multiTaskItems = (store: TaskItemStore) => [
   {
     onClick: () => {
       store.parent.modals.openGoalAssignModal();
     },
-    command: '⌥G',
-    hotkey: 'g',
     title: 'Assign to goal',
+    icon: faBullseyePointer,
+    hotkey: 'g',
+    command: '⌥G',
   },
   null,
   {
@@ -44,6 +58,7 @@ const multiTaskItems = (store: TaskItemStore) => [
     title: store.parent.canUnsetStatus(TaskStatus.DONE)
       ? 'Unmark as done'
       : 'Mark as done',
+    icon: faCircleCheck,
     hotkey: 'd',
     command: '⌥D',
   },
@@ -56,6 +71,7 @@ const multiTaskItems = (store: TaskItemStore) => [
     title: store.parent.canUnsetStatus(TaskStatus.WONT_DO)
       ? 'Unmark as won’t do'
       : 'Mark as won’t do',
+    icon: faBan,
     hotkey: ['w', 'shift+w'],
     command: '⌥W / ⌥⇧W',
   },
@@ -63,6 +79,7 @@ const multiTaskItems = (store: TaskItemStore) => [
   {
     onClick: () => store.parent.sendTasks(store.parent.draggableList.focused),
     title: 'Move to ' + store.parent.tasksReceiverName,
+    icon: faCalendarCheck,
     hotkey: 'm',
     command: '⌥M',
   },
@@ -70,6 +87,7 @@ const multiTaskItems = (store: TaskItemStore) => [
     onClick: () =>
       store.parent.deleteWithVerify(store.parent.draggableList.focused),
     title: 'Delete tasks',
+    icon: faXmark,
     hotkey: ['backspace', 'meta+backspace', 'ctrl+backspace'],
     command: '⌫ / ⌘⌫',
   },
@@ -82,6 +100,7 @@ const singleTaskItems = (store: TaskItemStore) => [
       setTimeout(() => store.quickEdit.activateMode(Modes.PRIORITY));
     },
     title: 'Change priority',
+    icon: faCircleExclamation,
   },
   {
     onClick: () => {
@@ -89,14 +108,16 @@ const singleTaskItems = (store: TaskItemStore) => [
       setTimeout(() => store.quickEdit.activateMode(Modes.TAG));
     },
     title: 'Add tag',
+    icon: faHashtag,
   },
   {
     onClick: () => {
       store.parent.modals.openGoalAssignModal(store.task.id);
     },
+    title: 'Assign to goal',
+    icon: faBullseyePointer,
     command: '⌥G',
     hotkey: 'g',
-    title: 'Assign to goal',
   },
   null,
   {
@@ -105,6 +126,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     title: store.parent.canUnsetStatus(TaskStatus.DONE)
       ? 'Unmark as done'
       : 'Mark as done',
+    icon: faCircleCheck,
     hotkey: 'd',
     command: '⌥D',
   },
@@ -114,6 +136,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     title: store.parent.canUnsetStatus(TaskStatus.WONT_DO)
       ? 'Unmark as won’t do'
       : 'Mark as won’t do',
+    icon: faBan,
     hotkey: ['w', 'shift+w'],
     command: store.parent.canUnsetStatus(TaskStatus.WONT_DO)
       ? '⌥W'
@@ -123,6 +146,7 @@ const singleTaskItems = (store: TaskItemStore) => [
   {
     onClick: () => store.parent.sendTasks([store.task.id]),
     title: 'Move to ' + store.parent.tasksReceiverName,
+    icon: faCalendarCheck,
     hotkey: 'm',
     command: '⌥M',
   },
@@ -135,6 +159,7 @@ const singleTaskItems = (store: TaskItemStore) => [
       }
     },
     title: 'Open task',
+    icon: faSquareArrowUpRight,
     command: '↵',
   },
   {
@@ -146,12 +171,14 @@ const singleTaskItems = (store: TaskItemStore) => [
       }
     },
     title: 'Edit task',
+    icon: faICursor,
     hotkey: 'space',
     command: '␣',
   },
   {
     onClick: () => store.parent.deleteWithVerify([store.task.id]),
     title: 'Delete task',
+    icon: faXmark,
     hotkey: ['backspace', 'meta+backspace', 'ctrl+backspace'],
     command: '⌫ / ⌘⌫',
   },
@@ -162,10 +189,12 @@ const TaskItemMenuItem = forwardRef(
     {
       onClick,
       command,
+      icon,
       children,
     }: PropsWithChildren<{
       onClick: () => void;
       command?: string;
+      icon: IconDefinition;
     }>,
     ref
   ) => {
@@ -186,10 +215,15 @@ const TaskItemMenuItem = forwardRef(
         _hover={{ bg: 'gray.100' }}
         _focus={{ outline: 'none', bg: 'gray.100', boxShadow: 'none' }}
         w='100%'
-        pr={2}
-        pl={2}
+        pr={4}
+        pl={4}
       >
-        <chakra.span fontWeight='normal'>{children}</chakra.span>
+        <chakra.span fontWeight='normal'>
+          <chakra.span color='gray.400' mr={2}>
+            <FontAwesomeIcon icon={icon} fixedWidth />
+          </chakra.span>
+          {children}
+        </chakra.span>
         <chakra.span color='gray.400' fontWeight='normal'>
           {command}
         </chakra.span>
@@ -207,6 +241,7 @@ const TaskItemMenuItems = ({
     onClick: () => void;
     command?: string;
     title: string;
+    icon: IconDefinition;
   }[];
 }) => {
   return (
@@ -220,6 +255,7 @@ const TaskItemMenuItems = ({
             key={item.title}
             onClick={item.onClick}
             command={item.command}
+            icon={item.icon}
           >
             {item.title}
           </TaskItemMenuItem>
@@ -271,7 +307,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
           shadow='lg'
           overflow='hidden'
           w='auto'
-          minW={64}
+          minW={72}
           ref={ref}
           onFocus={store.menuNavigation.handleFocus}
         >
