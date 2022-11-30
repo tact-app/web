@@ -15,20 +15,24 @@ export const TasksListWeekly = observer(function TasksListWeekly() {
     <Box mt={8}>
       {store.weekList.hasTasks ? (
         <Fade in={store.weekList.hasTasks}>
-          <Center mb={10}>
-            <chakra.span fontSize='md' fontWeight='normal' color='gray.400'>
-              switch between lists
-            </chakra.span>
-            <HotkeyBlock hotkey='Shift+Alt+ArrowUp' />
-            <HotkeyBlock hotkey='Shift+Alt+ArrowDown' />
-          </Center>
+          {store.listWithCreator.list.hasTasks && (
+            <Center mb={10}>
+              <chakra.span fontSize='md' fontWeight='normal' color='gray.400'>
+                switch between lists
+              </chakra.span>
+              <HotkeyBlock hotkey='Shift+Alt+ArrowUp' />
+              <HotkeyBlock hotkey='Shift+Alt+ArrowDown' />
+            </Center>
+          )}
           <DraggableListDroppable id='week-button'>
             <Button
+              h={8}
               variant='ghost'
               onClick={store.toggleWeekList}
               display='flex'
               alignSelf='start'
               ml={5}
+              mb={1}
               pr={2}
               pl={2}
             >
