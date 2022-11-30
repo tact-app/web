@@ -39,6 +39,7 @@ export class TodayStore {
     showImportant: false,
   };
 
+  draggingTask: TaskData | null = null;
   lastFocusedBlock: TodayBlocks = TodayBlocks.TASKS_LIST;
   openedTaskBlock: TodayBlocks = TodayBlocks.TASKS_LIST;
   focusedBlock: TodayBlocks = TodayBlocks.TASKS_LIST;
@@ -335,9 +336,15 @@ export class TodayStore {
     }
   };
 
-  handleDragStart = () => {
+  handleDragStart = (result) => {
     this.listWithCreator.list.draggableList.startDragging();
     this.weekList.draggableList.startDragging();
+
+    const taskId = result.draggableId;
+    const blockName = this.droppableIds[result.source.droppableId];
+    const list = this.getListByName(blockName);
+
+    this.draggingTask = list.items[taskId];
   };
 
   handleDragEnd = (result) => {
@@ -381,6 +388,8 @@ export class TodayStore {
         this.weekList.draggableList.endDragging();
       }
     }
+
+    this.draggingTask = null;
   };
 
   switchList = (blockName: TodayBlocks, saveState?: boolean) => {

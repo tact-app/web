@@ -12,7 +12,7 @@ export const DraggableListContext = observer(function DraggableListContext({
   sensors,
   children,
 }: PropsWithChildren<{
-  onDragStart: () => void;
+  onDragStart: (result) => void;
   onDragEnd: (result) => void;
   sensors: any[];
 }>) {
