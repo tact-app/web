@@ -25,6 +25,7 @@ import { TaskCreator } from '../../shared/TasksList/components/TaskCreator';
 import { TasksListWithCreatorStoreProvider } from '../../shared/TasksListWithCreator/store';
 import { TasksListStoreProvider } from '../../shared/TasksList/store';
 import { TasksListToday } from './components/TasksListToday';
+import { Calendar } from './components/Calendar';
 
 export const TodayView = observer(function TodayView() {
   const store = useTodayStore();
@@ -115,7 +116,15 @@ export const TodayView = observer(function TodayView() {
                       mr: 5,
                     }}
                   />
-                  <Box overflow='auto'>
+                  <Box
+                    overflow='auto'
+                    css={{
+                      scrollbarWidth: 'none',
+                      '&::-webkit-scrollbar': {
+                        display: 'none',
+                      },
+                    }}
+                  >
                     <DraggableListContext
                       onDragStart={store.handleDragStart}
                       onDragEnd={store.handleDragEnd}
@@ -158,6 +167,9 @@ export const TodayView = observer(function TodayView() {
             {store.taskProps.task && <Task {...store.taskProps} />}
           </ResizableGroupChild>
         </ResizableGroup>
+        <Box w={600}>
+          <Calendar dropItem={store.draggingTask} />
+        </Box>
       </Box>
     </>
   );

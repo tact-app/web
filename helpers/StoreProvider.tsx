@@ -10,6 +10,7 @@ import { RootStore, useRootStore } from '../stores/RootStore';
 
 export interface Store<PropsType> {
   init?(props: PropsType): Promise<void> | void;
+  destroy?(): void;
   update(props: PropsType): void;
 
   subscribe?(): () => void;
@@ -62,6 +63,8 @@ export const getProvider = <PropsType, StoreType extends Store<PropsType>>(
 
     useEffect(() => {
       store.init?.(props as PropsType);
+
+      return store.destroy;
     }, [store]);
 
     useEffect(() => {
