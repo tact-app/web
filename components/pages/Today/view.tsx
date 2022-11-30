@@ -22,9 +22,9 @@ import { ResizableGroupChild } from '../../shared/ResizableGroup/ResizableGroupC
 import { TasksListWeekly } from './components/TasksListWeekly';
 import { DraggableListContext } from '../../shared/DraggableList/view';
 import { TaskCreator } from '../../shared/TasksList/components/TaskCreator';
-import TasksList from '../../shared/TasksList';
 import { TasksListWithCreatorStoreProvider } from '../../shared/TasksListWithCreator/store';
 import { TasksListStoreProvider } from '../../shared/TasksList/store';
+import { TasksListToday } from './components/TasksListToday';
 
 export const TodayView = observer(function TodayView() {
   const store = useTodayStore();
@@ -121,16 +121,17 @@ export const TodayView = observer(function TodayView() {
                       onDragEnd={store.handleDragEnd}
                       sensors={store.sensors}
                     >
-                      <TasksList
-                        instance={store.listWithCreator.list}
+                      <TasksListStoreProvider
                         listId='default'
+                        instance={store.listWithCreator.list}
                         isHotkeysEnabled={store.isTasksListHotkeysEnabled}
-                        dnd={true}
                         highlightActiveTasks={store.isFocusModeActive}
                         checkTaskActivity={store.checkFocusModeMatch}
                         callbacks={store.listWithCreator.tasksListCallbacks}
                         tasksReceiverName='Week'
-                      />
+                      >
+                        <TasksListToday />
+                      </TasksListStoreProvider>
                       <TasksListStoreProvider
                         listId='week'
                         instance={store.weekList}

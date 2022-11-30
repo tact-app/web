@@ -65,6 +65,12 @@ export class TodayStore {
     },
   ];
 
+  droppableIds = {
+    default: TodayBlocks.TASKS_LIST,
+    week: TodayBlocks.WEEK_LIST,
+    'week-button': TodayBlocks.WEEK_LIST,
+  };
+
   keyMap = {
     FOCUS_INPUT: 'n',
     FOCUS_MODE: 'f',
@@ -295,16 +301,24 @@ export class TodayStore {
 
   handleDragEnd = (result) => {
     if (result?.destination) {
-      if (result.destination.droppableId === result.source.droppableId) {
-        if (result.destination.droppableId === 'default') {
+      const destinationId = result.destination.droppableId;
+      const sourceId = result.source.droppableId;
+
+      const destinationBlock = this.droppableIds[destinationId];
+      const sourceBlock = this.droppableIds[sourceId];
+
+      const isDifferentList = destinationBlock !== sourceBlock;
+
+      if (!isDifferentList) {
+        if (destinationBlock === TodayBlocks.TASKS_LIST) {
           this.listWithCreator.list.draggableList.endDragging(result);
           this.weekList.draggableList.endDragging();
-        } else {
+        } else if (destinationBlock === TodayBlocks.WEEK_LIST) {
           this.weekList.draggableList.endDragging(result);
           this.listWithCreator.list.draggableList.endDragging();
         }
       } else {
-        if (result.destination.droppableId === 'default') {
+        if (destinationBlock === TodayBlocks.TASKS_LIST) {
           const task = this.weekList.detachTask(result.draggableId);
 
           this.listWithCreator.list.receiveTasks(
@@ -312,7 +326,7 @@ export class TodayStore {
             [task],
             result.destination.index
           );
-        } else {
+        } else if (destinationBlock === TodayBlocks.WEEK_LIST) {
           const task = this.listWithCreator.list.detachTask(result.draggableId);
 
           this.weekList.receiveTasks(

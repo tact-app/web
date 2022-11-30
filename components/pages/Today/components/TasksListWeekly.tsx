@@ -6,8 +6,7 @@ import { useTodayStore } from '../store';
 import { HotkeyBlock } from '../../../shared/HotkeyBlock';
 import { TasksListView } from '../../../shared/TasksList/view';
 import { DraggableListDroppable } from '../../../shared/DraggableList/view';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarLines } from '@fortawesome/pro-light-svg-icons';
+import { TasksDroppablePlaceholder } from './TasksDroppablePlaceholder';
 
 export const TasksListWeekly = observer(function TasksListWeekly() {
   const store = useTodayStore();
@@ -25,11 +24,13 @@ export const TasksListWeekly = observer(function TasksListWeekly() {
           </Center>
           <DraggableListDroppable id='week-button'>
             <Button
-              variant='unstyled'
+              variant='ghost'
               onClick={store.toggleWeekList}
               display='flex'
               alignSelf='start'
               ml={5}
+              pr={2}
+              pl={2}
             >
               Weekly tasks
               <chakra.div
@@ -47,23 +48,12 @@ export const TasksListWeekly = observer(function TasksListWeekly() {
           </Collapse>
         </Fade>
       ) : (
-        <Fade in={store.listWithCreator.list.draggableList.isDraggingActive}>
-          <DraggableListDroppable id='week' pr={5} pl={5}>
-            <Box
-              color='gray.400'
-              minH={12}
-              w='100%'
-              borderRadius='lg'
-              bg='gray.75'
-              display='flex'
-              justifyContent='center'
-              alignItems='center'
-            >
-              <FontAwesomeIcon icon={faCalendarLines} />
-              <chakra.span ml={2.5}>Move to Weekly</chakra.span>
-            </Box>
-          </DraggableListDroppable>
-        </Fade>
+        <TasksDroppablePlaceholder
+          id='week'
+          in={store.listWithCreator.list.draggableList.isDraggingActive}
+        >
+          Move to Weekly
+        </TasksDroppablePlaceholder>
       )}
     </Box>
   );
