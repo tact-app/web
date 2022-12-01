@@ -16,8 +16,6 @@ import {
 import { DescriptionData } from '../../../types/description';
 import { Editor, JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
-import { SpaceData } from '../../pages/Spaces/types';
-import { GoalData } from '../../pages/Goals/types';
 import { subscriptions } from '../../../helpers/subscriptions';
 
 export type TaskProps = {
@@ -33,9 +31,6 @@ export type TaskProps = {
     onTagCreate?: (tag: TaskTag) => void;
     onFocus?: () => void;
   };
-  spaces: SpaceData[];
-  tagsMap: Record<string, TaskTag>;
-  goals: GoalData[];
   isExpanded?: boolean;
   hasPrevious?: boolean;
   hasNext?: boolean;
@@ -70,16 +65,13 @@ class TaskStore {
   isEditorFocused: boolean = false;
   callbacks: TaskProps['callbacks'];
   data: TaskData | null = null;
-  spaces: SpaceData[] = [];
-  tagsMap: Record<string, TaskTag> = {};
-  goals: GoalData[] = [];
   isDescriptionLoading: boolean = true;
   descriptionId: string = '';
   descriptionContent: DescriptionStore = new DescriptionStore();
   modesOrder = [Modes.PRIORITY, Modes.GOAL, Modes.SPACE, Modes.TAG];
 
   get inputSpace() {
-    return this.spaces.find((space) => space.id === this.data?.input.spaceId);
+    return this.root.resources.spaces.getById(this.data?.input.spaceId);
   }
 
   get isWontDo() {
@@ -231,7 +223,6 @@ class TaskStore {
       }
     },
     onSave: this.handleTaskChange,
-    onTagCreate: (tag: TaskTag) => this.callbacks.onTagCreate?.(tag),
   };
 
   subscribe = () =>
@@ -251,9 +242,6 @@ class TaskStore {
 
   update = (props: TaskProps) => {
     this.data = props.task;
-    this.spaces = props.spaces;
-    this.tagsMap = props.tagsMap;
-    this.goals = props.goals;
     this.hasPrevious = props.hasPrevious;
     this.hasNext = props.hasNext;
     this.isExpanded = props.isExpanded;

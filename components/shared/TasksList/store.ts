@@ -1,16 +1,15 @@
 import { RootStore } from '../../../stores/RootStore';
 import { makeAutoObservable, reaction, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { NavigationDirections, TaskData, TaskStatus, TaskTag } from './types';
+import { NavigationDirections, TaskData, TaskStatus } from './types';
 import { TaskQuickEditorProps } from './components/TaskQuickEditor/store';
 import {
   DraggableListCallbacks,
   DraggableListStore,
 } from '../DraggableList/store';
-import { GoalData } from '../../pages/Goals/types';
 import { TasksModals } from './modals/store';
 import { subscriptions } from '../../../helpers/subscriptions';
-import { SpaceData, SpacesInboxItemData } from '../../pages/Spaces/types';
+import { SpacesInboxItemData } from '../../pages/Spaces/types';
 import { TaskProps } from '../Task/store';
 
 export type TasksListProps = {
@@ -48,10 +47,6 @@ export class TasksListStore {
   listId: string = 'default';
   items: Record<string, TaskData> = {};
   order: string[] = [];
-  goals: GoalData[] = [];
-  spaces: SpaceData[] = [];
-  tags: TaskTag[] = [];
-  tagsMap: Record<string, TaskTag> = {};
   editingTaskId: null | string = null;
   openedTask: null | string = null;
 
@@ -419,12 +414,6 @@ export class TasksListStore {
     this.setEditingTask(null);
   };
 
-  createTag = (tag: TaskTag) => {
-    this.tags.push(tag);
-    this.tagsMap[tag.id] = tag;
-    this.root.api.tags.create(tag);
-  };
-
   receiveTasks = (
     fromListId: string,
     tasks: TaskData[],
@@ -561,34 +550,6 @@ export class TasksListStore {
     });
   };
 
-  loadTags = async () => {
-    const tags = await this.root.api.tags.list();
-
-    runInAction(() => {
-      this.tags = tags;
-      this.tagsMap = tags.reduce((acc, tag) => {
-        acc[tag.id] = tag;
-        return acc;
-      }, {});
-    });
-  };
-
-  loadGoals = async () => {
-    const { goals, order } = await this.root.api.goals.list('default');
-
-    runInAction(() => {
-      this.goals = order.map((id) => goals[id]);
-    });
-  };
-
-  loadSpaces = async () => {
-    const spaces = await this.root.api.spaces.list();
-
-    runInAction(() => {
-      this.spaces = spaces;
-    });
-  };
-
   subscribe = () => subscriptions(reaction(() => this.input, this.loadTasks));
 
   reset = () => {
@@ -597,17 +558,8 @@ export class TasksListStore {
     this.callbacks.onReset?.();
   };
 
-  load = async () => {
-    return Promise.all([
-      this.loadTasks(),
-      this.loadTags(),
-      this.loadGoals(),
-      this.loadSpaces(),
-    ]);
-  };
-
   init = async () => {
-    await this.load();
+    await this.loadTasks();
     await this.callbacks.onInit?.();
   };
 
@@ -629,13 +581,11 @@ export class TasksListStore {
     onNextItem: this.handleNextTask,
     onStatusChange: this.handleStatusChange,
     onTaskChange: this.updateTask,
-    onTagCreate: this.createTag,
   };
 
   taskListItemCallbacks: TaskQuickEditorProps['callbacks'] = {
     onNavigate: this.handleTaskItemNavigation,
     onSave: this.updateTask,
-    onTagCreate: this.createTag,
   };
 }
 

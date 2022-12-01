@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { RootStore } from '../../../../../stores/RootStore';
-import { GoalData } from '../../../Goals/types';
 import {
   GoalsSelectionProps,
   GoalsSelectionStore,
@@ -24,7 +23,6 @@ export type FocusConfigurationProps = {
     onGoalCreateClick?: (cb: () => void) => void;
   };
   getItemsCount: () => number;
-  goals: GoalData[];
 };
 
 export class FocusConfigurationStore {
@@ -56,7 +54,7 @@ export class FocusConfigurationStore {
       if (this.goalsSelection.isFocused) {
         const number = parseInt(e.key, 10);
 
-        if (number && number <= this.goals.length) {
+        if (number && number <= this.root.resources.goals.count) {
           this.goalsSelection.handleGoalCheck(number - 1);
         }
       }
@@ -80,7 +78,6 @@ export class FocusConfigurationStore {
   };
 
   callbacks: FocusConfigurationProps['callbacks'] = {};
-  goals: FocusConfigurationProps['goals'] = [];
 
   isBlockFocused: boolean = false;
 
@@ -149,7 +146,6 @@ export class FocusConfigurationStore {
 
   update = (props: FocusConfigurationProps) => {
     this.callbacks = props.callbacks;
-    this.goals = props.goals;
   };
 
   init = async (props: FocusConfigurationProps) => {

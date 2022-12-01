@@ -4,7 +4,6 @@ import { TaskGoalAssignModal } from './TaskGoalAssignModal';
 import { GoalCreationModal } from '../../../pages/Goals/modals/GoalCreationModal';
 import { TasksListStore } from '../store';
 import { GoalData } from '../../../pages/Goals/types';
-import { runInAction, toJS } from 'mobx';
 import { DescriptionData } from '../../../../types/description';
 import { TaskWontDoModal } from './TaskWontDoModal';
 
@@ -65,18 +64,7 @@ export class TasksModals {
           }
         },
         onSave: (goal: GoalData, description?: DescriptionData) => {
-          runInAction(() => {
-            this.parent.goals.push(goal);
-            this.parent.root.api.goals.create(goal);
-
-            if (description) {
-              this.parent.root.api.descriptions.add({
-                content: toJS(description.content),
-                id: description.id,
-              });
-            }
-          });
-
+          this.parent.root.resources.goals.add(goal, description);
           this.controller.close();
 
           if (cb) {
@@ -117,7 +105,6 @@ export class TasksModals {
           },
         },
         value,
-        goals: this.parent.goals,
       },
     });
   };

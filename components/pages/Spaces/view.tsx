@@ -64,9 +64,6 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
           {store.inboxItem.listWithCreator.list.openedTask && (
             <Task
               task={store.inboxItem.listWithCreator.list.openedTaskData}
-              spaces={store.inboxItem.listWithCreator.list.spaces}
-              tagsMap={store.inboxItem.listWithCreator.list.tagsMap}
-              goals={store.inboxItem.listWithCreator.list.goals}
               hasNext={store.inboxItem.listWithCreator.list.hasNextTask}
               hasPrevious={store.inboxItem.listWithCreator.list.hasPrevTask}
               isEditorFocused={

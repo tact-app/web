@@ -57,7 +57,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
         onChange={store.handleSpaceChange}
         index={store.isExpanded ? store.currentSpaceIndex : null}
       >
-        {store.spaces.map((space, index) => {
+        {store.root.resources.spaces.list.map((space, index) => {
           const { id, name, shortName, color, children } = space;
 
           return (

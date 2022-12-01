@@ -7,6 +7,9 @@ import { getAPI } from '../../services/api';
 import { IDBService } from '../../services/api/Database/IDBService';
 import { MenuStore } from './MenuStore';
 import { NextRouter } from 'next/router';
+import { SpacesStore } from './Resources/SpacesStore';
+import { TagsStore } from './Resources/TagsStore';
+import { GoalsStore } from './Resources/GoalsStore';
 
 enableStaticRendering(typeof window === 'undefined');
 
@@ -44,6 +47,11 @@ export class RootStore {
   isLoading = true;
   router: NextRouter;
 
+  resources = {
+    spaces: new SpacesStore(this),
+    tags: new TagsStore(this),
+    goals: new GoalsStore(this),
+  };
   menu = new MenuStore(this);
   user = new UserStore(this);
   api = getAPI(new IDBService()); // new ApiService()
@@ -54,6 +62,11 @@ export class RootStore {
 
   init = async () => {
     await this.user.init();
+    await Promise.all([
+      this.resources.spaces.init(),
+      this.resources.tags.init(),
+      this.resources.goals.init(),
+    ]);
 
     runInAction(() => (this.isLoading = false));
   };

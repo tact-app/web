@@ -5,7 +5,7 @@ import { GoalIconVariants } from '../../types';
 
 export const GoalItem = observer(function GoalItem({ id }: { id: string }) {
   const store = useGoalsStore();
-  const item = store.items[id];
+  const item = store.root.resources.goals.map[id];
 
   return (
     <Button

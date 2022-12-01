@@ -21,9 +21,6 @@ export const TasksListWithCreatorView = observer(
         <TaskCreator
           instance={store.creator}
           callbacks={store.taskCreatorCallbacks}
-          tagsMap={store.list.tagsMap}
-          spaces={store.list.spaces}
-          goals={store.list.goals}
           listId={store.list.listId}
           defaultSpaceId={
             store.list.input ? store.list.input.spaceId : undefined

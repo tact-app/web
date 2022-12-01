@@ -39,7 +39,6 @@ export class SpacesMenuStore {
 
   withCheckboxes = false;
   currentSpaceIndex: number | null = null;
-  spaces: SpaceData[] = [];
   isExpanded = true;
   focusedPath: string[] = [];
   selectedPath: string[] = [];
@@ -109,13 +108,13 @@ export class SpacesMenuStore {
   };
 
   get currentSpace() {
-    return this.spaces.find(({ id }) => id === this.currentSpaceId);
+    return this.root.resources.spaces.getById(this.currentSpaceId);
   }
 
   get currentSpaceId() {
     return this.currentSpaceIndex === null
       ? null
-      : this.spaces[this.currentSpaceIndex].id;
+      : this.root.resources.spaces.getByIndex(this.currentSpaceIndex).id;
   }
 
   checkPathMatch = (spaceId: string, path: string[], checkPath: string[]) => {
@@ -201,7 +200,7 @@ export class SpacesMenuStore {
       }
 
       if (
-        this.currentSpaceIndex === this.spaces.length - 1 &&
+        this.currentSpaceIndex === this.root.resources.spaces.count - 1 &&
         !newPath.length &&
         direction === 'down'
       ) {
@@ -423,24 +422,36 @@ export class SpacesMenuStore {
   getOriginStatus = (spaceId: string, path: string[]) => {
     let pointer = this.checkState[spaceId];
 
-    for (let key of path) {
-      if (!pointer.children || !pointer.children[key]) {
-        break;
-      } else if (pointer.status === OriginCheckStatusTypes.INDETERMINATE) {
-        pointer = pointer.children[key];
-      } else {
-        break;
+    if (pointer) {
+      for (let key of path) {
+        if (!pointer.children || !pointer.children[key]) {
+          break;
+        } else if (pointer.status === OriginCheckStatusTypes.INDETERMINATE) {
+          pointer = pointer.children[key];
+        } else {
+          break;
+        }
       }
+
+      return pointer.status;
     }
 
-    return pointer.status;
+    return OriginCheckStatusTypes.UNCHECKED;
   };
 
   getOriginState = (spaceId: string, path: string[]) => {
-    return path.reduce(
-      (acc, key) => acc.children[key],
-      this.checkState[spaceId]
-    );
+    if (this.checkState[spaceId]) {
+      return path.reduce(
+        (acc, key) => acc.children[key],
+        this.checkState[spaceId]
+      );
+    } else {
+      return {
+        status: OriginCheckStatusTypes.UNCHECKED,
+        expanded: false,
+        children: {},
+      } as OriginCheckState;
+    }
   };
 
   getOrigin = (
@@ -450,7 +461,7 @@ export class SpacesMenuStore {
     return path.reduce(
       (acc, key): OriginChildData | OriginData =>
         acc.children.find(({ id }) => id === key),
-      this.spaces.find(({ id }) => id === spaceId)
+      this.root.resources.spaces.getById(spaceId)
     );
   };
 
@@ -566,10 +577,12 @@ export class SpacesMenuStore {
   };
 
   selectNextSpace = (direction: 'up' | 'down') => {
+    const spacesCount = this.root.resources.spaces.count;
+
     if (this.currentSpaceIndex === null) {
-      if (this.spaces.length) {
+      if (spacesCount) {
         if (direction === 'up') {
-          this.handleSpaceChange(this.spaces.length - 1);
+          this.handleSpaceChange(spacesCount - 1);
         } else {
           this.handleSpaceChange(0);
         }
@@ -577,7 +590,7 @@ export class SpacesMenuStore {
     } else if (this.currentSpaceIndex > 0 && direction === 'up') {
       this.handleSpaceChange(this.currentSpaceIndex - 1);
     } else if (
-      this.currentSpaceIndex < this.spaces.length - 1 &&
+      this.currentSpaceIndex < spacesCount - 1 &&
       direction === 'down'
     ) {
       this.handleSpaceChange(this.currentSpaceIndex + 1);
@@ -587,66 +600,19 @@ export class SpacesMenuStore {
     }
   };
 
-  addSpace = (space: SpaceData) => {
-    this.spaces.push(space);
+  handleSpaceUpdate = (space: SpaceData) => {
     this.checkState[space.id] = this.createChildCheckState(space);
-
-    if (this.spaces.length === 2) {
-      this.spaces.unshift({
-        id: 'all',
-        color: 'gray',
-        type: 'all',
-        name: 'All spaces',
-        shortName: 'A',
-        children: [],
-      });
-    }
   };
 
-  updateSpace = (space: SpaceData) => {
-    const index = this.spaces.findIndex(({ id }) => id === space.id);
+  handleSpaceDelete = (spaceId: string) => {
+    delete this.checkState[spaceId];
 
-    if (index > -1) {
-      this.spaces[index] = space;
-      this.checkState[space.id] = this.createChildCheckState(space);
-    }
-  };
-
-  deleteSpace = (spaceId: string) => {
-    const index = this.spaces.findIndex(({ id }) => id === spaceId);
-
-    if (index > -1) {
-      this.spaces.splice(index, 1);
-      delete this.checkState[spaceId];
-
-      if (this.currentSpaceIndex === index) {
-        const newIndex = this.spaces.length > 1 ? 0 : null;
-        this.handleSpaceChange(newIndex, newIndex !== null);
-      }
-
-      if (this.spaces.length === 1) {
-        this.spaces.shift();
-      }
-    }
+    const newIndex = this.root.resources.spaces.count > 1 ? 0 : null;
+    this.handleSpaceChange(newIndex, newIndex !== null);
   };
 
   loadSpaces = async () => {
-    const spaces = await this.root.api.spaces.list();
-
-    if (spaces.length > 1) {
-      spaces.unshift({
-        id: 'all',
-        type: 'all',
-        color: 'gray',
-        name: 'All spaces',
-        shortName: 'A',
-        children: [],
-      });
-    }
-
-    this.spaces = spaces;
-
-    this.checkState = this.createChildrenState(this.spaces);
+    this.checkState = this.createChildrenState(this.root.resources.spaces.list);
   };
 
   update = (props: SpacesMenuProps) => {
@@ -660,7 +626,7 @@ export class SpacesMenuStore {
     await this.loadSpaces();
 
     if (!props.selectedSpaceId) {
-      if (this.spaces.length) {
+      if (this.root.resources.spaces.count) {
         this.handleSpaceChange(0);
       }
     } else {
@@ -672,8 +638,8 @@ export class SpacesMenuStore {
           }
         }, this.checkState[props.selectedSpaceId]);
 
-        const spaceIndex = this.spaces.findIndex(
-          ({ id }) => id === props.selectedSpaceId
+        const spaceIndex = this.root.resources.spaces.getIndex(
+          props.selectedSpaceId
         );
 
         if (spaceIndex > -1) {

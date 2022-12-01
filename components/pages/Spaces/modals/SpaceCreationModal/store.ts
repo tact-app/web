@@ -10,8 +10,8 @@ import { colors } from '../../constants';
 export type SpaceCreationModalProps = {
   callbacks: {
     onClose?: () => void;
-    onSave?: (goal: SpaceData) => void;
-    onDelete?: () => void;
+    onSave?: (space: SpaceData) => void;
+    onDelete?: (spaceId: string) => void;
   };
   editMode?: boolean;
   space?: SpaceData;
@@ -65,7 +65,9 @@ export class SpaceCreationModalStore {
 
   confirmDeletion = () => {
     this.isDeleteConfirmationOpen = false;
-    this.callbacks.onDelete?.();
+
+    this.root.resources.spaces.delete(this.existedSpace.id);
+    this.callbacks.onDelete?.(this.existedSpace.id);
   };
 
   handleColorSelect = (color: string) => {
@@ -122,14 +124,29 @@ export class SpaceCreationModalStore {
     if (this.isReadyForSave) {
       const id = this.existedSpace ? this.existedSpace.id : uuidv4();
 
-      this.callbacks.onSave?.({
-        id,
-        name: this.name,
-        type: 'private',
-        shortName: this.shortName,
-        color: this.color,
-        children: getRandomOrigins(id, 3),
-      });
+      if (this.existedSpace) {
+        this.root.resources.spaces.update({
+          id,
+          name: this.name,
+          shortName: this.shortName,
+          color: this.color,
+        });
+
+        this.callbacks.onSave?.(this.existedSpace);
+      } else {
+        const newSpace: SpaceData = {
+          id,
+          name: this.name,
+          type: 'private',
+          shortName: this.shortName,
+          color: this.color,
+          children: getRandomOrigins(id, 3),
+        };
+
+        this.root.resources.spaces.add(newSpace);
+
+        this.callbacks.onSave?.(newSpace);
+      }
 
       this.handleClose();
     }

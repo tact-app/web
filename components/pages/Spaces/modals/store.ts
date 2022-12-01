@@ -32,7 +32,7 @@ export class SpacesModals {
   openSpaceSettingsModal = (
     space: SpaceData,
     onSave: (space: SpaceData) => void,
-    onDelete: (space: SpaceData) => void
+    onDelete: (spaceId: string) => void
   ) => {
     this.controller.open({
       type: SpacesModalsTypes.CREATE_SPACE,
@@ -40,9 +40,9 @@ export class SpacesModals {
         space,
         callbacks: {
           onSave,
-          onDelete: () => {
+          onDelete: (spaceId: string) => {
             this.controller.close();
-            onDelete(space);
+            onDelete(spaceId);
           },
           onClose: this.controller.close,
         },

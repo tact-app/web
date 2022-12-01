@@ -2,9 +2,9 @@ import { NavigationDirections, TaskTag } from '../../../types';
 import React, { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { makeAutoObservable } from 'mobx';
+import { RootStore } from '../../../../../../stores/RootStore';
 
 export type TagModeCallbacks = {
-  onTagCreate: (tag: TaskTag) => void;
   onFocusLeave: (direction: NavigationDirections) => void;
   onExit: () => void;
 };
@@ -12,7 +12,7 @@ export type TagModeCallbacks = {
 type TagWithRef = TaskTag & { ref?: HTMLButtonElement };
 
 export class TagModeStore {
-  constructor(callbacks: TagModeCallbacks) {
+  constructor(public root: RootStore, callbacks: TagModeCallbacks) {
     this.callbacks = callbacks;
     makeAutoObservable(this);
   }
@@ -29,7 +29,6 @@ export class TagModeStore {
 
   callbacks: TagModeCallbacks;
 
-  tagsMap: Record<string, TaskTag> = {};
   tags: Array<TagWithRef> = [];
   strValue: string = '';
 
@@ -42,7 +41,7 @@ export class TagModeStore {
   }
 
   get availableTags() {
-    return Object.values(this.tagsMap);
+    return this.root.resources.tags.list;
   }
 
   get overflow() {
@@ -213,8 +212,7 @@ export class TagModeStore {
       const newTag = { title: this.trimmedStrValue, id };
 
       this.addTag(newTag);
-
-      this.callbacks.onTagCreate(newTag);
+      this.root.resources.tags.add(newTag);
     }
 
     this.disable();

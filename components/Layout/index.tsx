@@ -19,7 +19,7 @@ const Layout = observer(function Layout({ children }: { children: ReactNode }) {
       </Head>
       <MenuBar />
       <Box flex='1' overflow='scroll'>
-        {children}
+        {store.isLoading ? null : children}
       </Box>
     </Flex>
   );
