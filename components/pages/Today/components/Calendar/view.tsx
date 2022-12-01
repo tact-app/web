@@ -26,7 +26,7 @@ export const CalendarView = observer(function CalendarView(
             Calendar
           </Heading>
           <Heading
-            size='md'
+            fontSize='lg'
             as='h4'
             fontWeight='normal'
             color='gray.400'
