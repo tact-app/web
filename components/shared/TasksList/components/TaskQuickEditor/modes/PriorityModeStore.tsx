@@ -9,6 +9,7 @@ import React from 'react';
 import { HStack, Text } from '@chakra-ui/react';
 import { TaskPriorityIcon } from '../../../../Icons/TaskPriorityIcon';
 import { makeAutoObservable } from 'mobx';
+import { RootStore } from '../../../../../../stores/RootStore';
 
 export type PriorityCallbacks = {
   onExit: () => void;
@@ -16,7 +17,7 @@ export type PriorityCallbacks = {
 };
 
 export class PriorityModeStore {
-  constructor(callbacks: PriorityCallbacks) {
+  constructor(public root: RootStore, callbacks: PriorityCallbacks) {
     this.callbacks = callbacks;
     makeAutoObservable(this);
   }

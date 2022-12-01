@@ -4,10 +4,9 @@ import {
   TaskGoalAssignModalProps,
   TaskGoalAssignModalStoreProvider,
 } from './store';
-import { GoalData } from '../../../../pages/Goals/types';
 
 export const TaskGoalAssignModal = observer(function TaskGoalAssignModal(
-  props: TaskGoalAssignModalProps & { goals: GoalData[] }
+  props: TaskGoalAssignModalProps
 ) {
   return (
     <TaskGoalAssignModalStoreProvider {...props}>

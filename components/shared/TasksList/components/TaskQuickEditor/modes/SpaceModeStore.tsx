@@ -1,17 +1,17 @@
 import React from 'react';
 import { makeAutoObservable } from 'mobx';
-import { SpaceData } from '../../../../../pages/Spaces/types';
 import { chakra } from '@chakra-ui/react';
 import { SpacesSmallIcon } from '../../../../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/pro-solid-svg-icons';
+import { RootStore } from '../../../../../../stores/RootStore';
 
 export type SpaceModeCallbacks = {
   onExit: () => void;
 };
 
 export class SpaceModeStore {
-  constructor(callbacks: SpaceModeCallbacks) {
+  constructor(public root: RootStore, callbacks: SpaceModeCallbacks) {
     this.callbacks = callbacks;
     makeAutoObservable(this);
   }
@@ -24,12 +24,13 @@ export class SpaceModeStore {
   isAlwaysFilled: boolean = true;
   buttonRef: HTMLButtonElement | null = null;
 
-  spaces: SpaceData[] = [];
   strValue: string = '';
   selectedSpaceId: string | null = null;
 
   get defaultSpace() {
-    return this.spaces.find(({ type }) => type === 'personal');
+    return this.root.resources.spaces.list.find(
+      ({ type }) => type === 'personal'
+    );
   }
 
   get isFilled() {
@@ -39,7 +40,7 @@ export class SpaceModeStore {
   get filteredSpaces() {
     const spaceName = this.strValue.slice(1).toLowerCase();
 
-    return this.spaces.filter(({ name, id }) =>
+    return this.root.resources.spaces.list.filter(({ name, id }) =>
       name.toLowerCase().startsWith(spaceName)
     );
   }
@@ -53,7 +54,9 @@ export class SpaceModeStore {
   }
 
   get selectedSpace() {
-    return this.spaces.find(({ id }) => id === this.selectedSpaceId);
+    return this.root.resources.spaces.list.find(
+      ({ id }) => id === this.selectedSpaceId
+    );
   }
 
   get suggestions() {
@@ -80,9 +83,9 @@ export class SpaceModeStore {
     ));
 
     if (!spaces.length) {
-      if (this.spaces.length && this.strValue.length > 1) {
+      if (this.root.resources.spaces.count && this.strValue.length > 1) {
         spaces.push(<>Space not found</>);
-      } else if (!this.spaces.length) {
+      } else if (!this.root.resources.spaces.count) {
         spaces.push(<>You haven&apos;t created any space yet</>);
       }
     }

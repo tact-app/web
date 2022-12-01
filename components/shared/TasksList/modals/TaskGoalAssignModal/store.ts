@@ -2,7 +2,6 @@ import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { GoalsSelectionStore } from '../../../GoalsSelection/store';
-import { GoalData } from '../../../../pages/Goals/types';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
 
 export type TaskGoalAssignModalProps = {
@@ -12,7 +11,6 @@ export type TaskGoalAssignModalProps = {
     onGoalCreateClick?: () => void;
   };
   multiple?: boolean;
-  goals: GoalData[];
   value: string;
 };
 
@@ -24,7 +22,6 @@ export class TaskGoalAssignModalStore {
   callbacks: TaskGoalAssignModalProps['callbacks'] = {};
 
   goalsSelection = new GoalsSelectionStore(this.root);
-  goals: TaskGoalAssignModalProps['goals'] = [];
 
   emptyRef: HTMLInputElement | null = null;
   selectedGoalId: string | null = null;
@@ -56,7 +53,6 @@ export class TaskGoalAssignModalStore {
     this.callbacks = props.callbacks;
     this.multiple = props.multiple;
     this.selectedGoalId = props.value;
-    this.goals = props.goals;
   };
 
   navigation = new ListNavigation({

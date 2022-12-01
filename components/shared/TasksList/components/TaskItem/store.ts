@@ -1,5 +1,5 @@
 import { makeAutoObservable, reaction } from 'mobx';
-import { TaskData, TaskStatus, TaskTag } from '../../types';
+import { TaskData, TaskStatus } from '../../types';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import React, { MouseEvent } from 'react';
@@ -21,7 +21,6 @@ export type TaskItemProps = {
   onFocus?: (taskId: string, multiselect?: 'single' | 'many') => void;
   onStatusChange?: (taskId: string, status: TaskStatus) => void;
   onWontDoWithComment?: (taskId: string) => void;
-  tagsMap: Record<string, TaskTag>;
 };
 
 export class TaskItemStore {
@@ -35,7 +34,6 @@ export class TaskItemStore {
   boxRef: HTMLDivElement | null = null;
 
   task: TaskData;
-  tags: Record<string, TaskTag>;
 
   hasListeners: boolean = false;
   isAltPressed: boolean = false;
@@ -231,11 +229,9 @@ export class TaskItemStore {
     onStatusChange,
     onWontDoWithComment,
     onToggleMenu,
-    tagsMap,
     isDragging,
   }: TaskItemProps) => {
     this.task = task;
-    this.tags = tagsMap;
 
     this.onFocus = onFocus;
     this.onStatusChange = onStatusChange;

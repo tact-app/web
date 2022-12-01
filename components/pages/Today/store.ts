@@ -135,9 +135,6 @@ export class TodayStore {
 
     return {
       task: store.openedTaskData,
-      spaces: store.spaces,
-      tagsMap: store.tagsMap,
-      goals: store.goals,
       hasNext: store.hasNextTask,
       hasPrevious: store.hasPrevTask,
       isEditorFocused: store.isEditorFocused,

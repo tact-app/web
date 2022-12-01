@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction, toJS } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { ModalsController } from '../../../helpers/ModalsController';
@@ -21,10 +21,6 @@ export class GoalsStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
   }
-
-  items: Record<string, GoalData> = {};
-  order: string[] = [];
-  descriptions: Record<string, DescriptionData> = {};
 
   modals = new ModalsController(GoalsModals);
 
@@ -54,7 +50,7 @@ export class GoalsStore {
         onSave: this.updateGoal,
         onClose: this.modals.close,
         editMode: true,
-        goal: this.items[goalId],
+        goal: this.root.resources.goals.map[goalId],
       },
     });
   };
@@ -64,55 +60,13 @@ export class GoalsStore {
     description?: DescriptionData,
     isNewDescription?: boolean
   ) => {
-    this.items[goal.id] = goal;
-    this.root.api.goals.update({ id: goal.id, fields: goal });
-
-    if (description) {
-      this.descriptions[description.id] = description;
-
-      if (isNewDescription) {
-        this.root.api.descriptions.add({
-          content: toJS(description.content),
-          id: description.id,
-        });
-      } else {
-        this.root.api.descriptions.update({
-          fields: { content: toJS(description.content) },
-          id: description.id,
-        });
-      }
-    }
-
+    this.root.resources.goals.update(goal, description, isNewDescription);
     this.modals.close();
   };
 
   createGoal = (goal: GoalData, description?: DescriptionData) => {
-    this.items[goal.id] = goal;
-    this.order.push(goal.id);
-    this.root.api.goals.create(goal);
-
-    if (description) {
-      this.descriptions[description.id] = description;
-      this.root.api.descriptions.add({
-        content: toJS(description.content),
-        id: description.id,
-      });
-    }
-
+    this.root.resources.goals.add(goal, description);
     this.modals.close();
-  };
-
-  load = async () => {
-    const { goals, order } = await this.root.api.goals.list('default');
-
-    runInAction(() => {
-      this.items = goals;
-      this.order = order;
-    });
-  };
-
-  init = async () => {
-    await this.load();
   };
 
   update = () => null;

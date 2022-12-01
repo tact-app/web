@@ -1,17 +1,17 @@
 import React from 'react';
 import { makeAutoObservable } from 'mobx';
-import { GoalData } from '../../../../../pages/Goals/types';
 import { chakra } from '@chakra-ui/react';
 import { GoalIcon } from '../../../../../pages/Goals/components/GoalIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-regular-svg-icons';
+import { RootStore } from '../../../../../../stores/RootStore';
 
 export type GoalModeCallbacks = {
   onExit: () => void;
 };
 
 export class GoalModeStore {
-  constructor(callbacks: GoalModeCallbacks) {
+  constructor(public root: RootStore, callbacks: GoalModeCallbacks) {
     this.callbacks = callbacks;
     makeAutoObservable(this);
   }
@@ -24,7 +24,6 @@ export class GoalModeStore {
   buttonRef: HTMLButtonElement | null = null;
   isMenuOpen = false;
 
-  goals: GoalData[] = [];
   strValue: string = '';
   selectedGoalId: string | null = null;
 
@@ -35,7 +34,7 @@ export class GoalModeStore {
   get filteredGoals() {
     const goalName = this.strValue.slice(1).toLowerCase();
 
-    return this.goals.filter(
+    return this.root.resources.goals.list.filter(
       ({ title, id }) =>
         title.toLowerCase().startsWith(goalName) && id !== this.selectedGoalId
     );
@@ -50,7 +49,7 @@ export class GoalModeStore {
   }
 
   get selectedGoal() {
-    return this.goals.find(({ id }) => id === this.selectedGoalId);
+    return this.root.resources.goals.getById(this.selectedGoalId);
   }
 
   get suggestions() {
@@ -71,9 +70,9 @@ export class GoalModeStore {
     ));
 
     if (!goals.length) {
-      if (this.goals.length && this.strValue.length > 1) {
+      if (this.root.resources.goals.count && this.strValue.length > 1) {
         goals.push(<>Goal not found</>);
-      } else if (!this.goals.length) {
+      } else if (!this.root.resources.goals.count) {
         goals.push(<>You haven&apos;t created any goal yet</>);
       }
     }

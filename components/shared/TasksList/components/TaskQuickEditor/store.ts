@@ -3,22 +3,15 @@ import { SyntheticEvent } from 'react';
 import { makeAutoObservable, toJS } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import {
-  NavigationDirections,
-  TaskData,
-  TaskStatus,
-  TaskTag,
-} from '../../types';
+import { NavigationDirections, TaskData, TaskStatus } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 import { TaskQuickEditorSuggestionsMenu } from './suggestionsMenuStore';
-import { SpaceData } from '../../../../pages/Spaces/types';
 import { PriorityModeStore } from './modes/PriorityModeStore';
 import { TagModeStore } from './modes/TagModeStore';
 import { SpaceModeStore } from './modes/SpaceModeStore';
 import { SUGGESTIONS_MENU_ID } from './TaskQuickEditorMenu';
 import { TAGS_ID } from './TaskQuickEditorTags';
 import { GoalModeStore } from './modes/GoalModeStore';
-import { GoalData } from '../../../../pages/Goals/types';
 
 export type TaskQuickEditorProps = {
   callbacks: {
@@ -26,15 +19,11 @@ export type TaskQuickEditorProps = {
     onForceSave?: (taskId: string) => void;
     onFocus?: () => void;
     onSuggestionsMenuOpen?: (isOpen: boolean) => void;
-    onTagCreate?: (tag: TaskTag) => void;
     onNavigate?: (direction: NavigationDirections) => boolean;
     onModeNavigate?: (mode: Modes, direction: NavigationDirections) => boolean;
   };
-  tagsMap: Record<string, TaskTag>;
   defaultSpaceId?: string;
-  spaces: SpaceData[];
   order?: Modes[];
-  goals: GoalData[];
   listId?: string;
   keepFocus?: boolean;
   task?: TaskData;
@@ -77,12 +66,12 @@ export class TaskQuickEditorStore {
   callbacks: TaskQuickEditorProps['callbacks'];
 
   modes = {
-    [Modes.PRIORITY]: new PriorityModeStore({
+    [Modes.PRIORITY]: new PriorityModeStore(this.root, {
       onExit: () => this.exitMode(),
       onChangeSuggestionIndex: (index: number) =>
         this.suggestionsMenu.setIndex(index),
     }),
-    [Modes.TAG]: new TagModeStore({
+    [Modes.TAG]: new TagModeStore(this.root, {
       onExit: () => this.exitMode(),
       onFocusLeave: (direction: NavigationDirections) => {
         if (direction === NavigationDirections.LEFT) {
@@ -91,12 +80,11 @@ export class TaskQuickEditorStore {
           this.focusNextFilledMode();
         }
       },
-      onTagCreate: (tag: TaskTag) => this.callbacks.onTagCreate?.(tag),
     }),
-    [Modes.SPACE]: new SpaceModeStore({
+    [Modes.SPACE]: new SpaceModeStore(this.root, {
       onExit: () => this.exitMode(),
     }),
-    [Modes.GOAL]: new GoalModeStore({
+    [Modes.GOAL]: new GoalModeStore(this.root, {
       onExit: () => this.exitMode(),
     }),
   };
@@ -631,10 +619,14 @@ export class TaskQuickEditorStore {
       this.modes.space.selectedSpaceId =
         this.task.spaceId || this.modes.space.defaultSpace.id;
       this.modes.goal.selectedGoalId = this.task.goalId;
-      this.modes.tag.tags = this.task.tags.map((tag) => ({
-        id: tag,
-        title: this.modes.tag.tagsMap[tag] && this.modes.tag.tagsMap[tag].title,
-      }));
+      this.modes.tag.tags = this.task.tags.map((tag) => {
+        const existedTag = this.root.resources.tags.map[tag];
+
+        return {
+          id: tag,
+          title: existedTag && existedTag.title,
+        };
+      });
     }
   };
 
@@ -642,10 +634,7 @@ export class TaskQuickEditorStore {
     callbacks,
     listId,
     task,
-    tagsMap,
     order,
-    spaces,
-    goals,
     keepFocus,
     defaultSpaceId,
   }: TaskQuickEditorProps) => {
@@ -653,9 +642,6 @@ export class TaskQuickEditorStore {
     this.listId = task ? task.listId : listId;
     this.keepFocus = keepFocus;
     this.order = order || this.order;
-    this.modes.tag.tagsMap = tagsMap;
-    this.modes.space.spaces = spaces;
-    this.modes.goal.goals = goals;
 
     if (task) {
       if (
@@ -668,7 +654,7 @@ export class TaskQuickEditorStore {
       this.reset();
       this.task = task;
       this.restoreTask();
-    } else if (spaces.length) {
+    } else if (this.root.resources.spaces.count) {
       if (defaultSpaceId) {
         this.modes.space.selectedSpaceId = defaultSpaceId;
       } else {

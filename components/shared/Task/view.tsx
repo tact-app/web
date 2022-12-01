@@ -50,10 +50,7 @@ export const TaskView = observer(function TaskView() {
       <TaskQuickEditorStoreProvider
         instance={store.quickEditor}
         callbacks={store.quickEditorCallbacks}
-        spaces={store.spaces}
-        goals={store.goals}
         order={store.modesOrder}
-        tagsMap={store.tagsMap}
         task={store.data}
       >
         <Box minH={0} flex={1} pb={6} display='flex' flexDirection='column'>

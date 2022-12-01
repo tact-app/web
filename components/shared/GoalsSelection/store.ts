@@ -1,6 +1,5 @@
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
-import { GoalData } from '../../pages/Goals/types';
 import { getProvider } from '../../../helpers/StoreProvider';
 
 export type GoalsSelectionProps = {
@@ -11,7 +10,6 @@ export type GoalsSelectionProps = {
 
   setRefs?: (index: number, ref: HTMLElement) => void;
   multiple?: boolean;
-  goals: GoalData[];
   checked?: string[];
 };
 
@@ -22,8 +20,6 @@ export class GoalsSelectionStore {
 
   callbacks: GoalsSelectionProps['callbacks'] = {};
 
-  goals: GoalsSelectionProps['goals'];
-
   checkedGoals: Record<string, boolean> = {};
   isFocused: boolean = false;
   multiple: boolean = false;
@@ -33,7 +29,8 @@ export class GoalsSelectionStore {
   }
 
   handleGoalCheck = (index: number | null) => {
-    const goalId = index === null ? null : this.goals[index].id;
+    const goalId =
+      index === null ? null : this.root.resources.goals.getByIndex(index).id;
 
     if (this.multiple) {
       if (goalId !== null) {
@@ -65,7 +62,6 @@ export class GoalsSelectionStore {
 
   update = (props: GoalsSelectionProps) => {
     this.callbacks = props.callbacks;
-    this.goals = props.goals;
     this.multiple = props.multiple;
 
     if (props.checked) {

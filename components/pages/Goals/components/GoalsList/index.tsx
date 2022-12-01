@@ -15,7 +15,7 @@ export const GoalsList = observer(function GoalsList() {
       </Heading>
       <Box>
         <GoalCreateNewButton />
-        {store.order.map((goalId) => (
+        {store.root.resources.goals.order.map((goalId) => (
           <GoalItem key={goalId} id={goalId} />
         ))}
       </Box>

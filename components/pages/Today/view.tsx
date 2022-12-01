@@ -59,7 +59,6 @@ export const TodayView = observer(function TodayView() {
                   instance={store.focusConfiguration}
                   callbacks={store.focusConfigurationCallbacks}
                   getItemsCount={store.getItemsCount}
-                  goals={store.listWithCreator.list.goals}
                 />
               ) : null}
             </chakra.div>
@@ -101,9 +100,6 @@ export const TodayView = observer(function TodayView() {
                   <TaskCreator
                     instance={store.listWithCreator.creator}
                     callbacks={store.listWithCreator.taskCreatorCallbacks}
-                    tagsMap={store.listWithCreator.list.tagsMap}
-                    spaces={store.listWithCreator.list.spaces}
-                    goals={store.listWithCreator.list.goals}
                     listId={store.listWithCreator.list.listId}
                     defaultSpaceId={
                       store.listWithCreator.list.input

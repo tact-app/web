@@ -74,7 +74,6 @@ export class TasksListWithCreatorStore {
       this.list.openTask(taskId, true);
       this.list.draggableList.setFocusedItem(taskId);
     },
-    onTagCreate: this.list.createTag,
     onNavigate: this.list.handleNavigation,
     onFocus: this.list.removeFocus,
   };

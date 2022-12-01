@@ -164,7 +164,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
                   flexShrink={0}
                   mr={2}
                 >
-                  {store.tags[id]?.title}
+                  {store.root.resources.tags.map[id]?.title}
                 </Tag>
               ))
             )}

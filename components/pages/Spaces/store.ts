@@ -1,4 +1,4 @@
-import { makeAutoObservable, toJS } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { SpaceData, SpacesFocusableBlocks, SpacesInboxItemData } from './types';
 import {
@@ -196,45 +196,21 @@ export class SpacesStore {
   };
 
   handleSpaceCreationClick = () => {
-    this.modals.openSpaceCreationModal(this.saveSpace);
+    this.modals.openSpaceCreationModal(this.menu.handleSpaceUpdate);
   };
 
   handleSpaceSettingsClick = (space) => {
     this.modals.openSpaceSettingsModal(
       space,
-      this.updateSpace,
-      this.deleteSpace
+      this.menu.handleSpaceUpdate,
+      this.menu.handleSpaceDelete
     );
   };
 
   handleSpaceAddOriginClick = (space) => {
     space.children.push(getRandomOrigins(space.id, 1)[0]);
 
-    this.menu.updateSpace(space);
-    this.root.api.spaces.update({
-      id: space.id,
-      fields: {
-        children: toJS(space.children),
-      },
-    });
-  };
-
-  saveSpace = (space: SpaceData) => {
-    this.menu.addSpace(space);
-    this.root.api.spaces.add(space);
-  };
-
-  updateSpace = (space: SpaceData) => {
-    this.menu.updateSpace(space);
-    this.root.api.spaces.update({
-      id: space.id,
-      fields: space,
-    });
-  };
-
-  deleteSpace = (space: SpaceData) => {
-    this.menu.deleteSpace(space.id);
-    this.root.api.spaces.delete(space.id);
+    this.root.resources.spaces.update(space);
   };
 
   getInboxItems = async () => {
