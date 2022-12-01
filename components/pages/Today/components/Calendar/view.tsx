@@ -1,14 +1,22 @@
 import { observer } from 'mobx-react-lite';
 import { CalendarProps, useCalendarStore } from './store';
-import { Box, Heading, HStack } from '@chakra-ui/react';
-import { CalendarColumn } from './CalendarColumn';
-import { CalendarTimes } from './CalendarTimes';
-import { CalendarHeader } from './CalendarHeader';
+import { Box, Button, ButtonGroup, Heading, HStack } from '@chakra-ui/react';
+import { CalendarTableColumn } from './CalendarTableColumn';
+import { CalendarTableTimes } from './CalendarTableTimes';
+import { CalendarTableHeader } from './CalendarTableHeader';
+import { useEffect, useRef } from 'react';
+import useResizeObserver from 'use-resize-observer';
 
 export const CalendarView = observer(function CalendarView(
   props: CalendarProps
 ) {
   const store = useCalendarStore();
+  const columnsContainerRef = useRef();
+  const { width } = useResizeObserver({ ref: columnsContainerRef });
+
+  useEffect(() => {
+    store.setColumnsContainerWidth(width);
+  }, [store, width]);
 
   return (
     <Box
@@ -20,7 +28,7 @@ export const CalendarView = observer(function CalendarView(
       h='100%'
       borderLeft='1px solid var(--chakra-colors-gray-200)'
     >
-      <HStack>
+      <HStack justifyContent='space-between'>
         <Box display='flex' alignItems='center'>
           <Heading fontSize='2xl' fontWeight='semibold'>
             Calendar
@@ -38,8 +46,30 @@ export const CalendarView = observer(function CalendarView(
             })}
           </Heading>
         </Box>
+        <Box>
+          <ButtonGroup size='xs' bg='gray.75' p={1} borderRadius='md'>
+            <Button
+              onClick={() => store.setResolution(1)}
+              bg={store.daysCount === 1 ? 'gray.200' : 'gray.75'}
+            >
+              Day
+            </Button>
+            <Button
+              onClick={() => store.setResolution(3)}
+              bg={store.daysCount === 3 ? 'gray.200' : 'gray.75'}
+            >
+              3 days
+            </Button>
+            <Button
+              onClick={() => store.setResolution(7)}
+              bg={store.daysCount === 7 ? 'gray.200' : 'gray.75'}
+            >
+              Week
+            </Button>
+          </ButtonGroup>
+        </Box>
       </HStack>
-      <CalendarHeader />
+      <CalendarTableHeader />
       <Box
         overflow='auto'
         css={{
@@ -48,15 +78,15 @@ export const CalendarView = observer(function CalendarView(
             display: 'none',
           },
         }}
-        ref={store.setContentRef}
+        ref={store.setContainerRef}
       >
         <Box display='flex'>
-          <CalendarTimes />
-          {store.days.map((day, index) => (
-            <CalendarColumn
-              key={day.valueOf()}
-              flex={index === 0 ? 2 : 1}
+          <CalendarTableTimes />
+          {store.days.map(({ date, index }, viewIndex) => (
+            <CalendarTableColumn
+              key={date.valueOf()}
               index={index}
+              viewIndex={viewIndex}
             />
           ))}
         </Box>

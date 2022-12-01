@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { chakra } from '@chakra-ui/react';
 import { useCalendarStore } from './store';
 
-export const CalendarTimes = observer(function CalendarTimes() {
+export const CalendarTableTimes = observer(function CalendarTableTimes() {
   const store = useCalendarStore();
 
   return (
