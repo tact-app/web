@@ -70,7 +70,7 @@ export const CalendarView = observer(function CalendarView(
           </Box>
         </Button>
       ) : (
-        <Box>
+        <Box h='100%'>
           <HStack justifyContent='space-between'>
             <Box display='flex' alignItems='center'>
               <Heading fontSize='2xl' fontWeight='semibold'>
@@ -124,6 +124,7 @@ export const CalendarView = observer(function CalendarView(
           <CalendarTableHeader />
           <Box
             overflow='auto'
+            h='100%'
             css={{
               scrollbarWidth: 'none',
               '&::-webkit-scrollbar': {
