@@ -106,6 +106,9 @@ class TaskStore {
       this.descriptionId = uuidv4();
 
       this.data.descriptionId = this.descriptionId;
+      this.descriptionContent.set(undefined);
+      this.editor?.commands.setContent([]);
+
       this.root.api.descriptions.add({
         id: this.descriptionId,
         content: this.descriptionContent.get(),
