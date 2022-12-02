@@ -48,13 +48,9 @@ export class ResizableGroupStore {
   }
 
   get activeChildren() {
-    return this.hasContainerWidth
-      ? this.configs.map((config, index) => {
-          return !this.disabledChildren[index]
-            ? this.configs[index].size || 0
-            : 0;
-        })
-      : this.configs.map(() => 0);
+    return this.configs.map((config, index) => {
+      return !this.disabledChildren[index] ? this.configs[index].size || 0 : 0;
+    });
   }
 
   get totalSize() {
@@ -234,13 +230,18 @@ export class ResizableGroupStore {
         }
       ),
       reaction(
-        () => this.activeChildren,
-        (children, prevChildren) => {
-          if (!this.isFirstRender) {
+        () => ({
+          children: this.activeChildren,
+          hasWidth: this.hasContainerWidth,
+        }),
+        (current, prev) => {
+          const { children } = current;
+
+          if (!this.isFirstRender && prev?.hasWidth) {
             this.isAnimationActive = true;
 
             children.forEach((size, index) => {
-              if (size && !prevChildren[index]) {
+              if (size && !prev.children[index]) {
                 this.enterAnimation[index] = true;
               }
             });
@@ -259,7 +260,8 @@ export class ResizableGroupStore {
               })
             )
           );
-        }
+        },
+        { fireImmediately: true }
       ),
       reaction(
         () => this.totalFixedWidths,
