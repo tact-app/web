@@ -160,12 +160,21 @@ export const TodayView = observer(function TodayView() {
             boxShadow='lg'
             onMouseDown={store.handleTaskMouseDown}
           >
-            {store.taskProps.task && <Task {...store.taskProps} />}
+            <Box h='100%'>
+              {store.taskProps.task && <Task {...store.taskProps} />}
+            </Box>
+          </ResizableGroupChild>
+          <ResizableGroupChild index={3} config={store.resizableConfig[3]}>
+            <Calendar
+              dropItem={store.draggingTask}
+              isCollapsed={!store.isCalendarExpanded}
+              callbacks={{
+                onExpand: store.expandCalendar,
+                onCollapse: store.collapseCalendar,
+              }}
+            />
           </ResizableGroupChild>
         </ResizableGroup>
-        <Box w={600}>
-          <Calendar dropItem={store.draggingTask} />
-        </Box>
       </Box>
     </>
   );

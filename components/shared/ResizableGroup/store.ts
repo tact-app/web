@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, reaction } from 'mobx';
+import { makeAutoObservable, reaction } from 'mobx';
 import { PropsWithChildren } from 'react';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { subscriptions } from '../../../helpers/subscriptions';
@@ -21,7 +21,9 @@ export class ResizableGroupStore {
     makeAutoObservable(this);
   }
 
+  animationFrame: number = null;
   resizingIndex: number | null = null;
+  widthsUpdate: number[] = [];
   widths: number[] = [];
   containerWidth = 0;
   resizeStart: {
@@ -31,7 +33,8 @@ export class ResizableGroupStore {
   configs: ResizableGroupConfig[] = [];
   disabledChildren: boolean[] = [];
 
-  isFirstRender = true;
+  skipWidthsRecalc: boolean = false;
+  isFirstRender: boolean = true;
   isAnimationActive: boolean = false;
   enterAnimation = {};
 
@@ -65,6 +68,16 @@ export class ResizableGroupStore {
     return this.configs.map((config) => config.expanded || false);
   }
 
+  get fixedChildren() {
+    return this.configs.map((config) => {
+      if (config) {
+        return config.width !== undefined;
+      } else {
+        return false;
+      }
+    });
+  }
+
   setChildConfig = (index, config: ResizableGroupConfig) => {
     this.configs[index] = config;
   };
@@ -80,14 +93,14 @@ export class ResizableGroupStore {
   };
 
   isFixed = (index: number) => {
-    if (this.configs[index]) {
-      return this.configs[index].width !== undefined;
-    } else {
-      return false;
-    }
+    return this.fixedChildren[index];
   };
 
   hasResizableHandler = (index: number) => {
+    if (this.isFixed(index) && index === this.configs.length - 1) {
+      return false;
+    }
+
     if (this.configs[index]) {
       for (let i = index; i--; ) {
         if (this.isFixed(i)) {
@@ -108,11 +121,15 @@ export class ResizableGroupStore {
   };
 
   updateWidths = (widths: number[]) => {
-    requestAnimationFrame(
-      action(() => {
-        this.widths = widths;
-      })
-    );
+    this.widthsUpdate = widths;
+
+    cancelAnimationFrame(this.animationFrame);
+
+    this.animationFrame = requestAnimationFrame(this.commitWidths);
+  };
+
+  commitWidths = () => {
+    this.widths = this.widthsUpdate;
   };
 
   handleResize = (e) => {
@@ -214,7 +231,7 @@ export class ResizableGroupStore {
       reaction(
         () => this.width,
         (width, prevWidth) => {
-          if (width && prevWidth) {
+          if (width && prevWidth && !this.skipWidthsRecalc) {
             const diff = prevWidth / width;
 
             this.updateWidths(
@@ -239,6 +256,11 @@ export class ResizableGroupStore {
 
           if (!this.isFirstRender && prev?.hasWidth) {
             this.isAnimationActive = true;
+            this.skipWidthsRecalc = true;
+
+            setTimeout(() => {
+              this.skipWidthsRecalc = false;
+            });
 
             children.forEach((size, index) => {
               if (size && !prev.children[index]) {
@@ -249,16 +271,14 @@ export class ResizableGroupStore {
 
           this.isFirstRender = false;
 
-          setTimeout(() =>
-            this.updateWidths(
-              children.map((childSize, index) => {
-                if (this.isFixed(index)) {
-                  return this.configs[index].width;
-                } else {
-                  return (this.width / this.totalSize) * childSize;
-                }
-              })
-            )
+          this.updateWidths(
+            children.map((childSize, index) => {
+              if (this.isFixed(index)) {
+                return this.configs[index].width;
+              } else {
+                return (this.width / this.totalSize) * childSize;
+              }
+            })
           );
         },
         { fireImmediately: true }

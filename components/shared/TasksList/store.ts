@@ -340,20 +340,23 @@ export class TasksListStore {
   };
 
   openTask = (taskId: string, withEditor?: boolean) => {
-    this.callbacks.onOpenTask?.(!!this.openedTask);
     this.openedTask = taskId;
 
     if (withEditor) {
       this.isEditorFocused = true;
     }
+
+    this.callbacks.onOpenTask?.(!!this.openedTask);
   };
 
   closeTask = (silent?: boolean) => {
-    if (!silent) {
-      this.callbacks.onCloseTask?.();
-    }
+    const isTaskOpened = this.openedTask;
 
     this.openedTask = null;
+
+    if (!silent && isTaskOpened) {
+      this.callbacks.onCloseTask?.();
+    }
   };
 
   focusEditor = () => {

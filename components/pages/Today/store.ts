@@ -44,6 +44,9 @@ export class TodayStore {
   openedTaskBlock: TodayBlocks = TodayBlocks.TASKS_LIST;
   focusedBlock: TodayBlocks = TodayBlocks.TASKS_LIST;
   shouldSetFirstFocus: boolean = false;
+
+  shouldOpenCalendar: boolean = false;
+  isCalendarExpanded: boolean = true;
   isWeekExpanded: boolean = true;
   isTaskExpanded: boolean = false;
   isFocusModeActive: boolean = false;
@@ -61,8 +64,13 @@ export class TodayStore {
       minWidth: 400,
     },
     {
-      size: 1,
+      size: 0,
       minWidth: 340,
+    },
+    {
+      size: 2,
+      minWidth: 540,
+      width: undefined,
     },
   ];
 
@@ -119,6 +127,10 @@ export class TodayStore {
     );
   }
 
+  get openedTask() {
+    return this.listWithCreator.list.openedTask || this.weekList.openedTask;
+  }
+
   get isTasksListHotkeysEnabled() {
     return this.focusedBlock === TodayBlocks.TASKS_LIST;
   }
@@ -158,6 +170,10 @@ export class TodayStore {
       ? this.listWithCreator.list
       : this.weekList;
   }
+
+  closeTask = () => {
+    this.currentList.closeTask();
+  };
 
   toggleWeekList = () => {
     this.isWeekExpanded = !this.isWeekExpanded;
@@ -234,14 +250,6 @@ export class TodayStore {
     }
   };
 
-  resetLayout = () => {
-    this.isTaskExpanded = false;
-    this.resizableConfig[2].size = 1;
-    this.resizableConfig[1].size = 2;
-    this.resizableConfig[0].width =
-      this.isFocusModeActive && !this.isSilentFocusMode ? FOCUS_MODE_WIDTH : 0;
-  };
-
   focusFocusConfiguration = () => {
     this.focusConfiguration.focus();
   };
@@ -277,6 +285,7 @@ export class TodayStore {
 
   handleExpandTask = () => {
     this.isTaskExpanded = true;
+    this.resizableConfig[3].width = 0;
     this.resizableConfig[2].size = 1;
     this.resizableConfig[1].size = 0;
     this.resizableConfig[0].width = 0;
@@ -285,6 +294,54 @@ export class TodayStore {
   handleCollapseTask = () => {
     this.isTaskExpanded = false;
     this.resetLayout();
+  };
+
+  expandCalendar = () => {
+    this.isCalendarExpanded = true;
+
+    this.resizableConfig[2].size = 0;
+    this.resizableConfig[3].size = 2;
+    this.resizableConfig[3].width = undefined;
+    this.resizableConfig[3].minWidth = 530;
+    console.log('expand');
+  };
+
+  collapseCalendar = () => {
+    this.isCalendarExpanded = false;
+
+    this.resizableConfig[2].size = this.openedTask ? 1 : 0;
+    this.resizableConfig[3].size = 0;
+    this.resizableConfig[3].width = 57;
+    this.resizableConfig[3].minWidth = undefined;
+    console.log('collapse');
+  };
+
+  handleOpenTask = () => {
+    this.resizableConfig[2].size = 1;
+
+    if (this.isCalendarExpanded) {
+      this.collapseCalendar();
+      this.shouldOpenCalendar = true;
+    }
+  };
+
+  handleCloseTask = () => {
+    this.handleCollapseTask();
+    this.resizableConfig[2].size = 0;
+
+    if (this.shouldOpenCalendar && !this.isCalendarExpanded) {
+      this.expandCalendar();
+      this.shouldOpenCalendar = false;
+    }
+  };
+
+  resetLayout = () => {
+    this.isTaskExpanded = false;
+    this.resizableConfig[3].width = 57;
+    this.resizableConfig[2].size = this.openedTask ? 1 : 0;
+    this.resizableConfig[1].size = 2;
+    this.resizableConfig[0].width =
+      this.isFocusModeActive && !this.isSilentFocusMode ? FOCUS_MODE_WIDTH : 0;
   };
 
   handleToggleFocusMode = () => {
@@ -499,10 +556,11 @@ export class TodayStore {
   tasksListCallbacks: TasksListProps['callbacks'] = {
     onInit: this.setShouldSetFirstFocus,
     onFocusLeave: this.handleTasksListFocusLeave,
-    onCloseTask: this.handleCollapseTask,
+    onCloseTask: this.handleCloseTask,
     onFocusChange: () => this.switchList(TodayBlocks.TASKS_LIST),
     onSendTask: (tasks: TaskData[]) =>
       this.sendTasks(TodayBlocks.WEEK_LIST, tasks),
+    onOpenTask: this.handleOpenTask,
   };
 
   weekTasksListCallbacks: TasksListProps['callbacks'] = {
@@ -511,6 +569,8 @@ export class TodayStore {
     onEmpty: () => this.switchList(TodayBlocks.TASKS_LIST, true),
     onSendTask: (tasks: TaskData[]) =>
       this.sendTasks(TodayBlocks.TASKS_LIST, tasks),
+    onOpenTask: this.handleOpenTask,
+    onCloseTask: this.handleCloseTask,
   };
 
   focusConfigurationCallbacks: FocusConfigurationProps['callbacks'] = {

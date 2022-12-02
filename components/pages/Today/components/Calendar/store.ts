@@ -6,12 +6,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 export type CalendarProps = {
   dropItem?: TaskData;
+  isCollapsed?: boolean;
+  callbacks: {
+    onExpand?: () => void;
+    onCollapse?: () => void;
+  };
 };
 
 export class CalendarStore {
   constructor() {
     makeAutoObservable(this);
   }
+
+  isCollapsed: boolean = false;
 
   minutesStep = 15;
   containerRef: HTMLElement = null;
@@ -231,6 +238,7 @@ export class CalendarStore {
 
   update = (props: CalendarProps) => {
     this.dropItem = props.dropItem;
+    this.isCollapsed = props.isCollapsed;
 
     if (this.dropItem) {
       this.containerBounds = this.containerRef.getBoundingClientRect();

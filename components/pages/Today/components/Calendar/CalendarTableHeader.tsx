@@ -86,17 +86,19 @@ export const CalendarTableHeader = observer(function CalendarTableHeader() {
         display='flex'
         position='relative'
       >
-        <Button
-          onClick={store.prevPage}
-          position='absolute'
-          left={0}
-          variant='outline'
-          size='xs'
-          bottom={1}
-          color='gray.400'
-        >
-          <FontAwesomeIcon icon={faChevronLeft} />
-        </Button>
+        {store.daysCount > 3 && (
+          <Button
+            onClick={store.prevPage}
+            position='absolute'
+            left={0}
+            variant='outline'
+            size='xs'
+            bottom={1}
+            color='gray.400'
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </Button>
+        )}
         {store.days.map(({ date, index }) => (
           <CalendarTableHeaderDate
             key={date.valueOf()}
@@ -104,17 +106,19 @@ export const CalendarTableHeader = observer(function CalendarTableHeader() {
             index={index}
           />
         ))}
-        <Button
-          onClick={store.nextPage}
-          position='absolute'
-          right={0}
-          variant='outline'
-          size='xs'
-          bottom={1}
-          color='gray.400'
-        >
-          <FontAwesomeIcon icon={faChevronRight} />
-        </Button>
+        {store.daysCount > 3 && (
+          <Button
+            onClick={store.nextPage}
+            position='absolute'
+            right={0}
+            variant='outline'
+            size='xs'
+            bottom={1}
+            color='gray.400'
+          >
+            <FontAwesomeIcon icon={faChevronRight} />
+          </Button>
+        )}
       </Box>
     </Box>
   );
