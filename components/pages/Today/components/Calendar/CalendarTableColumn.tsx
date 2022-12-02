@@ -34,7 +34,7 @@ const CalendarTableColumnEvent = observer(function CalendarTableColumnEvent({
         width: '100%',
       }}
       minHeight={store.grid[1]}
-      dragAxis='y'
+      dragAxis='none'
       bounds='parent'
       enableResizing={{
         top: true,
@@ -58,7 +58,7 @@ const CalendarTableColumnEvent = observer(function CalendarTableColumnEvent({
         store.endDragging(event, d.y);
       }}
       onDragStart={(e, d) => {
-        store.startDragging(event, d.y);
+        store.startDragging(event, (e as MouseEvent).clientY);
       }}
     >
       {event.title}
@@ -76,6 +76,7 @@ export const CalendarTableColumn = observer(function CalendarTableColumn(
       position='relative'
       flex={props.index === 0 && store.daysCount <= 3 ? 2 : 1}
       ref={(el) => store.setDayRef(props.viewIndex, el)}
+      onMouseDown={(e) => store.handleColumnMouseDown(props.index, e)}
       {...props}
     >
       <chakra.div

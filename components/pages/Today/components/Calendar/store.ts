@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import { MouseEvent as ReactMouseEvent } from 'react';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { TaskData } from '../../../../shared/TasksList/types';
 import { EventData } from './types';
@@ -31,6 +32,12 @@ export class CalendarStore {
   daysBounds: DOMRect[] = [];
 
   startDraggingY: number = 0;
+  startDraggingTime: number = 0;
+  endDraggingTime: number = 0;
+  isDraggingActive: boolean = false;
+  isCreatingActive: boolean = false;
+  draggingEvent: EventData | null = null;
+
   resizeDelta: number = 0;
   resizedEventId: string = null;
   resizedDayIndex: number = null;
@@ -38,6 +45,7 @@ export class CalendarStore {
   resizeDirection: string = null;
 
   droppableDayIndex: number | null = null;
+  droppableTimeEnd: number | null = null;
   droppableTime: number | null = null;
 
   times = Array.from({ length: 24 }).map((_, i) => `${i}:00`);
@@ -55,7 +63,7 @@ export class CalendarStore {
 
   get ghostEvent(): EventData {
     if (
-      !this.dropItem ||
+      (!this.dropItem && !this.isCreatingActive) ||
       this.droppableTime === null ||
       this.droppableDayIndex === null
     ) {
@@ -70,12 +78,19 @@ export class CalendarStore {
     start.setDate(this.today.getDate() + this.droppableDayIndex);
 
     const end = new Date(start);
-    end.setMinutes(end.getMinutes() + this.minutesStep);
+
+    if (this.droppableTimeEnd === null) {
+      end.setMinutes(end.getMinutes() + this.minutesStep);
+    } else {
+      end.setMilliseconds(this.droppableTimeEnd);
+    }
+
+    console.log('ghostEvent', start, end);
 
     return {
       id: 'ghost',
-      title: this.dropItem.title,
-      description: this.dropItem.descriptionId,
+      title: this.dropItem?.title || '',
+      description: '',
       color: 'blue.200',
       dayIndex: this.droppableDayIndex,
       start: start.valueOf(),
@@ -113,11 +128,17 @@ export class CalendarStore {
   };
 
   castTimeToOffset = (time: number) => {
-    const date = new Date(time);
-    const totalHeight = this.containerRef.scrollHeight;
-    const hourHeight = totalHeight / 24;
+    if (this.containerRef) {
+      const date = new Date(time);
+      const totalHeight = this.containerRef.scrollHeight;
+      const hourHeight = totalHeight / 24;
 
-    return date.getHours() * hourHeight + (date.getMinutes() * hourHeight) / 60;
+      return (
+        date.getHours() * hourHeight + (date.getMinutes() * hourHeight) / 60
+      );
+    }
+
+    return 0;
   };
 
   prevPage = () => {
@@ -142,6 +163,10 @@ export class CalendarStore {
 
   setColumnsContainerWidth = (width: number) => {
     this.columnsContainerWidth = width;
+
+    this.containerBounds = this.containerRef?.getBoundingClientRect();
+    this.daysBounds =
+      this.daysRefs?.map((ref) => ref.getBoundingClientRect()) || [];
   };
 
   setDayRef = (viewIndex: number, ref: HTMLElement) => {
@@ -164,7 +189,12 @@ export class CalendarStore {
   };
 
   startDragging = (event: EventData, y: number) => {
-    this.startDraggingY = y;
+    this.startDraggingY =
+      y - this.containerBounds.top + this.containerRef.scrollTop;
+    this.startDraggingTime = event.start;
+    this.endDraggingTime = event.end;
+    this.isDraggingActive = true;
+    this.draggingEvent = event;
   };
 
   endResize = (event: EventData, direction: string, delta: number) => {
@@ -197,29 +227,79 @@ export class CalendarStore {
   };
 
   handleMouseMove = (e: MouseEvent) => {
-    if (
-      this.containerBounds &&
-      this.checkMouseInBounds(this.containerBounds, e.clientX, e.clientY)
-    ) {
-      const dayViewIndex = this.daysBounds.findIndex((bound) =>
-        this.checkMouseInBounds(bound, e.clientX, e.clientY)
-      );
-      const dayIndex =
-        dayViewIndex !== -1 ? this.currentLeftDay + dayViewIndex : null;
+    if (this.containerRef && this.containerBounds) {
+      if (
+        this.dropItem &&
+        this.checkMouseInBounds(this.containerBounds, e.clientX, e.clientY)
+      ) {
+        const dayViewIndex = this.daysBounds.findIndex((bound) =>
+          this.checkMouseInBounds(bound, e.clientX, e.clientY)
+        );
+        const dayIndex =
+          dayViewIndex !== -1 ? this.currentLeftDay + dayViewIndex : null;
 
-      if (dayIndex !== null) {
-        const realY =
-          e.clientY - this.containerBounds.top + this.containerRef.scrollTop;
+        if (dayIndex !== null) {
+          const realY =
+            e.clientY - this.containerBounds.top + this.containerRef.scrollTop;
 
-        this.droppableTime = this.castOffsetToTime(realY);
-        this.droppableDayIndex = dayIndex;
+          this.droppableTime = this.castOffsetToTime(realY);
+          this.droppableDayIndex = dayIndex;
 
-        return;
+          return;
+        }
+      }
+
+      const resolvedY =
+        e.clientY - this.containerBounds.top + this.containerRef.scrollTop;
+
+      if (this.isDraggingActive) {
+        this.draggingEvent.start =
+          this.startDraggingTime +
+          this.castOffsetToTime(resolvedY - this.startDraggingY);
+        this.draggingEvent.end =
+          this.endDraggingTime +
+          this.castOffsetToTime(resolvedY - this.startDraggingY);
+
+        const dayViewIndex = this.daysBounds.findIndex((bound) =>
+          this.checkMouseInBounds(bound, e.clientX, e.clientY)
+        );
+
+        const dayIndex = this.currentLeftDay + dayViewIndex;
+
+        this.events[this.draggingEvent.dayIndex] = this.events[
+          this.draggingEvent.dayIndex
+        ].filter((event) => event.id !== this.draggingEvent.id);
+
+        this.draggingEvent.dayIndex = dayIndex;
+
+        this.addEvent(this.draggingEvent);
+      }
+
+      if (this.isCreatingActive) {
+        this.droppableTimeEnd = this.castOffsetToTime(
+          resolvedY - this.startDraggingY
+        );
       }
     }
+  };
 
-    this.droppableTime = null;
-    this.droppableDayIndex = null;
+  handleColumnMouseDown = (index: number, e: ReactMouseEvent) => {
+    if (this.daysRefs.includes((e.target as HTMLElement).parentElement)) {
+      this.isCreatingActive = true;
+      this.droppableDayIndex = index;
+      this.startDraggingY =
+        e.clientY - this.containerBounds.top + this.containerRef.scrollTop;
+      this.droppableTime = this.castOffsetToTime(this.startDraggingY);
+      this.droppableTimeEnd = 0;
+    }
+  };
+
+  handleMouseUp = (e: MouseEvent) => {
+    if (this.ghostEvent) {
+      this.addEvent({ ...this.ghostEvent, id: uuidv4() });
+    }
+    this.isDraggingActive = false;
+    this.isCreatingActive = false;
   };
 
   init = () => {
@@ -232,18 +312,9 @@ export class CalendarStore {
     document.removeEventListener('mouseup', this.handleMouseUp);
   };
 
-  handleMouseUp = (e: MouseEvent) => {
-    this.addEvent({ ...this.ghostEvent, id: uuidv4() });
-  };
-
   update = (props: CalendarProps) => {
     this.dropItem = props.dropItem;
     this.isCollapsed = props.isCollapsed;
-
-    if (this.dropItem) {
-      this.containerBounds = this.containerRef.getBoundingClientRect();
-      this.daysBounds = this.daysRefs.map((ref) => ref.getBoundingClientRect());
-    }
   };
 }
 

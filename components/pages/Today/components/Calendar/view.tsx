@@ -70,7 +70,7 @@ export const CalendarView = observer(function CalendarView(
           </Box>
         </Button>
       ) : (
-        <Box h='100%'>
+        <Box h='100%' display='flex' flexDirection='column'>
           <HStack justifyContent='space-between'>
             <Box display='flex' alignItems='center'>
               <Heading fontSize='2xl' fontWeight='semibold'>
