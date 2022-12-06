@@ -12,9 +12,8 @@ on:
       - .npmrc
       - .prettierrc
       - package*.json
-      - '**.js'
-      - '**.ts'
-      - '**.tsx'
+      - '**.jsx?'
+      - '**.tsx?'
     tags: [ '!*' ]
 
 jobs:
