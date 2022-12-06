@@ -15,7 +15,7 @@ export const TasksListWeekly = observer(function TasksListWeekly() {
     <Box mt={8}>
       {store.weekList.hasTasks ? (
         <Fade in={store.weekList.hasTasks}>
-          {store.listWithCreator.list.hasTasks && (
+          {store.todayListWithCreator.list.hasTasks && (
             <Center mb={10}>
               <chakra.span fontSize='md' fontWeight='normal' color='gray.400'>
                 switch between lists
@@ -54,7 +54,7 @@ export const TasksListWeekly = observer(function TasksListWeekly() {
       ) : (
         <TasksDroppablePlaceholder
           id='week'
-          in={store.listWithCreator.list.draggableList.isDraggingActive}
+          in={store.todayListWithCreator.list.draggableList.isDraggingActive}
         >
           Move to Weekly
         </TasksDroppablePlaceholder>

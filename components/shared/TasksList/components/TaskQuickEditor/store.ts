@@ -16,8 +16,12 @@ import { ReferenceModeStore } from './modes/ReferenceModeStore';
 
 export type TaskQuickEditorProps = {
   callbacks: {
-    onSave?: (task: TaskData, withShift?: boolean) => void;
-    onForceSave?: (taskId: string) => void;
+    onSave?: (
+      task: TaskData,
+      withShift?: boolean,
+      referenceId?: string
+    ) => void;
+    onForceSave?: (taskId: string, referenceId?: string) => void;
     onFocus?: () => void;
     onSuggestionsMenuOpen?: (isOpen: boolean) => void;
     onNavigate?: (direction: NavigationDirections) => boolean;
@@ -28,6 +32,7 @@ export type TaskQuickEditorProps = {
   listId?: string;
   keepFocus?: boolean;
   task?: TaskData;
+  enableReferences?: boolean;
 };
 
 export enum Modes {
@@ -99,6 +104,7 @@ export class TaskQuickEditorStore {
   activeModeType: Modes = Modes.DEFAULT;
   focusedMode: Modes | null = null;
 
+  enableReferences: boolean = true;
   isMenuOpen: boolean = false;
   keepFocus: boolean = false;
 
@@ -148,7 +154,13 @@ export class TaskQuickEditorStore {
       ([key, mode]) => mode.startSymbol === symbol
     );
 
-    return matchMode ? (matchMode[0] as Modes) : null;
+    const modeName: Modes = matchMode ? (matchMode[0] as Modes) : null;
+
+    if (this.enableReferences) {
+      return modeName;
+    } else {
+      return matchMode && modeName !== Modes.REFERENCE ? modeName : null;
+    }
   };
 
   resetModes = () => {
@@ -342,7 +354,9 @@ export class TaskQuickEditorStore {
         goalId: this.modes.goal.selectedGoalId || undefined,
       };
 
-      this.callbacks.onSave(task, withShift);
+      const reference = this.modes[Modes.REFERENCE].selectedReferenceId;
+
+      this.callbacks.onSave(task, withShift, reference);
 
       if (this.keepFocus) {
         if (force) {
@@ -358,7 +372,7 @@ export class TaskQuickEditorStore {
       }
 
       if (force) {
-        this.callbacks.onForceSave?.(task.id);
+        this.callbacks.onForceSave?.(task.id, reference);
       }
     }
   };
@@ -642,11 +656,13 @@ export class TaskQuickEditorStore {
     order,
     keepFocus,
     defaultSpaceId,
+    enableReferences,
   }: TaskQuickEditorProps) => {
     this.callbacks = callbacks || {};
     this.listId = task ? task.listId : listId;
     this.keepFocus = keepFocus;
     this.order = order || this.order;
+    this.enableReferences = enableReferences;
 
     if (task) {
       if (

@@ -94,16 +94,17 @@ export const TodayView = observer(function TodayView() {
                   </HStack>
                 </HStack>
                 <TasksListWithCreatorStoreProvider
-                  instance={store.listWithCreator}
-                  callbacks={store.tasksListCallbacks}
+                  instance={store.todayListWithCreator}
+                  tasksListCallbacks={store.todayTasksListCallbacks}
+                  taskCreatorCallbacks={store.taskCreatorCallbacks}
                 >
                   <TaskCreator
-                    instance={store.listWithCreator.creator}
-                    callbacks={store.listWithCreator.taskCreatorCallbacks}
-                    listId={store.listWithCreator.list.listId}
+                    instance={store.todayListWithCreator.creator}
+                    callbacks={store.todayListWithCreator.taskCreatorCallbacks}
+                    listId={store.todayListWithCreator.list.listId}
                     defaultSpaceId={
-                      store.listWithCreator.list.input
-                        ? store.listWithCreator.list.input.spaceId
+                      store.todayListWithCreator.list.input
+                        ? store.todayListWithCreator.list.input.spaceId
                         : undefined
                     }
                     keepFocus
@@ -128,11 +129,13 @@ export const TodayView = observer(function TodayView() {
                     >
                       <TasksListStoreProvider
                         listId='default'
-                        instance={store.listWithCreator.list}
+                        instance={store.todayListWithCreator.list}
                         isHotkeysEnabled={store.isTasksListHotkeysEnabled}
                         highlightActiveTasks={store.isFocusModeActive}
                         checkTaskActivity={store.checkFocusModeMatch}
-                        callbacks={store.listWithCreator.tasksListCallbacks}
+                        callbacks={
+                          store.todayListWithCreator.tasksListCallbacks
+                        }
                         tasksReceiverName='Week'
                       >
                         <TasksListToday />

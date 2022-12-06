@@ -7,14 +7,24 @@ import {
 } from '../TaskQuickEditor/store';
 import { TaskCreatorProps, TaskCreatorView } from './view';
 
-const modesOrder = [Modes.TAG, Modes.SPACE, Modes.GOAL, Modes.PRIORITY];
+const modesOrder = [
+  Modes.TAG,
+  Modes.SPACE,
+  Modes.GOAL,
+  Modes.PRIORITY,
+  Modes.REFERENCE,
+];
 
 export const TaskCreator = observer(function TaskCreator(
   props: TaskQuickEditorProps &
     TaskCreatorProps & { instance?: TaskQuickEditorStore }
 ) {
   return (
-    <TaskQuickEditorStoreProvider {...props} order={modesOrder}>
+    <TaskQuickEditorStoreProvider
+      {...props}
+      order={modesOrder}
+      enableReferences
+    >
       <TaskCreatorView {...props} />
     </TaskQuickEditorStoreProvider>
   );

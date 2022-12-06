@@ -8,7 +8,10 @@ import { getProvider } from '../../../helpers/StoreProvider';
 import { TasksListProps, TasksListStore } from '../TasksList/store';
 import { NavigationDirections } from '../TasksList/types';
 
-export type TasksListWithCreatorProps = TasksListProps;
+export type TasksListWithCreatorProps = TasksListProps & {
+  taskCreatorCallbacks?: TaskQuickEditorProps['callbacks'];
+  tasksListCallbacks?: TasksListProps['callbacks'];
+};
 
 export class TasksListWithCreatorStore {
   constructor(public root: RootStore) {
@@ -29,7 +32,8 @@ export class TasksListWithCreatorStore {
     },
   };
 
-  callbacks: TasksListWithCreatorProps['callbacks'] = {};
+  tasksListAdditions: TasksListWithCreatorProps['callbacks'] = {};
+  taskCreatorAdditions: TaskQuickEditorProps['callbacks'] = {};
 
   get isHotkeysEnabled() {
     return this.list.isHotkeysEnabled && !this.creator.isMenuOpen;
@@ -37,7 +41,7 @@ export class TasksListWithCreatorStore {
 
   get tasksListCallbacks(): TasksListProps['callbacks'] {
     return {
-      ...this.callbacks,
+      ...this.tasksListAdditions,
       onReset: () => {
         this.creator.reset();
       },
@@ -50,12 +54,25 @@ export class TasksListWithCreatorStore {
 
           return true;
         } else {
-          return this.callbacks.onFocusLeave?.(direction);
+          return this.tasksListAdditions.onFocusLeave?.(direction);
         }
       },
       onEmpty: () => {
         this.creator.setFocus(true);
       },
+    };
+  }
+
+  get taskCreatorCallbacks(): TaskQuickEditorProps['callbacks'] {
+    return {
+      onSave: this.list.createTask,
+      onForceSave: (taskId: string) => {
+        this.list.openTask(taskId, true);
+        this.list.draggableList.setFocusedItem(taskId);
+      },
+      onNavigate: this.list.handleNavigation,
+      onFocus: this.list.removeFocus,
+      ...this.taskCreatorAdditions,
     };
   }
 
@@ -65,17 +82,8 @@ export class TasksListWithCreatorStore {
   };
 
   update = (props: TasksListWithCreatorProps) => {
-    this.callbacks = props.callbacks;
-  };
-
-  taskCreatorCallbacks: TaskQuickEditorProps['callbacks'] = {
-    onSave: this.list.createTask,
-    onForceSave: (taskId: string) => {
-      this.list.openTask(taskId, true);
-      this.list.draggableList.setFocusedItem(taskId);
-    },
-    onNavigate: this.list.handleNavigation,
-    onFocus: this.list.removeFocus,
+    this.tasksListAdditions = props.tasksListCallbacks || {};
+    this.taskCreatorAdditions = props.taskCreatorCallbacks || {};
   };
 }
 

@@ -13,7 +13,10 @@ import {
 } from '../../shared/TasksList/types';
 import { TasksListProps, TasksListStore } from '../../shared/TasksList/store';
 import { ResizableGroupConfig } from '../../shared/ResizableGroup/store';
-import { TasksListWithCreatorStore } from '../../shared/TasksListWithCreator/store';
+import {
+  TasksListWithCreatorProps,
+  TasksListWithCreatorStore,
+} from '../../shared/TasksListWithCreator/store';
 
 const FOCUS_MODE_WIDTH = 300;
 
@@ -28,7 +31,7 @@ export class TodayStore {
     makeAutoObservable(this);
   }
 
-  listWithCreator = new TasksListWithCreatorStore(this.root);
+  todayListWithCreator = new TasksListWithCreatorStore(this.root);
   weekList = new TasksListStore(this.root);
   focusConfiguration = new FocusConfigurationStore(this.root);
 
@@ -91,9 +94,9 @@ export class TodayStore {
 
   hotkeyHandlers = {
     FOCUS_INPUT: () => {
-      this.listWithCreator.list.removeFocus();
+      this.todayListWithCreator.list.removeFocus();
       this.weekList.removeFocus();
-      this.listWithCreator.creator.setFocus(true);
+      this.todayListWithCreator.creator.setFocus(true);
     },
     FOCUS_MODE: (e) => {
       e.preventDefault();
@@ -114,7 +117,7 @@ export class TodayStore {
   get sensors() {
     return [
       (api) => {
-        this.listWithCreator.list.draggableList.setDnDApi(api);
+        this.todayListWithCreator.list.draggableList.setDnDApi(api);
         this.weekList.draggableList.setDnDApi(api);
       },
     ];
@@ -122,13 +125,15 @@ export class TodayStore {
 
   get isHotkeysEnabled() {
     return (
-      !this.listWithCreator.list.modals.controller.isOpen &&
+      !this.todayListWithCreator.list.modals.controller.isOpen &&
       !this.weekList.modals.controller.isOpen
     );
   }
 
   get openedTask() {
-    return this.listWithCreator.list.openedTask || this.weekList.openedTask;
+    return (
+      this.todayListWithCreator.list.openedTask || this.weekList.openedTask
+    );
   }
 
   get isTasksListHotkeysEnabled() {
@@ -142,7 +147,7 @@ export class TodayStore {
   get taskProps() {
     const store =
       this.openedTaskBlock === TodayBlocks.TASKS_LIST
-        ? this.listWithCreator.list
+        ? this.todayListWithCreator.list
         : this.weekList;
 
     return {
@@ -161,13 +166,13 @@ export class TodayStore {
 
   get currentList() {
     return this.focusedBlock === TodayBlocks.TASKS_LIST
-      ? this.listWithCreator.list
+      ? this.todayListWithCreator.list
       : this.weekList;
   }
 
   get lastFocusedList() {
     return this.lastFocusedBlock === TodayBlocks.TASKS_LIST
-      ? this.listWithCreator.list
+      ? this.todayListWithCreator.list
       : this.weekList;
   }
 
@@ -181,13 +186,13 @@ export class TodayStore {
 
   getListByName = (name: TodayBlocks) => {
     return name === TodayBlocks.TASKS_LIST
-      ? this.listWithCreator.list
+      ? this.todayListWithCreator.list
       : this.weekList;
   };
 
   getItemsCount = () => {
     return (
-      this.listWithCreator.list.draggableList.activeItems.length +
+      this.todayListWithCreator.list.draggableList.activeItems.length +
       this.weekList.draggableList.activeItems.length
     );
   };
@@ -365,7 +370,7 @@ export class TodayStore {
       return true;
     } else if (
       direction === NavigationDirections.DOWN &&
-      !this.listWithCreator.list.hasTasks &&
+      !this.todayListWithCreator.list.hasTasks &&
       this.weekList.draggableList.hasFocusableItems
     ) {
       this.switchList(TodayBlocks.WEEK_LIST);
@@ -391,7 +396,7 @@ export class TodayStore {
   };
 
   handleDragStart = (result) => {
-    this.listWithCreator.list.draggableList.startDragging();
+    this.todayListWithCreator.list.draggableList.startDragging();
     this.weekList.draggableList.startDragging();
 
     const taskId = result.draggableId;
@@ -413,32 +418,34 @@ export class TodayStore {
 
       if (!isDifferentList) {
         if (destinationBlock === TodayBlocks.TASKS_LIST) {
-          this.listWithCreator.list.draggableList.endDragging(result);
+          this.todayListWithCreator.list.draggableList.endDragging(result);
           this.weekList.draggableList.endDragging();
         } else if (destinationBlock === TodayBlocks.WEEK_LIST) {
           this.weekList.draggableList.endDragging(result);
-          this.listWithCreator.list.draggableList.endDragging();
+          this.todayListWithCreator.list.draggableList.endDragging();
         }
       } else {
         if (destinationBlock === TodayBlocks.TASKS_LIST) {
           const task = this.weekList.detachTask(result.draggableId);
 
-          this.listWithCreator.list.receiveTasks(
+          this.todayListWithCreator.list.receiveTasks(
             this.weekList.listId,
             [task],
             result.destination.index
           );
         } else if (destinationBlock === TodayBlocks.WEEK_LIST) {
-          const task = this.listWithCreator.list.detachTask(result.draggableId);
+          const task = this.todayListWithCreator.list.detachTask(
+            result.draggableId
+          );
 
           this.weekList.receiveTasks(
-            this.listWithCreator.list.listId,
+            this.todayListWithCreator.list.listId,
             [task],
             result.destination.index
           );
         }
 
-        this.listWithCreator.list.draggableList.endDragging();
+        this.todayListWithCreator.list.draggableList.endDragging();
         this.weekList.draggableList.endDragging();
       }
     }
@@ -458,11 +465,11 @@ export class TodayStore {
 
       const fromList =
         this.focusedBlock === TodayBlocks.TASKS_LIST
-          ? this.listWithCreator.list
+          ? this.todayListWithCreator.list
           : this.weekList;
       const toList =
         blockName === TodayBlocks.TASKS_LIST
-          ? this.listWithCreator.list
+          ? this.todayListWithCreator.list
           : this.weekList;
 
       this.focusedBlock = blockName;
@@ -505,9 +512,9 @@ export class TodayStore {
 
       if (
         blockName === TodayBlocks.TASKS_LIST &&
-        !this.listWithCreator.list.hasTasks
+        !this.todayListWithCreator.list.hasTasks
       ) {
-        this.listWithCreator.creator.setFocus(true);
+        this.todayListWithCreator.creator.setFocus(true);
       }
     }
   };
@@ -515,12 +522,12 @@ export class TodayStore {
   sendTasks = (blockName: TodayBlocks, tasks: TaskData[]) => {
     const fromList =
       blockName === TodayBlocks.WEEK_LIST
-        ? this.listWithCreator.list
+        ? this.todayListWithCreator.list
         : this.weekList;
     const toList =
       blockName === TodayBlocks.WEEK_LIST
         ? this.weekList
-        : this.listWithCreator.list;
+        : this.todayListWithCreator.list;
 
     toList.receiveTasks(fromList.listId, tasks);
 
@@ -544,16 +551,16 @@ export class TodayStore {
   };
 
   setFirstFocus = () => {
-    if (this.listWithCreator.list.order.length) {
-      this.listWithCreator.list.draggableList.focusFirstItem();
+    if (this.todayListWithCreator.list.order.length) {
+      this.todayListWithCreator.list.draggableList.focusFirstItem();
     } else {
-      this.listWithCreator.creator.setFocus(true);
+      this.todayListWithCreator.creator.setFocus(true);
     }
 
     this.shouldSetFirstFocus = false;
   };
 
-  tasksListCallbacks: TasksListProps['callbacks'] = {
+  todayTasksListCallbacks: TasksListProps['callbacks'] = {
     onInit: this.setShouldSetFirstFocus,
     onFocusLeave: this.handleTasksListFocusLeave,
     onCloseTask: this.handleCloseTask,
@@ -561,6 +568,27 @@ export class TodayStore {
     onSendTask: (tasks: TaskData[]) =>
       this.sendTasks(TodayBlocks.WEEK_LIST, tasks),
     onOpenTask: this.handleOpenTask,
+  };
+
+  taskCreatorCallbacks: TasksListWithCreatorProps['taskCreatorCallbacks'] = {
+    onSave: (task, withShift, referenceId) => {
+      if (!referenceId || referenceId === 'today') {
+        this.todayListWithCreator.list.createTask(task, withShift);
+      } else if (referenceId === 'week') {
+        this.weekList.createTask(task, false);
+      } else if (referenceId === 'tomorrow') {
+        this.weekList.createTask(task, true);
+      }
+    },
+    onForceSave: (taskId: string, referenceId: string) => {
+      if (!referenceId || referenceId === 'today') {
+        this.todayListWithCreator.list.openTask(taskId, true);
+        this.todayListWithCreator.list.draggableList.setFocusedItem(taskId);
+      } else if (referenceId === 'week' || referenceId === 'tomorrow') {
+        this.weekList.openTask(taskId, true);
+        this.weekList.draggableList.setFocusedItem(taskId);
+      }
+    },
   };
 
   weekTasksListCallbacks: TasksListProps['callbacks'] = {
@@ -579,7 +607,7 @@ export class TodayStore {
     onFocus: this.handleFocusConfigurationFocus,
     onBlur: this.handleFocusTasksList,
     onGoalCreateClick: (cb) =>
-      this.listWithCreator.list.modals.openGoalCreationModal(cb),
+      this.todayListWithCreator.list.modals.openGoalCreationModal(cb),
   };
 }
 
