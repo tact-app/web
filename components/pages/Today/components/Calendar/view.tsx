@@ -12,20 +12,13 @@ import {
 import { CalendarTableColumn } from './CalendarTableColumn';
 import { CalendarTableTimes } from './CalendarTableTimes';
 import { CalendarTableHeader } from './CalendarTableHeader';
-import { useEffect, useRef } from 'react';
-import useResizeObserver from 'use-resize-observer';
 import { ExpandIcon } from '../../../../shared/Icons/ExpandIcon';
+import { ResizableBlocks } from './ResizableBlocks';
 
 export const CalendarView = observer(function CalendarView(
   props: CalendarProps
 ) {
   const store = useCalendarStore();
-  const columnsContainerRef = useRef();
-  const { width } = useResizeObserver({ ref: columnsContainerRef });
-
-  useEffect(() => {
-    store.setColumnsContainerWidth(width);
-  }, [store, width]);
 
   return (
     <Box
@@ -122,28 +115,14 @@ export const CalendarView = observer(function CalendarView(
             </Box>
           </HStack>
           <CalendarTableHeader />
-          <Box
-            overflow='auto'
-            h='100%'
-            css={{
-              scrollbarWidth: 'none',
-              '&::-webkit-scrollbar': {
-                display: 'none',
-              },
-            }}
-            ref={store.setContainerRef}
-          >
-            <Box display='flex'>
+          <ResizableBlocks items={[]}>
+            <Box display='flex' position='relative' w='100%' h='fit-content'>
               <CalendarTableTimes />
-              {store.days.map(({ date, index }, viewIndex) => (
-                <CalendarTableColumn
-                  key={date.valueOf()}
-                  index={index}
-                  viewIndex={viewIndex}
-                />
+              {store.days.map(({ id }) => (
+                <CalendarTableColumn key={id} dayId={id} />
               ))}
             </Box>
-          </Box>
+          </ResizableBlocks>
         </Box>
       )}
     </Box>

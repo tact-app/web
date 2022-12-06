@@ -10,10 +10,10 @@ import {
 
 const CalendarTableHeaderDate = observer(function CalendarTableHeaderDate({
   date,
-  index,
+  id,
   ...rest
 }: {
-  index: number;
+  id: string;
   date: Date;
 } & BoxProps) {
   const store = useCalendarStore();
@@ -24,14 +24,14 @@ const CalendarTableHeaderDate = observer(function CalendarTableHeaderDate({
       minH={9}
       display='flex'
       justifyContent='center'
-      flex={index === 0 && store.daysCount <= 3 ? 2 : 1}
+      flex={id === store.todayId && store.daysCount <= 3 ? 2 : 1}
       {...rest}
     >
       <chakra.div
         w={20}
         h={10}
         borderTopRadius='full'
-        bg={index === 0 ? 'blue.50' : 'transparent'}
+        bg={id === store.todayId ? 'blue.50' : 'transparent'}
         position='relative'
       >
         <chakra.span
@@ -99,12 +99,8 @@ export const CalendarTableHeader = observer(function CalendarTableHeader() {
             <FontAwesomeIcon icon={faChevronLeft} />
           </Button>
         )}
-        {store.days.map(({ date, index }) => (
-          <CalendarTableHeaderDate
-            key={date.valueOf()}
-            date={date}
-            index={index}
-          />
+        {store.days.map(({ date, id }) => (
+          <CalendarTableHeaderDate key={id} date={date} id={id} />
         ))}
         {store.daysCount > 3 && (
           <Button

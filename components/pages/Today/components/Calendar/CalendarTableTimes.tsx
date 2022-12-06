@@ -10,22 +10,21 @@ export const CalendarTableTimes = observer(function CalendarTableTimes() {
       {store.times.map((time) => (
         <chakra.span
           key={time}
-          position='relative'
           minH={36}
           pt={1}
           pr={1}
           fontSize='sm'
           fontWeight='normal'
           textAlign='end'
-          _after={{
+          _before={{
             content: '""',
             display: 'block',
             height: '1px',
             width: '100%',
             bg: 'gray.200',
             position: 'absolute',
-            top: 0,
             left: 0,
+            transform: 'translateY(-4px)',
           }}
         >
           {time}
