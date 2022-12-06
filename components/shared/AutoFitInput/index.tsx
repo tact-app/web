@@ -1,19 +1,33 @@
 import { chakra, Input, InputProps } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 export const AutoFitInput = ({
   inputRef,
   ...props
 }: InputProps & { inputRef?: (el: HTMLInputElement) => void }) => {
   const ref = useRef<HTMLSpanElement>(null);
+  const [isInited, setIsInited] = useState(false);
   const [width, setWidth] = useState(0);
 
-  useEffect(() => {
-    if (ref.current) {
-      const { width } = ref.current.getBoundingClientRect();
-      setWidth(width + 2);
+  const handleRef = useCallback((node) => {
+    if (node) {
+      ref.current = node;
+      setIsInited(true);
+    } else {
+      setIsInited(false);
     }
-  }, [props.value]);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (isInited) {
+      setTimeout(() => {
+        if (ref.current) {
+          const { width } = ref.current.getBoundingClientRect();
+          setWidth(width + 2);
+        }
+      });
+    }
+  }, [props.value, isInited]);
 
   return (
     <>
@@ -21,7 +35,7 @@ export const AutoFitInput = ({
         contentEditable={false}
         position='absolute'
         visibility='hidden'
-        ref={ref}
+        ref={handleRef}
         fontSize={props.fontSize || 'md'}
         fontWeight={props.fontWeight || 'normal'}
       >
