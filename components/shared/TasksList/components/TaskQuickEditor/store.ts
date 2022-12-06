@@ -12,6 +12,7 @@ import { SpaceModeStore } from './modes/SpaceModeStore';
 import { SUGGESTIONS_MENU_ID } from './TaskQuickEditorMenu';
 import { TAGS_ID } from './TaskQuickEditorTags';
 import { GoalModeStore } from './modes/GoalModeStore';
+import { ReferenceModeStore } from './modes/ReferenceModeStore';
 
 export type TaskQuickEditorProps = {
   callbacks: {
@@ -35,6 +36,7 @@ export enum Modes {
   TAG = 'tag',
   SPACE = 'space',
   GOAL = 'goal',
+  REFERENCE = 'reference',
 }
 
 const castArrowToDirection = (key: string): NavigationDirections => {
@@ -85,6 +87,9 @@ export class TaskQuickEditorStore {
       onExit: () => this.exitMode(),
     }),
     [Modes.GOAL]: new GoalModeStore(this.root, {
+      onExit: () => this.exitMode(),
+    }),
+    [Modes.REFERENCE]: new ReferenceModeStore(this.root, {
       onExit: () => this.exitMode(),
     }),
   };

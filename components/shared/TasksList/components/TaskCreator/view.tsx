@@ -18,6 +18,7 @@ import { TaskQuickEditorPriority } from '../TaskQuickEditor/TaskQuickEditorPrior
 import { TaskQuickEditorMainMenu } from '../TaskQuickEditor/TaskQuickEditorMainMenu';
 import { TaskQuickEditorSpace } from '../TaskQuickEditor/TaskQuickEditorSpace';
 import { TaskQuickEditorGoal } from '../TaskQuickEditor/TaskQuickEditorGoal';
+import { TaskQuickEditorReference } from '../TaskQuickEditor/TaskQuickEditorReference';
 
 export type TaskCreatorProps = {
   wrapperProps: InputWrapperProps;
@@ -93,6 +94,11 @@ export const TaskCreatorView = observer(function TaskCreator(
               </HStack>
             </Fade>
           </InputRightAddon>
+          <Box position='absolute' right={0} top='33px'>
+            <Fade in={store.isInputFocused} unmountOnExit>
+              <TaskQuickEditorReference />
+            </Fade>
+          </Box>
         </InputGroup>
       </InputWrapper>
       <HStack h={5} mt={2} mb={1} ml={5}>
@@ -102,7 +108,8 @@ export const TaskCreatorView = observer(function TaskCreator(
             <HotkeyHint>#</HotkeyHint> for tags,
             <HotkeyHint>!</HotkeyHint> for priority,
             <HotkeyHint>*</HotkeyHint> for goals,
-            <HotkeyHint>^</HotkeyHint> for spaces
+            <HotkeyHint>^</HotkeyHint> for spaces,
+            <HotkeyHint>@</HotkeyHint> for reference
           </Text>
         </Fade>
       </HStack>

@@ -12,6 +12,8 @@ export const InputWrapperStyles: Record<string, StyleConfig> = {
     baseStyle: ({ theme }) => ({
       ...theme.components.Input.baseStyle.field,
       ...theme.components.Input.variants.filled,
+      borderWidth: '2px',
+      borderColor: 'transparent',
       bg: 'gray.100',
     }),
     defaultProps: {
@@ -25,7 +27,7 @@ export const InputWrapperStyles: Record<string, StyleConfig> = {
     variants: {
       focused: {
         borderColor: 'blue.400',
-        boxShadow: '0 0 0 2px var(--chakra-colors-blue-400)',
+        borderWidth: '2px',
         bg: 'white',
       },
     },
