@@ -10,7 +10,7 @@ export const TasksListToday = observer(function TasksListToday() {
 
   return (
     <Box>
-      {store.listWithCreator.list.hasTasks || !store.weekList.hasTasks ? (
+      {store.todayListWithCreator.list.hasTasks || !store.weekList.hasTasks ? (
         <TasksListView dnd={true} />
       ) : (
         <Box
