@@ -33,7 +33,7 @@
     "@fortawesome/pro-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@tanstack/react-virtual": "^3.0.0-beta.26",
-    "@tiptap/core": "^2.0.0-beta.204",
+    "@tiptap/core": "^2.0.0-beta.205",
     "@tiptap/extension-placeholder": "^2.0.0-beta.204",
     "@tiptap/extension-task-item": "^2.0.0-beta.204",
     "@tiptap/extension-task-list": "^2.0.0-beta.204",
