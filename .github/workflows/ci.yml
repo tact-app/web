@@ -9,6 +9,7 @@ on:
       - package*.json
       - '**.js'
       - '**.ts'
+      - '**.tsx'
   push:
     branches: [ main ]
     paths:
@@ -16,6 +17,7 @@ on:
       - package*.json
       - '**.js'
       - '**.ts'
+      - '**.tsx'
     tags: [ '!*' ]
 
 jobs:
