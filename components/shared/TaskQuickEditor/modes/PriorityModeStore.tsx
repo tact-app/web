@@ -4,12 +4,12 @@ import {
   TaskPriorityKeys,
   TaskPriorityNames,
   TaskPriorityValues,
-} from '../../../types';
+} from '../../TasksList/types';
 import React from 'react';
 import { HStack, Text } from '@chakra-ui/react';
-import { TaskPriorityIcon } from '../../../../Icons/TaskPriorityIcon';
+import { TaskPriorityIcon } from '../../Icons/TaskPriorityIcon';
 import { makeAutoObservable } from 'mobx';
-import { RootStore } from '../../../../../../stores/RootStore';
+import { RootStore } from '../../../../stores/RootStore';
 
 export type PriorityCallbacks = {
   onExit: () => void;

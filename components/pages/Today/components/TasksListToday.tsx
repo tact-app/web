@@ -4,6 +4,7 @@ import { useTodayStore } from '../store';
 import { Box, Text } from '@chakra-ui/react';
 import { TasksListView } from '../../../shared/TasksList/view';
 import { TasksDroppablePlaceholder } from './TasksDroppablePlaceholder';
+import { Lists } from '../../../shared/TasksList/constants';
 
 export const TasksListToday = observer(function TasksListToday() {
   const store = useTodayStore();
@@ -33,7 +34,7 @@ export const TasksListToday = observer(function TasksListToday() {
             Plan your day
           </Text>
           <TasksDroppablePlaceholder
-            id='default'
+            id={Lists.TODAY}
             in={store.weekList.draggableList.isDraggingActive}
           >
             Move to Today

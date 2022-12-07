@@ -3,7 +3,7 @@ import { TaskData, TaskStatus } from '../../types';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import React, { MouseEvent } from 'react';
-import { TaskQuickEditorStore } from '../TaskQuickEditor/store';
+import { TaskQuickEditorStore } from '../../../TaskQuickEditor/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
 import { TasksListStore } from '../../store';
 import { subscriptions } from '../../../../../helpers/subscriptions';

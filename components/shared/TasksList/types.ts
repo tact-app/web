@@ -51,7 +51,6 @@ export const TaskStatusArray = [
 export type TaskData = {
   id: string;
   title: string;
-  listId: string;
   goalId?: string;
   spaceId?: string;
   input?: SpacesInboxItemData;

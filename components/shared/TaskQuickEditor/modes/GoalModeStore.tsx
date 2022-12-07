@@ -1,10 +1,10 @@
 import React from 'react';
 import { makeAutoObservable } from 'mobx';
 import { chakra } from '@chakra-ui/react';
-import { GoalIcon } from '../../../../../pages/Goals/components/GoalIcon';
+import { GoalIcon } from '../../../pages/Goals/components/GoalIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-regular-svg-icons';
-import { RootStore } from '../../../../../../stores/RootStore';
+import { RootStore } from '../../../../stores/RootStore';
 
 export type GoalModeCallbacks = {
   onExit: () => void;

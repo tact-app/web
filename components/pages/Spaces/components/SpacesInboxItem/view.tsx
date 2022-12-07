@@ -4,6 +4,7 @@ import { Box, Container, Divider, Heading, Text } from '@chakra-ui/react';
 import { ItemToolbar } from '../../../../shared/ItemToolbar/itemToolbar';
 import { SpacesInboxItemFields } from './SpacesInboxItemFields';
 import { TasksListWithCreator } from '../../../../shared/TasksListWithCreator';
+import { DraggableListContext } from '../../../../shared/DraggableList/view';
 
 export const SpacesInboxItemView = observer(function SpacesInboxItemView(
   props: SpacesInboxItemProps
@@ -42,12 +43,22 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
             <Text>{store.description}</Text>
           </Box>
           <Divider mt={6} mb={8} />
-          <TasksListWithCreator
-            instance={store.listWithCreator}
-            input={store.item}
-            isHotkeysEnabled={store.isHotkeysEnabled}
-            callbacks={store.tasksListCallbacks}
-          />
+
+          <DraggableListContext
+            onDragStart={store.listWithCreator.list.draggableList.startDragging}
+            onDragEnd={store.listWithCreator.list.draggableList.endDragging}
+            sensors={store.listWithCreator.list.draggableList.sensors}
+          >
+            <TasksListWithCreator
+              defaultSave
+              instance={store.listWithCreator}
+              listId={store.item.id}
+              input={store.item}
+              isHotkeysEnabled={store.isHotkeysEnabled}
+              tasksListCallbacks={store.tasksListCallbacks}
+              taskCreatorCallbacks={store.taskCreatorCallbacks}
+            />
+          </DraggableListContext>
         </Box>
       </Box>
     </Container>

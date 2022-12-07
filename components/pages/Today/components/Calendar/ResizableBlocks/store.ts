@@ -261,6 +261,8 @@ export class ResizableBlocksStore {
       this.temp.duration =
         this.resolvedMouseDownPos.value - this.resolvedMouse.value;
     }
+
+    this.boundItem(this.temp);
   };
 
   endCreating = () => {
@@ -308,6 +310,8 @@ export class ResizableBlocksStore {
         this.temp.duration = item.duration - delta;
       }
     }
+
+    this.boundItem(this.temp);
   };
 
   endResizing = () => {
@@ -330,6 +334,8 @@ export class ResizableBlocksStore {
 
     this.temp.start = item.start + delta;
     this.temp.containerId = mouse.containerId;
+
+    this.boundItem(this.temp);
   };
 
   endDragging = () => {
@@ -344,6 +350,15 @@ export class ResizableBlocksStore {
     const { left, top, width, height } = this.wrapperBounds;
 
     return x >= left && x <= left + width && y >= top && y <= top + height;
+  };
+
+  boundItem = (item: ResizableBlocksItemData) => {
+    const { start, duration } = item;
+
+    const newDuration = Math.min(duration, this.maxValue - item.start);
+    const newStart = Math.max(start, this.minValue);
+
+    item.start = newStart + (newDuration - duration);
   };
 
   handleMouseMove = (e: MouseEvent) => {
@@ -383,6 +398,11 @@ export class ResizableBlocksStore {
     }
   };
 
+  normalizeEvents = (containerIds?: string[]) => {
+    const levels = this.buildLevels(containerIds);
+    this.resolveIntersections(levels);
+  };
+
   buildLevels = (containerIds?: string[]) => {
     const itemsByContainer: Record<string, ResizableBlocksItemData[]> =
       this.items.reduce((acc, item) => {
@@ -395,7 +415,7 @@ export class ResizableBlocksStore {
         return acc;
       }, {});
 
-    const levels = [];
+    const levels: Record<string, string[][]> = {};
 
     Object.keys(itemsByContainer).forEach((containerId) => {
       if (!containerIds || containerIds.includes(containerId)) {
@@ -421,78 +441,90 @@ export class ResizableBlocksStore {
             }
 
             item.totalLevels = 0;
+            item.toLevel = 0;
+            item.fromLevel = 0;
           }
 
-          levels.push(currentLevel);
+          if (!levels[containerId]) {
+            levels[containerId] = [];
+          }
+
+          levels[containerId].push(currentLevel);
           currentLevel = [];
         }
       }
     });
 
-    for (let i = 0; i < levels.length; i++) {
-      const currentLevel = levels[i];
-      const currentItems = currentLevel.map((id) => this.itemsMap[id]);
+    return levels;
+  };
 
-      currentItems.forEach((item) => {
-        const allIntersectedItems = [item];
-        let prevLevelIntersections = [item];
-        let startLevelIntersections = -1;
-        let endLevelIntersections = -1;
-        let hasIntersections = false;
+  resolveIntersections = (levels: Record<string, string[][]>) => {
+    Object.values(levels).forEach((containerLevels) => {
+      for (let i = 0; i < containerLevels.length; i++) {
+        const currentLevel = containerLevels[i];
+        const currentItems = currentLevel.map((id) => this.itemsMap[id]);
 
-        for (let j = i + 1; j < levels.length; j++) {
-          const nextLevel = levels[j];
+        currentItems.forEach((item) => {
+          const allIntersectedItems = [item];
+          let prevLevelIntersections = [item];
+          let startLevelIntersections = -1;
+          let endLevelIntersections = -1;
+          let hasIntersections = false;
 
-          if (nextLevel) {
-            const nextLevelItems = nextLevel.map((id) => this.itemsMap[id]);
+          for (let j = i + 1; j < containerLevels.length; j++) {
+            const nextLevel = containerLevels[j];
 
-            if (nextLevelItems) {
-              const intersections = nextLevelItems.filter((nextItem) =>
-                prevLevelIntersections.some(
-                  (prevItem) =>
-                    (prevItem.start + prevItem.duration > nextItem.start &&
-                      prevItem.start <= nextItem.start) ||
-                    (prevItem.start < nextItem.start + nextItem.duration &&
-                      prevItem.start >= nextItem.start)
-                )
-              );
+            if (nextLevel) {
+              const nextLevelItems = nextLevel.map((id) => this.itemsMap[id]);
 
-              if (intersections.length) {
-                prevLevelIntersections = intersections;
-                allIntersectedItems.push(...intersections);
-                hasIntersections = true;
+              if (nextLevelItems) {
+                const intersections = nextLevelItems.filter((nextItem) =>
+                  prevLevelIntersections.some(
+                    (prevItem) =>
+                      (prevItem.start + prevItem.duration > nextItem.start &&
+                        prevItem.start <= nextItem.start) ||
+                      (prevItem.start < nextItem.start + nextItem.duration &&
+                        prevItem.start >= nextItem.start)
+                  )
+                );
+
+                if (intersections.length) {
+                  prevLevelIntersections = intersections;
+                  allIntersectedItems.push(...intersections);
+                  hasIntersections = true;
+                }
+              }
+            }
+
+            if (
+              prevLevelIntersections.length &&
+              prevLevelIntersections[0] !== item
+            ) {
+              if (startLevelIntersections === -1) {
+                startLevelIntersections = j;
+              }
+
+              if (hasIntersections) {
+                endLevelIntersections = j + 1;
+                hasIntersections = false;
               }
             }
           }
 
-          if (
-            prevLevelIntersections.length &&
-            prevLevelIntersections[0] !== item
-          ) {
-            if (startLevelIntersections === -1) {
-              startLevelIntersections = j;
+          item.fromLevel = i;
+          item.toLevel = Math.max(
+            startLevelIntersections === -1 ? i + 1 : startLevelIntersections,
+            allIntersectedItems.length > 1 ? 0 : item.totalLevels
+          );
+          allIntersectedItems.forEach((intersectedItem) => {
+            if (!intersectedItem.totalLevels) {
+              intersectedItem.totalLevels =
+                endLevelIntersections === -1 ? i + 1 : endLevelIntersections;
             }
-
-            if (hasIntersections) {
-              endLevelIntersections = j + 1;
-              hasIntersections = false;
-            }
-          }
-        }
-
-        item.fromLevel = i;
-        item.toLevel = Math.max(
-          startLevelIntersections === -1 ? i + 1 : startLevelIntersections,
-          allIntersectedItems.length > 1 ? 0 : item.totalLevels
-        );
-        allIntersectedItems.forEach((intersectedItem) => {
-          if (!intersectedItem.totalLevels) {
-            intersectedItem.totalLevels =
-              endLevelIntersections === -1 ? i + 1 : endLevelIntersections;
-          }
+          });
         });
-      });
-    }
+      }
+    });
   };
 
   commitChanges = () => {
@@ -513,7 +545,7 @@ export class ResizableBlocksStore {
         this.endDragging();
       }
 
-      this.buildLevels(containerIds);
+      this.normalizeEvents(containerIds);
 
       this.temp = null;
     }

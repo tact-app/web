@@ -11,7 +11,7 @@ import {
   Fade,
 } from '@chakra-ui/react';
 import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
-import { InputWrapper, InputWrapperProps } from '../../../InputWrapper';
+import { InputWrapper, InputWrapperProps } from '../InputWrapper';
 import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
 import { TaskQuickEditorPriority } from '../TaskQuickEditor/TaskQuickEditorPriority';

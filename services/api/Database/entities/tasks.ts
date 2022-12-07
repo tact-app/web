@@ -1,26 +1,42 @@
 import { TaskData } from '../../../../components/shared/TasksList/types';
 import { DB } from '../index';
 
+const updateList = async (
+  db: DB,
+  id: string,
+  cb: (list: {
+    id: string;
+    taskIds: string[];
+  }) =>
+    | Promise<{ id: string; taskIds: string[] }>
+    | { id: string; taskIds: string[] }
+) => {
+  const existedTasksList = await db.get('taskLists', id);
+  const updatedList = await cb(
+    existedTasksList ? existedTasksList : { id, taskIds: [] }
+  );
+
+  if (existedTasksList) {
+    await db.put('taskLists', updatedList);
+  } else {
+    await db.add('taskLists', updatedList);
+  }
+};
+
 const data = {
   get: {
     '/api/tasks': async (
       db: DB,
       {
         id,
-        filter,
       }: {
         id: string;
-        filter?: {
-          inputId?: string;
-        };
       }
     ) => {
       const tasks = await db.getAll('tasks');
-      const taskLists = await db.get('taskLists', id);
+      const tasksList = await db.get('taskLists', id);
 
-      if (!taskLists) {
-        await db.add('taskLists', { id, taskIds: [] });
-
+      if (!tasksList) {
         return {
           tasks: {},
           order: [],
@@ -28,17 +44,7 @@ const data = {
       }
 
       const filteredTasks = tasks
-        .filter(({ listId, input }) => {
-          if (listId !== id) {
-            return false;
-          }
-
-          if (filter?.inputId && input?.id !== filter.inputId) {
-            return false;
-          }
-
-          return true;
-        })
+        .filter(({ id }) => tasksList.taskIds.includes(id))
         .reduce((acc, task) => {
           acc[task.id] = task;
           return acc;
@@ -46,27 +52,30 @@ const data = {
 
       return {
         tasks: filteredTasks,
-        order: taskLists.taskIds.filter((taskId) => filteredTasks[taskId]),
+        order: tasksList.taskIds,
       };
     },
   },
   post: {
     '/api/tasks/create': async (
       db: DB,
-      data: { task: TaskData; placement: 'top' | 'bottom' }
+      data: { listId: string; task: TaskData; placement: 'top' | 'bottom' }
     ) => {
-      await db.add('tasks', data.task);
-      const taskLists = await db.get('taskLists', data.task.listId);
+      const existedTask = await db.get('tasks', data.task.id);
 
-      if (taskLists) {
+      if (!existedTask) {
+        await db.add('tasks', data.task);
+      }
+
+      await updateList(db, data.listId, (list) => {
         if (data.placement === 'top') {
-          taskLists.taskIds.unshift(data.task.id);
+          list.taskIds.unshift(data.task.id);
         } else {
-          taskLists.taskIds.push(data.task.id);
+          list.taskIds.push(data.task.id);
         }
 
-        await db.put('taskLists', taskLists);
-      }
+        return list;
+      });
     },
   },
   delete: {
@@ -74,17 +83,11 @@ const data = {
       db: DB,
       { ids, listId }: { ids: string[]; listId: string }
     ) => {
-      await Promise.all(ids.map((id) => db.delete('tasks', id)));
+      await updateList(db, listId, (list) => {
+        list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
 
-      const existedList = await db.get('taskLists', listId);
-
-      if (existedList) {
-        existedList.taskIds = existedList.taskIds.filter(
-          (id) => !ids.includes(id)
-        );
-
-        await db.put('taskLists', existedList);
-      }
+        return list;
+      });
     },
   },
   put: {
@@ -92,16 +95,12 @@ const data = {
       db: DB,
       data: { listId: string; taskIds: string[]; destination: number }
     ) => {
-      const existedList = await db.get('taskLists', data.listId);
+      await updateList(db, data.listId, (list) => {
+        list.taskIds = list.taskIds.filter((id) => !data.taskIds.includes(id));
+        list.taskIds.splice(data.destination, 0, ...data.taskIds);
 
-      if (existedList) {
-        existedList.taskIds = existedList.taskIds.filter(
-          (id) => !data.taskIds.includes(id)
-        );
-        existedList.taskIds.splice(data.destination, 0, ...data.taskIds);
-
-        await db.put('taskLists', existedList);
-      }
+        return list;
+      });
     },
     '/api/tasks/swap': async (
       db: DB,
@@ -112,23 +111,21 @@ const data = {
         destination?: number;
       }
     ) => {
-      const existedListFrom = await db.get('taskLists', data.fromListId);
-      const existedListTo = await db.get('taskLists', data.toListId);
+      await updateList(db, data.fromListId, (list) => {
+        list.taskIds = list.taskIds.filter((id) => !data.taskIds.includes(id));
 
-      if (existedListFrom && existedListTo) {
-        existedListFrom.taskIds = existedListFrom.taskIds.filter(
-          (id) => !data.taskIds.includes(id)
-        );
+        return list;
+      });
 
+      await updateList(db, data.toListId, (list) => {
         if (data.destination !== undefined) {
-          existedListTo.taskIds.splice(data.destination, 0, ...data.taskIds);
+          list.taskIds.splice(data.destination, 0, ...data.taskIds);
         } else {
-          existedListTo.taskIds.push(...data.taskIds);
+          list.taskIds.push(...data.taskIds);
         }
 
-        await db.put('taskLists', existedListFrom);
-        await db.put('taskLists', existedListTo);
-      }
+        return list;
+      });
     },
     '/api/tasks/update': async (
       db: DB,

@@ -3,7 +3,7 @@ import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
 import { Button, ButtonProps, chakra } from '@chakra-ui/react';
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { HeavyPlusIcon } from '../../../Icons/HeavyPlusIcon';
+import { HeavyPlusIcon } from '../Icons/HeavyPlusIcon';
 
 export const TaskQuickEditorEmptyButton = observer(
   function TaskQuickEditorEmptyButton({

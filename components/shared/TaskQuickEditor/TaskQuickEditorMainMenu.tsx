@@ -8,7 +8,7 @@ import {
   MenuItem,
   MenuList,
 } from '@chakra-ui/react';
-import { DotsIcon } from '../../../Icons/DotsIcon';
+import { DotsIcon } from '../Icons/DotsIcon';
 import React from 'react';
 
 export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {

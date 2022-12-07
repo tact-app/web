@@ -4,10 +4,10 @@ import { Box, Checkbox, chakra, Tag, useOutsideClick } from '@chakra-ui/react';
 import { TaskStatus } from '../../types';
 import { TaskItemProps, useTaskItemStore } from './store';
 import { TaskItemMenu } from '../TaskItemMenu';
-import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
-import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
-import { TaskQuickEditorPriority } from '../TaskQuickEditor/TaskQuickEditorPriority';
-import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
+import { TaskQuickEditorInput } from '../../../TaskQuickEditor/TaskQuickEditorInput';
+import { TaskQuickEditorTags } from '../../../TaskQuickEditor/TaskQuickEditorTags';
+import { TaskQuickEditorPriority } from '../../../TaskQuickEditor/TaskQuickEditorPriority';
+import { useTaskQuickEditorStore } from '../../../TaskQuickEditor/store';
 
 export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
   const store = useTaskItemStore();

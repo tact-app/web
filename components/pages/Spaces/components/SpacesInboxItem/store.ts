@@ -1,14 +1,12 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import {
-  TasksListProps,
-  TasksListStore,
-} from '../../../../shared/TasksList/store';
+import { TasksListStore } from '../../../../shared/TasksList/store';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getStubDescription } from '../../modals/SpaceCreationModal/stubs';
 import { SpacesInboxItemData } from '../../types';
 import { KeyboardEvent } from 'react';
 import { TasksListWithCreatorStore } from '../../../../shared/TasksListWithCreator/store';
+import { Lists, referenceToList } from '../../../../shared/TasksList/constants';
 
 export type SpacesInboxItemProps = {
   item: SpacesInboxItemData;
@@ -78,10 +76,26 @@ export class SpacesInboxItemStore {
     }
   };
 
-  tasksListCallbacks: TasksListProps['callbacks'] = {
+  tasksListCallbacks: TasksListWithCreatorStore['tasksListCallbacks'] = {
     onFocusLeave: this.callbacks.onFocusLeave,
     onOpenTask: this.callbacks.onOpenTask,
     onCloseTask: this.callbacks.onCloseTask,
+  };
+
+  taskCreatorCallbacks: TasksListWithCreatorStore['taskCreatorCallbacks'] = {
+    onSave: async (task, withShift, referenceId) => {
+      if (referenceToList[referenceId] === Lists.WEEK) {
+        await this.root.api.tasks.create(
+          Lists.WEEK,
+          task,
+          referenceId === 'tomorrow' ? 'top' : 'bottom'
+        );
+      } else if (referenceToList[referenceId] === Lists.TODAY || !referenceId) {
+        await this.root.api.tasks.create(Lists.TODAY, task, 'bottom');
+      }
+
+      this.listWithCreator.list.createTask(task, withShift);
+    },
   };
 }
 

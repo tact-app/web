@@ -21,7 +21,7 @@ import React, {
   useState,
 } from 'react';
 import { TaskStatus } from '../../types';
-import { Modes } from '../TaskQuickEditor/store';
+import { Modes } from '../../../TaskQuickEditor/store';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import {
