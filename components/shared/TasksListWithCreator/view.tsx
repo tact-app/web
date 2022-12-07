@@ -3,7 +3,7 @@ import {
   TasksListWithCreatorProps,
   useTasksListWithCreatorStore,
 } from './store';
-import { TaskCreator } from '../TasksList/components/TaskCreator';
+import { TaskCreator } from '../TaskCreator';
 import React from 'react';
 import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
 import TasksList from '../TasksList';
@@ -21,7 +21,6 @@ export const TasksListWithCreatorView = observer(
         <TaskCreator
           instance={store.creator}
           callbacks={store.taskCreatorCallbacks}
-          listId={store.list.listId}
           defaultSpaceId={
             store.list.input ? store.list.input.spaceId : undefined
           }

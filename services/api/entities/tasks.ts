@@ -2,13 +2,17 @@ import { ApiService } from '../ApiService';
 import { TaskData } from '../../../components/shared/TasksList/types';
 
 const getTasksApi = (apiService: ApiService) => ({
-  list: (id: string, filter?: { inputId?: string }) =>
+  list: (id: string) =>
     apiService.get<{ tasks: Record<string, TaskData>; order: string[] }>(
       `/api/tasks`,
-      { id, filter }
+      { id }
     ),
-  create: (task: TaskData, placement: 'top' | 'bottom') =>
-    apiService.post<TaskData[]>(`/api/tasks/create`, { task, placement }),
+  create: (listId: string, task: TaskData, placement: 'top' | 'bottom') =>
+    apiService.post<TaskData[]>(`/api/tasks/create`, {
+      listId,
+      task,
+      placement,
+    }),
   delete: (listId: string, ids: string[]) =>
     apiService.delete<TaskData[]>(`/api/tasks/delete`, { ids, listId }),
   order: (data: { listId: string; taskIds: string[]; destination: number }) =>

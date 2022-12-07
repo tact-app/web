@@ -2,7 +2,7 @@ import { RootStore } from '../../../stores/RootStore';
 import { makeAutoObservable, reaction, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { NavigationDirections, TaskData, TaskStatus } from './types';
-import { TaskQuickEditorProps } from './components/TaskQuickEditor/store';
+import { TaskQuickEditorProps } from '../TaskQuickEditor/store';
 import {
   DraggableListCallbacks,
   DraggableListStore,
@@ -11,6 +11,7 @@ import { TasksModals } from './modals/store';
 import { subscriptions } from '../../../helpers/subscriptions';
 import { SpacesInboxItemData } from '../../pages/Spaces/types';
 import { TaskProps } from '../Task/store';
+import { Lists } from './constants';
 
 export type TasksListProps = {
   checkTaskActivity?: (task: TaskData) => boolean;
@@ -44,7 +45,7 @@ export class TasksListStore {
   input: SpacesInboxItemData | null = null;
   checkTaskActivity: TasksListProps['checkTaskActivity'];
 
-  listId: string = 'default';
+  listId: string = Lists.TODAY;
   items: Record<string, TaskData> = {};
   order: string[] = [];
   editingTaskId: null | string = null;
@@ -384,7 +385,7 @@ export class TasksListStore {
       this.order.push(task.id);
     }
 
-    this.root.api.tasks.create(task, placement);
+    this.root.api.tasks.create(this.listId, task, placement);
   };
 
   deleteTasks = (ids: string[]) => {
@@ -418,12 +419,13 @@ export class TasksListStore {
 
   receiveTasks = (
     fromListId: string,
+    toListId: string,
     tasks: TaskData[],
     destination?: number
   ) => {
     this.root.api.tasks.swap({
-      fromListId: fromListId,
-      toListId: this.listId,
+      fromListId,
+      toListId,
       taskIds: tasks.map(({ id }) => id),
       destination,
     });
@@ -432,8 +434,6 @@ export class TasksListStore {
   };
 
   addTask = (task: TaskData, position?: number) => {
-    task.listId = this.listId;
-
     this.items[task.id] = task;
 
     if (position !== undefined) {
@@ -441,13 +441,6 @@ export class TasksListStore {
     } else {
       this.order.push(task.id);
     }
-
-    this.root.api.tasks.update({
-      id: task.id,
-      fields: {
-        listId: this.listId,
-      },
-    });
   };
 
   detachTask = (taskId: string) => {
@@ -536,14 +529,7 @@ export class TasksListStore {
   loadTasks = async () => {
     this.isLoading = true;
 
-    const { tasks, order } = await this.root.api.tasks.list(
-      this.listId,
-      this.input
-        ? {
-            inputId: this.input.id,
-          }
-        : {}
-    );
+    const { tasks, order } = await this.root.api.tasks.list(this.listId);
 
     runInAction(() => {
       this.items = tasks;

@@ -3,7 +3,7 @@ import { Modes, useTaskQuickEditorStore } from './store';
 import { Button, ButtonProps, chakra } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
-import { GoalIcon } from '../../../../pages/Goals/components/GoalIcon';
+import { GoalIcon } from '../../pages/Goals/components/GoalIcon';
 import { TaskQuickEditorEmptyButton } from './TaskQuickEditorEmptyButton';
 
 export const TaskQuickEditorGoal = observer(function TaskQuickEditorGoal({

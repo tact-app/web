@@ -9,9 +9,6 @@ interface MyDB extends DBSchema {
   tasks: {
     key: string;
     value: TaskData;
-    indexes: {
-      'by-list-id': string;
-    };
   };
   taskLists: {
     key: string;
@@ -66,10 +63,9 @@ export async function initDb() {
   return await openDB<MyDB>('tact-db', 5, {
     upgrade(db) {
       try {
-        const tasksStore = db.createObjectStore('tasks', {
+        db.createObjectStore('tasks', {
           keyPath: 'id',
         });
-        tasksStore.createIndex('by-list-id', 'listId');
       } catch (e) {}
 
       try {

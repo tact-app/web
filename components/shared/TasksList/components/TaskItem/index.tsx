@@ -10,7 +10,7 @@ import {
   Modes,
   TaskQuickEditorProps,
   TaskQuickEditorStoreProvider,
-} from '../TaskQuickEditor/store';
+} from '../../../TaskQuickEditor/store';
 import { TasksListStore } from '../../store';
 
 const useTasksItemStoreInstance = () => useTaskItemStore().quickEdit;

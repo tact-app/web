@@ -1,10 +1,10 @@
 import React from 'react';
 import { makeAutoObservable } from 'mobx';
 import { chakra } from '@chakra-ui/react';
-import { SpacesSmallIcon } from '../../../../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
+import { SpacesSmallIcon } from '../../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/pro-solid-svg-icons';
-import { RootStore } from '../../../../../../stores/RootStore';
+import { RootStore } from '../../../../stores/RootStore';
 
 export type SpaceModeCallbacks = {
   onExit: () => void;

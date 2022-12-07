@@ -20,7 +20,6 @@ export const TaskListItem = observer(function TaskListItem({
         task={task}
         highlightActiveTasks={store.highlightActiveTasks}
         isDragging={snapshot.isDragging}
-        listId={store.listId}
         onFocus={store.draggableList.setFocusedItem}
         onStatusChange={store.handleStatusChange}
         onWontDoWithComment={store.handleWontDoWithComment}

@@ -19,7 +19,6 @@ const data = {
         'focusConfigurations',
         data.id
       );
-      console.log(data);
 
       if (existedFocusConfiguration) {
         Object.entries(data.fields).forEach(([key, value]) => {

@@ -21,11 +21,12 @@ import { FocusConfiguration } from './components/FocusConfiguration';
 import { ResizableGroupChild } from '../../shared/ResizableGroup/ResizableGroupChild';
 import { TasksListWeekly } from './components/TasksListWeekly';
 import { DraggableListContext } from '../../shared/DraggableList/view';
-import { TaskCreator } from '../../shared/TasksList/components/TaskCreator';
+import { TaskCreator } from '../../shared/TaskCreator';
 import { TasksListWithCreatorStoreProvider } from '../../shared/TasksListWithCreator/store';
 import { TasksListStoreProvider } from '../../shared/TasksList/store';
 import { TasksListToday } from './components/TasksListToday';
 import { Calendar } from './components/Calendar';
+import { Lists } from '../../shared/TasksList/constants';
 
 export const TodayView = observer(function TodayView() {
   const store = useTodayStore();
@@ -101,7 +102,6 @@ export const TodayView = observer(function TodayView() {
                   <TaskCreator
                     instance={store.todayListWithCreator.creator}
                     callbacks={store.todayListWithCreator.taskCreatorCallbacks}
-                    listId={store.todayListWithCreator.list.listId}
                     defaultSpaceId={
                       store.todayListWithCreator.list.input
                         ? store.todayListWithCreator.list.input.spaceId
@@ -128,7 +128,7 @@ export const TodayView = observer(function TodayView() {
                       sensors={store.sensors}
                     >
                       <TasksListStoreProvider
-                        listId='default'
+                        listId={Lists.TODAY}
                         instance={store.todayListWithCreator.list}
                         isHotkeysEnabled={store.isTasksListHotkeysEnabled}
                         highlightActiveTasks={store.isFocusModeActive}
@@ -141,7 +141,7 @@ export const TodayView = observer(function TodayView() {
                         <TasksListToday />
                       </TasksListStoreProvider>
                       <TasksListStoreProvider
-                        listId='week'
+                        listId={Lists.WEEK}
                         instance={store.weekList}
                         isHotkeysEnabled={store.isWeekListHotkeysEnabled}
                         highlightActiveTasks={store.isFocusModeActive}

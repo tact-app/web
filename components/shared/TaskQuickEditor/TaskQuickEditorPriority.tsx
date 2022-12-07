@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import { Modes, useTaskQuickEditorStore } from './store';
-import { TaskPriorityIcon } from '../../../Icons/TaskPriorityIcon';
+import { TaskPriorityIcon } from '../Icons/TaskPriorityIcon';
 import React, { useEffect } from 'react';
 import { Button, ButtonProps, chakra } from '@chakra-ui/react';
 import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
-import { TaskPriority, TaskPriorityNames } from '../../types';
+import { TaskPriority, TaskPriorityNames } from '../TasksList/types';
 import { TaskQuickEditorEmptyButton } from './TaskQuickEditorEmptyButton';
 
 export const TaskQuickEditorPriority = observer(function TaskQuickEditPriority({

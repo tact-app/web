@@ -2,15 +2,17 @@ import { makeAutoObservable } from 'mobx';
 import {
   TaskQuickEditorProps,
   TaskQuickEditorStore,
-} from '../TasksList/components/TaskQuickEditor/store';
+} from '../TaskQuickEditor/store';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { TasksListProps, TasksListStore } from '../TasksList/store';
 import { NavigationDirections } from '../TasksList/types';
+import { Lists, referenceToList } from '../TasksList/constants';
 
 export type TasksListWithCreatorProps = TasksListProps & {
   taskCreatorCallbacks?: TaskQuickEditorProps['callbacks'];
   tasksListCallbacks?: TasksListProps['callbacks'];
+  defaultSave?: boolean;
 };
 
 export class TasksListWithCreatorStore {
@@ -32,6 +34,7 @@ export class TasksListWithCreatorStore {
     },
   };
 
+  defaultSave: boolean = false;
   tasksListAdditions: TasksListWithCreatorProps['callbacks'] = {};
   taskCreatorAdditions: TaskQuickEditorProps['callbacks'] = {};
 
@@ -65,7 +68,21 @@ export class TasksListWithCreatorStore {
 
   get taskCreatorCallbacks(): TaskQuickEditorProps['callbacks'] {
     return {
-      onSave: this.list.createTask,
+      onSave: this.defaultSave
+        ? (task, withShift, referenceId) => {
+            if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
+              this.root.api.tasks.create(Lists.TODAY, task, 'bottom');
+            } else if (referenceToList[referenceId] === Lists.WEEK) {
+              this.root.api.tasks.create(
+                Lists.WEEK,
+                task,
+                referenceId === 'tomorrow' ? 'top' : 'bottom'
+              );
+            }
+
+            this.list.createTask(task, withShift);
+          }
+        : this.list.createTask,
       onForceSave: (taskId: string) => {
         this.list.openTask(taskId, true);
         this.list.draggableList.setFocusedItem(taskId);
@@ -84,6 +101,7 @@ export class TasksListWithCreatorStore {
   update = (props: TasksListWithCreatorProps) => {
     this.tasksListAdditions = props.tasksListCallbacks || {};
     this.taskCreatorAdditions = props.taskCreatorCallbacks || {};
+    this.defaultSave = props.defaultSave || false;
   };
 }
 

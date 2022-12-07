@@ -297,6 +297,10 @@ export class DraggableListStore {
     this.isDraggingActive = true;
   };
 
+  get sensors() {
+    return [this.setDnDApi];
+  }
+
   endDragging = (result?: any) => {
     this.isDraggingActive = false;
     this.isControlDraggingActive = false;

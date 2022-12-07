@@ -32,33 +32,41 @@ const ResizableBlocksItem = observer(function ResizableBlocksItem({
 
   return (
     <chakra.div
-      onMouseDown={handleItemMouseDown}
-      cursor={store.isChangesActive ? '' : 'move'}
       overflow='hidden'
       zIndex={item.isTemp ? 1000 : 0}
-      bg={item.isTemp ? 'red.200' : 'blue.200'}
+      bg={item.isTemp ? 'red.200' : 'blue.75'}
       position='absolute'
-      opacity={isGhost ? 0.5 : 0.75}
-      left={left + '%'}
-      w={item.isTemp ? '100%' : `calc(${width}% - 10px)`}
+      opacity={isGhost ? 0.5 : 1}
+      borderRadius='md'
+      borderWidth={2}
+      borderColor='white'
       style={{
         top: item.y,
         height: item.height + 'px',
+        width: item.isTemp ? '100%' : `calc(${width}%)`,
+        left: left + '%',
       }}
       userSelect='none'
+      flexDirection='column'
     >
       <chakra.div
+        onMouseDown={handleItemMouseDown}
+        cursor={store.isChangesActive ? '' : 'move'}
+        h='100%'
+      >
+        {item.id}
+      </chakra.div>
+      <chakra.div
         onMouseDown={handleTopHandlerMouseDown}
-        h={2}
+        h={1.5}
         w='100%'
         position='absolute'
         top={0}
         cursor={store.isChangesActive ? '' : 'ns-resize'}
       />
-      {item.id}
       <chakra.div
         onMouseDown={handleBottomHandlerMouseDown}
-        h={2}
+        h={1.5}
         w='100%'
         position='absolute'
         bottom={0}
@@ -78,15 +86,18 @@ export const ResizableBlocksContainer = observer(
         onMouseDown={store.handleMouseDown}
         h='100%'
         w='100%'
+        pr={2.5}
       >
-        {store.itemsPositioning
-          .filter(({ containerId }) => containerId === id)
-          .map((item) => (
-            <ResizableBlocksItem key={item.id} item={item} />
-          ))}
-        {store.temp && store.temp.containerId === id ? (
-          <ResizableBlocksItem item={store.tempPositioning} />
-        ) : null}
+        <chakra.div position='relative'>
+          {store.itemsPositioning
+            .filter(({ containerId }) => containerId === id)
+            .map((item) => (
+              <ResizableBlocksItem key={item.id} item={item} />
+            ))}
+          {store.temp && store.temp.containerId === id ? (
+            <ResizableBlocksItem item={store.tempPositioning} />
+          ) : null}
+        </chakra.div>
       </chakra.div>
     );
   }

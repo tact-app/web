@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { Modes, useTaskQuickEditorStore } from './store';
-import { SpacesSmallIcon } from '../../../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
+import { SpacesSmallIcon } from '../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
 import { Box, Button, ButtonProps, chakra } from '@chakra-ui/react';
 import React from 'react';
 import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';

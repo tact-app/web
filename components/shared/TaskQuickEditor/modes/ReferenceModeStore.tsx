@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeAutoObservable } from 'mobx';
 import { chakra } from '@chakra-ui/react';
-import { RootStore } from '../../../../../../stores/RootStore';
+import { RootStore } from '../../../../stores/RootStore';
 
 export type ReferenceModeCallbacks = {
   onExit: () => void;

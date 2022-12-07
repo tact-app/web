@@ -1,9 +1,9 @@
 import type { KeyboardEvent } from 'react';
 import { SyntheticEvent } from 'react';
 import { makeAutoObservable, toJS } from 'mobx';
-import { RootStore } from '../../../../../stores/RootStore';
-import { getProvider } from '../../../../../helpers/StoreProvider';
-import { NavigationDirections, TaskData, TaskStatus } from '../../types';
+import { RootStore } from '../../../stores/RootStore';
+import { getProvider } from '../../../helpers/StoreProvider';
+import { NavigationDirections, TaskData, TaskStatus } from '../TasksList/types';
 import { v4 as uuidv4 } from 'uuid';
 import { TaskQuickEditorSuggestionsMenu } from './suggestionsMenuStore';
 import { PriorityModeStore } from './modes/PriorityModeStore';
@@ -29,7 +29,6 @@ export type TaskQuickEditorProps = {
   };
   defaultSpaceId?: string;
   order?: Modes[];
-  listId?: string;
   keepFocus?: boolean;
   task?: TaskData;
   enableReferences?: boolean;
@@ -109,7 +108,6 @@ export class TaskQuickEditorStore {
   keepFocus: boolean = false;
 
   task: TaskQuickEditorProps['task'] = null;
-  listId: string;
   value: string = '';
   isInputFocused: boolean = false;
   isMenuFocused: boolean = false;
@@ -342,11 +340,10 @@ export class TaskQuickEditorStore {
 
   saveTask = (withShift?: boolean, force?: boolean) => {
     if (this.callbacks.onSave && this.value) {
-      const task = {
+      const task: TaskData = {
         ...(toJS(this.task) || {}),
         title: this.value,
         id: this.task ? this.task.id : uuidv4(),
-        listId: this.listId,
         tags: this.modes.tag.tags.map(({ id }) => id),
         status: this.task ? this.task.status : TaskStatus.TODO,
         priority: this.modes.priority.priority,
@@ -651,7 +648,6 @@ export class TaskQuickEditorStore {
 
   update = ({
     callbacks,
-    listId,
     task,
     order,
     keepFocus,
@@ -659,7 +655,6 @@ export class TaskQuickEditorStore {
     enableReferences,
   }: TaskQuickEditorProps) => {
     this.callbacks = callbacks || {};
-    this.listId = task ? task.listId : listId;
     this.keepFocus = keepFocus;
     this.order = order || this.order;
     this.enableReferences = enableReferences;

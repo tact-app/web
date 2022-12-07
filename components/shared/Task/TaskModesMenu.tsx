@@ -1,7 +1,7 @@
 import { HStack } from '@chakra-ui/react';
-import { TaskQuickEditorPriority } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorPriority';
-import { TaskQuickEditorGoal } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorGoal';
-import { TaskQuickEditorSpace } from '../TasksList/components/TaskQuickEditor/TaskQuickEditorSpace';
+import { TaskQuickEditorPriority } from '../TaskQuickEditor/TaskQuickEditorPriority';
+import { TaskQuickEditorGoal } from '../TaskQuickEditor/TaskQuickEditorGoal';
+import { TaskQuickEditorSpace } from '../TaskQuickEditor/TaskQuickEditorSpace';
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useTaskStore } from './store';

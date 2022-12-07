@@ -1,8 +1,8 @@
-import { NavigationDirections, TaskTag } from '../../../types';
+import { NavigationDirections, TaskTag } from '../../TasksList/types';
 import React, { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { makeAutoObservable } from 'mobx';
-import { RootStore } from '../../../../../../stores/RootStore';
+import { RootStore } from '../../../../stores/RootStore';
 
 export type TagModeCallbacks = {
   onFocusLeave: (direction: NavigationDirections) => void;

@@ -12,7 +12,7 @@ import {
   Modes,
   TaskQuickEditorProps,
   TaskQuickEditorStore,
-} from '../TasksList/components/TaskQuickEditor/store';
+} from '../TaskQuickEditor/store';
 import { DescriptionData } from '../../../types/description';
 import { Editor, JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
