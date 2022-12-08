@@ -10,7 +10,7 @@ export const CalendarTableTimes = observer(function CalendarTableTimes() {
       {store.times.map((time) => (
         <chakra.span
           key={time}
-          minH={36}
+          minH={store.hourHeight}
           pt={1}
           pr={1}
           fontSize='sm'

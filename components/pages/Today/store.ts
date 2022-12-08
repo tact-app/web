@@ -124,6 +124,7 @@ export class TodayStore {
   }
 
   get isHotkeysEnabled() {
+    return false;
     return (
       !this.todayListWithCreator.list.modals.controller.isOpen &&
       !this.weekList.modals.controller.isOpen
@@ -137,10 +138,12 @@ export class TodayStore {
   }
 
   get isTasksListHotkeysEnabled() {
+    return false;
     return this.focusedBlock === TodayBlocks.TODAY_LIST;
   }
 
   get isWeekListHotkeysEnabled() {
+    return false;
     return this.focusedBlock === TodayBlocks.WEEK_LIST;
   }
 

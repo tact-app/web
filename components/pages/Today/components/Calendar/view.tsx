@@ -115,11 +115,16 @@ export const CalendarView = observer(function CalendarView(
             </Box>
           </HStack>
           <CalendarTableHeader />
-          <ResizableBlocks items={[]}>
+          <ResizableBlocks
+            items={store.resizableEvents}
+            grid={store.dayGridStep}
+            minValue={store.dayStartTime}
+            maxValue={store.dayEndTime}
+          >
             <Box display='flex' position='relative' w='100%' h='fit-content'>
               <CalendarTableTimes />
-              {store.days.map(({ id }) => (
-                <CalendarTableColumn key={id} dayId={id} />
+              {store.days.map((day) => (
+                <CalendarTableColumn key={day.id} day={day} />
               ))}
             </Box>
           </ResizableBlocks>

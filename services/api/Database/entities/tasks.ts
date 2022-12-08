@@ -1,5 +1,6 @@
 import { TaskData } from '../../../../components/shared/TasksList/types';
 import { DB } from '../index';
+import { Lists } from '../../../../components/shared/TasksList/constants';
 
 const updateList = async (
   db: DB,
@@ -63,6 +64,7 @@ const data = {
     ) => {
       const existedTask = await db.get('tasks', data.task.id);
 
+      console.log('post task', data.task);
       if (!existedTask) {
         await db.add('tasks', data.task);
       }
@@ -81,13 +83,57 @@ const data = {
   delete: {
     '/api/tasks/delete': async (
       db: DB,
-      { ids, listId }: { ids: string[]; listId: string }
+      { ids, listId }: { ids: string[]; listId?: string }
     ) => {
-      await updateList(db, listId, (list) => {
-        list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
+      if (!listId) {
+        const tasks = await Promise.all(ids.map((id) => db.get('tasks', id)));
 
-        return list;
-      });
+        const inputs: Record<string, string[]> = tasks
+          .filter(({ input }) => input)
+          .reduce((acc, task) => {
+            if (!acc[task.input.id]) {
+              acc[task.input.id] = [];
+            }
+
+            acc[task.input.id].push(task.id);
+
+            return acc;
+          }, {});
+
+        await Promise.all([
+          Promise.all(ids.map((id) => db.delete('tasks', id))),
+
+          Promise.all(
+            Object.entries(inputs).map(([inputId, taskIds]) =>
+              updateList(db, inputId, (list) => {
+                list.taskIds = list.taskIds.filter(
+                  (id) => !taskIds.includes(id)
+                );
+
+                return list;
+              })
+            )
+          ),
+
+          updateList(db, Lists.WEEK, (list) => {
+            list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
+
+            return list;
+          }),
+
+          updateList(db, Lists.TODAY, (list) => {
+            list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
+
+            return list;
+          }),
+        ]);
+      } else {
+        await updateList(db, listId, (list) => {
+          list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
+
+          return list;
+        });
+      }
     },
   },
   put: {

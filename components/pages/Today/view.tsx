@@ -102,11 +102,6 @@ export const TodayView = observer(function TodayView() {
                   <TaskCreator
                     instance={store.todayListWithCreator.creator}
                     callbacks={store.todayListWithCreator.taskCreatorCallbacks}
-                    defaultSpaceId={
-                      store.todayListWithCreator.list.input
-                        ? store.todayListWithCreator.list.input.spaceId
-                        : undefined
-                    }
                     keepFocus
                     wrapperProps={{
                       ml: 5,

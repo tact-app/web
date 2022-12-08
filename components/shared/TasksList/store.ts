@@ -9,7 +9,6 @@ import {
 } from '../DraggableList/store';
 import { TasksModals } from './modals/store';
 import { subscriptions } from '../../../helpers/subscriptions';
-import { SpacesInboxItemData } from '../../pages/Spaces/types';
 import { TaskProps } from '../Task/store';
 import { Lists } from './constants';
 
@@ -20,7 +19,6 @@ export type TasksListProps = {
   isReadOnly?: boolean;
   listId?: string;
   tasksReceiverName?: string;
-  input?: SpacesInboxItemData;
   dnd?: boolean;
   callbacks?: {
     onFocusLeave?: (direction: NavigationDirections) => boolean;
@@ -42,7 +40,6 @@ export class TasksListStore {
   modals = new TasksModals(this);
   draggableList = new DraggableListStore(this.root);
 
-  input: SpacesInboxItemData | null = null;
   checkTaskActivity: TasksListProps['checkTaskActivity'];
 
   listId: string = Lists.TODAY;
@@ -371,12 +368,6 @@ export class TasksListStore {
   createTask = (task: TaskData, withShift: boolean) => {
     const placement = withShift ? 'top' : 'bottom';
 
-    task.title = task.title.trim();
-
-    if (this.input) {
-      task.input = toJS(this.input);
-    }
-
     this.items[task.id] = task;
 
     if (placement === 'top') {
@@ -389,12 +380,12 @@ export class TasksListStore {
   };
 
   deleteTasks = (ids: string[]) => {
+    this.order = this.order.filter((id) => !ids.includes(id));
+    this.root.api.tasks.delete(ids);
+
     ids.forEach((id) => {
       delete this.items[id];
     });
-
-    this.order = this.order.filter((id) => !ids.includes(id));
-    this.root.api.tasks.delete(this.listId, ids);
 
     if (!this.draggableList.hasFocusableItems) {
       this.callbacks.onEmpty?.();
@@ -538,7 +529,7 @@ export class TasksListStore {
     });
   };
 
-  subscribe = () => subscriptions(reaction(() => this.input, this.loadTasks));
+  subscribe = () => subscriptions(reaction(() => this.listId, this.loadTasks));
 
   reset = () => {
     this.editingTaskId = null;
@@ -558,7 +549,6 @@ export class TasksListStore {
     this.isForceHotkeysEnabled = props.isHotkeysEnabled ?? true;
     this.isReadOnly = props.isReadOnly ?? false;
     this.listId = props.listId;
-    this.input = props.input;
     this.tasksReceiverName = props.tasksReceiverName;
   };
 
