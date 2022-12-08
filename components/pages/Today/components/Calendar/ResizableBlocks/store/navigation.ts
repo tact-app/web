@@ -194,14 +194,8 @@ export class ResizableBlocksNavigation {
     const itemId = this.focusedItem.id;
 
     const focusedItem = this.parent.items[itemId];
-    const focusedItemPos = this.parent.itemsPositions[itemId][containerId];
     const focusedItemContainerItems =
       this.parent.itemsByContainerId[containerId];
-    const focusedItemLevelCenter =
-      focusedItemPos.fromLevel +
-      (focusedItemPos.toLevel - focusedItemPos.fromLevel) / 2;
-    const focusedItemRelativeCenter =
-      focusedItemLevelCenter / focusedItemPos.totalLevels;
 
     const nearestItem = focusedItemContainerItems
       .filter((item) => {
@@ -216,39 +210,10 @@ export class ResizableBlocksNavigation {
         pos: this.parent.itemsPositions[item.id][containerId],
       }))
       .sort((itemA, itemB) => {
-        if (focusedItemPos.totalLevels > 1) {
-          // const itemALevelCenter =
-          //   itemA.pos.fromLevel + (itemA.pos.toLevel - itemA.pos.fromLevel) / 2;
-          // const itemBLevelCenter =
-          //   itemB.pos.fromLevel + (itemB.pos.toLevel - itemB.pos.fromLevel) / 2;
-          // const itemARelativeLevel = itemALevelCenter / itemA.pos.totalLevels;
-          // const itemBRelativeLevel = itemBLevelCenter / itemB.pos.totalLevels;
-          //
-          // const itemADelta = Math.abs(
-          //   itemARelativeLevel - focusedItemRelativeCenter
-          // );
-          // const itemBDelta = Math.abs(
-          //   itemBRelativeLevel - focusedItemRelativeCenter
-          // );
-
-          //const totalDelta = itemADelta - itemBDelta;
-          const totalDelta = 0;
-
-          if (totalDelta === 0) {
-            if (side === 'top') {
-              return itemB.item.end - itemA.item.end;
-            } else {
-              return itemA.item.start - itemB.item.start;
-            }
-          } else {
-            return totalDelta;
-          }
+        if (side === 'top') {
+          return itemB.item.end - itemA.item.end;
         } else {
-          if (side === 'top') {
-            return itemB.item.end - itemA.item.end;
-          } else {
-            return itemA.item.start - itemB.item.start;
-          }
+          return itemA.item.start - itemB.item.start;
         }
       })[0];
 
