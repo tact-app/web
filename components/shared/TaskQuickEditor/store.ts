@@ -13,6 +13,7 @@ import { SUGGESTIONS_MENU_ID } from './TaskQuickEditorMenu';
 import { TAGS_ID } from './TaskQuickEditorTags';
 import { GoalModeStore } from './modes/GoalModeStore';
 import { ReferenceModeStore } from './modes/ReferenceModeStore';
+import { SpacesInboxItemData } from '../../pages/Spaces/types';
 
 export type TaskQuickEditorProps = {
   callbacks: {
@@ -27,7 +28,7 @@ export type TaskQuickEditorProps = {
     onNavigate?: (direction: NavigationDirections) => boolean;
     onModeNavigate?: (mode: Modes, direction: NavigationDirections) => boolean;
   };
-  defaultSpaceId?: string;
+  input?: SpacesInboxItemData;
   order?: Modes[];
   keepFocus?: boolean;
   task?: TaskData;
@@ -102,6 +103,7 @@ export class TaskQuickEditorStore {
   modeEndPos = 0;
   activeModeType: Modes = Modes.DEFAULT;
   focusedMode: Modes | null = null;
+  inputData: SpacesInboxItemData | null = null;
 
   enableReferences: boolean = true;
   isMenuOpen: boolean = false;
@@ -340,9 +342,12 @@ export class TaskQuickEditorStore {
 
   saveTask = (withShift?: boolean, force?: boolean) => {
     if (this.callbacks.onSave && this.value) {
+      const title = this.value.trim();
+
       const task: TaskData = {
         ...(toJS(this.task) || {}),
-        title: this.value,
+        title,
+        input: toJS(this.task?.input || this.inputData),
         id: this.task ? this.task.id : uuidv4(),
         tags: this.modes.tag.tags.map(({ id }) => id),
         status: this.task ? this.task.status : TaskStatus.TODO,
@@ -651,13 +656,16 @@ export class TaskQuickEditorStore {
     task,
     order,
     keepFocus,
-    defaultSpaceId,
     enableReferences,
+    input,
   }: TaskQuickEditorProps) => {
     this.callbacks = callbacks || {};
     this.keepFocus = keepFocus;
     this.order = order || this.order;
     this.enableReferences = enableReferences;
+    this.inputData = input;
+
+    const defaultSpaceId = task?.spaceId || input?.spaceId;
 
     if (task) {
       if (

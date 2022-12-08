@@ -5,6 +5,13 @@ export type EventData = {
   color: string;
   start: number;
   end: number;
-  dayIndex: number;
+  dayId: string;
   isAllDay?: boolean;
+};
+
+export type DayData = {
+  id: string;
+  date: Date;
+  from: number;
+  to: number;
 };

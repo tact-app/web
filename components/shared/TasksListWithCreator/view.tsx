@@ -21,9 +21,7 @@ export const TasksListWithCreatorView = observer(
         <TaskCreator
           instance={store.creator}
           callbacks={store.taskCreatorCallbacks}
-          defaultSpaceId={
-            store.list.input ? store.list.input.spaceId : undefined
-          }
+          input={props.input}
           keepFocus
           wrapperProps={{
             ml: props.dnd ? 5 : 0,

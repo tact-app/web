@@ -8,11 +8,13 @@ import { getProvider } from '../../../helpers/StoreProvider';
 import { TasksListProps, TasksListStore } from '../TasksList/store';
 import { NavigationDirections } from '../TasksList/types';
 import { Lists, referenceToList } from '../TasksList/constants';
+import { SpacesInboxItemData } from '../../pages/Spaces/types';
 
 export type TasksListWithCreatorProps = TasksListProps & {
   taskCreatorCallbacks?: TaskQuickEditorProps['callbacks'];
   tasksListCallbacks?: TasksListProps['callbacks'];
   defaultSave?: boolean;
+  input?: SpacesInboxItemData;
 };
 
 export class TasksListWithCreatorStore {
