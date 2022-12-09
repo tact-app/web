@@ -1,3 +1,5 @@
+import { EventTypes } from './constants';
+
 export type EventData = {
   id: string;
   title: string;
@@ -5,7 +7,16 @@ export type EventData = {
   color: string;
   start: number;
   end: number;
-  dayId: string;
+  type: EventTypes;
+  data?:
+    | {
+        type: EventTypes.TASK;
+        id: string;
+        title: string;
+      }
+    | {
+        type: EventTypes.EVENT;
+      };
   isAllDay?: boolean;
 };
 

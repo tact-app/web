@@ -14,7 +14,7 @@ export const ResizableBlocks = observer(function ResizableBlocks(
 ) {
   return (
     <ResizableBlocksStoreProvider {...props}>
-      <ResizableBlocksView {...props} />
+      <ResizableBlocksView>{props.children}</ResizableBlocksView>
     </ResizableBlocksStoreProvider>
   );
 });

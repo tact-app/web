@@ -18,6 +18,7 @@ import {
   TasksListWithCreatorStore,
 } from '../../shared/TasksListWithCreator/store';
 import { Lists, referenceToList } from '../../shared/TasksList/constants';
+import { CalendarProps } from './components/Calendar/store';
 
 const FOCUS_MODE_WIDTH = 300;
 
@@ -609,6 +610,11 @@ export class TodayStore {
     onBlur: this.handleFocusTasksList,
     onGoalCreateClick: (cb) =>
       this.todayListWithCreator.list.modals.openGoalCreationModal(cb),
+  };
+
+  calendarCallbacks: CalendarProps['callbacks'] = {
+    onExpand: this.expandCalendar,
+    onCollapse: this.collapseCalendar,
   };
 }
 
