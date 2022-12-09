@@ -2,6 +2,19 @@
 
 set -euo pipefail
 
+refresh() {
+  if ! git diff-index --quiet HEAD; then
+    git stash -m 'stash before pull'
+    trap '{ git stash pop; }' EXIT
+  fi
+
+  git pull --force --prune --rebase --tags "${@:---all}"
+  git submodule update --init --rebase --recursive --remote
+
+  install --from-scratch
+  tools npm ci
+}
+
 setup() {
   set_fontawesome_token
   set_okteto_token

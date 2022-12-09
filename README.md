@@ -77,6 +77,12 @@ $ run server docker [--from-scratch]  # starts the application in the container
 
 ## Tools
 
+### Update
+
+```bash
+$ run refresh
+```
+
 ### Installation
 
 ```bash
