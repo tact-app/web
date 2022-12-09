@@ -56,6 +56,7 @@ export const ResizableBlocksItem = observer(function ResizableBlocksItem({
     ? item.color + '.300'
     : 'transparent';
   const borderStyle = item.isFocused ? 'solid' : 'dashed';
+  const Component = store.component;
 
   return (
     <chakra.div
@@ -89,7 +90,7 @@ export const ResizableBlocksItem = observer(function ResizableBlocksItem({
         borderWidth={2}
         borderColor={borderColor}
       >
-        {item.id}
+        {Component ? <Component id={item.id} data={item.data} /> : null}
       </chakra.div>
       <chakra.div
         onMouseDown={handleTopHandlerMouseDown}

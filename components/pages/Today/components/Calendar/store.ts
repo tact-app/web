@@ -2,8 +2,16 @@ import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { TaskData } from '../../../../shared/TasksList/types';
 import { EventData } from './types';
-import { ResizableBlocksItemData } from './ResizableBlocks/types';
-import { ResizableBlocksStore } from './ResizableBlocks/store';
+import {
+  ResizableBlocksDropItemData,
+  ResizableBlocksItemData,
+  ResizableBlocksTypes,
+} from './ResizableBlocks/types';
+import {
+  ResizableBlocksProps,
+  ResizableBlocksStore,
+} from './ResizableBlocks/store';
+import { EventColors, EventTypes } from './constants';
 
 export type CalendarProps = {
   dropItem?: TaskData;
@@ -19,12 +27,14 @@ export class CalendarStore {
     makeAutoObservable(this);
   }
 
+  callbacks: CalendarProps['callbacks'] = {};
+
   resizeBlocks = new ResizableBlocksStore();
 
   isCollapsed: boolean = false;
 
-  hourHeight = '49px';
-  dayGridStep = 10;
+  hourHeight = '144px';
+  dayGridStep = 15;
   dayStartTime = 0;
   dayEndTime = 24 * 60;
 
@@ -42,6 +52,26 @@ export class CalendarStore {
     return Math.round(timestamp / (1000 * 60));
   }
 
+  convertMinutesToTimestamp(minutes: number) {
+    return minutes * 1000 * 60;
+  }
+
+  get resizableBlockTask(): ResizableBlocksDropItemData {
+    if (!this.dropItem) {
+      return null;
+    }
+
+    return {
+      color: EventColors.TASK,
+      type: ResizableBlocksTypes.GHOST,
+      data: {
+        type: EventTypes.TASK,
+        id: this.dropItem.id,
+        title: this.dropItem.title,
+      },
+    };
+  }
+
   get days() {
     return Array.from({ length: Math.min(this.daysCount, 4) }).map((_, i) => {
       const date = new Date(this.today);
@@ -52,8 +82,6 @@ export class CalendarStore {
 
       const end = new Date(date);
       end.setHours(23, 59, 59, 999);
-
-      console.log('day', date, start, end);
 
       return {
         date,
@@ -88,6 +116,7 @@ export class CalendarStore {
       start: this.convertTimestampToMinutes(event.start),
       end: this.convertTimestampToMinutes(event.end),
       color: event.color,
+      type: ResizableBlocksTypes.SOLID,
     };
 
     this.resizeBlocks.addItem(resizableBlockItemData);
@@ -98,6 +127,21 @@ export class CalendarStore {
     this.resizeBlocks.removeItem(id);
   };
 
+  handleEventCreate = (item: ResizableBlocksItemData) => {
+    const event: EventData = {
+      id: item.id,
+      title: 'Event',
+      data: item.data,
+      description: '',
+      color: EventColors.EVENT,
+      type: EventTypes.EVENT,
+      start: this.convertMinutesToTimestamp(item.start),
+      end: this.convertMinutesToTimestamp(item.end),
+    };
+
+    this.addEvent(event);
+  };
+
   init = () => {};
 
   destroy = () => {};
@@ -105,6 +149,13 @@ export class CalendarStore {
   update = (props: CalendarProps) => {
     this.dropItem = props.dropItem;
     this.isCollapsed = props.isCollapsed;
+    this.callbacks = props.callbacks || {};
+
+    this.resizeBlocks.setDropItem(this.resizableBlockTask);
+  };
+
+  resizableBlocksCallbacks: ResizableBlocksProps['callbacks'] = {
+    onItemCreate: this.handleEventCreate,
   };
 }
 

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { CalendarProps, useCalendarStore } from './store';
+import { useCalendarStore } from './store';
 import {
   Box,
   Button,
@@ -14,10 +14,9 @@ import { CalendarTableTimes } from './CalendarTableTimes';
 import { CalendarTableHeader } from './CalendarTableHeader';
 import { ExpandIcon } from '../../../../shared/Icons/ExpandIcon';
 import { ResizableBlocks } from './ResizableBlocks';
+import { CalendarTableEvent } from './CalendarTableEvent';
 
-export const CalendarView = observer(function CalendarView(
-  props: CalendarProps
-) {
+export const CalendarView = observer(function CalendarView() {
   const store = useCalendarStore();
 
   return (
@@ -32,7 +31,7 @@ export const CalendarView = observer(function CalendarView(
     >
       {store.isCollapsed ? (
         <Button
-          onClick={props.callbacks.onExpand}
+          onClick={store.callbacks.onExpand}
           variant='unstyled'
           p={3}
           pt={10}
@@ -107,7 +106,7 @@ export const CalendarView = observer(function CalendarView(
                 ml={4}
                 size='sm'
                 variant='ghost'
-                onClick={props.callbacks.onCollapse}
+                onClick={store.callbacks.onCollapse}
                 p={1}
               >
                 <ExpandIcon />
@@ -116,10 +115,12 @@ export const CalendarView = observer(function CalendarView(
           </HStack>
           <CalendarTableHeader />
           <ResizableBlocks
-            items={store.resizableEvents}
+            instance={store.resizeBlocks}
             grid={store.dayGridStep}
             minValue={store.dayStartTime}
             maxValue={store.dayEndTime}
+            block={CalendarTableEvent}
+            callbacks={store.resizableBlocksCallbacks}
           >
             <Box display='flex' position='relative' w='100%' h='fit-content'>
               <CalendarTableTimes />

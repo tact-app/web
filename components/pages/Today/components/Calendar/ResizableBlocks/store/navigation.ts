@@ -25,6 +25,7 @@ export class ResizableBlocksNavigation {
     LEFT: () => this.moveFocus(NavigationDirections.LEFT),
     UP: () => this.moveFocus(NavigationDirections.UP),
     DOWN: () => this.moveFocus(NavigationDirections.DOWN),
+    ESCAPE: () => this.removeFocusedItem(),
     ENTER: console.log,
   };
 
