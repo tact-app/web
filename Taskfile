@@ -3,13 +3,20 @@
 set -euo pipefail
 
 refresh() {
+  git fetch --all --prune --prune-tags --tags
+
+  local remote actual target shared
+  remote=${1:-'@{u}'}
+  actual=$(git rev-parse @)
+  target=$(git rev-parse "${remote}")
+  shared="$(git merge-base @ "${remote}")"
+  [ "${actual}" != "${shared}" ] && echo Everything is up to date && return 0
+
   if ! git diff-index --quiet HEAD; then
     git stash -m 'stash before pull'
     trap '{ git stash pop; }' EXIT
   fi
-
-  git pull --force --prune --rebase --tags "${@:---all}"
-  git submodule update --init --rebase --recursive --remote
+  git pull --force --rebase
 
   install --from-scratch
   tools npm ci
