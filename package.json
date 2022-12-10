@@ -40,7 +40,7 @@
     "@tiptap/extension-underline": "^2.0.0-beta.205",
     "@tiptap/react": "^2.0.0-beta.207",
     "@tiptap/starter-kit": "^2.0.0-beta.207",
-    "@tiptap/suggestion": "^2.0.0-beta.205",
+    "@tiptap/suggestion": "^2.0.0-beta.207",
     "allotment": "^1.17.0",
     "chakra-react-select": "^4.4.2",
     "emoji-mart": "^5.3.2",
