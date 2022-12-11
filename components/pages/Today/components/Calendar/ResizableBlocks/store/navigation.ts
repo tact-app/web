@@ -15,18 +15,37 @@ export class ResizableBlocksNavigation {
     DOWN: 'arrowdown',
     TAB: 'tab',
     SHIFT_TAB: 'shift+tab',
-    ENTER: 'enter',
     ESC: 'escape',
     DELETE: ['delete', 'backspace'],
   };
 
   hotkeyHandlers = {
-    RIGHT: () => this.moveFocus(NavigationDirections.RIGHT),
-    LEFT: () => this.moveFocus(NavigationDirections.LEFT),
-    UP: () => this.moveFocus(NavigationDirections.UP),
-    DOWN: () => this.moveFocus(NavigationDirections.DOWN),
-    ESCAPE: () => this.removeFocusedItem(),
-    ENTER: console.log,
+    RIGHT: (e) => {
+      e.preventDefault();
+      this.moveFocus(NavigationDirections.RIGHT);
+    },
+    LEFT: (e) => {
+      e.preventDefault();
+      this.moveFocus(NavigationDirections.LEFT);
+    },
+    UP: (e) => {
+      e.preventDefault();
+      this.moveFocus(NavigationDirections.UP);
+    },
+    DOWN: (e) => {
+      e.preventDefault();
+      this.moveFocus(NavigationDirections.DOWN);
+    },
+    TAB: (e) => {
+      e.preventDefault();
+      this.moveFocus(NavigationDirections.DOWN);
+    },
+    SHIFT_TAB: (e) => {
+      e.preventDefault();
+      this.moveFocus(NavigationDirections.UP);
+    },
+    ESCAPE: () => this.resetFocus(),
+    DELETE: () => this.removeFocusedItem(),
   };
 
   focusedItem: {
@@ -34,8 +53,18 @@ export class ResizableBlocksNavigation {
     containerId: string;
   } | null = null;
 
+  focusFirstItem() {
+    const { itemsList } = this.parent;
+    const firstItem = [...itemsList].sort((a, b) => a.start - b.start)[0];
+    const firstItemContainerId = this.parent.getItemContainerId(firstItem.id);
+
+    if (firstItem) {
+      this.setFocusedItem(firstItem.id, firstItemContainerId);
+    }
+  }
+
   setFocusedItem = (id: string, containerId: string) => {
-    this.removeFocusedItem();
+    this.resetFocus();
 
     Object.values(this.parent.itemsPositions[id]).forEach((item) => {
       item.isFocused = true;
@@ -45,9 +74,11 @@ export class ResizableBlocksNavigation {
       id,
       containerId,
     };
+
+    this.parent.callbacks.onFocusItem?.(id);
   };
 
-  removeFocusedItem = () => {
+  resetFocus = () => {
     if (this.focusedItem) {
       Object.values(this.parent.itemsPositions[this.focusedItem.id]).forEach(
         (item) => {
@@ -57,6 +88,15 @@ export class ResizableBlocksNavigation {
     }
 
     this.focusedItem = null;
+  };
+
+  removeFocusedItem = () => {
+    if (this.focusedItem) {
+      const { id } = this.focusedItem;
+
+      this.moveFocus(NavigationDirections.DOWN);
+      this.parent.removeItem(id);
+    }
   };
 
   getNextContainer = (containerId: string) => {
@@ -156,6 +196,14 @@ export class ResizableBlocksNavigation {
       );
 
     const itemPos = neighborItems.sort((itemPosA, itemPosB) => {
+      if (itemPosA.y === focusedItemPos.y) {
+        return -1;
+      }
+
+      if (itemPosB.y === focusedItemPos.y) {
+        return 1;
+      }
+
       const itemAEnd = itemPosA.y + itemPosA.height;
       const itemBEnd = itemPosB.y + itemPosB.height;
       const itemATopDelta = Math.abs(itemPosA.y - focusedItemCenter);
@@ -195,8 +243,15 @@ export class ResizableBlocksNavigation {
     const itemId = this.focusedItem.id;
 
     const focusedItem = this.parent.items[itemId];
+    const focusedItemPos = this.parent.itemsPositions[itemId][containerId];
+
     const focusedItemContainerItems =
       this.parent.itemsByContainerId[containerId];
+    const focusedItemLevelCenter =
+      focusedItemPos.fromLevel +
+      (focusedItemPos.toLevel - focusedItemPos.fromLevel) / 2;
+    const focusedItemRelativeCenter =
+      focusedItemLevelCenter / focusedItemPos.totalLevels;
 
     const nearestItem = focusedItemContainerItems
       .filter((item) => {
@@ -211,11 +266,39 @@ export class ResizableBlocksNavigation {
         pos: this.parent.itemsPositions[item.id][containerId],
       }))
       .sort((itemA, itemB) => {
+        let result: number;
+
         if (side === 'top') {
-          return itemB.item.end - itemA.item.end;
+          result = itemB.item.end - itemA.item.end;
         } else {
-          return itemA.item.start - itemB.item.start;
+          result = itemA.item.start - itemB.item.start;
         }
+
+        if (result === 0) {
+          if (focusedItemPos.totalLevels === 1) {
+            return itemA.pos.fromLevel - itemB.pos.fromLevel;
+          } else {
+            const itemALevelCenter =
+              itemA.pos.fromLevel +
+              (itemA.pos.toLevel - itemA.pos.fromLevel) / 2;
+            const itemBLevelCenter =
+              itemB.pos.fromLevel +
+              (itemB.pos.toLevel - itemB.pos.fromLevel) / 2;
+            const itemARelativeLevel = itemALevelCenter / itemA.pos.totalLevels;
+            const itemBRelativeLevel = itemBLevelCenter / itemB.pos.totalLevels;
+
+            const itemADelta = Math.abs(
+              itemARelativeLevel - focusedItemRelativeCenter
+            );
+            const itemBDelta = Math.abs(
+              itemBRelativeLevel - focusedItemRelativeCenter
+            );
+
+            return itemADelta - itemBDelta;
+          }
+        }
+
+        return result;
       })[0];
 
     if (nearestItem) {
@@ -242,10 +325,15 @@ export class ResizableBlocksNavigation {
   };
 
   moveFocus = (direction: NavigationDirections) => {
-    const nextFocusedItem = this.getNextFocusedITemByDirection(direction);
+    if (this.focusedItem) {
+      const nextFocusedItem = this.getNextFocusedITemByDirection(direction);
 
-    if (nextFocusedItem) {
-      this.setFocusedItem(nextFocusedItem.id, nextFocusedItem.containerId);
+      if (nextFocusedItem) {
+        this.setFocusedItem(nextFocusedItem.id, nextFocusedItem.containerId);
+      } else if (direction === NavigationDirections.LEFT) {
+        this.parent.callbacks.onFocusLeave?.(direction);
+        this.resetFocus();
+      }
     }
   };
 

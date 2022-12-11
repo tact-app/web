@@ -6,4 +6,5 @@ export enum EventColors {
 export enum EventTypes {
   TASK = 'TASK',
   EVENT = 'EVENT',
+  TIME_BLOCK = 'TIME_BLOCK',
 }

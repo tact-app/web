@@ -9,7 +9,9 @@ export const ResizableBlocksView = observer(function ResizableBlocksView(
 ) {
   const store = useResizableBlocksStore();
 
-  useHotkeysHandler(store.navigation.keyMap, store.navigation.hotkeyHandlers);
+  useHotkeysHandler(store.navigation.keyMap, store.navigation.hotkeyHandlers, {
+    enabled: store.isHotkeysEnabled,
+  });
 
   return (
     <Box

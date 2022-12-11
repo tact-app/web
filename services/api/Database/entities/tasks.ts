@@ -64,7 +64,6 @@ const data = {
     ) => {
       const existedTask = await db.get('tasks', data.task.id);
 
-      console.log('post task', data.task);
       if (!existedTask) {
         await db.add('tasks', data.task);
       }
@@ -78,6 +77,15 @@ const data = {
 
         return list;
       });
+    },
+    '/api/tasks/map': async (db: DB, data: { taskIds: string[] }) => {
+      const allTasks = await db.getAll('tasks');
+      const tasks = allTasks.filter(({ id }) => data.taskIds.includes(id));
+
+      return tasks.reduce((acc, task) => {
+        acc[task.id] = task;
+        return acc;
+      }, {});
     },
   },
   delete: {
@@ -157,6 +165,8 @@ const data = {
         destination?: number;
       }
     ) => {
+      console.log('swap', data);
+
       await updateList(db, data.fromListId, (list) => {
         list.taskIds = list.taskIds.filter((id) => !data.taskIds.includes(id));
 
