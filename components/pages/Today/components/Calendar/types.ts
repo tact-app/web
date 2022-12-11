@@ -12,10 +12,10 @@ export type EventData = {
     | {
         type: EventTypes.TASK;
         id: string;
-        title: string;
       }
     | {
         type: EventTypes.EVENT;
+        taskIds?: string[];
       };
   isAllDay?: boolean;
 };

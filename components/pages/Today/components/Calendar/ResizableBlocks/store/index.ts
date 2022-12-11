@@ -9,6 +9,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { FC, MouseEvent as ReactMouseEvent } from 'react';
 import { ResizableBlocksNavigation } from './navigation';
+import { NavigationDirections } from '../../../../../../shared/TasksList/types';
 
 export type ResizableBlocksComponent = FC<{ id: string; data?: any }>;
 
@@ -18,8 +19,12 @@ export type ResizableBlocksProps = {
   minValue?: number;
   maxValue?: number;
   grid?: number;
+  isHotkeysEnabled?: boolean;
   callbacks?: {
     onItemCreate?: (item: ResizableBlocksItemData) => void;
+    onFocusLeave?: (direction: NavigationDirections) => void;
+    onFocusItem?: (itemId: string) => void;
+    onItemRemove?: (itemId: string) => void;
   };
 };
 
@@ -46,6 +51,7 @@ export class ResizableBlocksStore {
   temp: ResizableBlocksItemData | null = null;
   items: Record<string, ResizableBlocksItemData> = {};
   dropItem: ResizableBlocksDropItemData | null = null;
+  isHotkeysEnabled: boolean = false;
 
   cursor: string = 'default';
   resizeActiveHandler: 'top' | 'bottom' | null = null;
@@ -161,6 +167,19 @@ export class ResizableBlocksStore {
       this.isCreatingActive ||
       this.isDroppingActive
     );
+  }
+
+  getItemContainerId(itemId: string) {
+    const item = this.items[itemId];
+
+    return Object.entries(this.containers)
+      .filter(([id, { from, to }]) => {
+        return item.start >= from && item.end <= to;
+      })
+      .sort(([idA, { from: fromA }], [idB, { from: fromB }]) => {
+        return fromA - fromB;
+      })
+      .map(([id]) => id)[0];
   }
 
   makePosition = (
@@ -369,6 +388,8 @@ export class ResizableBlocksStore {
   removeItem = (id: string) => {
     delete this.items[id];
     delete this.itemsPositions[id];
+
+    this.callbacks.onItemRemove?.(id);
   };
 
   prepareForCreating = () => {
@@ -478,7 +499,7 @@ export class ResizableBlocksStore {
       const resizeSide = mouse.value > item.start ? 'bottom' : 'top';
 
       if (resizeSide === 'top') {
-        this.temp.start = mouse.value;
+        this.temp.start = Math.min(mouse.value, item.start - this.grid);
         this.temp.end = item.start;
       } else if (resizeSide === 'bottom') {
         this.temp.start = item.start;
@@ -491,7 +512,7 @@ export class ResizableBlocksStore {
         this.temp.start = item.end;
         this.temp.end = item.start + delta;
       } else if (resizeSide === 'top') {
-        this.temp.start = item.start + delta;
+        this.temp.start = Math.min(item.start + delta, item.end - this.grid);
         this.temp.end = item.end;
       }
     }
@@ -718,7 +739,7 @@ export class ResizableBlocksStore {
   };
 
   handleMouseDown = (e: ReactMouseEvent) => {
-    this.navigation.removeFocusedItem();
+    this.navigation.resetFocus();
     this.prepareForAction();
 
     const isInBounds = this.checkMouseInBounds();
@@ -818,6 +839,8 @@ export class ResizableBlocksStore {
     this.pixelValue = props.pixelValue;
     this.component = props.block;
     this.callbacks = props.callbacks || {};
+
+    this.isHotkeysEnabled = props.isHotkeysEnabled;
   };
 }
 

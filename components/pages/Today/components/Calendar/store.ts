@@ -1,6 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { TaskData } from '../../../../shared/TasksList/types';
+import {
+  NavigationDirections,
+  TaskData,
+} from '../../../../shared/TasksList/types';
 import { EventData } from './types';
 import {
   ResizableBlocksDropItemData,
@@ -12,18 +15,25 @@ import {
   ResizableBlocksStore,
 } from './ResizableBlocks/store';
 import { EventColors, EventTypes } from './constants';
+import { RootStore } from '../../../../../stores/RootStore';
 
 export type CalendarProps = {
   dropItem?: TaskData;
+  tasks: Record<string, TaskData>;
   isCollapsed?: boolean;
+  isHotkeysEnabled?: boolean;
   callbacks: {
+    onTaskStatusChange?: (id: string, status: string) => void;
+    onTaskScheduleChange?: (id: string, start: number, end: number) => void;
     onExpand?: () => void;
     onCollapse?: () => void;
+    onFocusLeave?: (direction: NavigationDirections) => void;
+    onFocusItem?: (id: string) => void;
   };
 };
 
 export class CalendarStore {
-  constructor() {
+  constructor(public root: RootStore) {
     makeAutoObservable(this);
   }
 
@@ -42,6 +52,7 @@ export class CalendarStore {
   currentLeftDay = 0;
   dropItem: TaskData = null;
 
+  tasks: Record<string, TaskData> = {};
   times: string[] = Array.from({ length: 24 }).map((_, i) => `${i}:00`);
   today: Date = new Date();
   todayId: string = this.today.toDateString();
@@ -108,7 +119,7 @@ export class CalendarStore {
     this.daysCount = count;
   };
 
-  addEvent = (event: EventData) => {
+  addEvent = async (event: EventData) => {
     this.events[event.id] = event;
 
     const resizableBlockItemData: ResizableBlocksItemData = {
@@ -124,7 +135,10 @@ export class CalendarStore {
 
   removeEvent = (id: string) => {
     delete this.events[id];
-    this.resizeBlocks.removeItem(id);
+  };
+
+  focus = () => {
+    this.resizeBlocks.navigation.focusFirstItem();
   };
 
   handleEventCreate = (item: ResizableBlocksItemData) => {
@@ -142,6 +156,14 @@ export class CalendarStore {
     this.addEvent(event);
   };
 
+  handleTaskStatusChange = (id: string, status: string) => {
+    this.callbacks.onTaskStatusChange?.(id, status);
+  };
+
+  handleOutsideClick = () => {
+    this.resizeBlocks.navigation.resetFocus();
+  };
+
   init = () => {};
 
   destroy = () => {};
@@ -150,13 +172,18 @@ export class CalendarStore {
     this.dropItem = props.dropItem;
     this.isCollapsed = props.isCollapsed;
     this.callbacks = props.callbacks || {};
-
     this.resizeBlocks.setDropItem(this.resizableBlockTask);
+    this.tasks = props.tasks;
   };
 
-  resizableBlocksCallbacks: ResizableBlocksProps['callbacks'] = {
-    onItemCreate: this.handleEventCreate,
-  };
+  get resizableBlocksCallbacks(): ResizableBlocksProps['callbacks'] {
+    return {
+      onItemCreate: this.handleEventCreate,
+      onItemRemove: this.removeEvent,
+      onFocusLeave: this.callbacks.onFocusLeave,
+      onFocusItem: this.callbacks.onFocusItem,
+    };
+  }
 }
 
 export const {

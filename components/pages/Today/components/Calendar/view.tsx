@@ -8,6 +8,7 @@ import {
   Heading,
   HStack,
   Text,
+  useOutsideClick,
 } from '@chakra-ui/react';
 import { CalendarTableColumn } from './CalendarTableColumn';
 import { CalendarTableTimes } from './CalendarTableTimes';
@@ -15,9 +16,17 @@ import { CalendarTableHeader } from './CalendarTableHeader';
 import { ExpandIcon } from '../../../../shared/Icons/ExpandIcon';
 import { ResizableBlocks } from './ResizableBlocks';
 import { CalendarTableEvent } from './CalendarTableEvent';
+import { useRef } from 'react';
 
 export const CalendarView = observer(function CalendarView() {
   const store = useCalendarStore();
+  const ref = useRef();
+
+  useOutsideClick({
+    ref,
+    enabled: !store.isCollapsed,
+    handler: store.handleOutsideClick,
+  });
 
   return (
     <Box

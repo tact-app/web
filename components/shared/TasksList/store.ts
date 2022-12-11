@@ -68,7 +68,8 @@ export class TasksListStore {
     EDIT: 'space',
     OPEN_AND_EDIT: 'enter',
     FOCUS_LEAVE_LEFT: 'arrowleft',
-    OPEN: 'arrowright',
+    FOCUS_LEAVE_RIGHT: 'arrowright',
+    OPEN: 'enter',
   };
 
   hotkeyHandlers = {
@@ -118,13 +119,13 @@ export class TasksListStore {
       if (!this.openedTask) {
         if (this.draggableList.focused.length) {
           if (this.openedTask === this.draggableList.focused[0]) {
-            this.isEditorFocused = true;
+            this.focusEditor();
           } else {
             this.openTask(this.draggableList.focused[0]);
           }
         }
       } else {
-        this.isEditorFocused = true;
+        this.focusEditor();
       }
     },
     MOVE: () => {
@@ -134,6 +135,14 @@ export class TasksListStore {
       if (this.openedTask) {
         this.closeTask();
       } else if (this.callbacks.onFocusLeave?.(NavigationDirections.LEFT)) {
+        this.draggableList.resetFocusedItem();
+        this.setEditingTask(null);
+      }
+    },
+    FOCUS_LEAVE_RIGHT: () => {
+      if (this.openedTask) {
+        this.focusEditor();
+      } else if (this.callbacks.onFocusLeave?.(NavigationDirections.RIGHT)) {
         this.draggableList.resetFocusedItem();
         this.setEditingTask(null);
       }
@@ -341,7 +350,7 @@ export class TasksListStore {
     this.openedTask = taskId;
 
     if (withEditor) {
-      this.isEditorFocused = true;
+      this.focusEditor();
     }
 
     this.callbacks.onOpenTask?.(!!this.openedTask);
