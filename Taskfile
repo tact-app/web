@@ -43,55 +43,26 @@ setup() {
   printf '└─ run whoami \t\t- to show meta information about your environment\n'
 }
 
-set_fontawesome_token() {
+set_fontawesome_token() { __store_token 'Font Awesome' fontawesome.token 36 "${1:-true}"; }
+set_okteto_token() { __store_token Okteto okteto.token 48 "${1:-true}"; }
+set_vercel_token() { __store_token Vercel vercel.token 24 "${1:-true}"; }
+__store_token() {
+  local name="${1}" key="${2}" length="${3}" update="${4:-true}"
+
   local token
-  echo Please enter Font Awesome token:
+  echo Please enter "${name}" token:
   read -rs token
   token=${token## }
   token=${token%% }
 
-  if [ "${#token}" -lt 36 ]; then
+  if [ "${#token}" -lt "${length}" ]; then
     echo 'Token is invalid.'
     return 1
   fi
-  git config fontawesome.token "${token}"
+  git config "${key}" "${token}"
   echo 'Token saved.'
 
-  [ "${1:-true}" != false ] && env || return 0
-}
-
-set_okteto_token() {
-  local token
-  echo Please enter Okteto token:
-  read -rs token
-  token=${token## }
-  token=${token%% }
-
-  if [ "${#token}" -lt 48 ]; then
-    echo 'Token is invalid.'
-    return 1
-  fi
-  git config okteto.token "${token}"
-  echo 'Token saved.'
-
-  [ "${1:-true}" != false ] && env || return 0
-}
-
-set_vercel_token() {
-  local token
-  echo Please enter Vercel token:
-  read -rs token
-  token=${token## }
-  token=${token%% }
-
-  if [ "${#token}" -lt 24 ]; then
-    echo 'Token is invalid.'
-    return 1
-  fi
-  git config vercel.token "${token}"
-  echo 'Token saved.'
-
-  [ "${1:-true}" != false ] && env || return 0
+  [ "${update}" != false ] && env || return 0
 }
 
 env() {
