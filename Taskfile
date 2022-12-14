@@ -189,7 +189,7 @@ tools() {
     os=$(uname -s)
     arch=$(uname -m) && arch=${arch/aarch64/arm64}
     bin=$(echo bin/"${os}"/"${arch}" | tr '[:upper:]' '[:lower:]')
-    version=2.10.1
+    version=2.10.2
 
     mkdir -p "${bin}"
     curl -sSfL "https://github.com/okteto/okteto/releases/download/${version}/okteto-${os}-${arch}" \
