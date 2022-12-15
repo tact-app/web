@@ -67,7 +67,7 @@
     "@types/node": "^18.11.15",
     "@types/react": "^18.0.26",
     "eslint": "8.29.0",
-    "eslint-config-next": "13.0.6",
+    "eslint-config-next": "13.0.7",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-unused-imports": "^2.0.0",
     "pre-commit": "^1.2.2",
