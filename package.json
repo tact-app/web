@@ -41,7 +41,7 @@
     "@tiptap/react": "^2.0.0-beta.207",
     "@tiptap/starter-kit": "^2.0.0-beta.207",
     "@tiptap/suggestion": "^2.0.0-beta.207",
-    "allotment": "^1.17.0",
+    "allotment": "^1.17.1",
     "chakra-react-select": "^4.4.3",
     "emoji-mart": "^5.4.0",
     "framer-motion": "^7.10.0",
