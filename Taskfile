@@ -1,0 +1,260 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+refresh() {
+  git fetch --all --prune --prune-tags --tags
+
+  local remote actual target shared
+  remote=${1:-'@{u}'}
+  actual=$(git rev-parse @)
+  target=$(git rev-parse "${remote}")
+  shared="$(git merge-base @ "${remote}")"
+  [ "${actual}" != "${shared}" ] && echo Everything is up to date && return 0
+
+  if ! git diff-index --quiet HEAD; then
+    git stash -m 'stash before pull'
+    trap '{ git stash pop; }' EXIT
+  fi
+  git pull --force --rebase
+
+  install --from-scratch
+  tools npm ci
+}
+
+setup() {
+  set_fontawesome_token false
+  set_okteto_token false
+  set_vercel_token false
+  env
+
+  tools npm ci
+  vercel link
+
+  tools okteto
+  okteto context use https://cloud.okteto.com
+
+  build --from-scratch
+
+  local copied=false
+  command -v pbcopy >/dev/null && echo source bin/activate | pbcopy && copied=true
+  echo Run the next commands to complete setup:
+  printf '├─ source bin/activate\t- to activate virtual environment (copied to clipboard: %s)\n' $copied
+  printf '└─ run whoami \t\t- to show meta information about your environment\n'
+}
+
+set_fontawesome_token() { __store_token 'Font Awesome' fontawesome.token 36 "${1:-true}"; }
+set_okteto_token() { __store_token Okteto okteto.token 48 "${1:-true}"; }
+set_vercel_token() { __store_token Vercel vercel.token 24 "${1:-true}"; }
+__store_token() {
+  local name="${1}" key="${2}" length="${3}" update="${4:-true}"
+
+  local token
+  echo Please enter "${name}" token:
+  read -rs token
+  token=${token## }
+  token=${token%% }
+
+  if [ "${#token}" -lt "${length}" ]; then
+    echo 'Token is invalid.'
+    return 1
+  fi
+  git config "${key}" "${token}"
+  echo 'Token saved.'
+
+  [ "${update}" != false ] && env || return 0
+}
+
+env() {
+  cat <<EOF >.env
+FONTAWESOME_TOKEN=$(git config fontawesome.token)
+OKTETO_TOKEN=$(git config okteto.token)
+VERCEL_TOKEN=$(git config vercel.token)
+EOF
+}
+
+# Example: run node 'npm ci --ignore-scripts --include=dev'
+# Example: run node inside
+#   - alias run=./Taskfile
+#   - source bin/activate
+#  Deploy to staging
+#   - run deploy
+#  Deploy to production
+#   - run tools okteto
+#   - run okteto context use https://cloud.okteto.com
+#   - run deploy prod
+node() {
+  if [ "${1:-}" == 'inside' ]; then
+    docker run --rm -it \
+      --env-file .env \
+      -v "$(pwd)":/app \
+      -w /app \
+      --entrypoint=/bin/bash \
+      node:16
+    return $?
+  fi
+
+  docker run --rm -it \
+    --env-file .env \
+    -v "$(pwd)":/app \
+    -w /app \
+    "${@:2}" \
+    --entrypoint=/bin/sh \
+    node:16-alpine -c "${1}"
+}
+
+# Example: run install --from-scratch
+install() {
+  [ "${1:-}" == '--from-scratch' ] && rm -rf node_modules
+  local cmd='npm install'
+  if [ -t package-lock.json ]; then
+    cmd='npm ci'
+  fi
+  node "${cmd} --ignore-scripts --include=dev"
+}
+
+# Example: run dev
+dev() {
+  node 'npm run dev' -p 3000:3000
+}
+
+# Example: run build --from-scratch
+# Example: run build docker --from-scratch
+build() {
+  # docker way
+  if [ "${1:-}" == 'docker' ]; then
+    if [ "${2:-}" == '--from-scratch' ]; then
+      docker rmi tact:latest || true
+    fi
+    docker build \
+      --build-arg token="$(git config fontawesome.token)" \
+      -f k8s/app/Dockerfile \
+      -t tact-app/frontend:local .
+    return $?
+  fi
+
+  # local way
+  [ "${1:-}" == '--from-scratch' ] && rm -rf .next && install "${@}"
+  node 'npm run build'
+}
+
+# Example: run server --from-scratch
+# Example: run server docker --from-scratch
+server() {
+  # docker way
+  if [ "${1:-}" == 'docker' ]; then
+    [ "${2:-}" == '--from-scratch' ] && build docker "${@:2}"
+    docker run \
+      --rm -it \
+      -p 127.0.0.1:3000:3000 \
+      tact-app/frontend:local
+    return $?
+  fi
+
+  # local way
+  [ "${1:-}" == '--from-scratch' ] && build "${@}"
+  node 'npm run start' -p 127.0.0.1:3000:3000
+}
+
+# Example: run deploy prod
+deploy() {
+  if [ "${1:-}" == 'prod' ]; then
+    vercel pull --yes --environment=production
+    vercel build --yes --prod
+    vercel deploy --yes --prebuilt --prod
+
+    okteto build
+    okteto deploy
+    return $?
+  fi
+
+  vercel pull --yes --environment=preview
+  vercel build --yes
+  vercel deploy --yes --prebuilt
+}
+
+# Example: run tools npm i vercel@latest
+# Example: run tools okteto
+tools() {
+  case "${1}" in
+  npm)
+    docker run --rm -it \
+      -v "$(pwd)/tools":/tools \
+      -w /tools \
+      --entrypoint=/bin/sh \
+      node:16-alpine -c "${*}"
+    ;;
+  okteto)
+    local os arch bin version
+    os=$(uname -s)
+    arch=$(uname -m) && arch=${arch/aarch64/arm64}
+    bin=$(echo bin/"${os}"/"${arch}" | tr '[:upper:]' '[:lower:]')
+    version=2.10.3
+
+    mkdir -p "${bin}"
+    curl -sSfL "https://github.com/okteto/okteto/releases/download/${version}/okteto-${os}-${arch}" \
+      -o "${bin}"/okteto
+    chmod +x "${bin}"/okteto
+    ;;
+  esac
+}
+
+compose() {
+  docker compose -p tact-app "${@}"
+}
+
+_okteto=$(which okteto || true)
+okteto() {
+  [ -z "${_okteto}" ] && echo Please setup env and activate it. && return 1
+
+  local OKTETO_TOKEN
+  OKTETO_TOKEN=$(git config okteto.token)
+
+  local args=("${@}")
+  OKTETO_TOKEN=$(git config okteto.token) $_okteto "${args[@]}"
+}
+
+_vercel=$(which vercel || true)
+vercel() {
+  [ -z "${_vercel}" ] && echo Please setup env and activate it. && return 1
+
+  local args=("${@}")
+  if [ "${1:-}" == 'clean' ]; then
+    args=(rm --yes)
+    if [ "${2:-}" == 'all' ]; then
+      local deployment found=false
+      while IFS='' read -r deployment; do
+        args+=("${deployment}")
+        found=true
+      done < <(vercel ls 2>&1 | grep https | awk '{print $2}')
+      if ! $found; then
+        echo No deployments found.
+        return 0
+      fi
+    else
+      args+=(--safe tact)
+    fi
+  fi
+
+  $_vercel -t "$(git config vercel.token)" "${args[@]}"
+}
+
+whoami() {
+  echo "You are $(git config user.name) <$(git config user.email)>"
+  echo "* Docker Compose ----------------------------------"
+  compose ls
+  echo "* Okteto ------------------------------------------"
+  okteto context
+  echo "* Vercel ------------------------------------------"
+  vercel whoami
+}
+
+help() {
+  echo "$0 <task> <args>"
+  echo "Tasks:"
+  compgen -A function | grep -v '^__' | sort | cat -n
+}
+
+__default() { help; }
+
+"${@:-__default}"

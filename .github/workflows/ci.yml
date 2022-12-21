@@ -1,0 +1,53 @@
+name: continuous integration
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - .github/workflows/ci.yml
+      - package*.json
+      - '**.jsx?'
+      - '**.tsx?'
+  push:
+    branches: [ main ]
+    paths:
+      - .github/workflows/ci.yml
+      - package*.json
+      - '**.jsx?'
+      - '**.tsx?'
+    tags: [ '!*' ]
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v3
+        with: { node-version: 16, cache: npm }
+
+      - uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+        id: cache
+      - run: npm ci --ignore-scripts --include=dev
+        if: steps.cache.outputs.cache-hit != 'true'
+        env: { FONTAWESOME_TOKEN: '${{ secrets.FONTAWESOME_TOKEN }}' }
+      - run: npm run build
+
+  notify:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (failure() || success())
+    needs: [ integrate ]
+
+    steps:
+      - uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+          SLACK_ICON: https://github.com/github.png?size=64
+          SLACK_TITLE: '♻️ ${{ github.repository }}: ${{ github.workflow }}'
+          SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

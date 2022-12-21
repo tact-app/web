@@ -1,0 +1,8 @@
+{
+  "extends": ["next/core-web-vitals", "prettier"],
+  "plugins": ["unused-imports"],
+  "rules": {
+    "unused-imports/no-unused-imports": 1,
+    "eol-last": [1, "always"]
+  }
+}

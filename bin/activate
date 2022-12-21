@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+
+deactivate() {
+  unset _OS
+  unset _ARCH
+  unset _BINPATH
+  unset _NPMPATH
+
+  if [[ -v _OLD_PATH ]]; then
+    export PATH="${_OLD_PATH}"
+    unset _OLD_PATH
+  fi
+
+  if [[ -n "${_OLD_PS1:-}" ]]; then
+    export PS1="${_OLD_PS1}"
+    unset _OLD_PS1
+  fi
+
+  if [[ -n "${BASH:-}" || -n "${ZSH_VERSION:-}" ]]; then
+    hash -r
+  fi
+
+  if [[ ! "${1:-}" == "nondestructive" ]]; then
+    unset -f deactivate
+    unset -f _realpath
+  fi
+}
+
+_realpath() {
+  if [[ -z "${1:-}" ]]; then
+    echo 'Please provide a file/dir name'
+    return
+  fi
+  echo "$(cd "$(dirname "${1}")" && pwd)/${1}"
+}
+
+deactivate nondestructive
+
+_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+_ARCH=$(uname -m | tr '[:upper:]' '[:lower:]') && _ARCH=${_ARCH/aarch64/arm64}
+_BINPATH=$(_realpath "$(dirname "${BASH_SOURCE[0]:-$0}")")/"${_OS}/${_ARCH}"
+_NPMPATH=$(dirname "$(_realpath "$(dirname "${BASH_SOURCE[0]:-$0}")")")/tools/node_modules/.bin
+
+_OLD_PATH="${PATH:-}"
+_OLD_PS1="${PS1:-}"
+
+export PATH="${_NPMPATH}:${_BINPATH}:${PATH}"
+# shellcheck disable=SC2050
+if [[ "x(activated) " != x ]]; then
+  PS1="(activated) ${PS1:-}"
+elif [[ "$(basename "${_BINPATH}")" == "__" ]]; then
+  PS1="[$(basename "$(dirname "${_BINPATH}")")] $PS1"
+else
+  PS1="($(basename "${_BINPATH}"))$PS1"
+fi
+export PS1
+
+if [[ -n "${BASH:-}" || -n "${ZSH_VERSION:-}" ]]; then
+  hash -r
+fi

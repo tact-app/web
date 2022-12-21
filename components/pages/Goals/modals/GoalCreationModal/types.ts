@@ -1,0 +1,4 @@
+export enum GoalCreationModalSteps {
+  SELECT_TEMPLATE = 'SELECT_TEMPLATE',
+  FILL_DESCRIPTION = 'FILL_DESCRIPTION',
+}
