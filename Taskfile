@@ -25,6 +25,7 @@ refresh() {
 setup() {
   set_fontawesome_token false
   set_okteto_token false
+  set_sentry_token false
   set_vercel_token false
   env
 
@@ -45,6 +46,7 @@ setup() {
 
 set_fontawesome_token() { __store_token 'Font Awesome' fontawesome.token 36 "${1:-true}"; }
 set_okteto_token() { __store_token Okteto okteto.token 48 "${1:-true}"; }
+set_sentry_token() { __store_token Sentry sentry.token 64 "${1:-true}"; }
 set_vercel_token() { __store_token Vercel vercel.token 24 "${1:-true}"; }
 __store_token() {
   local name="${1}" key="${2}" length="${3}" update="${4:-true}"
@@ -69,6 +71,7 @@ env() {
   cat <<EOF >.env
 FONTAWESOME_TOKEN=$(git config fontawesome.token)
 OKTETO_TOKEN=$(git config okteto.token)
+SENTRY_TOKEN=$(git config sentry.token)
 VERCEL_TOKEN=$(git config vercel.token)
 EOF
 }
@@ -175,6 +178,7 @@ deploy() {
 
 # Example: run tools npm i vercel@latest
 # Example: run tools okteto
+# Example: run tools sentry
 tools() {
   case "${1}" in
   npm)
@@ -185,16 +189,26 @@ tools() {
       node:16-alpine -c "${*}"
     ;;
   okteto)
-    local os arch bin version
+    local os arch bin src version=2.10.3
     os=$(uname -s)
     arch=$(uname -m) && arch=${arch/aarch64/arm64}
     bin=$(echo bin/"${os}"/"${arch}" | tr '[:upper:]' '[:lower:]')
-    version=2.10.3
+    src=https://github.com/okteto/okteto/releases/download
 
     mkdir -p "${bin}"
-    curl -sSfL "https://github.com/okteto/okteto/releases/download/${version}/okteto-${os}-${arch}" \
-      -o "${bin}"/okteto
+    curl -sSfL "${src}/${version}/okteto-${os}-${arch}" -o "${bin}"/okteto
     chmod +x "${bin}"/okteto
+    ;;
+  sentry)
+    local os arch bin src version=2.11.0
+    os=$(uname -s)
+    arch=$(uname -m) && arch=${arch/aarch64/arm64}
+    bin=$(echo bin/"${os}"/"${arch}" | tr '[:upper:]' '[:lower:]')
+    src=https://github.com/getsentry/sentry-cli/releases/download
+
+    mkdir -p "${bin}"
+    curl -sSfL "${src}/${version}/sentry-cli-${os}-${arch}" -o "${bin}"/sentry-cli
+    chmod +x "${bin}"/sentry-cli
     ;;
   esac
 }
@@ -212,6 +226,14 @@ okteto() {
 
   local args=("${@}")
   OKTETO_TOKEN=$(git config okteto.token) $_okteto "${args[@]}"
+}
+
+_sentry=$(which sentry-cli || true)
+sentry() {
+  [ -z "${_sentry}" ] && echo Please setup env and activate it. && return 1
+
+  local args=("${@}")
+  $_sentry --auth-token="$(git config sentry.token)" "${args[@]}"
 }
 
 _vercel=$(which vercel || true)
@@ -245,6 +267,8 @@ whoami() {
   compose ls
   echo "* Okteto ------------------------------------------"
   okteto context
+  echo "* Sentry ------------------------------------------"
+  sentry --version
   echo "* Vercel ------------------------------------------"
   vercel whoami
 }
