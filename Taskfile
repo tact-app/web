@@ -181,13 +181,6 @@ deploy() {
 # Example: run tools sentry
 tools() {
   case "${1}" in
-  npm)
-    docker run --rm -it \
-      -v "$(pwd)/tools":/tools \
-      -w /tools \
-      --entrypoint=/bin/sh \
-      node:16-alpine -c "${*}"
-    ;;
   okteto)
     local os arch bin src version=2.10.3
     os=$(uname -s)
@@ -199,16 +192,10 @@ tools() {
     curl -sSfL "${src}/${version}/okteto-${os}-${arch}" -o "${bin}"/okteto
     chmod +x "${bin}"/okteto
     ;;
-  sentry)
-    local os arch bin src version=2.11.0
-    os=$(uname -s)
-    arch=$(uname -m) && arch=${arch/aarch64/arm64}
-    bin=$(echo bin/"${os}"/"${arch}" | tr '[:upper:]' '[:lower:]')
-    src=https://github.com/getsentry/sentry-cli/releases/download
-
-    mkdir -p "${bin}"
-    curl -sSfL "${src}/${version}/sentry-cli-${os}-${arch}" -o "${bin}"/sentry-cli
-    chmod +x "${bin}"/sentry-cli
+  *)
+    pushd tools >/dev/null
+    trap '{ popd >/dev/null; }' EXIT
+    "${@}"
     ;;
   esac
 }

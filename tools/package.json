@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {},
   "dependencies": {
+    "@sentry/cli": "^2.11.0",
     "vercel": "^28.10.1"
   }
 }
