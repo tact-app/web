@@ -132,7 +132,7 @@ build() {
     docker build \
       --build-arg token="$(git config fontawesome.token)" \
       -f k8s/app/Dockerfile \
-      -t tact-app/frontend:local .
+      -t tact-app/web:local .
     return $?
   fi
 
@@ -150,7 +150,7 @@ server() {
     docker run \
       --rm -it \
       -p 127.0.0.1:3000:3000 \
-      tact-app/frontend:local
+      tact-app/web:local
     return $?
   fi
 

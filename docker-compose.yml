@@ -2,21 +2,21 @@ version: "3"
 
 services:
 
-  gateway:
+  gate:
     build: k8s/gate
     ports:
       - "80:80"
     depends_on:
-      - frontend
+      - web
     restart: always
     labels:
       dev.okteto.com/auto-ingress: domain
       dev.okteto.com/custom-domain: true
       dev.okteto.com/domain: cloud.tact.run
 
-  frontend:
+  web:
     build:
-      dockerfile: k8s/app/Dockerfile
+      dockerfile: k8s/web/Dockerfile
       context: .
       args:
         - token=${FONTAWESOME_TOKEN}
