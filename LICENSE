@@ -1,7 +1,10 @@
 Tact is the next-generation Time Management Software and Work-Life Management Platform.
-Copyright (C) 2022-present  OctoLab, Inc. https://www.octolab.org/ <copyright@octolab.org>
+Copyright (C) 2022-present  OctoLab, LLC. https://www.octolab.org/ <copyright@octolab.org>
 
 * The Tact web application, and other portions of the official Tact
   distribution not explicitly licensed otherwise, are licensed under
   the GNU AFFERO GENERAL PUBLIC LICENSE -- see the 'COPYING' file in this
   directory for details.
+
+* The CLA is located here https://gist.github.com/kamilsk/44221b6834a6cdc273b5e3411224f8be,
+  and you can sign it at https://cla-assistant.io/tact-app/web.
