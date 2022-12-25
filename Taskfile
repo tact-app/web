@@ -90,7 +90,7 @@ __node() {
     node:16-alpine -c "${1}"
 }
 
-# Example: run inside
+# Example: run isolated
 #   - alias run=./Taskfile
 #   - source bin/activate
 #  Deploy to staging
@@ -99,7 +99,7 @@ __node() {
 #   - run tools okteto
 #   - run okteto context use https://cloud.okteto.com
 #   - run deploy prod
-inside() {
+isolated() {
   docker run --rm -it \
     --env-file .env \
     -v "$(pwd)":/app \
@@ -126,11 +126,11 @@ build() {
   # docker way
   if [ "${1:-}" == 'docker' ]; then
     if [ "${2:-}" == '--from-scratch' ]; then
-      docker rmi tact:latest || true
+      docker rmi tact-app/web:local || true
     fi
     docker build \
       --build-arg token="$(git config fontawesome.token)" \
-      -f k8s/app/Dockerfile \
+      -f k8s/web/Dockerfile \
       -t tact-app/web:local .
     return $?
   fi
@@ -140,9 +140,9 @@ build() {
   __node 'npm run build'
 }
 
-# Example: run server --from-scratch
-# Example: run server docker --from-scratch
-server() {
+# Example: run start --from-scratch
+# Example: run start docker --from-scratch
+start() {
   # docker way
   if [ "${1:-}" == 'docker' ]; then
     [ "${2:-}" == '--from-scratch' ] && build docker "${@:2}"
@@ -156,23 +156,6 @@ server() {
   # local way
   [ "${1:-}" == '--from-scratch' ] && build "${@}"
   __node 'npm run start' -p 127.0.0.1:3000:3000
-}
-
-# Example: run deploy prod
-deploy() {
-  if [ "${1:-}" == 'prod' ]; then
-    vercel pull --yes --environment=production
-    vercel build --yes --prod
-    vercel deploy --yes --prebuilt --prod
-
-    okteto build
-    okteto deploy
-    return $?
-  fi
-
-  vercel pull --yes --environment=preview
-  vercel build --yes
-  vercel deploy --yes --prebuilt
 }
 
 # Example: run tools npm i vercel@latest
@@ -245,6 +228,23 @@ vercel() {
   fi
 
   $_vercel -t "$(git config vercel.token)" "${args[@]}"
+}
+
+# Example: run deploy prod
+deploy() {
+  if [ "${1:-}" == 'prod' ]; then
+    vercel pull --yes --environment=production
+    vercel build --yes --prod
+    vercel deploy --yes --prebuilt --prod
+
+    okteto build
+    okteto deploy
+    return $?
+  fi
+
+  vercel pull --yes --environment=preview
+  vercel build --yes
+  vercel deploy --yes --prebuilt
 }
 
 whoami() {

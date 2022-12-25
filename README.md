@@ -1,19 +1,22 @@
 > # 🖥️ The Tact web application
 >
-> Web-version of the service for desktops.
+> The web version of the service for desktops.
 
 ## Quick Start
 
 Requirements:
 
 - [Docker Desktop][Docker].
-- Tokens for [Font Awesome][], [Okteto][], and [Vercel][] before you start.
-  - Access provided by [1Password][].
+- Tokens for
+  - [Font Awesome][]
+  - [Okteto][]
+  - [Sentry][]
+  - [Vercel][]
 
-[1Password]:      https://1password.com/
 [Docker]:         https://www.docker.com/products/docker-desktop/
 [Font Awesome]:   https://fontawesome.com/
 [Okteto]:         https://www.okteto.com/
+[Sentry]:         https://sentry.io/welcome/
 [Vercel]:         https://vercel.com/
 
 ```bash
@@ -31,6 +34,7 @@ You can update tokens by the following commands
 ```bash
 $ run set_fontawesome_token
 $ run set_okteto_token
+$ run set_sentry_token
 $ run set_vercel_token
 
 $ run env # dump updated tokens into the .env file
@@ -43,36 +47,41 @@ $ run env # dump updated tokens into the .env file
 You could use a local environment, but it's not deterministic
 
 ```bash
-$ npm ci --ignore-scripts --include=dev # install deps
-$ npm run dev                           # starts the application in development mode
-$ npm run build                         # compiles the application for production deployment
-$ npm run start                         # starts the application in production mode
-# open http://localhost:3000
+$ npm ci --ignore-scripts --include=dev
+$ npm run dev
+$ npm run build
+$ npm run start
+
+$ $(sleep 3; open http://localhost:3000) &; npm run start
 ```
 
 ### Local development with the [Docker][]
 
-You could use Docker to build a deterministic environment
+You could use [Docker CLI][] to build a deterministic environment
 
 ```bash
-$ run install [--from-scratch]  # install deps
-$ run dev                       # starts the application in development mode
-$ run build [--from-scratch]    # compiles the application for production deployment
-$ run server [--from-scratch]   # starts the application in production mode
-# open http://localhost:3000
+$ run install [--from-scratch]
+$ run dev
+$ run build [--from-scratch]
+$ run start [--from-scratch]
 
-$ run node 'command args...'    # execute a command in the container
-$ run node inside               # open a shell in the container
+$ $(sleep 5; open http://localhost:3000) &; run start
+
+$ run npm ci --ignore-scripts --include=dev
+$ run npm ...
 ```
 
 ### Local development inside the [Docker][]
 
-You could use Docker to build an isolated environment
+You could use [Docker CLI][] to build an isolated environment
 
 ```bash
-$ run build docker [--from-scratch]   # build the image
-$ run server docker [--from-scratch]  # starts the application in the container
-# open http://localhost:3000
+$ run build docker [--from-scratch]
+$ run start docker [--from-scratch]
+
+$ $(sleep 3; open http://localhost:3000) &; run start docker
+
+$ run isolated
 ```
 
 ## Tools
@@ -86,51 +95,59 @@ $ run refresh
 ### Installation
 
 ```bash
-$ run tools npm ci  # install node tools
-$ run tools okteto  # install okteto
-$ run whoami        # shows your current environment context
+$ run tools npm ci
+$ run tools okteto
+$ run whoami
 ```
 
-### Docker Compose
+### [Docker Compose][]
 
 ```bash
-$ run compose up -d   # create and start containers
-$ run compose down    # stop and remove containers, networks
+$ run compose up -d
+$ run compose down
 
-$ run compose --help  # see more
+$ run compose --help
 ```
 
-### [Okteto][]
+### [Okteto CLI][]
 
 ```bash
 $ activate
-$ run okteto context use https://cloud.okteto.com   # set the default context
-$ run okteto up                                     # launch your development environment
+$ run okteto context use https://cloud.okteto.com
+$ run okteto up
 
-$ run okteto --help                                 # see more
+$ run okteto --help
 ```
 
 You can avoid using the token parameter when working with these commands,
 it's substituted automatically under the hood.
 
-### [Vercel][]
+### [Sentry CLI][]
 
 ```bash
 $ activate
-$ run vercel link       # link current directory to a Vercel Project
-$ run vercel deploy     # deploy the current directory to Vercel
 
-$ run vercel help       # see more
+$ run sentry --help
+```
+
+### [Vercel CLI][]
+
+```bash
+$ activate
+$ run vercel link
+$ run vercel deploy
+
+$ run vercel help
 ```
 
 You can avoid using the token parameter when working with these commands,
 it's substituted automatically under the hood.
 
-## Documentation
-
-- [Docker CLI](https://docs.docker.com/engine/reference/commandline/cli/).
-- [Okteto CLI](https://www.okteto.com/docs/cloud/okteto-cli/).
-- [Vercel CLI](https://vercel.com/docs/cli).
+[Docker CLI]:       https://docs.docker.com/engine/reference/commandline/cli/
+[Docker Compose]:   https://docs.docker.com/compose/reference/
+[Okteto CLI]:       https://www.okteto.com/docs/cloud/okteto-cli/.
+[Sentry CLI]:       https://docs.sentry.io/product/cli/.
+[Vercel CLI]:       https://vercel.com/docs/cli.
 
 ## Tips and tricks
 
