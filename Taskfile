@@ -74,6 +74,10 @@ OKTETO_TOKEN=$(git config okteto.token)
 SENTRY_TOKEN=$(git config sentry.token)
 VERCEL_TOKEN=$(git config vercel.token)
 EOF
+  cat <<EOF >.sentryclirc
+[auth]
+token=$(git config sentry.token)
+EOF
 }
 
 # Example: run node 'npm ci --ignore-scripts --include=dev'
