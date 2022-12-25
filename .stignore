@@ -1,5 +1,6 @@
 /.git/
 /.github/
+/.idea/
 /.next/
 /.vercel/
 
@@ -12,6 +13,7 @@
 .env
 .gitignore
 .gitmodules
+.sentryclirc
 .stignore
 .vercelignore
 

@@ -14,7 +14,7 @@ refresh() {
 
   if ! git diff-index --quiet HEAD; then
     git stash -m 'stash before pull'
-    trap '{ git stash pop; }' EXIT
+    trap 'git stash pop' EXIT
   fi
   git pull --force --rebase
 
@@ -181,8 +181,8 @@ deploy() {
 }
 
 # Example: run tools npm i vercel@latest
+# Example: run tools npm ci
 # Example: run tools okteto
-# Example: run tools sentry
 tools() {
   case "${1}" in
   okteto)
@@ -198,7 +198,7 @@ tools() {
     ;;
   *)
     pushd tools >/dev/null
-    trap '{ popd >/dev/null; }' EXIT
+    trap 'popd >/dev/null' EXIT
     "${@}"
     ;;
   esac
@@ -265,11 +265,31 @@ whoami() {
 }
 
 help() {
-  echo "$0 <task> <args>"
-  echo "Tasks:"
-  compgen -A function | grep -v '^__' | sort | cat -n
+  cat - <<EOF
+Usage: $0 <task> <args>
+Tasks:
+EOF
+  compgen -A function | grep -v ^_ | grep -v ^main | sort | cat -n
 }
 
-__default() { help; }
+declare -A config
+config['dryrun']=false
 
-"${@:-__default}"
+_() {
+  if ${config['dryrun']}; then
+    echo "${@}"
+  else
+    trap 'echo "${@}"' ERR
+    "${@}"
+  fi
+}
+
+function main() {
+  if [[ "${1:-}" =~ ^--dry-run|-d$ ]]; then
+    config['dryrun']=true
+    shift
+  fi
+  "${@:-help}"
+}
+
+main "${@}"
