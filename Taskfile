@@ -80,27 +80,7 @@ token=$(git config sentry.token)
 EOF
 }
 
-# Example: run node 'npm ci --ignore-scripts --include=dev'
-# Example: run node inside
-#   - alias run=./Taskfile
-#   - source bin/activate
-#  Deploy to staging
-#   - run deploy
-#  Deploy to production
-#   - run tools okteto
-#   - run okteto context use https://cloud.okteto.com
-#   - run deploy prod
-node() {
-  if [ "${1:-}" == 'inside' ]; then
-    docker run --rm -it \
-      --env-file .env \
-      -v "$(pwd)":/app \
-      -w /app \
-      --entrypoint=/bin/bash \
-      node:16
-    return $?
-  fi
-
+__node() {
   docker run --rm -it \
     --env-file .env \
     -v "$(pwd)":/app \
@@ -110,6 +90,24 @@ node() {
     node:16-alpine -c "${1}"
 }
 
+# Example: run inside
+#   - alias run=./Taskfile
+#   - source bin/activate
+#  Deploy to staging
+#   - run deploy
+#  Deploy to production
+#   - run tools okteto
+#   - run okteto context use https://cloud.okteto.com
+#   - run deploy prod
+inside() {
+  docker run --rm -it \
+    --env-file .env \
+    -v "$(pwd)":/app \
+    -w /app \
+    --entrypoint=/bin/bash \
+    node:16
+}
+
 # Example: run install --from-scratch
 install() {
   [ "${1:-}" == '--from-scratch' ] && rm -rf node_modules
@@ -117,13 +115,10 @@ install() {
   if [ -t package-lock.json ]; then
     cmd='npm ci'
   fi
-  node "${cmd} --ignore-scripts --include=dev"
+  __node "${cmd} --ignore-scripts --include=dev"
 }
 
-# Example: run dev
-dev() {
-  node 'npm run dev' -p 3000:3000
-}
+dev() { __node 'npm run dev' -p 3000:3000; }
 
 # Example: run build --from-scratch
 # Example: run build docker --from-scratch
@@ -142,7 +137,7 @@ build() {
 
   # local way
   [ "${1:-}" == '--from-scratch' ] && rm -rf .next && install "${@}"
-  node 'npm run build'
+  __node 'npm run build'
 }
 
 # Example: run server --from-scratch
@@ -160,7 +155,7 @@ server() {
 
   # local way
   [ "${1:-}" == '--from-scratch' ] && build "${@}"
-  node 'npm run start' -p 127.0.0.1:3000:3000
+  __node 'npm run start' -p 127.0.0.1:3000:3000
 }
 
 # Example: run deploy prod
@@ -204,9 +199,9 @@ tools() {
   esac
 }
 
-compose() {
-  docker compose -p tact-app "${@}"
-}
+compose() { docker compose -p tact-app "${@}"; }
+
+npm() { __node "npm ${*}"; }
 
 _okteto=$(which okteto || true)
 okteto() {
