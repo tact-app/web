@@ -210,6 +210,9 @@ export class TaskQuickEditorStore {
   openMenu = () => {
     this.isInputFocused = true;
     this.isMenuOpen = true;
+
+    this.suggestionsMenu.close();
+    this.suggestionsMenu.closeForMode();
   };
 
   closeMenu = () => {
