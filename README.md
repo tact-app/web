@@ -55,7 +55,7 @@ $ npm run start
 $ $(sleep 3; open http://localhost:3000) &; npm run start
 ```
 
-### Local development with the [Docker][]
+### Local development with the Docker
 
 You could use [Docker CLI][] to build a deterministic environment
 
@@ -71,7 +71,7 @@ $ run npm ci --ignore-scripts --include=dev
 $ run npm ...
 ```
 
-### Local development inside the [Docker][]
+### Local development inside the Docker
 
 You could use [Docker CLI][] to build an isolated environment
 
@@ -100,7 +100,8 @@ $ run tools okteto
 $ run whoami
 ```
 
-### [Docker Compose][]
+### Docker Compose
+**Useful:** [docs][Docker Compose], [src](https://github.com/docker/compose)
 
 ```bash
 $ run compose up -d
@@ -109,7 +110,8 @@ $ run compose down
 $ run compose --help
 ```
 
-### [Okteto CLI][]
+### Okteto CLI
+**Useful:** [docs][Okteto CLI], [src](https://github.com/okteto/okteto)
 
 ```bash
 $ activate
@@ -122,7 +124,8 @@ $ run okteto --help
 You can avoid using the token parameter when working with these commands,
 it's substituted automatically under the hood.
 
-### [Sentry CLI][]
+### Sentry CLI
+**Useful:** [docs][Sentry CLI], [src](https://github.com/getsentry/sentry-cli)
 
 ```bash
 $ activate
@@ -130,7 +133,8 @@ $ activate
 $ run sentry --help
 ```
 
-### [Vercel CLI][]
+### Vercel CLI
+**Useful:** [docs][Vercel CLI], [src](https://github.com/vercel/vercel)
 
 ```bash
 $ activate
@@ -145,9 +149,16 @@ it's substituted automatically under the hood.
 
 [Docker CLI]:       https://docs.docker.com/engine/reference/commandline/cli/
 [Docker Compose]:   https://docs.docker.com/compose/reference/
-[Okteto CLI]:       https://www.okteto.com/docs/cloud/okteto-cli/.
-[Sentry CLI]:       https://docs.sentry.io/product/cli/.
-[Vercel CLI]:       https://vercel.com/docs/cli.
+[Okteto CLI]:       https://www.okteto.com/docs/cloud/okteto-cli/
+[Sentry CLI]:       https://docs.sentry.io/product/cli/
+[Vercel CLI]:       https://vercel.com/docs/cli
+
+### Manual deployment
+
+```bash
+$ run deploy
+$ run deploy prod
+```
 
 ## Tips and tricks
 
@@ -157,13 +168,6 @@ You can drop Vercel's cache by running:
 
 ```bash
 $ run vercel --force
-```
-
-### Something went wrong with CI/CD
-
-```bash
-$ run deploy
-$ run deploy prod
 ```
 
 ## License
