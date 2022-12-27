@@ -175,9 +175,10 @@ tools() {
     chmod +x "${bin}"/okteto
     ;;
   *)
-    pushd tools >/dev/null
-    trap 'popd >/dev/null' EXIT
-    "${@}"
+    # dirty hack related to "docker: open .env: no such file or directory"
+    unset -f npm
+
+    (cd tools && "${@}")
     ;;
   esac
 }
@@ -194,7 +195,7 @@ okteto() {
   OKTETO_TOKEN=$(git config okteto.token)
 
   local args=("${@}")
-  OKTETO_TOKEN=$(git config okteto.token) $_okteto "${args[@]}"
+  OKTETO_TOKEN="$(git config okteto.token)" _ "${_okteto}" "${args[@]}"
 }
 
 _sentry=$(which sentry-cli || true)
@@ -202,7 +203,7 @@ sentry() {
   [ -z "${_sentry}" ] && echo Please setup env and activate it. && return 1
 
   local args=("${@}")
-  $_sentry --auth-token="$(git config sentry.token)" "${args[@]}"
+  _ "${_sentry}" --auth-token="$(git config sentry.token)" "${args[@]}"
 }
 
 _vercel=$(which vercel || true)
@@ -227,7 +228,7 @@ vercel() {
     fi
   fi
 
-  $_vercel -t "$(git config vercel.token)" "${args[@]}"
+  _ "${_vercel}" -t "$(git config vercel.token)" "${args[@]}"
 }
 
 # Example: run deploy prod
