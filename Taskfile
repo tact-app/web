@@ -288,4 +288,26 @@ function main() {
   "${@:-help}"
 }
 
+update() {
+  local packages=("${@}")
+  if [ ${#packages[@]} = 0 ]; then
+    # TODO: make it stateless but support starting point
+    # TODO: support beta-versions
+    # TODO: avoid git references, e.g., github
+
+    local filter='.dependencies | keys | join(" ")'
+    IFS=' ' read -r -a packages <<<"$(npm ls --depth=0 --omit=dev --json | jq -r "${filter}")"
+  fi
+
+  for pkg in "${packages[@]}"; do
+    echo npm install "${pkg}"@latest
+    npm install "${pkg}"@latest >/dev/null
+    if ! git diff --exit-code >/dev/null; then
+      printf '\nPackage %s was updated, please commit changes\n' "${pkg}"
+      return 0
+    fi
+  done
+  echo is up-to-date
+}
+
 main "${@}"
