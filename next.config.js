@@ -2,9 +2,6 @@ const withTranspileModules = require('next-transpile-modules')(['react-hotkeys-h
 const {withSentryConfig} = require('@sentry/nextjs');
 
 const moduleExports = {
-  experimental: {
-    esmExternals: false,
-  },
   sentry: {
     hideSourceMaps: true,
   },
