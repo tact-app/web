@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+[ "${BASH_VERSINFO:-0}" -ge 4 ] || {
+  echo "bash version 4 or higher is required" >&2
+  exit 1
+}
+
 set -euo pipefail
 
 refresh() {
@@ -20,6 +25,28 @@ refresh() {
 
   install --from-scratch
   tools npm ci
+}
+
+# TODO: make it stateless but support starting point
+# TODO: support beta-versions
+# TODO: avoid git references, e.g., github
+@update() {
+  local packages=("${@}")
+  if [ ${#packages[@]} = 0 ]; then
+
+    local filter='.dependencies | keys | join(" ")'
+    IFS=' ' read -r -a packages <<<"$(npm ls --depth=0 --omit=dev --json | jq -r "${filter}")"
+  fi
+
+  for pkg in "${packages[@]}"; do
+    echo npm install "${pkg}"@latest
+    npm install "${pkg}"@latest >/dev/null
+    if ! git diff --exit-code >/dev/null; then
+      printf '\nPackage %s was updated, please commit changes\n' "${pkg}"
+      return 0
+    fi
+  done
+  echo is up-to-date
 }
 
 setup() {
@@ -44,11 +71,11 @@ setup() {
   printf '└─ run whoami \t\t- to show meta information about your environment\n'
 }
 
-set_fontawesome_token() { __store_token 'Font Awesome' fontawesome.token 36 "${1:-true}"; }
-set_okteto_token() { __store_token Okteto okteto.token 48 "${1:-true}"; }
-set_sentry_token() { __store_token Sentry sentry.token 64 "${1:-true}"; }
-set_vercel_token() { __store_token Vercel vercel.token 24 "${1:-true}"; }
-__store_token() {
+set_fontawesome_token() { @store_token 'Font Awesome' fontawesome.token 36 "${1:-true}"; }
+set_okteto_token() { @store_token Okteto okteto.token 48 "${1:-true}"; }
+set_sentry_token() { @store_token Sentry sentry.token 64 "${1:-true}"; }
+set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
+@store_token() {
   local name="${1}" key="${2}" length="${3}" update="${4:-true}"
 
   local token
@@ -80,7 +107,7 @@ token=$(git config sentry.token)
 EOF
 }
 
-__node() {
+@node() {
   docker run --rm -it \
     --env-file .env \
     -v "$(pwd)":/app \
@@ -115,10 +142,10 @@ install() {
   if [ -t package-lock.json ]; then
     cmd='npm ci'
   fi
-  __node "${cmd} --ignore-scripts --include=dev"
+  @node "${cmd} --ignore-scripts --include=dev"
 }
 
-dev() { __node 'npm run dev' -p 3000:3000; }
+dev() { @node 'npm run dev' -p 3000:3000; }
 
 # Example: run build --from-scratch
 # Example: run build docker --from-scratch
@@ -137,7 +164,7 @@ build() {
 
   # local way
   [ "${1:-}" == '--from-scratch' ] && rm -rf .next && install "${@}"
-  __node 'npm run build'
+  @node 'npm run build'
 }
 
 # Example: run start --from-scratch
@@ -155,7 +182,7 @@ start() {
 
   # local way
   [ "${1:-}" == '--from-scratch' ] && build "${@}"
-  __node 'npm run start' -p 127.0.0.1:3000:3000
+  @node 'npm run start' -p 127.0.0.1:3000:3000
 }
 
 # Example: run tools npm i vercel@latest
@@ -185,7 +212,7 @@ tools() {
 
 compose() { docker compose -p tact-app "${@}"; }
 
-npm() { __node "npm ${*}"; }
+npm() { @node "npm ${*}"; }
 
 _okteto=$(which okteto || true)
 okteto() {
@@ -260,24 +287,27 @@ whoami() {
   vercel whoami
 }
 
-help() {
-  cat - <<EOF
-Usage: $0 <task> <args>
-Tasks:
-EOF
-  compgen -A function | grep -v ^_ | grep -v ^main | sort | cat -n
-}
-
 declare -A config
 config['dryrun']=false
 
 _() {
   if ${config['dryrun']}; then
     echo "${@}"
-  else
-    trap 'echo "${@}"' ERR
-    "${@}"
+    return
   fi
+  trap 'echo "${@}"' ERR
+  "${@}"
+}
+@debug() { echo "${@}"; }
+@trace() { @debug "${@}" && "${@}"; }
+@error() { echo "${@}" >&2; }
+@fatal() { @error "${@}" && exit 1; }
+@usage() {
+  cat - <<EOF
+Usage: $0 <task> <args>
+Tasks:
+EOF
+  compgen -A function | grep -Ev '^(@|_)' | sort | cat -n
 }
 
 function main() {
@@ -285,29 +315,7 @@ function main() {
     config['dryrun']=true
     shift
   fi
-  "${@:-help}"
-}
-
-update() {
-  local packages=("${@}")
-  if [ ${#packages[@]} = 0 ]; then
-    # TODO: make it stateless but support starting point
-    # TODO: support beta-versions
-    # TODO: avoid git references, e.g., github
-
-    local filter='.dependencies | keys | join(" ")'
-    IFS=' ' read -r -a packages <<<"$(npm ls --depth=0 --omit=dev --json | jq -r "${filter}")"
-  fi
-
-  for pkg in "${packages[@]}"; do
-    echo npm install "${pkg}"@latest
-    npm install "${pkg}"@latest >/dev/null
-    if ! git diff --exit-code >/dev/null; then
-      printf '\nPackage %s was updated, please commit changes\n' "${pkg}"
-      return 0
-    fi
-  done
-  echo is up-to-date
+  "${@:-@usage}"
 }
 
 main "${@}"
