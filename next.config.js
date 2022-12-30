@@ -1,11 +1,11 @@
-const withTranspileModules = require('next-transpile-modules')(['react-hotkeys-hook']);
 const {withSentryConfig} = require('@sentry/nextjs');
 
 const moduleExports = {
+  output: 'standalone',
   sentry: {
     hideSourceMaps: true,
   },
-  output: 'standalone',
+  transpilePackages: ['react-hotkeys-hook'],
 };
 
 const sentryWebpackPluginOptions = {
@@ -13,6 +13,6 @@ const sentryWebpackPluginOptions = {
 };
 
 module.exports = withSentryConfig(
-  withTranspileModules(moduleExports),
+  moduleExports,
   sentryWebpackPluginOptions,
 );
