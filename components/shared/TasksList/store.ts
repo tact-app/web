@@ -1,5 +1,6 @@
 import { RootStore } from '../../../stores/RootStore';
 import { makeAutoObservable, reaction, runInAction, toJS } from 'mobx';
+import cloneDeep from 'lodash/cloneDeep';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { NavigationDirections, TaskData, TaskStatus } from './types';
 import { TaskQuickEditorProps } from '../TaskQuickEditor/store';
@@ -333,7 +334,7 @@ export class TasksListStore {
 
   assignGoal = (taskIds: string[], goalId: string) => {
     taskIds.forEach((id) => {
-      this.items[id].goalId = goalId;
+      this.items[id] = {...cloneDeep(this.items[id]), goalId};
     });
 
     this.root.api.tasks.assignGoal({
