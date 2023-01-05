@@ -62,6 +62,7 @@ export const TaskCreatorView = observer(function TaskCreator(
         display='flex'
         minH={10}
         w='auto'
+        zIndex='100'
         {...props.wrapperProps}
       >
         <InputGroup size='md' ref={ref} variant='unstyled' alignItems='center'>
