@@ -334,6 +334,8 @@ export class TasksListStore {
 
   assignGoal = (taskIds: string[], goalId: string) => {
     taskIds.forEach((id) => {
+      // TODO:debt find a way to avoid cloning
+      //  see https://linear.app/octolab/issue/TACT-115/sync-the-goal-field-after-a-quick-edit-of-a-task
       this.items[id] = {...cloneDeep(this.items[id]), goalId};
     });
 
