@@ -191,7 +191,7 @@ start() {
 tools() {
   case "${1}" in
   okteto)
-    local os arch bin src version=2.10.3
+    local os arch bin src version=2.11.0
     os=$(uname -s)
     arch=$(uname -m) && arch=${arch/aarch64/arm64}
     bin=$(echo bin/"${os}"/"${arch}" | tr '[:upper:]' '[:lower:]')
