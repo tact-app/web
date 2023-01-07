@@ -9,13 +9,11 @@ Requirements:
 - [Docker Desktop][Docker].
 - Tokens for
   - [Font Awesome][]
-  - [Okteto][]
   - [Sentry][]
   - [Vercel][]
 
 [Docker]:         https://www.docker.com/products/docker-desktop/
 [Font Awesome]:   https://fontawesome.com/
-[Okteto]:         https://www.okteto.com/
 [Sentry]:         https://sentry.io/welcome/
 [Vercel]:         https://vercel.com/
 
@@ -33,7 +31,6 @@ You can update tokens by the following commands
 
 ```bash
 $ run set_fontawesome_token
-$ run set_okteto_token
 $ run set_sentry_token
 $ run set_vercel_token
 
@@ -96,33 +93,8 @@ $ run refresh
 
 ```bash
 $ run tools npm ci
-$ run tools okteto
 $ run whoami
 ```
-
-### Docker Compose
-**Useful:** [docs][Docker Compose], [src](https://github.com/docker/compose)
-
-```bash
-$ run compose up -d
-$ run compose down
-
-$ run compose --help
-```
-
-### Okteto CLI
-**Useful:** [docs][Okteto CLI], [src](https://github.com/okteto/okteto)
-
-```bash
-$ activate
-$ run okteto context use https://cloud.okteto.com
-$ run okteto up
-
-$ run okteto --help
-```
-
-You can avoid using the token parameter when working with these commands,
-it's substituted automatically under the hood.
 
 ### Sentry CLI
 **Useful:** [docs][Sentry CLI], [src](https://github.com/getsentry/sentry-cli)
@@ -148,8 +120,6 @@ You can avoid using the token parameter when working with these commands,
 it's substituted automatically under the hood.
 
 [Docker CLI]:       https://docs.docker.com/engine/reference/commandline/cli/
-[Docker Compose]:   https://docs.docker.com/compose/reference/
-[Okteto CLI]:       https://www.okteto.com/docs/cloud/okteto-cli/
 [Sentry CLI]:       https://docs.sentry.io/product/cli/
 [Vercel CLI]:       https://vercel.com/docs/cli
 
