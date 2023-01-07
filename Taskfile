@@ -8,6 +8,10 @@
 set -euo pipefail
 
 refresh() {
+  # migration
+  git config --unset okteto.token || true # https://github.com/tact-app/web/issues/227
+
+
   git fetch --all --prune --prune-tags --tags
 
   local remote actual target shared
@@ -15,7 +19,7 @@ refresh() {
   actual=$(git rev-parse @)
   target=$(git rev-parse "${remote}")
   shared="$(git merge-base @ "${remote}")"
-  [ "${actual}" != "${shared}" ] && echo Everything is up to date && return 0
+  [ "${actual}" != "${shared}" ] && echo Everything is up to date && return
 
   if ! git diff-index --quiet HEAD; then
     git stash -m 'stash before pull'
@@ -43,7 +47,7 @@ refresh() {
     npm install "${pkg}"@latest >/dev/null
     if ! git diff --exit-code >/dev/null; then
       printf '\nPackage %s was updated, please commit changes\n' "${pkg}"
-      return 0
+      return
     fi
   done
   echo is up-to-date
@@ -51,16 +55,12 @@ refresh() {
 
 setup() {
   set_fontawesome_token false
-  set_okteto_token false
   set_sentry_token false
   set_vercel_token false
   env
 
   tools npm ci
   vercel link
-
-  tools okteto
-  okteto context use https://cloud.okteto.com
 
   build --from-scratch
 
@@ -72,7 +72,6 @@ setup() {
 }
 
 set_fontawesome_token() { @store_token 'Font Awesome' fontawesome.token 36 "${1:-true}"; }
-set_okteto_token() { @store_token Okteto okteto.token 48 "${1:-true}"; }
 set_sentry_token() { @store_token Sentry sentry.token 64 "${1:-true}"; }
 set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
 @store_token() {
@@ -91,13 +90,12 @@ set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
   git config "${key}" "${token}"
   echo 'Token saved.'
 
-  [ "${update}" != false ] && env || return 0
+  [ "${update}" != false ] && env || return
 }
 
 env() {
   cat <<EOF >.env
 FONTAWESOME_TOKEN=$(git config fontawesome.token)
-OKTETO_TOKEN=$(git config okteto.token)
 SENTRY_TOKEN=$(git config sentry.token)
 VERCEL_TOKEN=$(git config vercel.token)
 EOF
@@ -123,8 +121,6 @@ EOF
 #  Deploy to staging
 #   - run deploy
 #  Deploy to production
-#   - run tools okteto
-#   - run okteto context use https://cloud.okteto.com
 #   - run deploy prod
 isolated() {
   docker run --rm -it \
@@ -157,9 +153,9 @@ build() {
     fi
     docker build \
       --build-arg token="$(git config fontawesome.token)" \
-      -f k8s/web/Dockerfile \
+      -f Dockerfile \
       -t tact-app/web:local .
-    return $?
+    return
   fi
 
   # local way
@@ -177,7 +173,7 @@ start() {
       --rm -it \
       -p 127.0.0.1:3000:3000 \
       tact-app/web:local
-    return $?
+    return
   fi
 
   # local way
@@ -187,43 +183,14 @@ start() {
 
 # Example: run tools npm i vercel@latest
 # Example: run tools npm ci
-# Example: run tools okteto
 tools() {
-  case "${1}" in
-  okteto)
-    local os arch bin src version=2.11.0
-    os=$(uname -s)
-    arch=$(uname -m) && arch=${arch/aarch64/arm64}
-    bin=$(echo bin/"${os}"/"${arch}" | tr '[:upper:]' '[:lower:]')
-    src=https://github.com/okteto/okteto/releases/download
+  # dirty hack related to "docker: open .env: no such file or directory"
+  unset -f npm
 
-    mkdir -p "${bin}"
-    curl -sSfL "${src}/${version}/okteto-${os}-${arch}" -o "${bin}"/okteto
-    chmod +x "${bin}"/okteto
-    ;;
-  *)
-    # dirty hack related to "docker: open .env: no such file or directory"
-    unset -f npm
-
-    (cd tools && "${@}")
-    ;;
-  esac
+  (cd tools && "${@}")
 }
-
-compose() { docker compose -p tact-app "${@}"; }
 
 npm() { @node "npm ${*}"; }
-
-_okteto=$(which okteto || true)
-okteto() {
-  [ -z "${_okteto}" ] && echo Please setup env and activate it. && return 1
-
-  local OKTETO_TOKEN
-  OKTETO_TOKEN=$(git config okteto.token)
-
-  local args=("${@}")
-  OKTETO_TOKEN="$(git config okteto.token)" _ "${_okteto}" "${args[@]}"
-}
 
 _sentry=$(which sentry-cli || true)
 sentry() {
@@ -248,7 +215,7 @@ vercel() {
       done < <(vercel ls 2>&1 | grep https | awk '{print $2}')
       if ! $found; then
         echo No deployments found.
-        return 0
+        return
       fi
     else
       args+=(--safe tact)
@@ -264,10 +231,7 @@ deploy() {
     vercel pull --yes --environment=production
     vercel build --yes --prod
     vercel deploy --yes --prebuilt --prod
-
-    okteto build
-    okteto deploy
-    return $?
+    return
   fi
 
   vercel pull --yes --environment=preview
@@ -277,10 +241,8 @@ deploy() {
 
 whoami() {
   echo "You are $(git config user.name) <$(git config user.email)>"
-  echo "* Docker Compose ----------------------------------"
-  compose ls
-  echo "* Okteto ------------------------------------------"
-  okteto context
+  echo "* Docker ------------------------------------------"
+  docker version
   echo "* Sentry ------------------------------------------"
   sentry --version
   echo "* Vercel ------------------------------------------"
@@ -289,6 +251,7 @@ whoami() {
 
 declare -A config
 config['dryrun']=false
+config['port']=3000 # TODO:debt customize it
 
 _() {
   if ${config['dryrun']}; then
@@ -310,7 +273,7 @@ EOF
   compgen -A function | grep -Ev '^(@|_)' | sort | cat -n
 }
 
-function main() {
+function @main() {
   if [[ "${1:-}" =~ ^--dry-run|-d$ ]]; then
     config['dryrun']=true
     shift
@@ -318,4 +281,4 @@ function main() {
   "${@:-@usage}"
 }
 
-main "${@}"
+@main "${@}"

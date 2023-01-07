@@ -36,7 +36,7 @@ jobs:
           images: |
             octopot/tact-app-web
             ghcr.io/tact-app/web
-            quay.io/octopot/tact-app-web
+            quay.io/tact-app/web
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -48,7 +48,7 @@ jobs:
       - uses: docker/build-push-action@v3
         with:
           context: .
-          file: k8s/web/Dockerfile
+          file: Dockerfile
           build-args: token=${{ secrets.FONTAWESOME_TOKEN }}
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}

@@ -5,7 +5,6 @@
 /.vercel/
 
 /bin/
-/k8s/
 /node_modules/
 /tools/
 
@@ -20,7 +19,6 @@
 next-env.d.ts
 tsconfig.tsbuildinfo
 
-docker-compose.yml
 Taskfile
 
 README.md
