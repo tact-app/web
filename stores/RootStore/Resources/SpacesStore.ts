@@ -27,6 +27,7 @@ export class SpacesStore {
 
   add(space: SpaceData) {
     this.list.push(space);
+    this.root.api.spaces.add(space);
 
     if (this.count === 2) {
       this.list.unshift({
