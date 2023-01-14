@@ -211,6 +211,7 @@ export class SpacesStore {
     space.children.push(getRandomOrigins(space.id, 1)[0]);
 
     this.root.resources.spaces.update(space);
+    this.menu.loadSpaces();
   };
 
   getInboxItems = async () => {
