@@ -60,6 +60,21 @@ export class SpacesInboxStore {
   space: SpaceData | null = null;
   items: SpacesInboxItemData[] = [];
   itemsLoader: (() => Promise<SpacesInboxItemData[]>) | null = null;
+  searchString: string = '';
+
+  get filteredItems() {
+    if (!this.searchString) {
+      return this.items;
+    }
+
+    return this.items.filter((item) =>
+        item.title.toLowerCase().startsWith(this.searchString.toLowerCase())
+    );
+  }
+
+  updateSearch(value: string) {
+    this.searchString = value;
+  }
 
   navigate = (direction: 'up' | 'down') => {
     const index = this.items.findIndex(
