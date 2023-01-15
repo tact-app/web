@@ -172,8 +172,8 @@ export class CalendarStore {
     this.dropItem = props.dropItem;
     this.isCollapsed = props.isCollapsed;
     this.callbacks = props.callbacks || {};
-    this.resizeBlocks.setDropItem(this.resizableBlockTask);
     this.tasks = props.tasks;
+    !this.isCollapsed && this.resizeBlocks.setDropItem(this.resizableBlockTask);
   };
 
   get resizableBlocksCallbacks(): ResizableBlocksProps['callbacks'] {
