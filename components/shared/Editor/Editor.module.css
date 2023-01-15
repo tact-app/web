@@ -11,7 +11,6 @@
   user-select: none;
 }
 
-.root li div{
+.root ul li div{
   width: calc(100% - 24px);
-  word-wrap: break-word;
 }
