@@ -20,7 +20,7 @@ export type SpacesInboxProps = {
 
 export class SpacesInboxStore {
   constructor(public root: RootStore) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, undefined, { autoBind: true });
   }
 
   keyMap = {
