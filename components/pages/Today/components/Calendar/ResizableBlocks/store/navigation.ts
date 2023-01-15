@@ -94,7 +94,7 @@ export class ResizableBlocksNavigation {
     if (this.focusedItem) {
       const { id } = this.focusedItem;
 
-      this.moveFocus(NavigationDirections.DOWN);
+      this.resetFocus();
       this.parent.removeItem(id);
     }
   };
