@@ -11,3 +11,7 @@
   user-select: none;
 }
 
+.root li div{
+  width: calc(100% - 24px);
+  word-wrap: break-word;
+}
