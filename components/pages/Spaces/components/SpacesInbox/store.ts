@@ -20,7 +20,7 @@ export type SpacesInboxProps = {
 
 export class SpacesInboxStore {
   constructor(public root: RootStore) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, undefined, { autoBind: true });
   }
 
   keyMap = {
@@ -60,6 +60,23 @@ export class SpacesInboxStore {
   space: SpaceData | null = null;
   items: SpacesInboxItemData[] = [];
   itemsLoader: (() => Promise<SpacesInboxItemData[]>) | null = null;
+  searchString: string = '';
+
+  get filteredItems() {
+    if (!this.searchString) {
+      return this.items;
+    }
+
+    const searchRegExp = new RegExp(this.searchString, 'gi');
+
+    return this.items.filter((item) => {
+      return searchRegExp.test(item.title);
+    });
+  }
+
+  updateSearch(value: string) {
+    this.searchString = value;
+  }
 
   navigate = (direction: 'up' | 'down') => {
     const index = this.items.findIndex(

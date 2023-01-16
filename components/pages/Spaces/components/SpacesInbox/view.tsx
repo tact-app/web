@@ -4,19 +4,16 @@ import {
   Box,
   Container,
   IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
   chakra,
 } from '@chakra-ui/react';
 import { SpacesInboxItemRow } from './SpacesInboxItemRow';
-import { SearchIcon } from '../../../../shared/Icons/SearchIcon';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faListCheck } from '@fortawesome/pro-regular-svg-icons';
 import React from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { SpacesInboxBreadcrumbs } from './SpacesInboxBreadcrumbs';
+import { Search } from '../../../../shared/Search';
 
 export const SpacesInboxView = observer(function SpacesInboxView(
   props: SpacesInboxProps
@@ -25,7 +22,7 @@ export const SpacesInboxView = observer(function SpacesInboxView(
   const parentRef = React.useRef<HTMLDivElement | null>(null);
 
   const rows = useVirtualizer({
-    count: store.items.length,
+    count: store.filteredItems.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 41,
   });
@@ -68,12 +65,7 @@ export const SpacesInboxView = observer(function SpacesInboxView(
           </IconButton>
         </Box>
       </Box>
-      <InputGroup size='md' mb={6}>
-        <Input placeholder='Search...' borderWidth='2px' />
-        <InputRightElement>
-          <SearchIcon />
-        </InputRightElement>
-      </InputGroup>
+      <Search onChange={store.updateSearch} />
       <Box overflow='auto' ref={parentRef} flex={1}>
         <chakra.div
           style={{
@@ -82,12 +74,25 @@ export const SpacesInboxView = observer(function SpacesInboxView(
             position: 'relative',
           }}
         >
+          {!store.filteredItems.length && (
+              <chakra.div w={'100%'} textAlign='center' m={2}>
+                <chakra.span
+                    fontSize='sm'
+                    fontWeight='normal'
+                    color='gray.400'
+                    pr={1}
+                    pl={1}
+                >
+                  No result found
+                </chakra.span>
+              </chakra.div>
+          )}
           {rows.getVirtualItems().map((virtualRow) => (
             <Box
               key={virtualRow.key}
               data-index={virtualRow.index}
               ref={
-                store.items[virtualRow.index].id === store.focusedItemId
+                store.filteredItems[virtualRow.index].id === store.focusedItemId
                   ? store.setFocusedItemRef
                   : null
               }
@@ -99,7 +104,7 @@ export const SpacesInboxView = observer(function SpacesInboxView(
                 transform: `translateY(${virtualRow.start}px)`,
               }}
             >
-              <SpacesInboxItemRow item={store.items[virtualRow.index]} />
+              <SpacesInboxItemRow item={store.filteredItems[virtualRow.index]} />
             </Box>
           ))}
         </chakra.div>
