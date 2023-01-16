@@ -11,6 +11,6 @@
   user-select: none;
 }
 
-.root ul li div{
+.root ul li div {
   width: calc(100% - 24px);
 }
