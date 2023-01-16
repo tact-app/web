@@ -67,9 +67,9 @@ export class SpacesInboxStore {
       return this.items;
     }
 
-    return this.items.filter((item) =>
-        item.title.toLowerCase().startsWith(this.searchString.toLowerCase())
-    );
+    return this.items.filter((item) => {
+      return new RegExp(this.searchString, 'gi').test(item.title);
+    });
   }
 
   updateSearch(value: string) {

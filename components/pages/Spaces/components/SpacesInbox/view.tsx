@@ -74,6 +74,19 @@ export const SpacesInboxView = observer(function SpacesInboxView(
             position: 'relative',
           }}
         >
+          {!store.filteredItems.length && (
+              <chakra.div w={'100%'} textAlign='center' m={2}>
+                <chakra.span
+                    fontSize='sm'
+                    fontWeight='normal'
+                    color='gray.400'
+                    pr={1}
+                    pl={1}
+                >
+                  No result found
+                </chakra.span>
+              </chakra.div>
+          )}
           {rows.getVirtualItems().map((virtualRow) => (
             <Box
               key={virtualRow.key}
