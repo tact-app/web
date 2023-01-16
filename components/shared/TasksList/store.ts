@@ -68,8 +68,8 @@ export class TasksListStore {
     FORCE_WONT_DO: ['alt+w'],
     EDIT: 'space',
     OPEN_AND_EDIT: 'enter',
-    FOCUS_LEAVE_LEFT: 'arrowleft',
-    FOCUS_LEAVE_RIGHT: 'arrowright',
+    FOCUS_LEAVE_LEFT: 'left',
+    FOCUS_LEAVE_RIGHT: 'right',
     OPEN: 'enter',
   };
 

@@ -78,7 +78,7 @@ export class TaskWontDoModalStore {
         e.stopPropagation();
       }
     } else if (e.key === 'Enter') {
-      if (!(e.metaKey || e.ctrlKey)) {
+      if (!(e.metaKey)) {
         e.stopPropagation();
       }
     } else {

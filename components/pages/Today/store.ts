@@ -91,8 +91,8 @@ export class TodayStore {
     FOCUS_INPUT: 'n',
     FOCUS_MODE: 'f',
     SILENT_FOCUS_MODE: 'shift+f',
-    SWITCH_LIST_TODAY: ['t', 'alt+shift+arrowup'],
-    SWITCH_LIST_WEEK: ['w', 'alt+shift+arrowdown'],
+    SWITCH_LIST_TODAY: ['t', 'alt+shift+up'],
+    SWITCH_LIST_WEEK: ['w', 'alt+shift+down'],
     MOVE_TASK: ['alt+s'],
     TOGGLE_CALENDAR: 'c',
   };

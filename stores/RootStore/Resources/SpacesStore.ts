@@ -94,7 +94,6 @@ export class SpacesStore {
 
     runInAction(() => {
       this.list = spaces;
-      console.log('spaces inited', this.count);
     });
   };
 }

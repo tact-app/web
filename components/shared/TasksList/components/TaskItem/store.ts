@@ -69,7 +69,7 @@ export class TaskItemStore {
   }
 
   handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Alt' && !e.metaKey && !e.shiftKey && !e.ctrlKey) {
+    if (e.key === 'Alt' && !e.metaKey && !e.shiftKey) {
       this.isAltPressed = true;
     } else if (this.isAltPressed) {
       this.isAltPressed = false;
@@ -151,7 +151,7 @@ export class TaskItemStore {
     let newStatus;
 
     if (this.task.status === TaskStatus.TODO) {
-      if (nativeEvent.metaKey || nativeEvent.ctrlKey) {
+      if (nativeEvent.metaKey) {
         newStatus = TaskStatus.WONT_DO;
 
         if (nativeEvent.shiftKey) {
@@ -162,7 +162,7 @@ export class TaskItemStore {
         newStatus = TaskStatus.DONE;
       }
     } else {
-      if (nativeEvent.metaKey || nativeEvent.ctrlKey) {
+      if (nativeEvent.metaKey) {
         if (this.task.status === TaskStatus.DONE) {
           newStatus = TaskStatus.WONT_DO;
 

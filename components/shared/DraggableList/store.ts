@@ -90,32 +90,26 @@ export class DraggableListStore {
   }
 
   keymap = {
-    UP: ['j', 'arrowup'],
-    DOWN: ['k', 'arrowdown'],
-    FORCE_UP: ['meta+j', 'meta+arrowup', 'ctrl+j', 'ctrl+arrowup', 'h'],
-    FORCE_DOWN: ['meta+k', 'meta+arrowdown', 'ctrl+k', 'ctrl+arrowdown', 'l'],
+    UP: ['j', 'up'],
+    DOWN: ['k', 'down'],
+    FORCE_UP: ['meta+j', 'meta+up', 'h'],
+    FORCE_DOWN: ['meta+k', 'meta+down', 'l'],
     EDIT: 'space',
     MOVE_UP: [
       'meta+shift+j',
-      'meta+shift+arrowup',
-      'ctrl+shift+j',
-      'ctrl+shift+arrowup',
+      'meta+shift+up'
     ],
     MOVE_DOWN: [
       'meta+shift+k',
-      'meta+shift+arrowdown',
-      'ctrl+shift+k',
-      'ctrl+shift+arrowdown',
+      'meta+shift+down',
     ],
-    SELECT_UP: ['shift+j', 'shift+arrowup'],
-    SELECT_DOWN: ['shift+k', 'shift+arrowdown'],
-    SELECT_ALL: ['meta+a', 'ctrl+a'],
+    SELECT_UP: ['shift+j', 'shift+up'],
+    SELECT_DOWN: ['shift+k', 'shift+down'],
+    SELECT_ALL: ['meta+a'],
     ESC: 'escape',
     FORCE_DELETE: [
       'meta+backspace',
-      'meta+delete',
-      'ctrl+backspace',
-      'ctrl+delete',
+      'meta+delete'
     ],
     DELETE: ['del', 'backspace'],
   };

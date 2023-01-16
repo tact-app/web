@@ -9,10 +9,10 @@ const dict = {
   alt: '⌥',
   options: '⌥',
   ctrl: '⌃',
-  arrowup: '↑',
-  arrowdown: '↓',
-  arrowleft: '←',
-  arrowright: '→',
+  up: '↑',
+  down: '↓',
+  left: '←',
+  right: '→',
 };
 
 export const HotkeyBlock = observer(function HotkeyBlock({

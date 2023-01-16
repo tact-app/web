@@ -24,11 +24,11 @@ export class SpacesInboxStore {
   }
 
   keyMap = {
-    UP: 'arrowup',
-    DOWN: 'arrowdown',
-    LEAVE_LEFT: 'arrowleft',
-    LEAVE_RIGHT: 'arrowright',
-    SELECT: ['arrowright', 'enter'],
+    UP: 'up',
+    DOWN: 'down',
+    LEAVE_LEFT: 'left',
+    LEAVE_RIGHT: 'right',
+    SELECT: ['right', 'enter'],
     UNSELECT: 'escape',
   };
 

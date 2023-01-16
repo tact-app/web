@@ -590,7 +590,7 @@ export class TaskQuickEditorStore {
         this.callbacks.onNavigate?.(NavigationDirections.ENTER);
       }
 
-      this.saveTask(e.shiftKey, e.metaKey || e.ctrlKey);
+      this.saveTask(e.shiftKey, e.metaKey);
     } else if (mode) {
       e.stopPropagation();
       this.enterMode(mode, e);

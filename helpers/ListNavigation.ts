@@ -34,12 +34,12 @@ export class ListNavigation {
   focusedIndex: number | null = 0;
 
   keyMap = {
-    UP: ['arrowup', 'j'],
-    DOWN: ['arrowdown', 'k'],
+    UP: ['up', 'j'],
+    DOWN: ['down', 'k'],
     ENTER: ['enter'],
-    FORCE_ENTER: ['meta+enter', 'ctrl+enter'],
-    FIRST: ['meta+arrowup', 'meta+j', 'ctrl+arrowup', 'ctrl+j', 'h'],
-    LAST: ['meta+arrowdown', 'meta+k', 'ctrl+arrowdown', 'ctrl+k', 'l'],
+    FORCE_ENTER: ['meta+enter'],
+    FIRST: ['meta+up', 'meta+j', 'h'],
+    LAST: ['meta+down', 'meta+k', 'l'],
     NUMBERS: numbers,
   };
 
