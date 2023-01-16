@@ -57,8 +57,6 @@ export class CalendarStore {
   tasks: Record<string, TaskData> = {};
   times: string[] = Array.from({ length: 24 }).map((_, i) => `${i}:00`);
   today: Date = new Date();
-  minDate: Date = new Date(new Date().setDate(this.today.getDate() - 3));
-  maxDate: Date = new Date(new Date().setDate(this.today.getDate() + 7));
   todayId: string = this.today.toDateString();
   events: Record<string, EventData> = {};
   resizableEvents: Record<string, ResizableBlocksItemData> = {};
