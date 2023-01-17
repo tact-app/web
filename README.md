@@ -22,7 +22,7 @@ $ alias run='./Taskfile'
 $ alias activate='source bin/activate'
 $ activate && run setup
 
-$ open http://localhost:3000 && run server
+$ $(sleep 3; open http://localhost:3000) &; npm start
 ```
 
 ## Manage secrets

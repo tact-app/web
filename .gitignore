@@ -1,11 +1,16 @@
+# inventory
 .idea
 .next
 .vercel
 
+# dependencies
 /node_modules/
 
+# sensitive data
 .env
 .sentryclirc
+http-client.private.env.json
 
+# ts build output
 *.tsbuildinfo
 next-env.d.ts

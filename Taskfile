@@ -19,7 +19,7 @@ refresh() {
   actual=$(git rev-parse @)
   target=$(git rev-parse "${remote}")
   shared="$(git merge-base @ "${remote}")"
-  [ "${actual}" != "${shared}" ] && echo Everything is up to date && return
+  [ "${actual}" == "${shared}" ] && echo Everything is up to date && return
 
   if ! git diff-index --quiet HEAD; then
     git stash -m 'stash before pull'
@@ -90,7 +90,7 @@ set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
   git config "${key}" "${token}"
   echo 'Token saved.'
 
-  [ "${update}" != false ] && env || return
+  [ "${update}" != false ] && env || return 0
 }
 
 env() {
