@@ -9,7 +9,6 @@ import { ResizableGroup } from '../../shared/ResizableGroup';
 import { Task } from '../../shared/Task';
 import React from 'react';
 import { ModalsSwitcher } from '../../../helpers/ModalsController';
-import { SpacesTodayHelp } from './components/SpacesTodayHelp';
 import { ResizableGroupChild } from '../../shared/ResizableGroup/ResizableGroupChild';
 
 export const SpacesView = observer(function SpacesView(props: SpacesProps) {
@@ -75,7 +74,6 @@ export const SpacesView = observer(function SpacesView(props: SpacesProps) {
           )}
         </ResizableGroupChild>
       </ResizableGroup>
-      <SpacesTodayHelp />
       <ModalsSwitcher controller={store.modals.controller} />
     </Box>
   );

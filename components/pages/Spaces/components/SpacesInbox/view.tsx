@@ -49,21 +49,6 @@ export const SpacesInboxView = observer(function SpacesInboxView(
         mb={7}
       >
         <SpacesInboxBreadcrumbs />
-        <Box>
-          <IconButton
-            aria-label='today help'
-            size='xs'
-            variant='ghost'
-            onClick={props.callbacks.onTodayHelpClick}
-          >
-            <FontAwesomeIcon
-              icon={faListCheck}
-              fixedWidth
-              size='lg'
-              color='var(--chakra-colors-gray-400)'
-            />
-          </IconButton>
-        </Box>
       </Box>
       <Search onChange={store.updateSearch} />
       <Box overflow='auto' ref={parentRef} flex={1}>
