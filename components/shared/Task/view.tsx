@@ -53,8 +53,7 @@ export const TaskView = observer(function TaskView() {
         order={store.modesOrder}
         task={store.data}
       >
-        <Box minH={0} flex={1} pb={6} display='flex' flexDirection='column'>
-          <ItemToolbar
+        <ItemToolbar
             onPreviousItem={store.handlePreviousItem}
             onNextItem={store.handleNextItem}
             onClose={store.handleClose}
@@ -63,11 +62,16 @@ export const TaskView = observer(function TaskView() {
             hasPreviousItem={store.hasPrevious}
             hasNextItem={store.hasNext}
             isExpanded={store.isExpanded}
-          />
-          <Box mt={6}>
-            <TaskModesMenu />
+        />
+        <Box mt={6}>
+          <TaskModesMenu />
+        </Box>
+        <Box minH={0} flex={1} display='flex' flexDirection='column'>
             <Box
               transition='opacity 0.2s ease-in-out'
+              display='flex'
+              flexDirection='column'
+              h='100%'
               opacity={
                 store.isWontDo &&
                 !store.isEditorFocused &&
@@ -77,7 +81,7 @@ export const TaskView = observer(function TaskView() {
               }
             >
               <HStack ref={ref} alignItems='start'>
-                <Box h={9} display='flex' alignItems='center'>
+                <Box h='100%' display='flex' alignItems='center'>
                   <Checkbox
                     variant='indeterminateUnfilled'
                     bg='white'
@@ -104,7 +108,6 @@ export const TaskView = observer(function TaskView() {
                   <TaskEditor />
                 )}
               </Box>
-            </Box>
           </Box>
           {store.isWontDo && store.data.wontDoReason && (
             <Box>
@@ -119,7 +122,7 @@ export const TaskView = observer(function TaskView() {
           )}
         </Box>
         {store.data.input && store.inputSpace ? (
-          <Box>
+          <Box mt={2} mb={2}>
             <Divider />
             <Box
               borderColor='gray.200'
