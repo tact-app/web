@@ -3,13 +3,10 @@ import { SpacesInboxProps, useSpacesInboxStore } from './store';
 import {
   Box,
   Container,
-  IconButton,
   chakra,
 } from '@chakra-ui/react';
 import { SpacesInboxItemRow } from './SpacesInboxItemRow';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faListCheck } from '@fortawesome/pro-regular-svg-icons';
 import React from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { SpacesInboxBreadcrumbs } from './SpacesInboxBreadcrumbs';
