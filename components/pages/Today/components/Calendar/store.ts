@@ -34,7 +34,7 @@ export type CalendarProps = {
 
 export class CalendarStore {
   constructor(public root: RootStore) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, undefined, { autoBind: true });
   }
 
   callbacks: CalendarProps['callbacks'] = {};
@@ -50,6 +50,8 @@ export class CalendarStore {
 
   daysCount = 3;
   currentLeftDay = 0;
+  daysMinCountForWeek = 3;
+  daysMaxCountForWeek = 7;
   dropItem: TaskData = null;
 
   tasks: Record<string, TaskData> = {};
@@ -67,6 +69,19 @@ export class CalendarStore {
     return minutes * 1000 * 60;
   }
 
+  get weekMinMaxDates() {
+    const minDate = new Date(new Date().setDate(this.today.getDate() - this.daysMinCountForWeek));
+    minDate.setHours(0, 0, 0, 0);
+
+    const maxDate = new Date(new Date().setDate(this.today.getDate() + this.daysMaxCountForWeek));
+    maxDate.setHours(23, 59, 59, 999);
+
+    return {
+      minDate: this.convertTimestampToMinutes(minDate.getTime()),
+      maxDate: this.convertTimestampToMinutes(maxDate.getTime()),
+    };
+  }
+
   get resizableBlockTask(): ResizableBlocksDropItemData {
     if (!this.dropItem) {
       return null;
@@ -81,6 +96,14 @@ export class CalendarStore {
         title: this.dropItem.title,
       },
     };
+  }
+
+  get prevPageDisabled() {
+    return this.weekMinMaxDates.minDate >= this.days[0].from;
+  }
+
+  get nextPageDisabled() {
+    return this.weekMinMaxDates.maxDate <= this.days[this.days.length - 1].to;
   }
 
   get days() {
@@ -104,11 +127,11 @@ export class CalendarStore {
   }
 
   prevPage = () => {
-    this.currentLeftDay -= this.daysCount;
+    this.currentLeftDay -= 1;
   };
 
   nextPage = () => {
-    this.currentLeftDay += this.daysCount;
+    this.currentLeftDay += 1;
   };
 
   setResolution = (count: number) => {

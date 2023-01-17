@@ -88,6 +88,7 @@ export const CalendarTableHeader = observer(function CalendarTableHeader() {
       >
         {store.daysCount > 3 && (
           <Button
+            disabled={store.prevPageDisabled}
             onClick={store.prevPage}
             position='absolute'
             left={0}
@@ -104,6 +105,7 @@ export const CalendarTableHeader = observer(function CalendarTableHeader() {
         ))}
         {store.daysCount > 3 && (
           <Button
+            disabled={store.nextPageDisabled}
             onClick={store.nextPage}
             position='absolute'
             right={0}
