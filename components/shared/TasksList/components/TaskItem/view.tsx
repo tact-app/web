@@ -107,15 +107,17 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           {store.isEditMode ? (
             <TaskQuickEditorInput autoFocus />
           ) : (
-            <Box position='relative' overflow='hidden'>
-              <chakra.span
-                transition='color 0.2s ease-in-out'
-                color={
-                  isTodoTask && !store.isEditMode ? 'gray.700' : 'gray.400'
-                }
+            <Box
+                position='relative'
                 whiteSpace='nowrap'
                 textOverflow='ellipsis'
                 overflow='hidden'
+                color={
+                  isTodoTask && !store.isEditMode ? 'gray.700' : 'gray.400'
+                }
+            >
+              <chakra.span
+                transition='color 0.2s ease-in-out'
               >
                 {store.task.title}
               </chakra.span>
