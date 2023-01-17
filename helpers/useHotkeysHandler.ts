@@ -9,19 +9,15 @@ const normalizeKey = (key: string) => {
   const arr = key.split('+');
   const keyName = arr.pop();
 
-  return arr.sort().concat(keyName).join('+');
+  return arr.concat(keyName).join('+');
 };
 
 const getNormalizedKeyFromEvent = (e: HotkeysEvent) => {
-  const { keys, mod, ctrl, meta, alt, shift } = e;
+  const { keys, mod, meta, alt, shift } = e;
   const items = [];
 
   if (mod) {
     items.push('mod');
-  }
-
-  if (ctrl) {
-    items.push('ctrl');
   }
 
   if (meta) {
@@ -92,9 +88,10 @@ export const useHotkeysHandler = (
 
   const handleHotkey = useCallback(
     (event, hotkeysEvent) => {
+      const {metaKey, shiftKey, key} = event
+      if(shiftKey && metaKey && (key === 'ArrowDown' || key === 'ArrowUp' )) return
       const matchedHandlerName =
         revertedKeymap[getNormalizedKeyFromEvent(hotkeysEvent)];
-
       if (matchedHandlerName) {
         matchedHandlerName.forEach((name) => {
           if (handlers[name]) {

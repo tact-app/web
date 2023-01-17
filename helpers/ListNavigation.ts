@@ -1,5 +1,8 @@
 import { makeAutoObservable } from 'mobx';
 import { useHotkeysHandler } from './useHotkeysHandler';
+import {
+  HotkeysEvent,
+} from 'react-hotkeys-hook/src/types';
 import { useEffect } from 'react';
 
 const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
@@ -12,14 +15,17 @@ export type NavigationCallbacks = {
 
 const defaultCallbacks: NavigationCallbacks = {};
 
-export const useListNavigation = (listNavigation: ListNavigation) => {
+export const useListNavigation = (listNavigation: ListNavigation,
+  storeKeyMap?: Record<string, string[] | string>,
+  storeHotkeyHandlers?: Record<string, (event: KeyboardEvent, handler: HotkeysEvent) => void
+  >) => {
   useEffect(() => {
     listNavigation.init();
   }, [listNavigation]);
 
   return useHotkeysHandler(
-    listNavigation.keyMap,
-    listNavigation.hotkeyHandlers,
+    { ...listNavigation.keyMap, ...(storeKeyMap || {}) },
+    { ...listNavigation.hotkeyHandlers, ...(storeHotkeyHandlers || {}) },
     { enabled: listNavigation.isEnabled }
   );
 };
@@ -34,12 +40,12 @@ export class ListNavigation {
   focusedIndex: number | null = 0;
 
   keyMap = {
-    UP: ['arrowup', 'j'],
-    DOWN: ['arrowdown', 'k'],
+    UP: ['up', 'j'],
+    DOWN: ['down', 'k'],
     ENTER: ['enter'],
-    FORCE_ENTER: ['meta+enter', 'ctrl+enter'],
-    FIRST: ['meta+arrowup', 'meta+j', 'ctrl+arrowup', 'ctrl+j', 'h'],
-    LAST: ['meta+arrowdown', 'meta+k', 'ctrl+arrowdown', 'ctrl+k', 'l'],
+    FORCE_ENTER: ['meta+enter'],
+    FIRST: ['meta+up', 'meta+j', 'h'],
+    LAST: ['meta+down', 'meta+k', 'l'],
     NUMBERS: numbers,
   };
 

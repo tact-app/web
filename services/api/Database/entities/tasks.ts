@@ -165,7 +165,6 @@ const data = {
         destination?: number;
       }
     ) => {
-      console.log('swap', data);
 
       await updateList(db, data.fromListId, (list) => {
         list.taskIds = list.taskIds.filter((id) => !data.taskIds.includes(id));

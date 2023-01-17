@@ -88,7 +88,7 @@ const multiTaskItems = (store: TaskItemStore) => [
       store.parent.deleteWithVerify(store.parent.draggableList.focused),
     title: 'Delete tasks',
     icon: faXmark,
-    hotkey: ['backspace', 'meta+backspace', 'ctrl+backspace'],
+    hotkey: ['backspace', 'meta+backspace'],
     command: '⌫ / ⌘⌫',
   },
 ];
@@ -179,7 +179,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     onClick: () => store.parent.deleteWithVerify([store.task.id]),
     title: 'Delete task',
     icon: faXmark,
-    hotkey: ['backspace', 'meta+backspace', 'ctrl+backspace'],
+    hotkey: ['backspace', 'meta+backspace'],
     command: '⌫ / ⌘⌫',
   },
 ];
