@@ -9,7 +9,6 @@ import {
 } from '@chakra-ui/modal';
 import { Button, Text } from '@chakra-ui/react';
 import { useTaskGoalAssignModalStore } from './store';
-import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import React from 'react';
 import { GoalsSelection } from '../../../GoalsSelection';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
@@ -18,17 +17,13 @@ export const TaskGoalAssignModalView = observer(
   function TaskGoalAssignModalView() {
     const store = useTaskGoalAssignModalStore();
 
-    const ref = useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
-    const hotkeysRef = useListNavigation(store.navigation);
+   const hotkeysRef = useListNavigation(store.navigation, store.keyMap, store.hotkeyHandlers);
 
     return (
       <Modal isCentered isOpen={true} onClose={store.callbacks.onClose}>
         <ModalOverlay />
         <ModalContent
-          ref={(el) => {
-            ref(el);
-            hotkeysRef(el);
-          }}
+          ref={hotkeysRef}
           onFocus={store.navigation.handleFocus}
         >
           <ModalHeader>My goals</ModalHeader>

@@ -9,7 +9,7 @@ const normalizeKey = (key: string) => {
   const arr = key.split('+');
   const keyName = arr.pop();
 
-  return arr.sort().concat(keyName).join('+');
+  return arr.concat(keyName).join('+');
 };
 
 const getNormalizedKeyFromEvent = (e: HotkeysEvent) => {
