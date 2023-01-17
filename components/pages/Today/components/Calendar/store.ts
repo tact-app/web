@@ -112,10 +112,7 @@ export class CalendarStore {
   };
 
   setResolution = (count: number) => {
-    if (this.currentLeftDay % count !== 0) {
-      this.currentLeftDay = Math.floor(this.currentLeftDay / count) * count;
-    }
-
+    this.currentLeftDay = 0;
     this.daysCount = count;
   };
 
