@@ -90,7 +90,7 @@ export const ItemToolbar = ({
           <IconButton
             aria-label={'prev'}
             size='xs'
-            disabled={!hasPreviousItem}
+            isDisabled={!hasPreviousItem}
             variant='ghost'
             mr={2}
             onClick={onPreviousItem}
@@ -105,7 +105,7 @@ export const ItemToolbar = ({
           <IconButton
             aria-label={'next'}
             size='xs'
-            disabled={!hasNextItem}
+            isDisabled={!hasNextItem}
             variant='ghost'
             onClick={onNextItem}
           >

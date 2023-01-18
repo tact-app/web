@@ -69,7 +69,7 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
               <Button
                 colorScheme='blue'
                 size='sm'
-                disabled={!store.isReadyForSave}
+                isDisabled={!store.isReadyForSave}
                 onClick={store.handleSave}
               >
                 Save

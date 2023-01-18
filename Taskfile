@@ -8,11 +8,7 @@
 set -euo pipefail
 
 refresh() {
-  # migration
-  git config --unset okteto.token || true # https://github.com/tact-app/web/issues/227
-
-
-  git fetch --all --prune --prune-tags --tags
+  git fetch --all --prune # TODO:bug `--tags --prune-tags` replaces tags from forks
 
   local remote actual target shared
   remote=${1:-'@{u}'}

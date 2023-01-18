@@ -84,7 +84,7 @@ export const TaskWontDoModalView = observer(function TaskWontDoModalView({
           <Button
             colorScheme='blue'
             onClick={store.handleSave}
-            disabled={!store.isFilled}
+            isDisabled={!store.isFilled}
             display='flex'
             flexDirection='row'
           >

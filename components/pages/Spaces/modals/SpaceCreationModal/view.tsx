@@ -79,7 +79,7 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
             <Button
               colorScheme='blue'
               size='sm'
-              disabled={!store.isReadyForSave}
+              isDisabled={!store.isReadyForSave}
               onClick={store.handleSave}
             >
               Save

@@ -7,7 +7,7 @@
 Requirements:
 
 - [Docker Desktop][Docker].
-- Tokens for
+- Access tokens for
   - [Font Awesome][]
   - [Sentry][]
   - [Vercel][]
