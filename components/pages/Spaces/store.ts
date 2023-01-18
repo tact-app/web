@@ -33,8 +33,6 @@ export class SpacesStore {
   menu = new SpacesMenuStore(this.root);
   inboxItem = new SpacesInboxItemStore(this.root);
   inbox = new SpacesInboxStore(this.root);
-
-  isTodayHelpOpen: boolean = false;
   focusedBlockId: SpacesFocusableBlocks | null = SpacesFocusableBlocks.INBOX;
 
   currentSpace: SpaceData | null = null;
@@ -84,14 +82,6 @@ export class SpacesStore {
       return (index === 3 && size === 1) || (index !== 3 && size === 0);
     });
   }
-
-  toggleTodayHelp = () => {
-    this.isTodayHelpOpen = !this.isTodayHelpOpen;
-  };
-
-  closeTodayHelp = () => {
-    this.isTodayHelpOpen = false;
-  };
 
   setCurrentSpace = (space: SpaceData) => {
     if (this.currentSpace?.id !== space.id && this.currentSpace) {
@@ -240,7 +230,6 @@ export class SpacesStore {
     onFocus: () => this.handleFocus(SpacesFocusableBlocks.INBOX),
     onFocusLeave: this.handleFocusLeave,
     onSelect: (item) => this.setOpenedItem(item),
-    onTodayHelpClick: this.toggleTodayHelp,
     onPathChange: this.handlePathSelect,
   };
 

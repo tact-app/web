@@ -3,13 +3,10 @@ import { SpacesInboxProps, useSpacesInboxStore } from './store';
 import {
   Box,
   Container,
-  IconButton,
   chakra,
 } from '@chakra-ui/react';
 import { SpacesInboxItemRow } from './SpacesInboxItemRow';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faListCheck } from '@fortawesome/pro-regular-svg-icons';
 import React from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { SpacesInboxBreadcrumbs } from './SpacesInboxBreadcrumbs';
@@ -49,21 +46,6 @@ export const SpacesInboxView = observer(function SpacesInboxView(
         mb={7}
       >
         <SpacesInboxBreadcrumbs />
-        <Box>
-          <IconButton
-            aria-label='today help'
-            size='xs'
-            variant='ghost'
-            onClick={props.callbacks.onTodayHelpClick}
-          >
-            <FontAwesomeIcon
-              icon={faListCheck}
-              fixedWidth
-              size='lg'
-              color='var(--chakra-colors-gray-400)'
-            />
-          </IconButton>
-        </Box>
       </Box>
       <Search onChange={store.updateSearch} />
       <Box overflow='auto' ref={parentRef} flex={1}>

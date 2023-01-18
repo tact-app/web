@@ -11,7 +11,6 @@ export type SpacesInboxProps = {
   callbacks: {
     onFocusLeave?: (direction: NavigationDirections) => void;
     onFocus?: () => void;
-    onTodayHelpClick?: () => void;
     onPathChange?: (path: string[]) => void;
     onSelect?: (item: SpacesInboxItemData) => void;
   };
