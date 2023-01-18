@@ -342,6 +342,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
 
   const open = useCallback(() => {
     setIsAnimationInProcess(true);
+    store.handleFocus();
     onOpen();
     store.openMenu();
   }, [onOpen, store]);
