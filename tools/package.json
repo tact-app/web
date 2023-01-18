@@ -3,6 +3,6 @@
   "scripts": {},
   "dependencies": {
     "@sentry/cli": "^2.11.0",
-    "vercel": "^28.12.4"
+    "vercel": "^28.12.6"
   }
 }
