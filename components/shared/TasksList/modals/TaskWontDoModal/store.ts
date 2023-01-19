@@ -25,6 +25,23 @@ export class TaskWontDoModalStore {
   predefinedReasonIndex: number = null;
   otherReason: string = '';
 
+  keyMap = {
+    RESET: ['backspace', 'delete'],
+    FORCE_ENTER: ['meta+enter'],
+  };
+
+  hotkeyHandlers = {
+    RESET: (e: KeyboardEvent) => {
+      this.predefinedReasonIndex = null;
+    },
+    FORCE_ENTER: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.navigation.hotkeyHandlers.FORCE_ENTER?.(e);
+    },
+  };
+
+
   onSave: TaskWontDoModalProps['onSave'];
 
   get isOtherReasonSelected() {

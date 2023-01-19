@@ -14,8 +14,9 @@ import {
 } from '@chakra-ui/react';
 import { GoalsSelectionStoreProvider } from '../../../../shared/GoalsSelection/store';
 import { GoalsSelectionView } from '../../../../shared/GoalsSelection/view';
-import { useRef, LegacyRef } from 'react';
+import { useRef } from 'react';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
+import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 
 export const FocusConfigurationView = observer(function FocusConfigurationView(
   props: FocusConfigurationProps
@@ -23,7 +24,8 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
   const ref = useRef(null);
   const store = useFocusConfigurationStore();
 
-  const hotkeysRef = useListNavigation(store.navigation, store.keyMap, store.hotkeyHandlers);
+  useListNavigation(store.navigation);
+  useHotkeysHandler(store.keyMap, store.hotkeyHandlers)
 
   useOutsideClick({
     ref,
@@ -59,7 +61,6 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           Press ⇧ C to clear
         </Text>
         <Box
-          ref={hotkeysRef as LegacyRef<HTMLDivElement>}
           p={2}
           pl={1}
           borderRadius='md'
