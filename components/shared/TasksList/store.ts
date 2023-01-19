@@ -61,7 +61,7 @@ export class TasksListStore {
   callbacks: TasksListProps['callbacks'] = {};
 
   keyMap = {
-    DONE: 'alt+d',
+    DONE: ['alt+d', 'd'],
     GOAL: 'alt+g',
     MOVE: 'alt+m',
     WONT_DO: ['alt+shift+w'],
@@ -70,7 +70,7 @@ export class TasksListStore {
     OPEN_AND_EDIT: 'enter',
     FOCUS_LEAVE_LEFT: 'left',
     FOCUS_LEAVE_RIGHT: 'right',
-    OPEN: 'enter',
+    OPEN: ['alt+o', 'enter'],
   };
 
   hotkeyHandlers = {

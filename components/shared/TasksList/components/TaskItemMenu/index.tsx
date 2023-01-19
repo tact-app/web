@@ -58,8 +58,8 @@ const multiTaskItems = (store: TaskItemStore) => [
       ? 'Unmark as done'
       : 'Mark as done',
     icon: faCircleCheck,
-    hotkey: 'alt+d',
-    command: '⌥D',
+    hotkey: ['alt+d', 'd'],
+    command: '⌥D / D',
   },
   {
     onClick: () =>
@@ -126,8 +126,8 @@ const singleTaskItems = (store: TaskItemStore) => [
       ? 'Unmark as done'
       : 'Mark as done',
     icon: faCircleCheck,
-    hotkey: 'alt+d',
-    command: '⌥D',
+    hotkey: ['alt+d', 'd'],
+    command: '⌥D / D',
   },
   {
     onClick: () =>
@@ -159,8 +159,8 @@ const singleTaskItems = (store: TaskItemStore) => [
     },
     title: 'Open task',
     icon: faSquareArrowUpRight,
-    hotkey: 'alt+o',
-    command: '⌥O',
+    hotkey: ['alt+o', 'enter'],
+    command: '⌥O / ↵',
   },
   {
     onClick: () => {

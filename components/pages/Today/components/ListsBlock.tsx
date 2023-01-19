@@ -37,7 +37,7 @@ export const ListsBlock = observer(function ListsBlock() {
             Today
           </Heading>
           <HStack>
-            <Tooltip label='F / ⇧ F' hasArrow>
+            <Tooltip label='F / ⇧F' hasArrow>
               <IconButton
                 aria-label='focus'
                 variant='ghost'
