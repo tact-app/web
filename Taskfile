@@ -10,21 +10,30 @@ set -euo pipefail
 refresh() {
   git fetch --all --prune # TODO:bug `--tags --prune-tags` replaces tags from forks
 
+  local deps tools
+  deps=$(md5sum package-lock.json | awk '{print $1}')
+  tools=$(md5sum tools/package-lock.json | awk '{print $1}')
+
   local remote actual target shared
   remote=${1:-'@{u}'}
   actual=$(git rev-parse @)
   target=$(git rev-parse "${remote}")
   shared="$(git merge-base @ "${remote}")"
-  [ "${actual}" == "${shared}" ] && echo Everything is up to date && return
-
-  if ! git diff-index --quiet HEAD; then
-    git stash -m 'stash before pull'
-    trap 'git stash pop' EXIT
+  if [ "${actual}" != "${shared}" ]; then
+    if ! git diff-index --quiet HEAD; then
+      git stash -m 'stash before pull'
+      trap 'git stash pop' EXIT
+    fi
+    git pull --force --rebase
   fi
-  git pull --force --rebase
 
-  install --from-scratch
-  tools npm ci
+  if [ "${deps}" != "$(md5sum package-lock.json | awk '{print $1}')" ]; then
+    install --from-scratch
+  fi
+
+  if [ "${tools}" != "$(md5sum tools/package-lock.json | awk '{print $1}')" ]; then
+    tools npm ci
+  fi
 }
 
 # TODO: make it stateless but support starting point
@@ -53,7 +62,7 @@ setup() {
   set_fontawesome_token false
   set_sentry_token false
   set_vercel_token false
-  env
+  @env
 
   tools npm ci
   vercel link
@@ -86,10 +95,10 @@ set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
   git config "${key}" "${token}"
   echo 'Token saved.'
 
-  [ "${update}" != false ] && env || return 0
+  [ "${update}" != false ] && @env || return 0
 }
 
-env() {
+@env() {
   cat <<EOF >.env
 FONTAWESOME_TOKEN=$(git config fontawesome.token)
 SENTRY_TOKEN=$(git config sentry.token)
@@ -99,6 +108,13 @@ EOF
 [auth]
 token=$(git config sentry.token)
 EOF
+}
+
+@vne() {
+  source .env
+  git config fontawesome.token ${FONTAWESOME_TOKEN}
+  git config sentry.token ${SENTRY_TOKEN}
+  git config vercel.token ${VERCEL_TOKEN}
 }
 
 @node() {

@@ -33,8 +33,6 @@ You can update tokens by the following commands
 $ run set_fontawesome_token
 $ run set_sentry_token
 $ run set_vercel_token
-
-$ run env # dump updated tokens into the .env file
 ```
 
 ## Deep dive
