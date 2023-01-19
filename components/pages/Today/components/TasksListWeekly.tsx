@@ -20,8 +20,8 @@ export const TasksListWeekly = observer(function TasksListWeekly() {
               <chakra.span fontSize='md' fontWeight='normal' color='gray.400'>
                 switch between lists
               </chakra.span>
-              <HotkeyBlock hotkey='Shift+Alt+ArrowUp' />
-              <HotkeyBlock hotkey='Shift+Alt+ArrowDown' />
+              <HotkeyBlock hotkey='Alt+Shift+Up' />
+              <HotkeyBlock hotkey='Alt+Shift+Down' />
             </Center>
           )}
           <DraggableListDroppable id='week-button'>
