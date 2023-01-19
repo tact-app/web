@@ -159,7 +159,8 @@ const singleTaskItems = (store: TaskItemStore) => [
     },
     title: 'Open task',
     icon: faSquareArrowUpRight,
-    command: '↵',
+    hotkey: 'alt+o',
+    command: '⌥O',
   },
   {
     onClick: () => {
