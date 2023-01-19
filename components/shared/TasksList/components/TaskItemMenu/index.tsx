@@ -19,7 +19,6 @@ import React, {
   useCallback,
   useMemo,
   useState,
-  useEffect,
 } from 'react';
 import { TaskStatus } from '../../types';
 import { Modes } from '../../../TaskQuickEditor/store';
