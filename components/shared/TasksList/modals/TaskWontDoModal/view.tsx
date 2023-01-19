@@ -23,17 +23,20 @@ import {
   WontDoReasons,
 } from './store';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
+import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 
 export const TaskWontDoModalView = observer(function TaskWontDoModalView({
   onClose,
 }: TaskWontDoModalProps) {
   const store = useTaskWontDoModalStore();
-  const ref = useListNavigation(store.navigation);
+
+  useListNavigation(store.navigation);
+  useHotkeysHandler(store.keyMap, store.hotkeyHandlers)
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent ref={ref} onFocus={store.navigation.handleFocus}>
+      <ModalContent onFocus={store.navigation.handleFocus}>
         <ModalHeader>Why you won&apos;t do this task?</ModalHeader>
         <ModalBody pb={6} pl={5} pr={5}>
           <Box pr={1} pl={1}>

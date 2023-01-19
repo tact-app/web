@@ -29,11 +29,17 @@ export class TaskGoalAssignModalStore {
 
   keyMap = {
     RESET: ['backspace', 'delete'],
+    FORCE_ENTER: ['meta+enter'],
   };
 
   hotkeyHandlers = {
     RESET: (e: KeyboardEvent) => {
       this.selectedGoalId = null;
+    },
+    FORCE_ENTER: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.navigation.hotkeyHandlers.FORCE_ENTER?.(e);
     },
   };
 

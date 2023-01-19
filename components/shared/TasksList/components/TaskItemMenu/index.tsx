@@ -19,11 +19,11 @@ import React, {
   useCallback,
   useMemo,
   useState,
+  useEffect,
 } from 'react';
 import { TaskStatus } from '../../types';
 import { Modes } from '../../../TaskQuickEditor/store';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
-import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import {
   faBan,
   faBullseyePointer,
@@ -45,7 +45,7 @@ const multiTaskItems = (store: TaskItemStore) => [
     },
     title: 'Assign to goal',
     icon: faBullseyePointer,
-    hotkey: 'g',
+    hotkey: 'alt+g',
     command: '⌥G',
   },
   null,
@@ -59,7 +59,7 @@ const multiTaskItems = (store: TaskItemStore) => [
       ? 'Unmark as done'
       : 'Mark as done',
     icon: faCircleCheck,
-    hotkey: 'd',
+    hotkey: 'alt+d',
     command: '⌥D',
   },
   {
@@ -72,7 +72,7 @@ const multiTaskItems = (store: TaskItemStore) => [
       ? 'Unmark as won’t do'
       : 'Mark as won’t do',
     icon: faBan,
-    hotkey: ['w', 'shift+w'],
+    hotkey: ['alt+w', 'alt+shift+w'],
     command: '⌥W / ⌥⇧W',
   },
   null,
@@ -80,7 +80,7 @@ const multiTaskItems = (store: TaskItemStore) => [
     onClick: () => store.parent.sendTasks(store.parent.draggableList.focused),
     title: 'Move to ' + store.parent.tasksReceiverName,
     icon: faCalendarCheck,
-    hotkey: 'm',
+    hotkey: 'alt+m',
     command: '⌥M',
   },
   {
@@ -117,7 +117,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     title: 'Assign to goal',
     icon: faBullseyePointer,
     command: '⌥G',
-    hotkey: 'g',
+    hotkey: 'alt+g',
   },
   null,
   {
@@ -127,7 +127,7 @@ const singleTaskItems = (store: TaskItemStore) => [
       ? 'Unmark as done'
       : 'Mark as done',
     icon: faCircleCheck,
-    hotkey: 'd',
+    hotkey: 'alt+d',
     command: '⌥D',
   },
   {
@@ -137,7 +137,7 @@ const singleTaskItems = (store: TaskItemStore) => [
       ? 'Unmark as won’t do'
       : 'Mark as won’t do',
     icon: faBan,
-    hotkey: ['w', 'shift+w'],
+    hotkey: ['alt+w', 'alt+shift+w'],
     command: store.parent.canUnsetStatus(TaskStatus.WONT_DO)
       ? '⌥W'
       : '⌥W / ⌥⇧W',
@@ -147,7 +147,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     onClick: () => store.parent.sendTasks([store.task.id]),
     title: 'Move to ' + store.parent.tasksReceiverName,
     icon: faCalendarCheck,
-    hotkey: 'm',
+    hotkey: 'alt+m',
     command: '⌥M',
   },
   {
@@ -274,7 +274,6 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
 }) {
   const store = useTaskItemStore();
 
-  const ref = useListNavigation(store.menuNavigation);
   const items = store.isMultiSelected
     ? multiTaskItems(store)
     : singleTaskItems(store);
@@ -296,7 +295,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
     return { keyMap, hotkeyHandlers };
   }, [items, store]);
 
-  useHotkeysHandler(keyMap, hotkeyHandlers);
+  useListNavigation(store.menuNavigation,keyMap, hotkeyHandlers);
 
   return (
     <Portal>
@@ -308,7 +307,6 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
           overflow='hidden'
           w='auto'
           minW={72}
-          ref={ref}
           onFocus={store.menuNavigation.handleFocus}
         >
           <PopoverBody p={0}>

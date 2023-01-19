@@ -67,7 +67,7 @@ export class FocusConfigurationStore {
       this.sendChanges();
     },
     FOCUS_GOAL_SELECTION: () => {
-      this.focus();
+      !this?.isFocused && this.focus();
     },
     ESCAPE: () => {
       if (this.isFocused) {

@@ -12,18 +12,19 @@ import { useTaskGoalAssignModalStore } from './store';
 import React from 'react';
 import { GoalsSelection } from '../../../GoalsSelection';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
+import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 
 export const TaskGoalAssignModalView = observer(
   function TaskGoalAssignModalView() {
     const store = useTaskGoalAssignModalStore();
 
-   const hotkeysRef = useListNavigation(store.navigation, store.keyMap, store.hotkeyHandlers);
+    useListNavigation(store.navigation);
+    useHotkeysHandler(store.keyMap, store.hotkeyHandlers)
 
     return (
       <Modal isCentered isOpen={true} onClose={store.callbacks.onClose}>
         <ModalOverlay />
         <ModalContent
-          ref={hotkeysRef}
           onFocus={store.navigation.handleFocus}
         >
           <ModalHeader>My goals</ModalHeader>
