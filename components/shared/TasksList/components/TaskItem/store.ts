@@ -69,9 +69,9 @@ export class TaskItemStore {
   }
 
   handleKeyDown = (e: KeyboardEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
     if (e.key === 'Alt' && !e.metaKey && !e.shiftKey) {
+      e.preventDefault();
+      e.stopPropagation();
       this.isAltPressed = true;
     } else if (this.isAltPressed) {
       this.isAltPressed = false;
