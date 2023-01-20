@@ -3,12 +3,22 @@ import { Text, TextProps } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { isMac } from '../../../helpers/os';
 
-const dict = {
+const macDict = {
   meta: '⌘',
   shift: '⇧',
   alt: '⌥',
   options: '⌥',
   ctrl: '⌃',
+  up: '↑',
+  down: '↓',
+  left: '←',
+  right: '→',
+};
+
+const winDict = {
+  shift: '⇧',
+  alt: 'Alt',
+  ctrl: 'Ctrl',
   up: '↑',
   down: '↓',
   left: '←',
@@ -28,8 +38,8 @@ export const HotkeyBlock = observer(function HotkeyBlock({
 
     return hotkey
       .split('+')
-      .map((key) => (isMac() ? dict[key.toLowerCase()] : key || key))
-      .join('');
+      .map((key) => (isMac() ? macDict[key.toLowerCase()] : winDict[key.toLowerCase()] || key))
+      .join(isMac() ? '' : '+');
   }, [hotkey]);
 
   return (
