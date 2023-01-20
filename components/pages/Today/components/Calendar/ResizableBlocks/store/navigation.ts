@@ -13,8 +13,6 @@ export class ResizableBlocksNavigation {
     LEFT: 'left',
     UP: 'up',
     DOWN: 'down',
-    TAB: 'tab',
-    SHIFT_TAB: 'shift+tab',
     ESC: 'escape',
     DELETE: ['delete', 'backspace'],
   };
