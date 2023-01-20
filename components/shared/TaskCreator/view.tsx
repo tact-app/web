@@ -9,7 +9,6 @@ import {
   Text,
   chakra,
   Fade,
-  Collapse,
 } from '@chakra-ui/react';
 import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
 import { InputWrapper, InputWrapperProps } from '../InputWrapper';
@@ -108,7 +107,7 @@ export const TaskCreatorView = observer(function TaskCreator(
           </Box>
         </InputGroup>
       </InputWrapper>
-      <Collapse in={store.isInputFocused} animateOpacity>
+      <Box opacity={store.isInputFocused ? 1 : 0}>
         <HStack mt={1} mb={2} ml={5}>
           <Text color='gray.400' fontSize='xs' fontWeight='normal'>
             Type
@@ -119,7 +118,7 @@ export const TaskCreatorView = observer(function TaskCreator(
             <HotkeyHint>@</HotkeyHint> for reference
           </Text>
         </HStack>
-      </Collapse>
+      </Box>
     </Box>
   );
 });
