@@ -36,14 +36,6 @@ export class ResizableBlocksNavigation {
       e.preventDefault();
       this.moveFocus(NavigationDirections.DOWN);
     },
-    TAB: (e) => {
-      e.preventDefault();
-      this.moveFocus(NavigationDirections.DOWN);
-    },
-    SHIFT_TAB: (e) => {
-      e.preventDefault();
-      this.moveFocus(NavigationDirections.UP);
-    },
     ESCAPE: () => this.resetFocus(),
     DELETE: () => this.removeFocusedItem(),
   };
@@ -56,6 +48,7 @@ export class ResizableBlocksNavigation {
   focusFirstItem() {
     const { itemsList } = this.parent;
     const firstItem = [...itemsList].sort((a, b) => a.start - b.start)[0];
+    if(!firstItem) return
     const firstItemContainerId = this.parent.getItemContainerId(firstItem.id);
 
     if (firstItem) {
