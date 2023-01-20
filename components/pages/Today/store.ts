@@ -394,7 +394,7 @@ export class TodayStore {
 
   resetLayout = () => {
     this.isTaskExpanded = false;
-    this.resizableConfig[3].width = 57;
+    if(!this?.isCalendarExpanded) this.resizableConfig[3].width = 57;
     this.resizableConfig[2].size = this.openedTask ? 1 : 0;
     this.resizableConfig[1].size = 2;
     this.resizableConfig[0].width =

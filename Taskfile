@@ -19,7 +19,7 @@ refresh() {
   actual=$(git rev-parse @)
   target=$(git rev-parse "${remote}")
   shared="$(git merge-base @ "${remote}")"
-  if [ "${actual}" != "${shared}" ]; then
+  if [ "${actual}" != "${target}" ]; then
     if ! git diff-index --quiet HEAD; then
       git stash -m 'stash before pull'
       trap 'git stash pop' EXIT
