@@ -251,8 +251,6 @@ export class TasksListStore {
   handleNavigation = (direction: NavigationDirections) => {
     if (direction === NavigationDirections.LEFT) {
       this.callbacks.onFocusLeave?.(NavigationDirections.LEFT);
-
-      return true;
     } else if (
       direction === NavigationDirections.DOWN ||
       direction === NavigationDirections.UP
@@ -262,9 +260,11 @@ export class TasksListStore {
       } else {
         this.callbacks.onFocusLeave?.(direction);
       }
-
-      return true;
     }
+
+    // return successful interaction by default instead of undefined
+    // see TACT-161 for details
+    return true;
   };
 
   handleTaskItemNavigation = (direction: NavigationDirections) => {
