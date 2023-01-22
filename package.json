@@ -32,7 +32,7 @@
     "@fortawesome/pro-regular-svg-icons": "^6.2.1",
     "@fortawesome/pro-solid-svg-icons": "^6.2.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@sentry/nextjs": "^7.31.1",
+    "@sentry/nextjs": "^7.32.0",
     "@tanstack/react-virtual": "^3.0.0-beta.39",
     "@tiptap/core": "^2.0.0-beta.209",
     "@tiptap/extension-placeholder": "^2.0.0-beta.209",
