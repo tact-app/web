@@ -265,6 +265,8 @@ export class TasksListStore {
 
       return true;
     }
+
+    return true;
   };
 
   handleTaskItemNavigation = (direction: NavigationDirections) => {
