@@ -44,7 +44,7 @@
     "@tiptap/suggestion": "^2.0.0-beta.209",
     "allotment": "^1.17.1",
     "chakra-react-select": "^4.4.3",
-    "emoji-mart": "^5.5.1",
+    "emoji-mart": "^5.5.2",
     "framer-motion": "^8.5.2",
     "idb": "^7.1.1",
     "mobx": "^6.7.0",
