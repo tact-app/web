@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { Box, BoxProps, chakra, ChakraProps } from '@chakra-ui/react';
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useRef } from 'react';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { TaskDragIcon } from '../Icons/TaskDragIcon';
 import { DraggableListComponentProps, useDraggableListStore } from './store';
@@ -64,18 +64,28 @@ const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
   const store = useDraggableListStore();
   const isFocused = store.focusedItemIds.includes(id);
 
+  const ref = useRef<HTMLDivElement>();
+
   return (
     <Box
       w='100%'
-      ref={
-        isFocused && store.lastFocusedItemId === id
-          ? (el) => store.setFocusedRef(el)
-          : null
-      }
+      ref={(el) => {
+        ref.current = el;
+
+        if (isFocused && store.lastFocusedItemId === id) {
+          store.setFocusedRef(el)
+        }
+      }}
+      css={{
+        '.chakra-portal': {
+          zIndex: 'var(--chakra-zIndices-popover)',
+          position: 'relative',
+        }
+      }}
     >
       {Prefix && <Prefix id={id} snapshot={snapshot} />}
       <DragHandler provided={provided} snapshot={snapshot} id={id} />
-      <Content id={id} isFocused={isFocused} snapshot={snapshot} />
+      <Content id={id} isFocused={isFocused} snapshot={snapshot} menuPortalRef={ref} />
     </Box>
   );
 });

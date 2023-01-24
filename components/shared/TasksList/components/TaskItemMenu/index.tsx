@@ -16,6 +16,7 @@ import { TaskItemMenuIcon } from '../../../Icons/TaskItemMenuIcon';
 import { TaskItemStore, useTaskItemStore } from '../TaskItem/store';
 import React, {
   PropsWithChildren,
+  RefObject,
   useCallback,
   useMemo,
   useState,
@@ -268,9 +269,11 @@ const TaskItemMenuItems = ({
 const TaskItemMenuContent = observer(function TaskItemMenuContent({
   isOpen,
   stopAnimation,
+  menuPortalRef,
 }: {
   isOpen: boolean;
   stopAnimation: () => void;
+  menuPortalRef?: RefObject<HTMLDivElement>;
 }) {
   const store = useTaskItemStore();
 
@@ -298,7 +301,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
   useListNavigation(store.menuNavigation,keyMap, hotkeyHandlers);
 
   return (
-    <Portal>
+    <Portal containerRef={menuPortalRef}>
       <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
         <PopoverContent
           tabIndex={-1}
@@ -321,7 +324,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
   );
 });
 
-export const TaskItemMenu = observer(function TaskItemMenu() {
+export const TaskItemMenu = observer(function TaskItemMenu({ menuPortalRef }: { menuPortalRef?: RefObject<HTMLDivElement>; }) {
   const store = useTaskItemStore();
   const { isOpen, onClose, onOpen } = useDisclosure({
     isOpen: store.isMenuOpen,
@@ -345,13 +348,16 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
     store.openMenu();
   }, [onOpen, store]);
 
+  console.log('console.log(menuPortalRef)', menuPortalRef)
+
   return (
     <Popover
       isLazy
       isOpen={isOpen || isAnimationInProcess}
       onOpen={open}
       onClose={close}
-      placement={'bottom-start'}
+      placement='bottom-start'
+      flip
     >
       <PopoverTrigger>
         <Button
@@ -395,7 +401,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
         </Button>
       </PopoverTrigger>
       {(isOpen || isAnimationInProcess) && (
-        <TaskItemMenuContent isOpen={isOpen} stopAnimation={stopAnimation} />
+        <TaskItemMenuContent isOpen={isOpen} stopAnimation={stopAnimation} menuPortalRef={menuPortalRef} />
       )}
     </Popover>
   );

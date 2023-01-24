@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { NavigationDirections } from '../TasksList/types';
-import React from 'react';
+import React, { RefObject } from 'react';
 
 export type DraggableListCallbacks = {
   onItemsRemove?: (items: string[], ids: string[]) => void;
@@ -23,6 +23,7 @@ export type DraggableListComponentInnerProps = {
   provided?: any;
   snapshot?: any;
   isFocused?: boolean;
+  menuPortalRef?: RefObject<HTMLDivElement>;
 };
 
 export type DraggableListComponentProps = {

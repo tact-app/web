@@ -173,7 +173,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           </Box>
         )}
       </Box>
-      {!store.isReadOnly && !store.isDisabled && <TaskItemMenu />}
+      {!store.isReadOnly && !store.isDisabled && <TaskItemMenu menuPortalRef={props.menuPortalRef} />}
     </Box>
   );
 });

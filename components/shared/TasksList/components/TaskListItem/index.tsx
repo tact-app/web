@@ -1,14 +1,16 @@
 import { observer } from 'mobx-react-lite';
 import TaskItem from '../TaskItem';
-import React from 'react';
+import React, { RefObject } from 'react';
 import { useTasksListStore } from '../../store';
 
 export const TaskListItem = observer(function TaskListItem({
   id,
   snapshot,
+  menuPortalRef
 }: {
   id: string;
   snapshot: any;
+  menuPortalRef?: RefObject<HTMLDivElement>;
 }) {
   const store = useTasksListStore();
   const task = store.items[id];
@@ -25,6 +27,7 @@ export const TaskListItem = observer(function TaskListItem({
         onWontDoWithComment={store.handleWontDoWithComment}
         onToggleMenu={store.handleToggleMenu}
         callbacks={store.taskListItemCallbacks}
+        menuPortalRef={menuPortalRef}
       />
     )
   );
