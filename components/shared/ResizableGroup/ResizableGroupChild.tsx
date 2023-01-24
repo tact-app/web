@@ -32,7 +32,6 @@ export const ResizableGroupChild = observer(function ResizableGroupChild({
       position='relative'
       style={{
         width: store.widths.length ? store.getWidth(i) : config.width || 0,
-        clipPath: 'inset(0 0 0 0)'
       }}
       flexShrink={isFixed ? 0 : 1}
       onTransitionEnd={store.handleAnimationEnd}
