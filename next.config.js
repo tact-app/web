@@ -1,5 +1,7 @@
 const {withSentryConfig} = require('@sentry/nextjs');
 
+// some stupid comment
+
 const moduleExports = {
   output: 'standalone',
   sentry: {

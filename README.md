@@ -2,6 +2,8 @@
 >
 > The web version of the service for desktops.
 
+Hello, world!
+
 ## Quick Start
 
 Requirements:
