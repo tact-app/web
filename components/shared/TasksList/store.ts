@@ -74,7 +74,9 @@ export class TasksListStore {
   };
 
   hotkeyHandlers = {
-    DONE: () => {
+    DONE: (e) => {
+      e.preventDefault()
+
       if (this.draggableList.focused.length) {
         this.setTasksStatus(this.draggableList.focused, TaskStatus.DONE);
       }
