@@ -101,6 +101,7 @@ export class TaskQuickEditorStore {
 
   modeStartPos = 0;
   modeEndPos = 0;
+  maxDefaultModeTextLength = 50;
   activeModeType: Modes = Modes.DEFAULT;
   focusedMode: Modes | null = null;
   inputData: SpacesInboxItemData | null = null;
@@ -126,7 +127,11 @@ export class TaskQuickEditorStore {
   }
 
   get maxLength() {
-    if (this.activeMode?.maxLength) {
+    if (!this.activeMode) {
+      return this.maxDefaultModeTextLength;
+    }
+
+    if (this.activeMode.maxLength) {
       return (
         this.value.length +
         this.activeMode.maxLength -
