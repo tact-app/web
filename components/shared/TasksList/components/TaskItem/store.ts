@@ -7,8 +7,9 @@ import { TaskQuickEditorStore } from '../../../TaskQuickEditor/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
 import { TasksListStore } from '../../store';
 import { subscriptions } from '../../../../../helpers/subscriptions';
+import { checkKeyCombination, checkKeyCombinations } from '../../../../../helpers/combinations';
 
-const IGNORED_LETTERS = ['d']
+const IGNORED_COMBINATIONS = ['Alt+D']
 
 export type TaskItemProps = {
   task?: TaskData | null;
@@ -71,13 +72,14 @@ export class TaskItemStore {
   }
 
   handleKeyDown = (e: KeyboardEvent) => {
-    if(e.altKey && IGNORED_LETTERS.includes(e.key.toLowerCase())) e.preventDefault();
+    const isAltPressed = checkKeyCombination(e, 'Alt');
 
-    if (e.key === 'Alt' && !e.metaKey && !e.shiftKey) {
+    if (isAltPressed || checkKeyCombinations(e, IGNORED_COMBINATIONS)) {
       e.preventDefault();
-      this.isAltPressed = true;
-    } else if (this.isAltPressed) {
-      this.isAltPressed = false;
+    }
+
+    if (isAltPressed !== this.isAltPressed) {
+      this.isAltPressed = isAltPressed;
     }
   };
 
