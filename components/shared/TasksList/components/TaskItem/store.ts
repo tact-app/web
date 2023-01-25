@@ -8,6 +8,8 @@ import { ListNavigation } from '../../../../../helpers/ListNavigation';
 import { TasksListStore } from '../../store';
 import { subscriptions } from '../../../../../helpers/subscriptions';
 
+const IGNORED_LETTERS = ['d']
+
 export type TaskItemProps = {
   task?: TaskData | null;
   highlightActiveTasks?: boolean;
@@ -69,9 +71,10 @@ export class TaskItemStore {
   }
 
   handleKeyDown = (e: KeyboardEvent) => {
+    if(e.altKey && IGNORED_LETTERS.includes(e.key.toLowerCase())) e.preventDefault();
+
     if (e.key === 'Alt' && !e.metaKey && !e.shiftKey) {
       e.preventDefault();
-      e.stopPropagation();
       this.isAltPressed = true;
     } else if (this.isAltPressed) {
       this.isAltPressed = false;
