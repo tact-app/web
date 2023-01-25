@@ -4,24 +4,53 @@ type CombinationPick = {
     metaKey?: KeyboardEvent['metaKey'];
     shiftKey?: KeyboardEvent['shiftKey'];
     code?: KeyboardEvent['code'];
+    key?: KeyboardEvent['key'];
 };
 
 const getCombinationPickByKey = (key: string): CombinationPick => {
     const metaKeysMap = {
-        alt: 'altKey',
-        control: 'ctrlKey',
-        meta: 'metaKey',
-        shift: 'shiftKey',
+        Alt: 'altKey',
+        Control: 'ctrlKey',
+        Meta: 'metaKey',
+        Shift: 'shiftKey',
     } as const;
 
-    const metaKey = metaKeysMap[key.toLowerCase()];
+    const keyCodesMap = {
+        Space: true,
+        Escape: true,
+        Tab: true,
+        ArrowUp: true,
+        ArrowDown: true,
+        ArrowLeft: true,
+        ArrowRight: true,
+        CapsLock: true,
+        Backspace: true,
+        Enter: true,
+    } as const;
+
+    const metaKey = metaKeysMap[key];
 
     if (metaKey) {
-        return { [metaKey]: true };
+        return {
+            [metaKey]: true,
+            key
+        };
+    }
+
+    if (keyCodesMap[key]) {
+        return {
+            code: key,
+        };
+    }
+
+    if (/^[a-zA-Z]$/.test(key)) {
+        return {
+            code: `Key${key.toUpperCase()}`,
+        };
     }
 
     return {
-        code: `Key${key.toUpperCase()}`,
+        key
     };
 };
 
@@ -43,12 +72,16 @@ export const checkKeyCombination = (
     const combination = combinationString.split('+').map((key) => key.trim());
 
     const combinationPick = combination.reduce(
-        (acc, key) => ({ ...acc, ...getCombinationPickByKey(key) }),
+        (acc, key) => ({
+            ...acc,
+            key: null,
+            ...getCombinationPickByKey(key)
+        }),
         defaultCombinationPick
     );
 
     return Object.entries(combinationPick).every(
-        ([key, value]) => event[key] === value
+        ([key, value]) => value === null || event[key] === value
     );
 };
 

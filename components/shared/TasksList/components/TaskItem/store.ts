@@ -72,11 +72,11 @@ export class TaskItemStore {
   }
 
   handleKeyDown = (e: KeyboardEvent) => {
-    if (checkKeyCombinations(e, IGNORED_COMBINATIONS)) {
+    const isAltPressed = checkKeyCombination(e, 'Alt');
+
+    if (isAltPressed || checkKeyCombinations(e, IGNORED_COMBINATIONS)) {
       e.preventDefault();
     }
-
-    const isAltPressed = checkKeyCombination(e, 'Alt');
 
     if (isAltPressed !== this.isAltPressed) {
       this.isAltPressed = isAltPressed;
