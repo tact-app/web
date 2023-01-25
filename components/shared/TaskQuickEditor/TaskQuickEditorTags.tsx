@@ -73,7 +73,7 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
 
   useEffect(() => {
     store.modes.tag.setIsCollapsable(collapsable);
-  }, [store, collapsable]);
+  }, [store.modes.tag, collapsable]);
 
   return (
     <Box
