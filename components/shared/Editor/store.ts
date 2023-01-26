@@ -65,7 +65,14 @@ class EditorStore {
       Extension.create({
         addKeyboardShortcuts() {
           return {
-            Escape: ({ editor }) => editor.commands.blur(),
+            Escape: ({ editor }) => {
+              if (converterMenu.isOpen) {
+                converterMenu.handleClose();
+                return false;
+              }
+
+              return editor.commands.blur();
+            },
             'Cmd-s': () => {
               handleSave?.();
               return true;
