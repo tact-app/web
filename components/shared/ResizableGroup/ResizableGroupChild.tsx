@@ -16,6 +16,7 @@ export const ResizableGroupChild = observer(function ResizableGroupChild({
 >) {
   const store = useResizableGroupStore();
   const isFixed = store.isFixed(i);
+  const hasShadow = Boolean(props.boxShadow);
 
   useEffect(() => {
     store.setChildConfig(i, config);
@@ -32,7 +33,7 @@ export const ResizableGroupChild = observer(function ResizableGroupChild({
       position='relative'
       style={{
         width: store.widths.length ? store.getWidth(i) : config.width || 0,
-        clipPath: 'inset(0 0 0 0)'
+        clipPath: hasShadow ? `inset(-8px)` : 'inset(0)'
       }}
       flexShrink={isFixed ? 0 : 1}
       onTransitionEnd={store.handleAnimationEnd}
