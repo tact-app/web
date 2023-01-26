@@ -14,9 +14,17 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 import { TooltipWithHotkey } from '../../../../../shared/TooltipWithHotkey';
 import { ExpandIcon } from '../../../../../shared/Icons/ExpandIcon';
-import { CalendarStore } from '../store';
+import { CalendarProps } from '../store';
 
-export const CalendarToolbar = ({ today, isFullScreen, callbacks, setResolution, daysCount }: CalendarStore) => (
+export type CalendarToolbarProps = {
+  isFullScreen?: boolean;
+  callbacks: CalendarProps['callbacks'];
+  daysCount: number;
+  setResolution: (number:number) => void
+  today: Date;
+};
+
+export const CalendarToolbar = ({ today, isFullScreen, callbacks, setResolution, daysCount }: CalendarToolbarProps) => (
   <HStack justifyContent='space-between'>
     <Box display='flex' alignItems='center'>
       <Heading fontSize='2xl' fontWeight='semibold'>
