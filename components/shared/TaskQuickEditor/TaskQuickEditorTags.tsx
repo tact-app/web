@@ -13,6 +13,7 @@ import {
   Tag,
   chakra,
   VStack,
+  Portal,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 
@@ -73,7 +74,7 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
 
   useEffect(() => {
     store.modes.tag.setIsCollapsable(collapsable);
-  }, [store, collapsable]);
+  }, [store.modes.tag, collapsable]);
 
   return (
     <Box
@@ -125,18 +126,20 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
                 </chakra.span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent w='auto' minW='3xs'>
-              <PopoverBody
-                display='flex'
-                flexDirection='column'
-                overflow='auto'
-                maxH={64}
-              >
-                <VStack alignItems='start'>
-                  <TaskQuickEditorTagsList buttonProps={buttonProps} />
-                </VStack>
-              </PopoverBody>
-            </PopoverContent>
+            <Portal>
+              <PopoverContent w='auto' minW='3xs'>
+                <PopoverBody
+                    display='flex'
+                    flexDirection='column'
+                    overflow='auto'
+                    maxH={64}
+                >
+                  <VStack alignItems='start'>
+                    <TaskQuickEditorTagsList buttonProps={buttonProps} />
+                  </VStack>
+                </PopoverBody>
+              </PopoverContent>
+            </Portal>
           </Popover>
         )
       ) : (

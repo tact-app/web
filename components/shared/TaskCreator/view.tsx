@@ -25,6 +25,9 @@ export type TaskCreatorProps = {
   isHotkeysEnabled?: boolean;
 };
 
+const TASK_CREATOR_VIEW_TAG_LIST_MIN_WIDTH = 72;
+const TASK_CREATOR_VIEW_PERCENTAGE_OF_TAG_LIST = 0.25;
+
 const HotkeyHint = ({ children }) => (
   <chakra.span
     borderColor='gray.200'
@@ -52,6 +55,11 @@ export const TaskCreatorView = observer(function TaskCreator(
     ref: ref,
     handler: store.handleClickOutside,
   });
+
+  const tagsWidth = store.input?.clientWidth * TASK_CREATOR_VIEW_PERCENTAGE_OF_TAG_LIST;
+  const maxTagsWidth = tagsWidth < TASK_CREATOR_VIEW_TAG_LIST_MIN_WIDTH
+      ? TASK_CREATOR_VIEW_TAG_LIST_MIN_WIDTH
+      : tagsWidth;
 
   return (
     <Box position='relative'>
@@ -84,6 +92,7 @@ export const TaskCreatorView = observer(function TaskCreator(
                   collapsable
                   boxProps={{
                     minWidth: 0,
+                    maxWidth: `${maxTagsWidth}px`,
                     p: 1,
                     css: {
                       scrollbarWidth: 'none',
