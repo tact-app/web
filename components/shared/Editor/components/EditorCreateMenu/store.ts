@@ -39,11 +39,6 @@ export class EditorCreateMenuStore {
       return true;
     }
 
-    if (event.key === 'Esc') {
-      this.onClose?.();
-      return true;
-    }
-
     return false;
   };
 
