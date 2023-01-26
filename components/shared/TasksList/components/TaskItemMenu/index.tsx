@@ -349,9 +349,25 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
     <Popover
       isLazy
       isOpen={isOpen || isAnimationInProcess}
+      strategy='fixed'
+      eventListeners={{
+        resize: true
+      }}
+      modifiers={[
+        {
+          name: 'preventOverflow',
+          options: {
+            tether: false,
+            altAxis: true,
+            padding: 8,
+            boundary: 'clippingParents',
+            rootBoundary: 'viewport'
+          }
+        }
+      ]}
+      placement='bottom-start'
       onOpen={open}
       onClose={close}
-      placement={'bottom-start'}
     >
       <PopoverTrigger>
         <Button
