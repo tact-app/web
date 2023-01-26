@@ -36,6 +36,6 @@ export const CalendarTableEvent = observer(function CalendarTableEvent(props: {
       </chakra.div>
     );
   } else {
-    return <div>Time block</div>;
+    return <div />;
   }
 });
