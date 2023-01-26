@@ -13,6 +13,7 @@ export const CalendarBlock = observer(function CalendarBlock() {
       tasks={store.allTasks}
       dropItem={store.draggingTask}
       isCollapsed={!store.isCalendarExpanded}
+      isFullScreen={store.isCalendarFullScreen}
       callbacks={store.calendarCallbacks}
     />
   );

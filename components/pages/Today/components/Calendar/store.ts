@@ -21,12 +21,15 @@ export type CalendarProps = {
   dropItem?: TaskData;
   tasks: Record<string, TaskData>;
   isCollapsed?: boolean;
+  isFullScreen?: boolean;
   isHotkeysEnabled?: boolean;
   callbacks: {
     onTaskStatusChange?: (id: string, status: string) => void;
     onTaskScheduleChange?: (id: string, start: number, end: number) => void;
     onExpand?: () => void;
     onCollapse?: () => void;
+    onOpenFullScreen?: () => void;
+    onCloseFullScreen?: () => void;
     onFocusLeave?: (direction: NavigationDirections) => void;
     onFocusItem?: (id: string) => void;
   };
@@ -42,6 +45,7 @@ export class CalendarStore {
   resizeBlocks = new ResizableBlocksStore();
 
   isCollapsed: boolean = false;
+  isFullScreen: boolean = false;
 
   hourHeight = '144px';
   dayGridStep = 15;
@@ -191,6 +195,7 @@ export class CalendarStore {
   update = (props: CalendarProps) => {
     this.dropItem = props.dropItem;
     this.isCollapsed = props.isCollapsed;
+    this.isFullScreen = props.isFullScreen;
     this.callbacks = props.callbacks || {};
     this.tasks = props.tasks;
     !this.isCollapsed && this.resizeBlocks.setDropItem(this.resizableBlockTask);
