@@ -54,6 +54,7 @@ export class TodayStore {
 
   shouldOpenCalendar: boolean = false;
   isCalendarExpanded: boolean = true;
+  isCalendarFullScreen: boolean = false;
   isWeekExpanded: boolean = true;
   isTaskExpanded: boolean = false;
   isFocusModeActive: boolean = false;
@@ -76,7 +77,7 @@ export class TodayStore {
     },
     {
       size: 2,
-      minWidth: 540,
+      minWidth: 530,
       width: undefined,
     },
   ];
@@ -95,6 +96,7 @@ export class TodayStore {
     SWITCH_LIST_WEEK: ['w', 'alt+shift+down'],
     MOVE_TASK: ['alt+s'],
     TOGGLE_CALENDAR: 'c',
+    TOGGLE_CALENDAR_FULL_SCREEN: 'meta+e',
   };
 
   hotkeyHandlers = {
@@ -119,6 +121,10 @@ export class TodayStore {
     },
     TOGGLE_CALENDAR: () => {
       this.toggleCalendar();
+    },
+    TOGGLE_CALENDAR_FULL_SCREEN: (e) => {
+      e.preventDefault();
+      this.isCalendarExpanded && this.toggleCalendarFullScreen();
     },
   };
 
@@ -357,12 +363,34 @@ export class TodayStore {
   };
 
   collapseCalendar = () => {
+    this.isCalendarFullScreen = false;
     this.isCalendarExpanded = false;
 
+    this.resizableConfig[1].size = 2;
     this.resizableConfig[2].size = this.openedTask ? 1 : 0;
     this.resizableConfig[3].size = 0;
     this.resizableConfig[3].width = 57;
     this.resizableConfig[3].minWidth = undefined;
+  };
+
+  openFullScreenCalendar = () => {
+    this.isCalendarFullScreen = true;
+
+    this.resizableConfig[1].size = 0;
+    this.resizableConfig[2].size = 0;
+    this.resizableConfig[3].size = 3;
+    this.resizableConfig[3].width = undefined;
+    this.resizableConfig[3].minWidth = 530;
+  };
+
+  closeFullScreenCalendar = () => {
+    this.isCalendarFullScreen = false;
+
+    this.resizableConfig[1].size = 2;
+    this.resizableConfig[2].size = 0;
+    this.resizableConfig[3].size = 2;
+    this.resizableConfig[3].width = undefined;
+    this.resizableConfig[3].minWidth = 530;
   };
 
   toggleCalendar = () => {
@@ -370,6 +398,14 @@ export class TodayStore {
       this.collapseCalendar();
     } else {
       this.expandCalendar();
+    }
+  };
+
+  toggleCalendarFullScreen = () => {
+    if (!this.isCalendarFullScreen) {
+      this.openFullScreenCalendar();
+    } else {
+      this.closeFullScreenCalendar();
     }
   };
 
@@ -690,6 +726,8 @@ export class TodayStore {
   calendarCallbacks: CalendarProps['callbacks'] = {
     onExpand: this.expandCalendar,
     onCollapse: this.collapseCalendar,
+    onOpenFullScreen: this.openFullScreenCalendar,
+    onCloseFullScreen: this.closeFullScreenCalendar,
     onTaskStatusChange: this.handleCalendarTaskStatusChange,
     onFocusLeave: this.handleCalendarFocusLeave,
     onFocusItem: this.handleCalendarFocusItem,
