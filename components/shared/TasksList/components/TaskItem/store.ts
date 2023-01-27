@@ -219,14 +219,6 @@ export class TaskItemStore {
             this.removeKeyDownListeners();
           }
         }
-      ),
-      reaction(
-        () => this.isMenuOpen,
-        () => {
-          if (!this.isMenuOpen && !this.isEditMode) {
-            this.boxRef?.focus();
-          }
-        }
       )
     );
 

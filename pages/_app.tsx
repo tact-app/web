@@ -275,11 +275,19 @@ const theme = extendTheme({
         },
       },
     },
+    PopoverContent: {
+      baseStyle: {
+        _focus: { boxShadow: 'none', outline: 'none' },
+        _focusVisible: { boxShadow: 'none', outline: 'none' },
+      },
+    },
     Popover: {
       baseStyle: {
+        _focus: { boxShadow: 'none', outline: 'none' },
+        _focusVisible: { boxShadow: 'none', outline: 'none' },
         popper: {
           zIndex: 'popover',
-        },
+        }
       },
       variants: {
         relative: {
