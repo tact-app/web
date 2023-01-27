@@ -45,7 +45,7 @@
     "allotment": "^1.17.1",
     "chakra-react-select": "^4.4.3",
     "emoji-mart": "^5.5.2",
-    "framer-motion": "^8.5.3",
+    "framer-motion": "^8.5.4",
     "idb": "^7.1.1",
     "mobx": "^6.7.0",
     "mobx-react-lite": "^3.4.0",
