@@ -46,7 +46,13 @@ const GoalSelectionListItem = observer(
           position='relative'
           fontWeight='semibold'
           fontSize='lg'
+          width='100%'
           icon={checkboxContent ? <></> : undefined}
+          css={{
+            '.chakra-checkbox__label': {
+              width: 'calc(100% - 2rem)',
+            }
+          }}
         >
           {checkboxContent ? (
             <chakra.span
@@ -65,12 +71,21 @@ const GoalSelectionListItem = observer(
           ) : null}
           <chakra.span
             display='flex'
-            alignItems={'center'}
+            alignItems='center'
             fontSize='sm'
             fontWeight='normal'
           >
             {icon ? <GoalIcon icon={icon} /> : null}
-            <chakra.span ml={2}>{title}</chakra.span>
+            <chakra.span
+              ml={2}
+              textOverflow='ellipsis'
+              whiteSpace='nowrap'
+              overflow='hidden'
+              width='calc(100% - 2rem)'
+              display='inline-block'
+            >
+              {title}
+            </chakra.span>
           </chakra.span>
         </Checkbox>
       </ListItem>
