@@ -10,6 +10,8 @@ import {
   faParagraph,
   faPercent,
   faSquareCheck,
+  faCode,
+  faBlockQuote
 } from '@fortawesome/pro-regular-svg-icons';
 import {
   insertMetric,
@@ -22,6 +24,7 @@ export enum BlockValues {
   HEADING = 'heading',
   ORDERED_LIST = 'orderedList',
   BULLET_LIST = 'bulletList',
+  CODE_BLOCK = 'codeBlock',
 }
 
 export const BlockTypesOptions: BlockTypesOption[] = [
@@ -51,6 +54,18 @@ export const BlockTypesOptions: BlockTypesOption[] = [
         type: 'command',
         label: 'Heading 3',
         command: (chain) => chain.setNode(BlockValues.HEADING, { level: 3 }),
+      },
+      {
+        icon: () => <FontAwesomeIcon fixedWidth icon={faCode} />,
+        type: 'command',
+        label: 'Code Block',
+        command: (chain) => chain.setNode(BlockValues.CODE_BLOCK),
+      },
+      {
+        icon: () => <FontAwesomeIcon fixedWidth icon={faBlockQuote} />,
+        type: 'command',
+        label: 'Quote',
+        command: (chain) => chain.setBlockquote(),
       },
     ],
   },

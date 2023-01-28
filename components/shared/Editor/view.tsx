@@ -38,7 +38,7 @@ export const EditorView = observer(function EditorView() {
                 size='sm'
                 variant='ghost'
                 colorScheme={editor.isActive('bold') ? 'blue' : 'gray'}
-                aria-label={'Bold'}
+                aria-label='Bold'
                 icon={<Text>B</Text>}
                 onClick={() => editor.chain().focus().toggleBold().run()}
               />
@@ -46,7 +46,7 @@ export const EditorView = observer(function EditorView() {
                 size='sm'
                 variant='ghost'
                 colorScheme={editor.isActive('italic') ? 'blue' : 'gray'}
-                aria-label={'Italic'}
+                aria-label='Italic'
                 icon={<Text>I</Text>}
                 onClick={() => editor.chain().focus().toggleItalic().run()}
               />
@@ -54,9 +54,25 @@ export const EditorView = observer(function EditorView() {
                 size='sm'
                 variant='ghost'
                 colorScheme={editor.isActive('underline') ? 'blue' : 'gray'}
-                aria-label={'Underline'}
+                aria-label='Underline'
                 icon={<Text>U</Text>}
                 onClick={() => editor.chain().focus().toggleUnderline().run()}
+              />
+              <IconButton
+                  size='sm'
+                  variant='ghost'
+                  colorScheme={editor.isActive('strike') ? 'blue' : 'gray'}
+                  aria-label='Strike'
+                  icon={<Text>S</Text>}
+                  onClick={() => editor.chain().focus().toggleStrike().run()}
+              />
+              <IconButton
+                  size='sm'
+                  variant='ghost'
+                  colorScheme={editor.isActive('highlight') ? 'blue' : 'gray'}
+                  aria-label='Highlight'
+                  icon={<Text>H</Text>}
+                  onClick={() => editor.chain().focus().toggleHighlight().run()}
               />
             </ButtonGroup>
           </Box>

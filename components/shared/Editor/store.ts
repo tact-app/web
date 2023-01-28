@@ -6,6 +6,7 @@ import { StarterKit } from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import getRenderer from './extensions/CommandsExtension/renderer';
 import { Underline } from '@tiptap/extension-underline';
+import { Highlight } from '@tiptap/extension-highlight';
 import { Commands } from './extensions/CommandsExtension';
 import { EditorCreateMenuStore } from './components/EditorCreateMenu/store';
 import { EditorCreateMenu } from './components/EditorCreateMenu';
@@ -49,6 +50,7 @@ class EditorStore {
         nested: true,
       }),
       MetricExtension,
+      Highlight.configure(),
       Commands.configure({
         suggestion: {
           items: ({ query }) => {
@@ -86,6 +88,8 @@ class EditorStore {
 
               return false;
             },
+            'Cmd-x': ({ editor }) => editor.chain().focus().toggleStrike().run(),
+            'Cmd-h': ({ editor }) => editor.chain().focus().toggleHighlight().run(),
           };
         },
       }),
