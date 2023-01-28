@@ -7,6 +7,7 @@ import { Placeholder } from '@tiptap/extension-placeholder';
 import getRenderer from './extensions/CommandsExtension/renderer';
 import { Underline } from '@tiptap/extension-underline';
 import { Highlight } from '@tiptap/extension-highlight';
+import { Link } from '@tiptap/extension-link';
 import { Commands } from './extensions/CommandsExtension';
 import { EditorCreateMenuStore } from './components/EditorCreateMenu/store';
 import { EditorCreateMenu } from './components/EditorCreateMenu';
@@ -51,6 +52,7 @@ class EditorStore {
       }),
       MetricExtension,
       Highlight.configure(),
+      Link.configure(),
       Commands.configure({
         suggestion: {
           items: ({ query }) => {

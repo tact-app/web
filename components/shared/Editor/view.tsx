@@ -25,7 +25,7 @@ export const EditorView = observer(function EditorView() {
       cursor='text'
     >
       {editor && (
-        <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
+        <BubbleMenu editor={editor} tippyOptions={{ duration: 100, placement: 'top-start' }}>
           <Box
             boxShadow='lg'
             overflow='hidden'
@@ -73,6 +73,14 @@ export const EditorView = observer(function EditorView() {
                   aria-label='Highlight'
                   icon={<Text>H</Text>}
                   onClick={() => editor.chain().focus().toggleHighlight().run()}
+              />
+              <IconButton
+                  size='sm'
+                  variant='ghost'
+                  colorScheme={editor.isActive('code') ? 'blue' : 'gray'}
+                  aria-label='Code'
+                  icon={<Text>C</Text>}
+                  onClick={() => editor.chain().focus().toggleCode().run()}
               />
             </ButtonGroup>
           </Box>
