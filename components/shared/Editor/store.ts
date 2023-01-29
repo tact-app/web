@@ -261,10 +261,8 @@ class EditorStore {
   getValidLink = () => {
     const href = this.linkValue.trim();
 
-    if (Validators.isValidUrl(href)) {
-      return (href.startsWith('http://') || href.startsWith("https://"))
-          ? href
-          : `https://${href}`;
+    if (Validators.isValidUrl(href) || Validators.isValidMailTo(href)) {
+      return (/^(?:http(s)?:\/\/|mailto:)/.test(href)) ? href : `https://${href}`;
     }
 
     return this.initialLinkValue;
