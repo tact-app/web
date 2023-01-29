@@ -27,13 +27,24 @@ refresh() {
     git pull --force --rebase
   fi
 
-  if [ "${deps}" != "$(md5sum package-lock.json | awk '{print $1}')" ]; then
+  if ! @deps package-lock.json; then
     install --from-scratch
+    md5sum package-lock.json > node_modules/current.lock
   fi
 
-  if [ "${tools}" != "$(md5sum tools/package-lock.json | awk '{print $1}')" ]; then
+  if ! @deps tools/package-lock.json; then
     tools npm ci
+    md5sum tools/package-lock.json > tools/node_modules/current.lock
   fi
+}
+
+@deps() {
+  local file="${1:-package-lock.json}" lock
+  lock=$(dirname "${file}")/node_modules/current.lock
+  if [ ! -f "${lock}" ]; then
+    return
+  fi
+  [ "$(cat "${lock}")" == "$(md5sum "${file}")" ]
 }
 
 # TODO: make it stateless but support starting point
