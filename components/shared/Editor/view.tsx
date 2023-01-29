@@ -1,11 +1,12 @@
 import { observer } from 'mobx-react-lite';
-import { Box, ButtonGroup, chakra, IconButton, Text, Input } from '@chakra-ui/react';
+import { Box, ButtonGroup, chakra, IconButton, Text, Input, HStack } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useEditorStore } from './store';
 import { EditorContent, useEditor, BubbleMenu } from '@tiptap/react';
-import { faCode, faLink } from '@fortawesome/pro-regular-svg-icons';
+import { faCode, faLink, faCopy, faLinkSlash, faPenToSquare, faCheck } from '@fortawesome/pro-regular-svg-icons';
 import styles from './Editor.module.css';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useCopyToClipboard from '../../../helpers/useCopyToClipboard';
 
 export const EditorView = observer(function EditorView() {
   const store = useEditorStore();
@@ -18,6 +19,8 @@ export const EditorView = observer(function EditorView() {
   });
 
   useEffect(() => store.setEditor(editor), [store, editor]);
+
+  const [handleCopy] = useCopyToClipboard(3000);
 
   return (
     <chakra.div
@@ -32,8 +35,8 @@ export const EditorView = observer(function EditorView() {
             tippyOptions={{
               duration: 100,
               placement: 'top-start',
-              onClickOutside: store.closeLinkForm,
-              onHidden: store.closeLinkForm,
+              onClickOutside: store.closeLinkInfoAndForm,
+              onHidden: store.closeLinkInfoAndForm,
             }}
         >
           <Box
@@ -43,15 +46,123 @@ export const EditorView = observer(function EditorView() {
             borderRadius='md'
             bg='white'
           >
-            {store.isLinkFormOpened ? (
-                <Input
-                    value={store.linkValue}
-                    placeholder='URL'
-                    onKeyDown={store.handleLinkInputKeyDown}
-                    autoFocus
-                    onInput={store.updateLinkValue}
-                />
-            ) : (
+            {store.isLinkInfoOpened && (
+                <HStack w='100%' justifyContent='space-between'>
+                  <chakra.a
+                      width={150}
+                      paddingLeft={2}
+                      overflow='hidden'
+                      textOverflow='ellipsis'
+                      whiteSpace='nowrap'
+                      target='_blank'
+                      href={store.initialLinkValue}
+                  >
+                    {store.initialLinkValue}
+                  </chakra.a>
+                  <ButtonGroup isAttached>
+                    <IconButton
+                        size='sm'
+                        variant='ghost'
+                        aria-label='Copy'
+                        borderBottomLeftRadius={0}
+                        borderTopLeftRadius={0}
+                        onClick={() => handleCopy(store.linkValue)}
+                    >
+                      <FontAwesomeIcon
+                          fontSize={14}
+                          icon={faCopy}
+                          fixedWidth
+                      />
+                    </IconButton>
+                    <IconButton
+                        size='sm'
+                        variant='ghost'
+                        aria-label='Edit'
+                        onClick={store.openLinkForm}
+                    >
+                      <FontAwesomeIcon
+                          fontSize={14}
+                          icon={faPenToSquare}
+                          fixedWidth
+                      />
+                    </IconButton>
+                    <IconButton
+                        size='sm'
+                        variant='ghost'
+                        aria-label='Remove'
+                        onClick={store.handleUnsetLink}
+                    >
+                      <FontAwesomeIcon
+                          fontSize={14}
+                          icon={faLinkSlash}
+                          fixedWidth
+                      />
+                    </IconButton>
+                  </ButtonGroup>
+                </HStack>
+            )}
+            {store.isLinkFormOpened && (
+                <HStack
+                    w='100%'
+                    p={1}
+                    justifyContent='space-between'
+                    onKeyDown={store.handleLinkFormKeyDown}
+                >
+                  <Box>
+                    <HStack
+                        w='100%'
+                        justifyContent='space-between'
+                        onKeyDown={store.handleLinkFormKeyDown}
+                    >
+                      <Input
+                          value={store.linkValue}
+                          size='sm'
+                          placeholder='URL'
+                          autoFocus
+                          onInput={store.updateLinkValue}
+                      />
+                      <IconButton
+                          size='sm'
+                          variant='ghost'
+                          aria-label='Save'
+                          onClick={store.saveNewLinkValue}
+                      >
+                        <FontAwesomeIcon
+                            fontSize={14}
+                            icon={faCheck}
+                            fixedWidth
+                        />
+                      </IconButton>
+                    </HStack>
+                    <HStack
+                        w='100%'
+                        justifyContent='space-between'
+                        onKeyDown={store.handleLinkFormKeyDown}
+                        mt={1}
+                    >
+                      <Input
+                          value={store.linkTitle}
+                          size='sm'
+                          placeholder='Title'
+                          onInput={store.updateLinkTitle}
+                      />
+                      <IconButton
+                          size='sm'
+                          variant='ghost'
+                          aria-label='Remove'
+                          onClick={store.handleUnsetLink}
+                      >
+                        <FontAwesomeIcon
+                            fontSize={14}
+                            icon={faLinkSlash}
+                            fixedWidth
+                        />
+                      </IconButton>
+                    </HStack>
+                  </Box>
+                </HStack>
+            )}
+            {!store.isLinkInfoOpened && !store.isLinkFormOpened && (
                 <ButtonGroup w='100%' isAttached>
                   <IconButton
                       size='sm'
@@ -111,7 +222,7 @@ export const EditorView = observer(function EditorView() {
                       variant='ghost'
                       colorScheme={editor.isActive('link') ? 'blue' : 'gray'}
                       aria-label='Link'
-                      onClick={store.openLinkForm}
+                      onClick={store.openLinkInfo}
                   >
                     <FontAwesomeIcon
                         fontSize={14}

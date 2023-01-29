@@ -16,6 +16,6 @@
 }
 
 .root a {
-  color: var(--chakra-colors-gray-400);
+  color: var(--chakra-colors-blue-400);
   cursor: pointer;
 }
