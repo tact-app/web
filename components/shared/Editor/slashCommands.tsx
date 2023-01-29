@@ -58,7 +58,7 @@ export const BlockTypesOptions: BlockTypesOption[] = [
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faCode} />,
         type: 'command',
-        label: 'Code Block',
+        label: 'Code block',
         command: (chain) => chain.setNode(BlockValues.CODE_BLOCK),
       },
       {
