@@ -73,16 +73,16 @@ export const BlockTypesOptions: BlockTypesOption[] = [
     name: 'Lists',
     options: [
       {
+        icon: () => <FontAwesomeIcon fixedWidth icon={faListUl} />,
+        type: 'command',
+        label: 'List',
+        command: (chain) => chain.toggleBulletList(),
+      },
+      {
         icon: () => <FontAwesomeIcon fixedWidth icon={faListOl} />,
         type: 'command',
         label: 'Ordered list',
         command: (chain) => chain.toggleOrderedList(),
-      },
-      {
-        icon: () => <FontAwesomeIcon fixedWidth icon={faListUl} />,
-        type: 'command',
-        label: 'Bullet list',
-        command: (chain) => chain.toggleBulletList(),
       },
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faListCheck} />,
