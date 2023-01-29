@@ -96,12 +96,12 @@ export class DraggableListStore {
     FORCE_DOWN: ['meta+k', 'meta+down', 'l'],
     EDIT: 'space',
     MOVE_UP: [
-      'shift+ctrl+j',
-      'shift+ctrl+up'
+      'ctrl+shift+j',
+      'ctrl+shift+up'
     ],
     MOVE_DOWN: [
-      'shift+ctrl+k',
-      'shift+ctrl+down',
+      'ctrl+shift+k',
+      'ctrl+shift+down',
     ],
     SELECT_UP: ['shift+j', 'shift+up'],
     SELECT_DOWN: ['shift+k', 'shift+down'],
