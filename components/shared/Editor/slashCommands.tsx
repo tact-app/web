@@ -29,14 +29,8 @@ export enum BlockValues {
 
 export const BlockTypesOptions: BlockTypesOption[] = [
   {
-    name: 'Text',
+    name: 'Heading',
     options: [
-      {
-        icon: () => <FontAwesomeIcon fixedWidth icon={faParagraph} />,
-        type: 'command',
-        label: 'Paragraph',
-        command: (chain) => chain.setNode(BlockValues.PARAGRAPH),
-      },
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faH1} />,
         type: 'command',
@@ -54,6 +48,17 @@ export const BlockTypesOptions: BlockTypesOption[] = [
         type: 'command',
         label: 'Heading 3',
         command: (chain) => chain.setNode(BlockValues.HEADING, { level: 3 }),
+      },
+    ],
+  },
+  {
+    name: 'Text',
+    options: [
+      {
+        icon: () => <FontAwesomeIcon fixedWidth icon={faParagraph} />,
+        type: 'command',
+        label: 'Paragraph',
+        command: (chain) => chain.setNode(BlockValues.PARAGRAPH),
       },
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faCode} />,
