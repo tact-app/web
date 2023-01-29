@@ -246,7 +246,9 @@ class EditorStore {
 
   handleUnsetLink = () => {
     this.editor.chain().focus().unsetLink().run();
-    this.closeLinkInfo();
+
+    this.isLinkFormOpened = false;
+    this.isLinkInfoOpened = false;
   }
 
   updateLinkValue = (event: SyntheticEvent<HTMLInputElement>) => {
