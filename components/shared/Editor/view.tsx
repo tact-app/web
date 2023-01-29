@@ -3,7 +3,9 @@ import { Box, ButtonGroup, chakra, IconButton, Text, Input } from '@chakra-ui/re
 import React, { useEffect } from 'react';
 import { useEditorStore } from './store';
 import { EditorContent, useEditor, BubbleMenu } from '@tiptap/react';
+import { faCode, faLink } from '@fortawesome/pro-regular-svg-icons';
 import styles from './Editor.module.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const EditorView = observer(function EditorView() {
   const store = useEditorStore();
@@ -98,17 +100,27 @@ export const EditorView = observer(function EditorView() {
                       variant='ghost'
                       colorScheme={editor.isActive('code') ? 'blue' : 'gray'}
                       aria-label='Code'
-                      icon={<Text>C</Text>}
                       onClick={() => editor.chain().focus().toggleCode().run()}
-                  />
+                  >
+                    <FontAwesomeIcon
+                        fontSize={14}
+                        icon={faCode}
+                        fixedWidth
+                    />
+                  </IconButton>
                   <IconButton
                       size='sm'
                       variant='ghost'
                       colorScheme={editor.isActive('link') ? 'blue' : 'gray'}
                       aria-label='Link'
-                      icon={<Text>L</Text>}
                       onClick={store.openLinkForm}
-                  />
+                  >
+                    <FontAwesomeIcon
+                        fontSize={14}
+                        icon={faLink}
+                        fixedWidth
+                    />
+                  </IconButton>
                 </ButtonGroup>
             )}
           </Box>
