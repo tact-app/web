@@ -42,7 +42,7 @@ refresh() {
   local file="${1:-package-lock.json}" lock
   lock=$(dirname "${file}")/node_modules/current.lock
   if [ ! -f "${lock}" ]; then
-    return
+    return 1
   fi
   [ "$(cat "${lock}")" == "$(md5sum "${file}")" ]
 }
