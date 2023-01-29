@@ -18,7 +18,6 @@ import { BlockTypesOptions } from './slashCommands';
 import { NavigationDirections } from '../TasksList/types';
 import { TrailingNode } from './extensions/TrailingNode';
 import { KeyboardEvent, SyntheticEvent } from 'react';
-import { Validators } from "../../../helpers/validators";
 
 export type EditorProps = {
   content: JSONContent;
@@ -261,11 +260,11 @@ class EditorStore {
   getValidLink = () => {
     const href = this.linkValue.trim();
 
-    if (Validators.isValidUrl(href) || Validators.isValidMailTo(href)) {
-      return (/^(?:http(s)?:\/\/|mailto:)/.test(href)) ? href : `https://${href}`;
+    if (!href) {
+      return this.initialLinkValue;
     }
 
-    return this.initialLinkValue;
+    return (/^(?:http(s)?:\/\/|mailto:)/.test(href)) ? href : `https://${href}`;
   }
 }
 
