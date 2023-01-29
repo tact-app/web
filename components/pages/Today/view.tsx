@@ -36,7 +36,7 @@ export const TodayView = observer(function TodayView() {
           <ResizableGroupChild
             index={0}
             config={store.resizableConfig[0]}
-            borderRight='1px'
+            borderRight={store.resizableConfig[0].width ? '1px' : 0}
             borderColor='gray.100'
           >
             <FocusConfigurationBlock />
