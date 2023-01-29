@@ -36,12 +36,12 @@ export const TodayView = observer(function TodayView() {
           <ResizableGroupChild
             index={0}
             config={store.resizableConfig[0]}
-            borderRight='1px'
+            borderRight={store.resizableConfig[0].width ? '1px' : 0}
             borderColor='gray.100'
           >
             <FocusConfigurationBlock />
           </ResizableGroupChild>
-          <ResizableGroupChild index={1} config={store.resizableConfig[1]}>
+          <ResizableGroupChild index={1} config={{ ...store.resizableConfig[1], onMinWidth: store.openFullScreenCalendar }}>
             <ListsBlock />
           </ResizableGroupChild>
           <ResizableGroupChild
@@ -52,7 +52,7 @@ export const TodayView = observer(function TodayView() {
           >
             <TaskBlock />
           </ResizableGroupChild>
-          <ResizableGroupChild index={3} config={store.resizableConfig[3]}>
+          <ResizableGroupChild index={3} config={{ ...store.resizableConfig[3], onMinWidth: store.collapseCalendar }}>
             <CalendarBlock />
           </ResizableGroupChild>
         </ResizableGroup>

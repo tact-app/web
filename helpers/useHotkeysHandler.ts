@@ -9,11 +9,11 @@ const normalizeKey = (key: string) => {
   const arr = key.split('+');
   const keyName = arr.pop();
 
-  return arr.concat(keyName).join('+');
+  return arr.sort().concat(keyName).join('+');
 };
 
 const getNormalizedKeyFromEvent = (e: HotkeysEvent) => {
-  const { keys, mod, meta, alt, shift } = e;
+  const { keys, mod, ctrl, meta, alt, shift } = e;
   const items = [];
 
   if (mod) {
@@ -30,6 +30,10 @@ const getNormalizedKeyFromEvent = (e: HotkeysEvent) => {
 
   if (shift) {
     items.push('shift');
+  }
+
+  if (ctrl) {
+    items.push('ctrl');
   }
 
   items.sort();
