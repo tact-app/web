@@ -14,3 +14,8 @@
 .root ul li div {
   width: calc(100% - 24px);
 }
+
+.root a {
+  color: var(--chakra-colors-gray-400);
+  cursor: pointer;
+}

@@ -17,6 +17,8 @@ import { MetricExtension } from './extensions/MetricExtension';
 import { BlockTypesOptions } from './slashCommands';
 import { NavigationDirections } from '../TasksList/types';
 import { TrailingNode } from './extensions/TrailingNode';
+import { KeyboardEvent, SyntheticEvent } from 'react';
+import { Validators } from "../../../helpers/validators";
 
 export type EditorProps = {
   content: JSONContent;
@@ -30,13 +32,34 @@ export type EditorProps = {
 };
 
 class EditorStore {
+  isLinkFormOpened: boolean = false;
+
+  converterMenu: EditorCreateMenuStore;
+
+  onFocus: EditorProps['onFocus'];
+  onBlur: EditorProps['onBlur'];
+  onUpdate: EditorProps['onUpdate'];
+  onSave: EditorProps['onSave'];
+  onLeave: EditorProps['onLeave'];
+  editorRef: EditorProps['editorRef'];
+
+  content: JSONContent = undefined;
+  isFocused = false;
+  ref: HTMLDivElement;
+
+  editor: Editor | null = null;
+
+  extensions: Extensions;
+  linkValue: string = '';
+
   constructor(public root: RootStore) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, undefined, { autoBind: true });
 
     const converterMenu = new EditorCreateMenuStore();
 
     const handleSave = this.handleSave.bind(this);
     const handleLeave = this.handleLeave.bind(this);
+    const openLinkForm = this.openLinkForm.bind(this);
 
     this.converterMenu = converterMenu;
 
@@ -92,29 +115,16 @@ class EditorStore {
             },
             'Cmd-x': ({ editor }) => editor.chain().focus().toggleStrike().run(),
             'Cmd-h': ({ editor }) => editor.chain().focus().toggleHighlight().run(),
+            'Cmd-l': () => {
+              openLinkForm();
+              return true;
+            }
           };
         },
       }),
       TrailingNode,
     ];
   }
-
-  converterMenu: EditorCreateMenuStore;
-
-  onFocus: EditorProps['onFocus'];
-  onBlur: EditorProps['onBlur'];
-  onUpdate: EditorProps['onUpdate'];
-  onSave: EditorProps['onSave'];
-  onLeave: EditorProps['onLeave'];
-  editorRef: EditorProps['editorRef'];
-
-  content: JSONContent = undefined;
-  isFocused = false;
-  ref: HTMLDivElement;
-
-  editor: Editor | null = null;
-
-  extensions: Extensions;
 
   handleClick = () => {
     this.onFocus?.();
@@ -159,6 +169,40 @@ class EditorStore {
     this.onLeave = props.onLeave;
     this.editorRef = props.editorRef;
   };
+
+  openLinkForm = () => {
+    this.isLinkFormOpened = true;
+    this.linkValue = this.editor.getAttributes('link').href;
+  }
+
+  closeLinkForm = () => {
+    this.isLinkFormOpened = false;
+  }
+
+  handleLinkInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+
+    if (event.key === 'Escape') {
+      return this.closeLinkForm();
+    }
+
+    if (event.key === 'Enter') {
+      const editorFocus = this.editor.chain().focus();
+      const href = this.linkValue.trim();
+
+      if (Validators.isValidUrl(href)) {
+        editorFocus.setLink({ href, target: '_blank' }).run();
+      } else {
+        editorFocus.unsetLink().run();
+      }
+
+      return this.closeLinkForm();
+    }
+  }
+
+  updateLinkValue(event: SyntheticEvent<HTMLInputElement>) {
+    this.linkValue = (event.target as HTMLInputElement).value;
+  }
 }
 
 export const { StoreProvider: EditorStoreProvider, useStore: useEditorStore } =
