@@ -44,15 +44,13 @@ export const EditorView = observer(function EditorView() {
             bg='white'
           >
             {store.isLinkFormOpened ? (
-                <>
-                  <Input
-                      value={store.linkValue}
-                      placeholder='URL'
-                      onKeyDown={store.handleLinkInputKeyDown}
-                      autoFocus
-                      onInput={store.updateLinkValue}
-                  />
-                </>
+                <Input
+                    value={store.linkValue}
+                    placeholder='URL'
+                    onKeyDown={store.handleLinkInputKeyDown}
+                    autoFocus
+                    onInput={store.updateLinkValue}
+                />
             ) : (
                 <ButtonGroup w='100%' isAttached>
                   <IconButton
