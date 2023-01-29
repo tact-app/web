@@ -32,26 +32,6 @@ export type EditorProps = {
 };
 
 class EditorStore {
-  isLinkFormOpened: boolean = false;
-
-  converterMenu: EditorCreateMenuStore;
-
-  onFocus: EditorProps['onFocus'];
-  onBlur: EditorProps['onBlur'];
-  onUpdate: EditorProps['onUpdate'];
-  onSave: EditorProps['onSave'];
-  onLeave: EditorProps['onLeave'];
-  editorRef: EditorProps['editorRef'];
-
-  content: JSONContent = undefined;
-  isFocused = false;
-  ref: HTMLDivElement;
-
-  editor: Editor | null = null;
-
-  extensions: Extensions;
-  linkValue: string = '';
-
   constructor(public root: RootStore) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
@@ -125,6 +105,26 @@ class EditorStore {
       TrailingNode,
     ];
   }
+
+  isLinkFormOpened: boolean = false;
+
+  converterMenu: EditorCreateMenuStore;
+
+  onFocus: EditorProps['onFocus'];
+  onBlur: EditorProps['onBlur'];
+  onUpdate: EditorProps['onUpdate'];
+  onSave: EditorProps['onSave'];
+  onLeave: EditorProps['onLeave'];
+  editorRef: EditorProps['editorRef'];
+
+  content: JSONContent = undefined;
+  isFocused = false;
+  ref: HTMLDivElement;
+
+  editor: Editor | null = null;
+
+  extensions: Extensions;
+  linkValue: string = '';
 
   handleClick = () => {
     this.onFocus?.();
