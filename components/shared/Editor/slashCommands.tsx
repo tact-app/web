@@ -10,6 +10,8 @@ import {
   faParagraph,
   faPercent,
   faSquareCheck,
+  faCode,
+  faBlockQuote
 } from '@fortawesome/pro-regular-svg-icons';
 import {
   insertMetric,
@@ -22,6 +24,7 @@ export enum BlockValues {
   HEADING = 'heading',
   ORDERED_LIST = 'orderedList',
   BULLET_LIST = 'bulletList',
+  CODE_BLOCK = 'codeBlock',
 }
 
 export const BlockTypesOptions: BlockTypesOption[] = [
@@ -52,22 +55,34 @@ export const BlockTypesOptions: BlockTypesOption[] = [
         label: 'Heading 3',
         command: (chain) => chain.setNode(BlockValues.HEADING, { level: 3 }),
       },
+      {
+        icon: () => <FontAwesomeIcon fixedWidth icon={faCode} />,
+        type: 'command',
+        label: 'Code Block',
+        command: (chain) => chain.setNode(BlockValues.CODE_BLOCK),
+      },
+      {
+        icon: () => <FontAwesomeIcon fixedWidth icon={faBlockQuote} />,
+        type: 'command',
+        label: 'Quote',
+        command: (chain) => chain.setBlockquote(),
+      },
     ],
   },
   {
     name: 'Lists',
     options: [
       {
+        icon: () => <FontAwesomeIcon fixedWidth icon={faListUl} />,
+        type: 'command',
+        label: 'List',
+        command: (chain) => chain.toggleBulletList(),
+      },
+      {
         icon: () => <FontAwesomeIcon fixedWidth icon={faListOl} />,
         type: 'command',
         label: 'Ordered list',
         command: (chain) => chain.toggleOrderedList(),
-      },
-      {
-        icon: () => <FontAwesomeIcon fixedWidth icon={faListUl} />,
-        type: 'command',
-        label: 'Bullet list',
-        command: (chain) => chain.toggleBulletList(),
       },
       {
         icon: () => <FontAwesomeIcon fixedWidth icon={faListCheck} />,

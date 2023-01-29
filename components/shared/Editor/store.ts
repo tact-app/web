@@ -6,6 +6,8 @@ import { StarterKit } from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import getRenderer from './extensions/CommandsExtension/renderer';
 import { Underline } from '@tiptap/extension-underline';
+import { Highlight } from '@tiptap/extension-highlight';
+import { Link } from '@tiptap/extension-link';
 import { Commands } from './extensions/CommandsExtension';
 import { EditorCreateMenuStore } from './components/EditorCreateMenu/store';
 import { EditorCreateMenu } from './components/EditorCreateMenu';
@@ -15,6 +17,8 @@ import { MetricExtension } from './extensions/MetricExtension';
 import { BlockTypesOptions } from './slashCommands';
 import { NavigationDirections } from '../TasksList/types';
 import { TrailingNode } from './extensions/TrailingNode';
+import { KeyboardEvent, SyntheticEvent } from 'react';
+import { Validators } from "../../../helpers/validators";
 
 export type EditorProps = {
   content: JSONContent;
@@ -29,12 +33,13 @@ export type EditorProps = {
 
 class EditorStore {
   constructor(public root: RootStore) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, undefined, { autoBind: true });
 
     const converterMenu = new EditorCreateMenuStore();
 
     const handleSave = this.handleSave.bind(this);
     const handleLeave = this.handleLeave.bind(this);
+    const openLinkForm = this.openLinkForm.bind(this);
 
     this.converterMenu = converterMenu;
 
@@ -49,6 +54,8 @@ class EditorStore {
         nested: true,
       }),
       MetricExtension,
+      Highlight.configure(),
+      Link.configure(),
       Commands.configure({
         suggestion: {
           items: ({ query }) => {
@@ -86,12 +93,20 @@ class EditorStore {
 
               return false;
             },
+            'Cmd-x': ({ editor }) => editor.chain().focus().toggleStrike().run(),
+            'Cmd-h': ({ editor }) => editor.chain().focus().toggleHighlight().run(),
+            'Cmd-l': () => {
+              openLinkForm();
+              return true;
+            }
           };
         },
       }),
       TrailingNode,
     ];
   }
+
+  isLinkFormOpened: boolean = false;
 
   converterMenu: EditorCreateMenuStore;
 
@@ -109,6 +124,7 @@ class EditorStore {
   editor: Editor | null = null;
 
   extensions: Extensions;
+  linkValue: string = '';
 
   handleClick = () => {
     this.onFocus?.();
@@ -153,6 +169,40 @@ class EditorStore {
     this.onLeave = props.onLeave;
     this.editorRef = props.editorRef;
   };
+
+  openLinkForm = () => {
+    this.isLinkFormOpened = true;
+    this.linkValue = this.editor.getAttributes('link').href;
+  }
+
+  closeLinkForm = () => {
+    this.isLinkFormOpened = false;
+  }
+
+  handleLinkInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+
+    if (event.key === 'Escape') {
+      return this.closeLinkForm();
+    }
+
+    if (event.key === 'Enter') {
+      const editorFocus = this.editor.chain().focus();
+      const href = this.linkValue.trim();
+
+      if (Validators.isValidUrl(href)) {
+        editorFocus.setLink({ href, target: '_blank' }).run();
+      } else {
+        editorFocus.unsetLink().run();
+      }
+
+      return this.closeLinkForm();
+    }
+  }
+
+  updateLinkValue(event: SyntheticEvent<HTMLInputElement>) {
+    this.linkValue = (event.target as HTMLInputElement).value;
+  }
 }
 
 export const { StoreProvider: EditorStoreProvider, useStore: useEditorStore } =
