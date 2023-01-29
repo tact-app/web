@@ -13,6 +13,7 @@ export type ResizableGroupConfig = {
   onlyShrink?: boolean;
   minFixedWidth?: number;
   flexible?: boolean;
+  onMinWidth?: () => void;
   expanded?: boolean; // not supported yet
 };
 
@@ -102,7 +103,7 @@ export class ResizableGroupStore {
     }
 
     if (this.configs[index]) {
-      for (let i = index; i--; ) {
+      for (let i = index; i--;) {
         if (this.isFixed(i)) {
           return false;
         }
@@ -131,6 +132,14 @@ export class ResizableGroupStore {
   commitWidths = () => {
     this.widths = this.widthsUpdate;
   };
+
+  checkMinWidth = (width, index) => {
+    const { onMinWidth, minWidth } = this.configs[index]
+    if (onMinWidth && minWidth && width <= minWidth) {
+      onMinWidth()
+      this.handleResizeEnd()
+    }
+  }
 
   handleResize = (e) => {
     if (this.resizingIndex === null || !this.resizeStart) {
@@ -167,23 +176,31 @@ export class ResizableGroupStore {
     };
 
     const newWidths = this.activeChildren.map((size, index) => {
+      const startWidth = this.resizeStart?.widths[index]
+
+      if (!startWidth) return;
+
       if (size) {
         if (
           index < this.resizingIndex &&
           leftSideTotal &&
           shouldGrow(index, 'left')
         ) {
-          return this.resizeStart.widths[index] + getDelta(index, 'left');
+          const leftScalingWidth = startWidth + getDelta(index, 'left');
+          this.checkMinWidth(leftScalingWidth, index)
+          return leftScalingWidth;
         } else if (
           index >= this.resizingIndex &&
           rightSideTotal &&
           shouldGrow(index, 'right')
         ) {
-          return this.resizeStart.widths[index] - getDelta(index, 'right');
+          const rightScalingWidth = startWidth - getDelta(index, 'right');
+          this.checkMinWidth(rightScalingWidth, index)
+          return rightScalingWidth;
         }
       }
 
-      return this.resizeStart.widths[index];
+      return startWidth;
     });
 
     this.updateWidths(newWidths);
@@ -291,7 +308,7 @@ export class ResizableGroupStore {
       )
     );
 
-  update = () => {};
+  update = () => { };
 }
 
 export const {
