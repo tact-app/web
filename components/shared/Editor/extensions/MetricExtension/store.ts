@@ -22,7 +22,10 @@ export class MetricExtensionStore {
   secondInputRef = null;
 
   focusTimeout: number;
+  removeNodeTimeout: NodeJS.Timeout;
   isFocused = false;
+
+  prevNodeContentSize: number;
 
   get isCompleted() {
     switch (this.props.node.attrs.type) {
@@ -181,7 +184,19 @@ export class MetricExtensionStore {
     this.value = newValue;
   };
 
+  destroy = () => {
+    clearTimeout(this.removeNodeTimeout);
+  };
+
   update = (props: MetricExtensionProps) => {
+    if (!props.node.content.size && this.prevNodeContentSize !== 1) {
+      this.removeNodeTimeout = setTimeout(() => {
+        props.deleteNode();
+      })
+      return;
+    }
+
+    this.prevNodeContentSize = props.node.content.size;
     this.props = props;
     this.value = props.node.attrs.value;
     this.type = props.node.attrs.type;
