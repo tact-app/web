@@ -96,7 +96,7 @@ export class TodayStore {
     SWITCH_LIST_WEEK: ['w', 'alt+shift+down'],
     MOVE_TASK: ['alt+s'],
     TOGGLE_CALENDAR: 'c',
-    TOGGLE_CALENDAR_FULL_SCREEN: 'meta+e',
+    TOGGLE_CALENDAR_FULL_SCREEN: ['meta+e', 'ctrl+e'],
   };
 
   hotkeyHandlers = {
