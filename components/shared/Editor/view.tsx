@@ -29,6 +29,7 @@ export const EditorView = observer(function EditorView() {
       onClick={store.handleClick}
       bg='white'
       cursor='text'
+      overflow='auto'
       pb={6}
       id={EDITOR_ROOT_ID}
       onKeyDown={store.handleKeyDown}

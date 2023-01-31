@@ -99,7 +99,7 @@ export const TaskView = observer(function TaskView() {
                   multiline
                 />
               </HStack>
-              <Box mt={4} id='editor' overflow='auto' height='100%'>
+              <Box mt={4} id='editor' overflow='hidden' flex={1}>
                 {store.isDescriptionLoading ? (
                   <Center>
                     <CircularProgress isIndeterminate size='24px' />
