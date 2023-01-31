@@ -77,10 +77,9 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
             </Box>
           ) : null}
         </ModalHeader>
-        <ModalBody pb={6} overflow='scroll' position='relative'>
+        <ModalBody p={0} overflow='auto' position='relative'>
           <GoalCreationStepsSwitcher />
         </ModalBody>
-        <ModalFooter />
       </ModalContent>
     </Modal>
   );

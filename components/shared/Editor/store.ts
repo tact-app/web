@@ -18,9 +18,11 @@ import { BlockTypesOptions } from './slashCommands';
 import { NavigationDirections } from '../TasksList/types';
 import { TrailingNode } from './extensions/TrailingNode';
 import { KeyboardEvent, SyntheticEvent } from 'react';
+import { ChakraProps } from "@chakra-ui/system/dist/system.types";
 
 export type EditorProps = {
   content: JSONContent;
+  contentContainerProps?: ChakraProps;
 
   editorRef?: (editor: Editor) => void;
   onFocus?: () => void;
@@ -29,6 +31,8 @@ export type EditorProps = {
   onLeave?: (direction: NavigationDirections) => void;
   onUpdate?: (content: JSONContent) => void;
 };
+
+export const EDITOR_ROOT_ID = 'editor-root';
 
 class EditorStore {
   isLinkInfoOpened: boolean = false;
@@ -45,6 +49,7 @@ class EditorStore {
   editorRef: EditorProps['editorRef'];
 
   content: JSONContent = undefined;
+  contentContainerProps: EditorProps['contentContainerProps'] = {};
   isFocused = false;
   ref: HTMLDivElement;
 
@@ -55,6 +60,8 @@ class EditorStore {
   linkValue: string = '';
   linkTitle: string = '';
   initialLinkTitle: string = '';
+
+  editorContainerRef: HTMLElement | null = null;
 
   constructor(public root: RootStore) {
     makeAutoObservable(this, undefined, { autoBind: true });
@@ -130,8 +137,12 @@ class EditorStore {
     ];
   }
 
-  handleClick = () => {
+  handleClick = (event: SyntheticEvent<HTMLDivElement>) => {
     this.onFocus?.();
+
+    if ((event.target as HTMLDivElement).id === EDITOR_ROOT_ID) {
+      this.editor.commands.focus('end');
+    }
   };
 
   handleBlur = () => {
@@ -146,12 +157,35 @@ class EditorStore {
     this.onSave?.();
   };
 
+  handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      const lastChildNodeIndex = this.editor.state.doc.content.childCount - 2;
+
+      if (lastChildNodeIndex < 0) {
+        return;
+      }
+
+      const lastChildNode = this.editor.state.doc.content.child(lastChildNodeIndex);
+      const cursorNode = this.editor.state.selection.$head.parent;
+
+      if (lastChildNode === cursorNode) {
+        this.editorContainerRef?.scrollIntoView({ block: 'end' });
+      }
+    }
+  }
+
   handleLeave = (direction: NavigationDirections) => {
     this.onLeave?.(direction);
   };
 
   handleEditorUpdate = ({ editor }) => {
     this.onUpdate(this.editor.getJSON());
+  };
+
+  setContainerRef = (ref: HTMLElement | null) => {
+    if (ref && this.editorContainerRef !== ref) {
+      this.editorContainerRef = ref;
+    }
   };
 
   setEditor = (editor: Editor) => {
@@ -165,6 +199,7 @@ class EditorStore {
 
   update = (props: EditorProps) => {
     this.content = props.content;
+    this.contentContainerProps = props.contentContainerProps;
 
     this.onUpdate = props.onUpdate;
     this.onFocus = props.onFocus;
