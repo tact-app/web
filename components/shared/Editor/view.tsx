@@ -24,7 +24,6 @@ export const EditorView = observer(function EditorView() {
 
   return (
     <chakra.div
-      ref={store.setContainerRef}
       className={styles.root}
       onClick={store.handleClick}
       bg='white'
@@ -34,7 +33,7 @@ export const EditorView = observer(function EditorView() {
       id={EDITOR_ROOT_ID}
       onKeyDown={store.handleKeyDown}
     >
-      <chakra.div {...store.contentContainerProps}>
+      <chakra.div ref={store.setContainerRef} {...store.contentContainerProps}>
         {editor && (
             <BubbleMenu
                 editor={editor}
