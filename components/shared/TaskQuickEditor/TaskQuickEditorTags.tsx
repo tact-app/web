@@ -99,31 +99,31 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
           >
             <PopoverTrigger>
               <Button
-                  ref={store.modes.tag.setCollapseRef}
-                  onKeyDown={store.modes.tag.handleCollapseButtonKeyDown}
-                  onFocus={store.handleModeFocus(Modes.TAG)}
-                  size='xs'
-                  role='group'
-                  bg='blue.400'
-                  _hover={{
-                    bg: 'blue.500',
-                  }}
-                  _focus={{
-                    boxShadow: 'var(--chakra-shadows-outline)',
-                  }}
-                  color='white'
+                ref={store.modes.tag.setCollapseRef}
+                onKeyDown={store.modes.tag.handleCollapseButtonKeyDown}
+                onFocus={store.handleModeFocus(Modes.TAG)}
+                size='xs'
+                role='group'
+                bg='blue.400'
+                _hover={{
+                  bg: 'blue.500',
+                }}
+                _focus={{
+                  boxShadow: 'var(--chakra-shadows-outline)',
+                }}
+                color='white'
               >
                 Tags
                 <chakra.span
-                    ml={1}
-                    bg='blue.300'
-                    pl={1}
-                    pr={1}
-                    borderRadius='full'
-                    transitionProperty='common'
-                    transitionDuration='normal'
-                    color='white'
-                    fontSize='xs'
+                  ml={1}
+                  bg='blue.300'
+                  pl={1}
+                  pr={1}
+                  borderRadius='full'
+                  transitionProperty='common'
+                  transitionDuration='normal'
+                  color='white'
+                  fontSize='xs'
                 >
                   {store.modes.tag.tags.length}
                 </chakra.span>
