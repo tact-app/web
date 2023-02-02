@@ -40,6 +40,7 @@ export const TaskView = observer(function TaskView() {
       h='100%'
       maxW='container.md'
       p={6}
+      pb={0}
       display='flex'
       flexDirection='column'
       justifyContent='space-between'
@@ -99,7 +100,7 @@ export const TaskView = observer(function TaskView() {
                   multiline
                 />
               </HStack>
-              <Box mt={4} id='editor' overflow='auto'>
+              <Box mt={4} id='editor' overflow='hidden' flex={1} ml={-6} mr={-6}>
                 {store.isDescriptionLoading ? (
                   <Center>
                     <CircularProgress isIndeterminate size='24px' />
@@ -142,6 +143,7 @@ export const TaskView = observer(function TaskView() {
         <TaskQuickEditorTags
           boxProps={{
             display: 'inline',
+            pb: 6,
           }}
           buttonProps={{
             mt: 2,

@@ -14,6 +14,7 @@ export const TaskEditor = observer(function TaskEditor() {
       onLeave={() => store.quickEditor.setFocus(true)}
       onFocus={store.handleDescriptionFocus}
       onBlur={store.handleDescriptionBlur}
+      contentContainerProps={{ pl: 6, pr: 6 }}
     />
   );
 });

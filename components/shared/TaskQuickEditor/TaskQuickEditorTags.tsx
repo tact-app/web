@@ -76,6 +76,10 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
     store.modes.tag.setIsCollapsable(collapsable);
   }, [store.modes.tag, collapsable]);
 
+  if (!store.modes.tag.tags.length) {
+    return null;
+  }
+
   return (
     <Box
       data-id={TAGS_ID}
@@ -84,7 +88,6 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
       ref={store.modes.tag.setContainerRef}
     >
       {store.modes.tag.isCollapsed ? (
-        store.modes.tag.tags.length > 0 && (
           <Popover
             isOpen={store.modes.tag.isCollapseOpen}
             onOpen={store.modes.tag.handleCollapseOpen}
@@ -141,7 +144,6 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
               </PopoverContent>
             </Portal>
           </Popover>
-        )
       ) : (
         <TaskQuickEditorTagsList buttonProps={buttonProps} />
       )}

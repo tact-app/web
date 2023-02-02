@@ -9,11 +9,15 @@ export const GoalCreationDescription = observer(
 
     return (
       <Box
-        maxW='2xl'
         overflow='visible'
         position='absolute'
         left={0}
         right={0}
+        top={0}
+        bottom={0}
+        display='flex'
+        alignItems='center'
+        flexDirection='column'
         m='auto'
       >
         <Input
@@ -23,14 +27,17 @@ export const GoalCreationDescription = observer(
           placeholder='Goal name'
           onChange={store.handleTitleChange}
           variant='flushed'
+          ml={6}
+          mr={6}
           fontSize='2xl'
+          maxW='2xl'
           fontWeight='semibold'
           _focusVisible={{
             borderColor: 'blue.400',
             boxShadow: 'none',
           }}
         />
-        <Box mt={4}>
+        <Box mt={4} width='100%' flex={1}>
           {store.isDescriptionLoading ? (
             <Center>
               <CircularProgress isIndeterminate size='24px' />
@@ -40,6 +47,10 @@ export const GoalCreationDescription = observer(
               content={
                 store.description ? store.description.content : undefined
               }
+              contentContainerProps={{
+                  maxW: '2xl',
+                  margin: 'auto',
+              }}
               onUpdate={store.handleDescriptionChange}
               onSave={store.handleSave}
             />
