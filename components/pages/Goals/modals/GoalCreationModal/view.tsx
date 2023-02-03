@@ -10,7 +10,6 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalHeader,
 } from '@chakra-ui/modal';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';

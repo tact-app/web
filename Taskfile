@@ -29,12 +29,12 @@ refresh() {
 
   if ! @deps package-lock.json; then
     install --from-scratch
-    md5sum package-lock.json > node_modules/current.lock
+    md5sum package-lock.json >node_modules/current.lock
   fi
 
   if ! @deps tools/package-lock.json; then
     tools npm ci
-    md5sum tools/package-lock.json > tools/node_modules/current.lock
+    md5sum tools/package-lock.json >tools/node_modules/current.lock
   fi
 }
 
@@ -70,9 +70,9 @@ refresh() {
 }
 
 setup() {
-  set_fontawesome_token false
-  set_sentry_token false
-  set_vercel_token false
+  set_fontawesome_token false || (echo The token is required && return 1)
+  set_sentry_token false || true
+  set_vercel_token false || true
   @env
 
   tools npm ci
@@ -93,6 +93,15 @@ set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
 @store_token() {
   local name="${1}" key="${2}" length="${3}" update="${4:-true}"
 
+  if ! ${update}; then
+    local yn='N'
+    read -rp "Do you have ${name}' token? (y/N) " yn
+    case $yn in
+    [yY]) ;;
+    *) return 1 ;;
+    esac
+  fi
+
   local token
   echo Please enter "${name}" token:
   read -rs token
@@ -101,7 +110,7 @@ set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
 
   if [ "${#token}" -lt "${length}" ]; then
     echo 'Token is invalid.'
-    return 1
+    exit 1
   fi
   git config "${key}" "${token}"
   echo 'Token saved.'
