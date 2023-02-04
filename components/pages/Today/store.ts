@@ -373,6 +373,14 @@ export class TodayStore {
     this.resizableConfig[3].minWidth = undefined;
   };
 
+  handleListMinWidth = () => {
+    if (this.isCalendarExpanded) {
+      this.openFullScreenCalendar();
+    } else {
+      this.handleExpandTask();
+    }
+  }
+
   openFullScreenCalendar = () => {
     this.isCalendarFullScreen = true;
 
