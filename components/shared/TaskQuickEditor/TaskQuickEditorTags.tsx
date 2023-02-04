@@ -14,8 +14,11 @@ import {
   chakra,
   VStack,
   Portal,
+  IconButton,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
+import { faXmark } from "@fortawesome/pro-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const TAGS_ID = 'task-quick-editor-tags';
 
@@ -48,12 +51,56 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
             fontSize='initial'
             verticalAlign='initial'
             mr={2}
-            _focus={{ boxShadow: 'var(--chakra-shadows-outline)' }}
+            _hover={{
+              button: {
+                opacity: 100
+              },
+              span: {
+                bg: 'var(--chakra-colors-blue-600)'
+              }
+            }}
+            _focus={{
+              boxShadow: 'none',
+              span: {
+                'box-shadow': 'inset 0px 0px 0px 2px var(--chakra-colors-blue-600)'
+              }
+            }}
             {...buttonProps}
           >
-            <Tag bg='blue.400' color='white' cursor='pointer'>
+            <Tag
+                bg='blue.400'
+                color='white'
+                cursor='pointer'
+                boxSizing='border-box'
+            >
               {title}
             </Tag>
+            <IconButton
+                variant='unstyled'
+                aria-label='Remove'
+                w='12px'
+                h='12px'
+                minW='12px'
+                top='-4px'
+                right='-4px'
+                position='absolute'
+                backgroundColor='var(--chakra-colors-blue-300)'
+                opacity='0'
+                display='flex'
+                alignItems='center'
+                justifyContent='center'
+                isRound
+                onClick={() => {
+                  store.modes.tag.removeTag(id);
+                  store.leave();
+                }}
+            >
+              <FontAwesomeIcon
+                  icon={faXmark}
+                  fontSize={10}
+                  color='var(--chakra-colors-white)'
+              />
+            </IconButton>
           </Button>
         </motion.span>
       ))}
