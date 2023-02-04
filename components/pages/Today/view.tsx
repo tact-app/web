@@ -41,7 +41,7 @@ export const TodayView = observer(function TodayView() {
           >
             <FocusConfigurationBlock />
           </ResizableGroupChild>
-          <ResizableGroupChild index={1} config={{ ...store.resizableConfig[1], onMinWidth: store.openFullScreenCalendar }}>
+          <ResizableGroupChild index={1} config={{ ...store.resizableConfig[1], onMinWidth: store.handleListMinWidth }}>
             <ListsBlock />
           </ResizableGroupChild>
           <ResizableGroupChild
