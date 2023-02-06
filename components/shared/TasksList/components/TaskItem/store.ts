@@ -9,7 +9,8 @@ import { TasksListStore } from '../../store';
 import { subscriptions } from '../../../../../helpers/subscriptions';
 import { checkKeyCombination, checkKeyCombinations } from '../../../../../helpers/combinations';
 
-const IGNORED_COMBINATIONS = ['Alt+D']
+const IGNORED_COMBINATIONS = ['Alt+D'];
+export const TASK_TITLE_ELEMENT_ID = 'task-title';
 
 export type TaskItemProps = {
   task?: TaskData | null;
@@ -131,11 +132,15 @@ export class TaskItemStore {
   };
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).id === TASK_TITLE_ELEMENT_ID && this.isFocused) {
+      return this.parent.setEditingTask(this.task.id);
+    }
+
     if (
       this.onFocus &&
       !this.isDisabled &&
-      !this.isEditMode &&
-      !this.isReadOnly
+      !this.isReadOnly &&
+      !this.isEditMode
     ) {
       e.preventDefault();
       document.getSelection().removeAllRanges();
