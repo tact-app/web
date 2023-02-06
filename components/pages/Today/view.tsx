@@ -46,7 +46,7 @@ export const TodayView = observer(function TodayView() {
           </ResizableGroupChild>
           <ResizableGroupChild
             index={2}
-            config={store.resizableConfig[2]}
+            config={{ ...store.resizableConfig[2], onMinWidth: () => store.handleCloseTask(true), }}
             boxShadow='lg'
             onMouseDown={store.handleTaskMouseDown}
           >

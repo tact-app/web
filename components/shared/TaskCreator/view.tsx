@@ -117,8 +117,8 @@ export const TaskCreatorView = observer(function TaskCreator(
         </InputGroup>
       </InputWrapper>
       <Box opacity={store.isInputFocused ? 1 : 0}>
-        <HStack mt={1} mb={2} ml={5}>
-          <Text color='gray.400' fontSize='xs' fontWeight='normal'>
+        <HStack mt={1} mb={2} ml={5} mr={5}>
+          <Text color='gray.400' fontSize='xs' fontWeight='normal' overflow='hidden' maxH='24px'>
             Type
             <HotkeyHint>#</HotkeyHint> for tags,
             <HotkeyHint>!</HotkeyHint> for priority,
