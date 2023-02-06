@@ -80,10 +80,6 @@ class TaskStore {
 
   setEditor = (editor) => {
     this.editor = editor;
-
-    if (this.isEditorFocused) {
-      this.editor.commands.focus();
-    }
   };
 
   handleDescriptionChange = (content: JSONContent) => {
@@ -230,14 +226,6 @@ class TaskStore {
       reaction(() => this.data?.id, this.loadDescription, {
         fireImmediately: true,
       }),
-      reaction(
-        () => [this.isEditorFocused, this.descriptionId],
-        () => {
-          if (this.isEditorFocused && this.editor && !this.editor.isDestroyed) {
-            this.editor.commands.focus(true);
-          }
-        }
-      )
     );
 
   update = (props: TaskProps) => {

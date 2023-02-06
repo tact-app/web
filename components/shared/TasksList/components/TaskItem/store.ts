@@ -20,6 +20,7 @@ export type TaskItemProps = {
   isFocused?: boolean;
   isDragging?: boolean;
   isEditMode?: boolean;
+  provided: any;
 
   onToggleMenu?: (isOpen: boolean) => void;
   onFocus?: (taskId: string, multiselect?: 'single' | 'many') => void;
@@ -132,7 +133,7 @@ export class TaskItemStore {
   };
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).id === TASK_TITLE_ELEMENT_ID && this.isFocused) {
+    if ((e.detail !== 2 || this.isFocused) && (e.target as HTMLElement).id === TASK_TITLE_ELEMENT_ID) {
       return this.parent.setEditingTask(this.task.id);
     }
 
@@ -143,7 +144,6 @@ export class TaskItemStore {
       !this.isEditMode
     ) {
       e.preventDefault();
-      document.getSelection().removeAllRanges();
 
       this.onFocus(
         this.task.id,
