@@ -426,11 +426,11 @@ export class TodayStore {
     }
   };
 
-  handleCloseTask = () => {
+  handleCloseTask = (doNotOpenCalendar = false) => {
     this.handleCollapseTask();
     this.resizableConfig[2].size = 0;
 
-    if (this.shouldOpenCalendar && !this.isCalendarExpanded) {
+    if (!doNotOpenCalendar && this.shouldOpenCalendar && !this.isCalendarExpanded) {
       this.expandCalendar();
       this.shouldOpenCalendar = false;
     }
