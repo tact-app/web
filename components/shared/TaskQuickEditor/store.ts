@@ -256,6 +256,7 @@ export class TaskQuickEditorStore {
     this.closeMenu();
     this.suggestionsMenu.close();
     this.suggestionsMenu.closeForMode();
+    this.modes.tag.handleCollapseClose();
   };
 
   handleClickOutside = (e: Event) => {
@@ -694,6 +695,20 @@ export class TaskQuickEditorStore {
       }
     }
   };
+
+  handleRemoveTag = (id: string, autoSave: boolean) => {
+    this.modes.tag.removeTag(id);
+
+    if (autoSave) {
+      this.leave();
+    } else {
+      this.handleFocus();
+
+      if (this.modes.tag.tags.length) {
+        this.modes.tag.handleCollapseOpen();
+      }
+    }
+  }
 }
 
 export const {

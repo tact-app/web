@@ -148,6 +148,7 @@ export const TaskView = observer(function TaskView() {
           buttonProps={{
             mt: 2,
           }}
+          autoSave
         />
       </TaskQuickEditorStoreProvider>
     </Container>

@@ -6,6 +6,7 @@ import {
   Menu,
   MenuButton,
   MenuItem,
+  Portal,
   MenuList,
 } from '@chakra-ui/react';
 import { DotsIcon } from '../Icons/DotsIcon';
@@ -34,44 +35,46 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
         >
           <DotsIcon />
         </MenuButton>
-        <MenuList p={0} shadow='lg'>
-          <MenuItem
-            fontSize='sm'
-            lineHeight='5'
-            fontWeight='normal'
-            command='#'
-            onClick={() => store.activateMode(Modes.TAG)}
-          >
-            Add tag
-          </MenuItem>
-          <MenuItem
-            fontSize='sm'
-            lineHeight='5'
-            fontWeight='normal'
-            command='!'
-            onClick={() => store.activateMode(Modes.PRIORITY)}
-          >
-            Set priority
-          </MenuItem>
-          <MenuItem
-            fontSize='sm'
-            lineHeight='5'
-            fontWeight='normal'
-            command='*'
-            onClick={() => store.activateMode(Modes.GOAL)}
-          >
-            Add goal
-          </MenuItem>
-          <MenuItem
-            fontSize='sm'
-            lineHeight='5'
-            fontWeight='normal'
-            command='^'
-            onClick={() => store.activateMode(Modes.SPACE)}
-          >
-            Link to space
-          </MenuItem>
-        </MenuList>
+        <Portal>
+          <MenuList p={0} shadow='lg'>
+            <MenuItem
+                fontSize='sm'
+                lineHeight='5'
+                fontWeight='normal'
+                command='#'
+                onClick={() => store.activateMode(Modes.TAG)}
+            >
+              Add tag
+            </MenuItem>
+            <MenuItem
+                fontSize='sm'
+                lineHeight='5'
+                fontWeight='normal'
+                command='!'
+                onClick={() => store.activateMode(Modes.PRIORITY)}
+            >
+              Set priority
+            </MenuItem>
+            <MenuItem
+                fontSize='sm'
+                lineHeight='5'
+                fontWeight='normal'
+                command='*'
+                onClick={() => store.activateMode(Modes.GOAL)}
+            >
+              Add goal
+            </MenuItem>
+            <MenuItem
+                fontSize='sm'
+                lineHeight='5'
+                fontWeight='normal'
+                command='^'
+                onClick={() => store.activateMode(Modes.SPACE)}
+            >
+              Link to space
+            </MenuItem>
+          </MenuList>
+        </Portal>
       </Menu>
     </chakra.div>
   );
