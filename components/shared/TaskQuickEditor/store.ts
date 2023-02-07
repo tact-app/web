@@ -694,6 +694,17 @@ export class TaskQuickEditorStore {
       }
     }
   };
+
+  handleRemoveTag = (id: string, autoSave: boolean) => {
+    this.modes.tag.removeTag(id);
+
+    if (autoSave) {
+      this.leave();
+    } else {
+      this.handleFocus()
+      this.modes.tag.handleCollapseOpen();
+    }
+  }
 }
 
 export const {

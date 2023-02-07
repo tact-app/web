@@ -24,8 +24,10 @@ export const TAGS_ID = 'task-quick-editor-tags';
 
 const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
   buttonProps,
+  autoSave,
 }: {
   buttonProps: ButtonProps;
+  autoSave: boolean;
 }) {
   const store = useTaskQuickEditorStore();
 
@@ -90,10 +92,7 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
                 alignItems='center'
                 justifyContent='center'
                 isRound
-                onClick={() => {
-                  store.modes.tag.removeTag(id);
-                  store.leave();
-                }}
+                onClick={() => store.handleRemoveTag(id, autoSave)}
             >
               <FontAwesomeIcon
                   icon={faXmark}
@@ -112,10 +111,12 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
   boxProps,
   buttonProps,
   collapsable = false,
+  autoSave = false,
 }: {
   boxProps?: BoxProps;
   buttonProps?: ButtonProps;
   collapsable?: boolean;
+  autoSave?: boolean;
 }) {
   const store = useTaskQuickEditorStore();
 
@@ -185,14 +186,14 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
                     maxH={64}
                 >
                   <VStack alignItems='start'>
-                    <TaskQuickEditorTagsList buttonProps={buttonProps} />
+                    <TaskQuickEditorTagsList buttonProps={buttonProps} autoSave={autoSave} />
                   </VStack>
                 </PopoverBody>
               </PopoverContent>
             </Portal>
           </Popover>
       ) : (
-        <TaskQuickEditorTagsList buttonProps={buttonProps} />
+        <TaskQuickEditorTagsList buttonProps={buttonProps} autoSave={autoSave} />
       )}
     </Box>
   );
