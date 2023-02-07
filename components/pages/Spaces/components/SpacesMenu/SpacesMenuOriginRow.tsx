@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite';
 import { useSpacesMenuStore } from './store';
 import { useCallback } from 'react';
 import { ArrowDownIcon } from '../../../../shared/Icons/ArrowIcons';
+import { OriginIcon } from '../SpacesIcons/OriginsIcons';
 
 export const SpacesMenuOriginRow = observer(function SpacesMenuOriginRow({
   item,
@@ -53,8 +54,8 @@ export const SpacesMenuOriginRow = observer(function SpacesMenuOriginRow({
             ? 'gray.200'
             : 'gray.300'
           : isFocused
-          ? 'gray.100'
-          : 'white'
+            ? 'gray.100'
+            : 'white'
       }
       _hover={{
         bg: isSelected ? 'gray.200' : 'gray.100',
@@ -72,7 +73,8 @@ export const SpacesMenuOriginRow = observer(function SpacesMenuOriginRow({
           mr={2}
         />
       ) : null}
-      <chakra.span whiteSpace='nowrap' fontSize='sm' fontWeight='medium'>
+      {item?.['type'] && <OriginIcon origin={item['type']} />}
+      <chakra.span whiteSpace='nowrap' fontSize='sm' fontWeight='medium' ml={1}>
         {item.name}
       </chakra.span>
       {item.children?.length > 0 ? (

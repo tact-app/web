@@ -58,7 +58,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
         index={store.isExpanded ? store.currentSpaceIndex : null}
       >
         {store.root.resources.spaces.list.map((space, index) => {
-          const { id, name, shortName, color, children } = space;
+          const { id, name, color, children } = space;
 
           return (
             <AccordionItem
@@ -126,7 +126,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                 )}
               </AccordionButton>
               <AccordionPanel p={0} pl={4}>
-                {children.map((origin) => (
+                {children?.map((origin) => (
                   <SpacesMenuOrigin key={origin.id} space={id} item={origin} />
                 ))}
                 {id !== 'all' && (
@@ -138,7 +138,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                     onClick={() =>
                       store.callbacks.onSpaceOriginAddClick?.(space)
                     }
-                    title='Add origin'
+                    title='Connect apps'
                     size='sm'
                   />
                 )}
@@ -150,7 +150,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
       <SpacesMenuAdd
         onClick={store.callbacks.onSpaceCreationClick}
         isFocused={props.isHotkeysEnabled && store.currentSpaceIndex === null}
-        title='Add space'
+        title='Create new space'
         size='lg'
       />
     </Box>

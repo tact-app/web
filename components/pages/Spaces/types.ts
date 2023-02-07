@@ -3,6 +3,8 @@ export enum OriginTypes {
   TRELLO = 'TRELLO',
   GITHUB = 'GITHUB',
   MAIL = 'MAIL',
+  GITLAB = 'GITLAB',
+  NOTION = 'NOTION',
 }
 
 export type OriginChildData = {
@@ -19,12 +21,13 @@ export type OriginData = {
 };
 
 export type SpaceData = {
+  icon: string;
   id: string;
   type: 'personal' | 'private' | 'all';
   name: string;
+  description?: string;
   color: string;
-  shortName: string;
-  children: OriginData[];
+  children?: OriginData[];
 };
 
 export enum SpacesFocusableBlocks {

@@ -23,7 +23,7 @@ export const SpacesSmallIcon = observer(function SpacesSmallIcon({
       fontSize={size > 6 ? 'lg' : 'sm'}
       color={space.color + '.500'}
     >
-      {space.shortName}
+      {space.icon || space.name[0]}
     </chakra.div>
   ) : null;
 });

@@ -4,16 +4,16 @@ import {
   Button,
   Text,
   Box,
-  Center,
-  Heading,
   Input,
   HStack,
   VStack,
   Container,
-  Divider,
+  Textarea,
 } from '@chakra-ui/react';
 import { useSpaceCreationModalStore } from './store';
-import { BackArrowIcon } from '../../../../shared/Icons/BackArrowIcon';
+import { SpaceCreationEmojiSelect } from './components/SpaceCreationEmojiSelect';
+import { DeleteSpaceModal } from './components/DeleteSpaceModal';
+import { SpaceСongratulationsModal } from '../SpaceСongratulationsModal'
 import {
   Modal,
   ModalBody,
@@ -23,10 +23,9 @@ import {
   ModalOverlay,
 } from '@chakra-ui/modal';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
-import { SpaceCreationColorSelect } from './components/SpaceCreationColorSelect';
-import { SpaceCreationAccountSelect } from './components/SpaceCreationAccountSelect';
+import { TextAreaLengthCounter } from '../../../../shared/TextAreaLengthCounter'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/pro-regular-svg-icons';
+import { faAlignLeft } from '@fortawesome/pro-light-svg-icons';
 
 const keyMap = {
   CREATE: ['meta+enter', 'meta+s'],
@@ -46,142 +45,113 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
       closeOnEsc={false}
       onEsc={store.handleBack}
       blockScrollOnMount={false}
-      size='full'
+      isCentered
+      size={'2xl'}
     >
+      <ModalOverlay />
       <ModalContent>
-        <ModalHeader
-          position='relative'
-          display='flex'
-          alignItems='center'
-          flexDirection='row'
-        >
-          <Button
-            variant='ghost'
-            size='xs'
-            onClick={store.handleBack}
-            position='absolute'
-          >
-            <BackArrowIcon />
-            <Text fontSize='lg' color='gray.400' fontWeight='normal'>
-              Back
-            </Text>
-          </Button>
-          <Center flex={1} minH={12}>
-            <SpaceCreationColorSelect />
-            <Heading variant='h1' fontSize='2rem'>
-              {store.existedSpace ? 'Edit' : 'Create'} space
-            </Heading>
-          </Center>
-          <Box display='flex' alignItems='center' position='absolute' right={6}>
-            <Text fontSize='xs' fontWeight='normal' mr={4} color='gray.400'>
-              Press ⌘ S{' '}
-            </Text>
-            <Button
-              colorScheme='blue'
-              size='sm'
-              isDisabled={!store.isReadyForSave}
-              onClick={store.handleSave}
-            >
-              Save
-            </Button>
-          </Box>
+        <ModalHeader>
+          {store.existedSpace ? 'Edit' : 'Create'} space
         </ModalHeader>
         <ModalBody pb={6} overflow='scroll' position='relative'>
           <Container maxW='2xl'>
             <VStack>
-              <SpaceCreationAccountSelect />
               <HStack
                 overflow='visible'
-                display='flex'
-                m='auto'
                 w='100%'
-                spacing={6}
-                alignItems='end'
+                spacing={0}
+                marginBottom={4}
               >
+                <SpaceCreationEmojiSelect />
                 <Box flex={1}>
-                  <Text fontSize='lg' fontWeight='semibold'>
-                    Name
-                  </Text>
                   <Input
                     size='lg'
                     value={store.name}
                     autoFocus
-                    placeholder='Space name'
+                    placeholder='Add a space name'
                     onChange={store.handleNameChange}
                     variant='flushed'
                   />
                 </Box>
-                <Input
-                  size='lg'
-                  value={store.shortName}
-                  placeholder='-'
-                  w={10}
-                  maxLength={1}
-                  onChange={store.handleShortNameChange}
-                  variant='flushed'
-                />
+              </HStack>
+              <HStack
+                overflow='visible'
+                w='100%'
+                spacing={0}
+                display='flex'
+              >
+                <Box flex={1}>
+                  <Text fontSize='md' fontWeight='semibold' lineHeight={6}>
+                    Description
+                  </Text>
+                  <Text fontSize='sm' fontWeight='normal' lineHeight={5} >
+                    Write about the space so users know where you invite them
+                  </Text>
+                  <TextAreaLengthCounter textValue={store.description} limit={store.descriptionLimit}>
+                    <Box
+                      display='flex'
+                      w='100%'>
+                      <FontAwesomeIcon
+                        icon={faAlignLeft}
+                        color='#A0AEC0'
+                        size='lg'
+                        style={{ margin: '10px 11px 0 0' }} />
+                      <Textarea
+                        maxLength={store.descriptionLimit}
+                        size='lg'
+                        resize='none'
+                        value={store.description}
+                        placeholder='Add description'
+                        onChange={store.handleDescriptionChange}
+                        variant='unstyled'
+                      />
+                    </Box>
+                  </TextAreaLengthCounter>
+                </Box>
               </HStack>
             </VStack>
           </Container>
         </ModalBody>
-        <ModalFooter>
-          {store.existedSpace && store.existedSpace.type !== 'personal' && (
-            <Container maxW='2xl'>
-              <Divider />
-              <Box
-                display='flex'
-                alignItems='center'
-                justifyContent='space-between'
-                pb={10}
-                pt={4}
-              >
-                <Box display='flex' alignItems='center'>
-                  <FontAwesomeIcon icon={faTrash} fixedWidth />
-                  <Text fontSize='sm' fontWeight='normal'>
-                    Delete space
-                  </Text>
-                </Box>
-                <Button
-                  onClick={store.openConfirmationDelete}
-                  variant='outline'
-                  borderWidth='2px'
-                  colorScheme='blue'
-                  borderColor='blue.400'
-                  color='blue.400'
-                  size='xs'
-                >
-                  Delete
-                </Button>
-              </Box>
-            </Container>
-          )}
+        <ModalFooter display='flex' justifyContent='flex-end' gap={3} >
+          {store.existedSpace && store.existedSpace.type !== 'personal' &&
+            <Button
+              onClick={store.openConfirmationDelete}
+              colorScheme='red'
+            >
+              Delete
+            </Button>}
+          <Button onClick={store.handleClose} display='flex' flexDirection='row'>
+            Cancel
+            <Text ml={1} fontSize='xs' color='blackAlpha.500'>
+              Esc
+            </Text>
+          </Button>
+          <Button
+            colorScheme='blue'
+            onClick={store.handleSave}
+            isDisabled={!store.isReadyForSave}
+            display='flex'
+            flexDirection='row'
+          >
+            Save
+            <Text ml={1} fontSize='xs' color='whiteAlpha.700'>
+              ⌘ + Enter
+            </Text>
+          </Button>
         </ModalFooter>
       </ModalContent>
 
-      <Modal
+      <SpaceСongratulationsModal
+        onClose={store.handleClose}
+        isOpen={store.isСongratulationsModal}
+        onConnect={store.handelConnect} />
+
+      <DeleteSpaceModal
         isOpen={store.isDeleteConfirmationOpen}
         onClose={store.closeDeleteConfirmation}
-        isCentered
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Confirm deletion</ModalHeader>
-          <ModalBody>Are you sure?</ModalBody>
-          <ModalFooter>
-            <Button
-              colorScheme='gray'
-              variant='ghost'
-              mr={3}
-              onClick={store.closeDeleteConfirmation}
-            >
-              Cancel
-            </Button>
-            <Button colorScheme='red' onClick={store.confirmDeletion}>
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Modal>
+        onDelete={store.confirmDeletion}
+      />
+
+    </Modal >
   );
 });

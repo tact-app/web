@@ -3,9 +3,12 @@ import { RootStore } from '../../../../stores/RootStore';
 import { ModalsController } from '../../../../helpers/ModalsController';
 import { SpaceCreationModal } from './SpaceCreationModal';
 import { SpaceData } from '../types';
+import { SpaceConnectAppsModal } from './SpaceConnectAppsModal';
 
 export enum SpacesModalsTypes {
   CREATE_SPACE,
+  CREATE_СONGRATULATIONS,
+  SPACE_CONNECTIONS,
 }
 
 export class SpacesModals {
@@ -15,13 +18,34 @@ export class SpacesModals {
 
   controller = new ModalsController({
     [SpacesModalsTypes.CREATE_SPACE]: SpaceCreationModal,
+    [SpacesModalsTypes.CREATE_СONGRATULATIONS]: SpaceConnectAppsModal,
   });
 
-  openSpaceCreationModal = (onSave: (space: SpaceData) => void) => {
+  openSpaceСonnectionsModal = (
+    space: SpaceData,
+    onConnect: (space: SpaceData) => (app: string) => void
+  ) => {
+    this.controller.open({
+      type: SpacesModalsTypes.CREATE_СONGRATULATIONS,
+      props: {
+        space,
+        callbacks: {
+          onConnect: onConnect(space),
+          onClose: this.controller.close,
+        },
+      },
+    });
+  };
+
+  openSpaceCreationModal = (
+    onSave: (space: SpaceData) => void,
+    onConnect: (space: SpaceData) => void
+    ) => {
     this.controller.open({
       type: SpacesModalsTypes.CREATE_SPACE,
       props: {
         callbacks: {
+          onConnect,
           onSave,
           onClose: this.controller.close,
         },
@@ -32,7 +56,7 @@ export class SpacesModals {
   openSpaceSettingsModal = (
     space: SpaceData,
     onSave: (space: SpaceData) => void,
-    onDelete: (spaceId: string) => void
+    onDelete: (spaceId: string) => void,
   ) => {
     this.controller.open({
       type: SpacesModalsTypes.CREATE_SPACE,
