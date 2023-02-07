@@ -26,11 +26,11 @@ export const TAGS_ID = 'task-quick-editor-tags';
 const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
   buttonProps,
   autoSave,
-  disableAnimating,
+  disableAnimating = false,
 }: {
   buttonProps: ButtonProps;
   autoSave: boolean;
-  disableAnimating: boolean;
+  disableAnimating?: boolean;
 }) {
   const store = useTaskQuickEditorStore();
 
@@ -201,7 +201,7 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
                     <TaskQuickEditorTagsList
                         buttonProps={buttonProps}
                         autoSave={autoSave}
-                        disableAnimating={collapsable}
+                        disableAnimating
                     />
                   </VStack>
                 </PopoverBody>
@@ -212,7 +212,6 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
         <TaskQuickEditorTagsList
             buttonProps={buttonProps}
             autoSave={autoSave}
-            disableAnimating={collapsable}
         />
       )}
     </Box>
