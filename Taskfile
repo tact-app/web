@@ -27,46 +27,29 @@ refresh() {
     git pull --force --rebase
   fi
 
-  if ! @deps package-lock.json; then
+  if ! @deps verify package-lock.json; then
     install --from-scratch
     md5sum package-lock.json >node_modules/current.lock
   fi
 
-  if ! @deps tools/package-lock.json; then
+  if ! @deps verify tools/package-lock.json; then
     tools npm ci
     md5sum tools/package-lock.json >tools/node_modules/current.lock
   fi
 }
 
 @deps() {
-  local file="${1:-package-lock.json}" lock
-  lock=$(dirname "${file}")/node_modules/current.lock
-  if [ ! -f "${lock}" ]; then
-    return 1
-  fi
-  [ "$(cat "${lock}")" == "$(md5sum "${file}")" ]
-}
-
-# TODO: make it stateless but support starting point
-# TODO: support beta-versions
-# TODO: avoid git references, e.g., github
-@update() {
-  local packages=("${@}")
-  if [ ${#packages[@]} = 0 ]; then
-
-    local filter='.dependencies | keys | join(" ")'
-    IFS=' ' read -r -a packages <<<"$(npm ls --depth=0 --omit=dev --json | jq -r "${filter}")"
-  fi
-
-  for pkg in "${packages[@]}"; do
-    echo npm install "${pkg}"@latest
-    npm install "${pkg}"@latest >/dev/null
-    if ! git diff --exit-code >/dev/null; then
-      printf '\nPackage %s was updated, please commit changes\n' "${pkg}"
-      return
+  case "${1}" in
+  check) depcheck --ignore-bin-package=true --ignores=pre-commit,@fortawesome/fontawesome-pro ;;
+  verify)
+    local file="${2:-package-lock.json}" lock
+    lock=$(dirname "${file}")/node_modules/current.lock
+    if [ ! -f "${lock}" ]; then
+      return 1
     fi
-  done
-  echo is up-to-date
+    [ "$(cat "${lock}")" == "$(md5sum "${file}")" ]
+    ;;
+  esac
 }
 
 setup() {
