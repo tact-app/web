@@ -86,7 +86,7 @@ export class TasksListWithCreatorStore {
           }
         : this.list.createTask,
       onForceSave: (taskId: string) => {
-        this.list.openTask(taskId, true);
+        this.list.openTask(taskId);
         this.list.draggableList.setFocusedItem(taskId);
       },
       onNavigate: this.list.handleNavigation,

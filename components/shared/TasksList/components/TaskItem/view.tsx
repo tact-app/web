@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Box, Checkbox, chakra, Tag, useOutsideClick } from '@chakra-ui/react';
 import { TaskStatus } from '../../types';
-import { TaskItemProps, useTaskItemStore } from './store';
+import { TaskItemProps, useTaskItemStore, TASK_TITLE_ELEMENT_ID } from './store';
 import { TaskItemMenu } from '../TaskItemMenu';
 import { TaskQuickEditorInput } from '../../../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../../../TaskQuickEditor/TaskQuickEditorTags';
@@ -85,6 +85,8 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
               ? 'transparent'
               : 'gray.100',
         }}
+        {...props.provided.dragHandleProps}
+        cursor='pointer !important'
       >
         <Box minH={10} pl={2} display='flex' alignItems='center'>
           <div onClick={(e) => e.stopPropagation()}>
@@ -117,7 +119,9 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
                 }
             >
               <chakra.span
+                id={TASK_TITLE_ELEMENT_ID}
                 transition='color 0.2s ease-in-out'
+                cursor={store.isFocused ? 'text' : 'inherit'}
               >
                 {store.task.title}
               </chakra.span>

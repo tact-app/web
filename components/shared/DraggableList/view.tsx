@@ -75,7 +75,7 @@ const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
     >
       {Prefix && <Prefix id={id} snapshot={snapshot} />}
       <DragHandler provided={provided} snapshot={snapshot} id={id} />
-      <Content id={id} isFocused={isFocused} snapshot={snapshot} />
+      <Content id={id} isFocused={isFocused} snapshot={snapshot} provided={provided} />
     </Box>
   );
 });
