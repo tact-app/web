@@ -151,7 +151,7 @@ const singleTaskItems = (store: TaskItemStore) => [
   },
   {
     onClick: () => {
-      store.parent.openTask(store.task.id, true);
+      store.parent.openTask(store.task.id);
 
       if (!store.isFocused) {
         store.parent.draggableList.setFocusedItem(store.task.id);

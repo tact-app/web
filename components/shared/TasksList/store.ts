@@ -73,6 +73,13 @@ export class TasksListStore {
     OPEN: ['alt+o', 'enter'],
   };
 
+  openTask = (taskId: string) => {
+    this.openedTask = taskId;
+
+    this.blurEditor();
+    this.callbacks.onOpenTask?.(!!this.openedTask);
+  };
+
   hotkeyHandlers = {
     DONE: (e) => {
       e.preventDefault()
@@ -109,7 +116,7 @@ export class TasksListStore {
     },
     OPEN_AND_EDIT: () => {
       if (this.draggableList.focused.length) {
-        this.openTask(this.draggableList.focused[0], true);
+        this.openTask(this.draggableList.focused[0]);
       }
     },
     GOAL: (e) => {
@@ -149,58 +156,6 @@ export class TasksListStore {
         this.draggableList.resetFocusedItem();
         this.setEditingTask(null);
       }
-    },
-  };
-
-  draggableHandlers: DraggableListCallbacks = {
-    onItemsRemove: (order: string[], ids: string[]) => {
-      this.order = order;
-      this.deleteTasks(ids);
-    },
-    onFocusLeave: (direction: NavigationDirections) => {
-      this.callbacks.onFocusLeave?.(direction);
-    },
-    onItemSecondClick: (id: string) => {
-      this.openTask(id, true);
-    },
-    onFocusedItemsChange: (ids: string[]) => {
-      if (!ids.length) {
-        this.closeTask();
-        this.setEditingTask(null);
-      } else {
-        if (ids.length > 1 || this.editingTaskId !== ids[0]) {
-          this.setEditingTask(null);
-        }
-
-        if (this.openedTask) {
-          if (ids.length === 1) {
-            this.openTask(ids[0]);
-          } else {
-            this.closeTask();
-          }
-        }
-      }
-
-      this.callbacks.onFocusChange?.(ids);
-    },
-    onOrderChange: (
-      order: string[],
-      changedIds: string[],
-      destinationIndex: number
-    ) => {
-      this.changeOrder(order, changedIds, destinationIndex);
-    },
-    onVerifyDelete: (ids: string[], done: () => void) => {
-      this.modals.openVerifyDeleteModal(ids, done);
-    },
-    onEscape: () => {
-      if (this.openedTask) {
-        this.closeTask();
-
-        return true;
-      }
-
-      return this.callbacks.onFocusLeave?.(NavigationDirections.INVARIANT);
     },
   };
 
@@ -350,15 +305,56 @@ export class TasksListStore {
   handleToggleMenu = (isOpen: boolean) => {
     this.isItemMenuOpen = isOpen;
   };
+  draggableHandlers: DraggableListCallbacks = {
+    onItemsRemove: (order: string[], ids: string[]) => {
+      this.order = order;
+      this.deleteTasks(ids);
+    },
+    onFocusLeave: (direction: NavigationDirections) => {
+      this.callbacks.onFocusLeave?.(direction);
+    },
+    onItemSecondClick: (id: string) => {
+      this.openTask(id);
+    },
+    onFocusedItemsChange: (ids: string[]) => {
+      if (!ids.length) {
+        this.closeTask();
+        this.setEditingTask(null);
+      } else {
+        if (ids.length > 1 || this.editingTaskId !== ids[0]) {
+          this.setEditingTask(null);
+        }
 
-  openTask = (taskId: string, withEditor?: boolean) => {
-    this.openedTask = taskId;
+        if (this.openedTask) {
+          if (ids.length === 1) {
+            this.openTask(ids[0]);
+          } else {
+            this.closeTask();
+          }
+        }
+      }
 
-    if (withEditor) {
-      this.focusEditor();
-    }
+      this.callbacks.onFocusChange?.(ids);
+    },
+    onOrderChange: (
+      order: string[],
+      changedIds: string[],
+      destinationIndex: number
+    ) => {
+      this.changeOrder(order, changedIds, destinationIndex);
+    },
+    onVerifyDelete: (ids: string[], done: () => void) => {
+      this.modals.openVerifyDeleteModal(ids, done);
+    },
+    onEscape: () => {
+      if (this.openedTask) {
+        this.closeTask();
 
-    this.callbacks.onOpenTask?.(!!this.openedTask);
+        return true;
+      }
+
+      return this.callbacks.onFocusLeave?.(NavigationDirections.INVARIANT);
+    },
   };
 
   closeTask = (silent?: boolean) => {

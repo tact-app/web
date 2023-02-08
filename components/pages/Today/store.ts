@@ -703,10 +703,10 @@ export class TodayStore {
     },
     onForceSave: (taskId: string, referenceId: string) => {
       if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
-        this.todayListWithCreator.list.openTask(taskId, true);
+        this.todayListWithCreator.list.openTask(taskId);
         this.todayListWithCreator.list.draggableList.setFocusedItem(taskId);
       } else if (referenceToList[referenceId] === Lists.WEEK) {
-        this.weekList.openTask(taskId, true);
+        this.weekList.openTask(taskId);
         this.weekList.draggableList.setFocusedItem(taskId);
       }
     },
