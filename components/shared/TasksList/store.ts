@@ -67,7 +67,6 @@ export class TasksListStore {
     WONT_DO: ['alt+shift+w'],
     FORCE_WONT_DO: ['alt+w'],
     EDIT: 'space',
-    OPEN_AND_EDIT: 'enter',
     FOCUS_LEAVE_LEFT: 'left',
     FOCUS_LEAVE_RIGHT: 'right',
     OPEN: ['alt+o', 'enter'],
@@ -112,11 +111,6 @@ export class TasksListStore {
         this.setEditingTask(
           this.draggableList.focused[this.draggableList.focused.length - 1]
         );
-      }
-    },
-    OPEN_AND_EDIT: () => {
-      if (this.draggableList.focused.length) {
-        this.openTask(this.draggableList.focused[0]);
       }
     },
     GOAL: (e) => {
