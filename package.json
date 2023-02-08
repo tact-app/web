@@ -18,6 +18,7 @@
     "type-check"
   ],
   "dependencies": {
+    "@chakra-ui/modal": "^2.2.9",
     "@chakra-ui/react": "^2.4.9",
     "@chakra-ui/theme-tools": "^2.0.15",
     "@emoji-mart/data": "^1.1.2",
