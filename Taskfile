@@ -40,7 +40,7 @@ refresh() {
 
 @deps() {
   case "${1}" in
-  check) depcheck --ignore-bin-package=true --ignores=pre-commit,@fortawesome/fontawesome-pro ;;
+  check) depcheck --ignores=pre-commit,prettier,@fortawesome/fontawesome-pro,@types/node ;;
   verify)
     local file="${2:-package-lock.json}" lock
     lock=$(dirname "${file}")/node_modules/current.lock

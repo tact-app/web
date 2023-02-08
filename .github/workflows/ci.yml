@@ -2,6 +2,7 @@ name: continuous integration
 
 on:
   workflow_dispatch:
+
   pull_request:
     branches: [ main ]
     paths:
@@ -9,6 +10,7 @@ on:
       - package*.json
       - '**.jsx?'
       - '**.tsx?'
+
   push:
     branches: [ main ]
     paths:
@@ -37,6 +39,15 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         env: { FONTAWESOME_TOKEN: '${{ secrets.FONTAWESOME_TOKEN }}' }
       - run: npm run build
+
+      - uses: actions/cache@v3
+        with:
+          path: ./tools/node_modules
+          key: tools-${{ hashFiles('tools/package-lock.json') }}
+          id: tools
+      - run: ./Taskfile tools npm ci
+        if: steps.tools.outputs.cache-hit != 'true'
+      - run: 'source bin/activate && [ "$(./Taskfile @deps check)" == "No depcheck issue" ]'
 
   notify:
     runs-on: ubuntu-latest
