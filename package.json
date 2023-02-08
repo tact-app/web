@@ -43,6 +43,7 @@
     "@tiptap/starter-kit": "^2.0.0-beta.212",
     "@tiptap/suggestion": "^2.0.0-beta.212",
     "allotment": "^1.18.0",
+    "copy-to-clipboard": "^3.3.3",
     "emoji-mart": "^5.5.2",
     "framer-motion": "^9.0.2",
     "idb": "^7.1.1",
