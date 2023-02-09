@@ -165,7 +165,7 @@ export class SpacesMenuStore {
           if (this.currentSpace?.children.length) {
             const lastChild =
               this.currentSpace?.children[
-                this.currentSpace.children.length - 1
+              this.currentSpace.children.length - 1
               ];
 
             this.focus(

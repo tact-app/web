@@ -1,7 +1,15 @@
-import { Box } from '@chakra-ui/react';
+import { Box, LayoutProps } from '@chakra-ui/react';
 import { OriginTypes } from '../../types';
 
-export const OriginIcon = ({ origin, size = '16px' }: { origin: OriginTypes, size?: string }) => {
+export const OriginIcon = ({
+  origin,
+  size = '16px',
+  ...props
+}: {
+  origin: OriginTypes,
+  size?: string,
+  key?: string
+} & LayoutProps) => {
   const Icons = {
     JIRA: <JiraIcon />,
     TRELLO: <TrelloIcon />,
@@ -12,7 +20,7 @@ export const OriginIcon = ({ origin, size = '16px' }: { origin: OriginTypes, siz
   }
 
   return (
-    <Box h={size}>
+    <Box h={size} w={size} {...props}>
       {Icons[origin]}
     </Box>
   )
@@ -182,5 +190,3 @@ export const GitlabIcon = () => (
     </g>
   </svg>
 )
-
-export const platformsIconsList = [GithubIcon, NotionIcon, TrelloIcon, JiraIcon, GitlabIcon]

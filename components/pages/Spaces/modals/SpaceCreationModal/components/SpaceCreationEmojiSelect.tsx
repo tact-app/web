@@ -49,8 +49,8 @@ export const SpaceCreationEmojiSelect = observer(
                                             onClick={() => store.handleColorSelect(color)}
                                             key={color}
                                             borderColor={
-                                                color + '.200' === store.color
-                                                    ? color.replace(/\d+/, '400')
+                                                color === store.color
+                                                    ? color + '.400'
                                                     : 'transparent'
                                             }
                                             borderWidth={4}

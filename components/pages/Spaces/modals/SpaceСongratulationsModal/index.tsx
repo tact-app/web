@@ -11,8 +11,9 @@ import {
     ModalFooter,
     VStack,
 } from '@chakra-ui/react';
-import { platformsIconsList } from '../../components/SpacesIcons/OriginsIcons'
 import { СongratulationsMascot } from './CongratulationsMascot'
+import { OriginTypes } from '../../types';
+import { OriginIcon } from '../../components/SpacesIcons/OriginsIcons';
 
 export type SpaceСongratulationsProps = {
     onClose: () => void;
@@ -49,7 +50,7 @@ export const SpaceСongratulationsModal: FC<SpaceСongratulationsProps> = ({
                         </Text>
                     </VStack>
                     <HStack justifyContent='center' mt={4} spacing={3} h={4}>
-                        {platformsIconsList.map((Icon, index) => (<Icon key={`app-icon-${index}`} />))}
+                        {Object.values(OriginTypes).map((icon, index) => (<OriginIcon origin={icon} size='16px' key={`app-icon-${index}`} />))}
                     </HStack>
                     <HStack justifyContent='center' mt={10}>
                         <Button colorScheme='blue' onClick={onConnect}>

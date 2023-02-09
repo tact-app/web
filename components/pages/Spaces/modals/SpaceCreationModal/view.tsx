@@ -9,6 +9,7 @@ import {
   VStack,
   Container,
   Textarea,
+  IconButton,
 } from '@chakra-ui/react';
 import { useSpaceCreationModalStore } from './store';
 import { SpaceCreationEmojiSelect } from './components/SpaceCreationEmojiSelect';
@@ -25,7 +26,7 @@ import {
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { TextAreaLengthCounter } from '../../../../shared/TextAreaLengthCounter'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAlignLeft } from '@fortawesome/pro-light-svg-icons';
+import { faAlignLeft, faTrashCan } from '@fortawesome/pro-light-svg-icons';
 
 const keyMap = {
   CREATE: ['meta+enter', 'meta+s'],
@@ -50,8 +51,17 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
+        <ModalHeader display='flex' alignItems='center' justifyContent='space-between'>
           {store.existedSpace ? 'Edit' : 'Create'} space
+          {store.existedSpace && store.existedSpace.type !== 'personal' &&
+            <IconButton
+              aria-label='delete'
+              variant='ghost'
+              onClick={store.openConfirmationDelete}
+              colorScheme='red'
+            >
+              <FontAwesomeIcon icon={faTrashCan} />
+            </IconButton>}
         </ModalHeader>
         <ModalBody pb={6} overflow='scroll' position='relative'>
           <Container maxW='2xl'>
@@ -113,13 +123,6 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
           </Container>
         </ModalBody>
         <ModalFooter display='flex' justifyContent='flex-end' gap={3} >
-          {store.existedSpace && store.existedSpace.type !== 'personal' &&
-            <Button
-              onClick={store.openConfirmationDelete}
-              colorScheme='red'
-            >
-              Delete
-            </Button>}
           <Button onClick={store.handleClose} display='flex' flexDirection='row'>
             Cancel
             <Text ml={1} fontSize='xs' color='blackAlpha.500'>
