@@ -1,6 +1,6 @@
 import { RootStore } from '../index';
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
-import { SpaceData } from '../../../components/pages/Spaces/types';
+import { OriginData, SpaceData } from '../../../components/pages/Spaces/types';
 
 export class SpacesStore {
   constructor(public root: RootStore) {
@@ -32,10 +32,10 @@ export class SpacesStore {
     if (this.count === 2) {
       this.list.unshift({
         id: 'all',
+        icon: '',
         color: 'gray',
         type: 'all',
         name: 'All spaces',
-        shortName: 'A',
         children: [],
       });
     }
@@ -84,10 +84,10 @@ export class SpacesStore {
     if (spaces.length > 1) {
       spaces.unshift({
         id: 'all',
+        icon: '',
         type: 'all',
         color: 'gray',
         name: 'All spaces',
-        shortName: 'A',
         children: [],
       });
     }

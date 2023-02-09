@@ -12,7 +12,7 @@ const data = {
         const personalSpace: SpaceData = {
           id: uuidv4(),
           name: 'Personal',
-          shortName: 'P',
+          icon: '',
           type: 'personal',
           color: colors[Math.floor(Math.random() * colors.length)],
           children: [],

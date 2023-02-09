@@ -16,10 +16,8 @@ import {
   SpacesInboxStore,
 } from './components/SpacesInbox/store';
 import { TaskProps } from '../../shared/Task/store';
-import {
-  getRandomOrigins,
-  getStubItems,
-} from './modals/SpaceCreationModal/stubs';
+import { getStubItems } from './modals/SpaceCreationModal/stubs';
+import { getNewConnect } from './modals/SpaceConnectAppsModal/stubs';
 import { NavigationDirections } from '../../shared/TasksList/types';
 
 export type SpacesProps = {};
@@ -186,7 +184,7 @@ export class SpacesStore {
   };
 
   handleSpaceCreationClick = () => {
-    this.modals.openSpaceCreationModal(this.menu.handleSpaceUpdate);
+    this.modals.openSpaceCreationModal(this.menu.handleSpaceUpdate, this.handleSpaceAddOriginClick);
   };
 
   handleSpaceSettingsClick = (space) => {
@@ -197,11 +195,14 @@ export class SpacesStore {
     );
   };
 
-  handleSpaceAddOriginClick = (space) => {
-    space.children.push(getRandomOrigins(space.id, 1)[0]);
-
+  handleConnectApp = (space: SpaceData) => (app: string) => {
+    space.children.push(getNewConnect(space.id, app));
     this.root.resources.spaces.update(space);
     this.menu.loadSpaces();
+  }
+
+  handleSpaceAddOriginClick = (space) => {
+    this.modals.openSpaceСonnectionsModal(space, this.handleConnectApp);
   };
 
   getInboxItems = async () => {

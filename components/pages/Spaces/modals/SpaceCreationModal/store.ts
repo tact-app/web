@@ -4,7 +4,6 @@ import { getProvider } from '../../../../../helpers/StoreProvider';
 import { SpaceData } from '../../types';
 import { SyntheticEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { getRandomOrigins } from './stubs';
 import { colors } from '../../constants';
 
 export type SpaceCreationModalProps = {
@@ -12,6 +11,8 @@ export type SpaceCreationModalProps = {
     onClose?: () => void;
     onSave?: (space: SpaceData) => void;
     onDelete?: (spaceId: string) => void;
+    openSpaceСonnectionsModal?: () => void;
+    onConnect?: (space: SpaceData) => void;
   };
   editMode?: boolean;
   space?: SpaceData;
@@ -37,18 +38,20 @@ export class SpaceCreationModalStore {
 
   callbacks: SpaceCreationModalProps['callbacks'] = {};
 
-  isOpen = true;
-  isColorPickerOpen = false;
+  isOpen: boolean = true;
+  isEmojiPickerOpen: boolean = false;
+  isСongratulationsModal: boolean  = false;
   isDescriptionLoading: boolean = true;
   isEditMode: boolean = false;
 
+  descriptionLimit: number = 200;
   selectedAccountId: string = this.root.user.data.accounts[0].id;
   existedSpace: SpaceData | null = null;
+  newSpace: SpaceData | null  = null;
   icon: string = '';
   color = colors[Math.floor(Math.random() * colors.length)];
   name: string = '';
-  shortName: string = '';
-  shortNameChanged: boolean = false;
+  description: string = '';
   isDeleteConfirmationOpen: boolean = false;
 
   get isReadyForSave() {
@@ -74,26 +77,20 @@ export class SpaceCreationModalStore {
     this.color = color;
   };
 
-  handleAccountSelect = (id: string) => {
-    this.selectedAccountId = id;
-  };
+  handleRemoveEmoji = () => {
+      this.icon = ''
+  }
 
-  handleShortNameChange = (e: SyntheticEvent<HTMLInputElement>) => {
-    this.shortName = e.currentTarget.value;
-    this.shortNameChanged = true;
+  handleEmojiSelect = (emoji: { native: string }) => {
+    this.icon = emoji.native;
   };
 
   handleNameChange = (e: SyntheticEvent) => {
     this.name = (e.target as HTMLInputElement).value;
+  };
 
-    if (!this.name) {
-      this.shortName = '';
-      this.shortNameChanged = false;
-    }
-
-    if (!this.shortNameChanged) {
-      this.shortName = this.name.slice(0, 1).toUpperCase();
-    }
+  handleDescriptionChange = (e: SyntheticEvent) => {
+    this.description = (e.target as HTMLInputElement).value;
   };
 
   handleBack = () => {
@@ -101,10 +98,13 @@ export class SpaceCreationModalStore {
   };
 
   handleClose = () => {
-    if (!this.isColorPickerOpen) {
+    if (!this.isEmojiPickerOpen) {
       this.isOpen = false;
+      if (this.isСongratulationsModal) {
+        this.isСongratulationsModal = false
+      }
     } else {
-      this.closeColorPicker();
+      this.closeEmojiPicker();
     }
   };
 
@@ -112,12 +112,12 @@ export class SpaceCreationModalStore {
     this.callbacks.onClose?.();
   };
 
-  openColorPicker = () => {
-    this.isColorPickerOpen = true;
+  openEmojiPicker = () => {
+    this.isEmojiPickerOpen = true;
   };
 
-  closeColorPicker = () => {
-    this.isColorPickerOpen = false;
+  closeEmojiPicker = () => {
+    this.isEmojiPickerOpen = false;
   };
 
   handleSave = () => {
@@ -128,29 +128,35 @@ export class SpaceCreationModalStore {
         this.root.resources.spaces.update({
           id,
           name: this.name,
-          shortName: this.shortName,
+          description: this.description,
           color: this.color,
+          icon: this.icon,
         });
 
         this.callbacks.onSave?.(this.existedSpace);
+        this.handleClose();
       } else {
         const newSpace: SpaceData = {
           id,
           name: this.name,
-          type: 'private',
-          shortName: this.shortName,
+          description: this.description,
           color: this.color,
-          children: getRandomOrigins(id, 3),
+          icon: this.icon,
+          type: 'private',
+          children: [],
         };
 
         this.root.resources.spaces.add(newSpace);
-
         this.callbacks.onSave?.(newSpace);
+        this.newSpace = newSpace
+        this.isСongratulationsModal = true
       }
-
-      this.handleClose();
     }
   };
+
+  handelConnect = () => {
+    this.callbacks.onConnect(this.newSpace)
+  }
 
   update = async (props: SpaceCreationModalProps) => {
     this.callbacks = props.callbacks;
@@ -158,10 +164,10 @@ export class SpaceCreationModalStore {
     this.isEditMode = props.editMode;
 
     if (this.existedSpace) {
-      this.color = this.existedSpace.color;
       this.name = this.existedSpace.name;
-      this.shortName = this.existedSpace.shortName;
-      this.shortNameChanged = true;
+      this.description = this.existedSpace.description;
+      this.color = this.existedSpace.color;
+      this.icon = this.existedSpace.icon;
     } else {
       runInAction(() => {
         this.isDescriptionLoading = false;

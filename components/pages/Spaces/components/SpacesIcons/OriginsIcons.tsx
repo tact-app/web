@@ -1,16 +1,29 @@
+import { Box, LayoutProps } from '@chakra-ui/react';
 import { OriginTypes } from '../../types';
 
-export const OriginIcon = ({ origin }: { origin: OriginTypes }) => {
-  switch (origin) {
-    case OriginTypes.GITHUB:
-      return <GithubIcon />;
-    case OriginTypes.TRELLO:
-      return <TrelloIcon />;
-    case OriginTypes.JIRA:
-      return <JiraIcon />;
-    case OriginTypes.MAIL:
-      return <GmailIcon />;
+export const OriginIcon = ({
+  origin,
+  size = '16px',
+  ...props
+}: {
+  origin: OriginTypes,
+  size?: string,
+  key?: string
+} & LayoutProps) => {
+  const Icons = {
+    JIRA: <JiraIcon />,
+    TRELLO: <TrelloIcon />,
+    GITHUB: <GithubIcon />,
+    MAIL: <GmailIcon />,
+    GITLAB: <GitlabIcon />,
+    NOTION: <NotionIcon />,
   }
+
+  return (
+    <Box h={size} w={size} {...props}>
+      {Icons[origin]}
+    </Box>
+  )
 };
 
 export const GithubIcon = () => (
@@ -18,8 +31,8 @@ export const GithubIcon = () => (
     xmlns='http://www.w3.org/2000/svg'
     fill='#000000'
     viewBox='0 0 30 30'
-    width='16px'
-    height='16px'
+    width='100%'
+    height='100%'
   >
     {' '}
     <path d='M15,3C8.373,3,3,8.373,3,15c0,5.623,3.872,10.328,9.092,11.63C12.036,26.468,12,26.28,12,26.047v-2.051 c-0.487,0-1.303,0-1.508,0c-0.821,0-1.551-0.353-1.905-1.009c-0.393-0.729-0.461-1.844-1.435-2.526 c-0.289-0.227-0.069-0.486,0.264-0.451c0.615,0.174,1.125,0.596,1.605,1.222c0.478,0.627,0.703,0.769,1.596,0.769 c0.433,0,1.081-0.025,1.691-0.121c0.328-0.833,0.895-1.6,1.588-1.962c-3.996-0.411-5.903-2.399-5.903-5.098 c0-1.162,0.495-2.286,1.336-3.233C9.053,10.647,8.706,8.73,9.435,8c1.798,0,2.885,1.166,3.146,1.481C13.477,9.174,14.461,9,15.495,9 c1.036,0,2.024,0.174,2.922,0.483C18.675,9.17,19.763,8,21.565,8c0.732,0.731,0.381,2.656,0.102,3.594 c0.836,0.945,1.328,2.066,1.328,3.226c0,2.697-1.904,4.684-5.894,5.097C18.199,20.49,19,22.1,19,23.313v2.734 c0,0.104-0.023,0.179-0.035,0.268C23.641,24.676,27,20.236,27,15C27,8.373,21.627,3,15,3z' />
@@ -30,8 +43,8 @@ export const JiraIcon = () => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 40.343 42'
-    width='16px'
-    height='16px'
+    width='100%'
+    height='100%'
   >
     <g>
       <path
@@ -86,8 +99,8 @@ export const TrelloIcon = () => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 48 48'
-    width='16px'
-    height='16px'
+    width='100%'
+    height='100%'
   >
     <path
       fill='#1E88E5'
@@ -104,8 +117,8 @@ export const GmailIcon = () => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 48 48'
-    width='16px'
-    height='16px'
+    width='100%'
+    height='100%'
   >
     <path
       fill='#e0e0e0'
@@ -137,3 +150,43 @@ export const GmailIcon = () => (
     />
   </svg>
 );
+
+export const NotionIcon = () => (
+  <svg
+    fill="#000000"
+    viewBox="0 0 24 24"
+    role="img"
+    xmlns="http://www.w3.org/2000/svg"
+    width='100%'
+    height='100%'>
+    <g stroke-width="0"></g>
+    <g stroke-linecap="round" stroke-linejoin="round"></g>
+    <g >
+      <title>Notion icon</title>
+      <path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z">
+      </path>
+    </g>
+  </svg>
+)
+
+export const GitlabIcon = () => (
+  <svg
+    viewBox="0 0 16 16"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    width='100%'
+    height='100%'>
+    <g stroke-width="0" />
+    <g stroke-linecap="round" stroke-linejoin="round" />
+    <g >
+      <path fill="#FC6D26" d="M14.975 8.904L14.19 6.55l-1.552-4.67a.268.268 0 00-.255-.18.268.268 0 00-.254.18l-1.552 4.667H5.422L3.87 1.879a.267.267 0 00-.254-.179.267.267 0 00-.254.18l-1.55 4.667-.784 2.357a.515.515 0 00.193.583l6.78 4.812 6.778-4.812a.516.516 0 00.196-.583z" />
+      <path fill="#E24329" d="M8 14.296l2.578-7.75H5.423L8 14.296z" />
+      <path fill="#FC6D26" d="M8 14.296l-2.579-7.75H1.813L8 14.296z" />
+      <path fill="#FCA326" d="M1.81 6.549l-.784 2.354a.515.515 0 00.193.583L8 14.3 1.81 6.55z" />
+      <path fill="#E24329" d="M1.812 6.549h3.612L3.87 1.882a.268.268 0 00-.254-.18.268.268 0 00-.255.18L1.812 6.549z" />
+      <path fill="#FC6D26" d="M8 14.296l2.578-7.75h3.614L8 14.296z" />
+      <path fill="#FCA326" d="M14.19 6.549l.783 2.354a.514.514 0 01-.193.583L8 14.296l6.188-7.747h.001z" />
+      <path fill="#E24329" d="M14.19 6.549H10.58l1.551-4.667a.267.267 0 01.255-.18c.115 0 .217.073.254.18l1.552 4.667z" />
+    </g>
+  </svg>
+)
