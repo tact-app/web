@@ -696,9 +696,9 @@ export class TodayStore {
   taskCreatorCallbacks: TasksListWithCreatorProps['taskCreatorCallbacks'] = {
     onSave: (task, withShift, referenceId) => {
       if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
-        this.todayListWithCreator.list.createTask(task, withShift);
+        return this.todayListWithCreator.list.createTask(task, withShift);
       } else if (referenceToList[referenceId] === Lists.WEEK) {
-        this.weekList.createTask(task, referenceId === 'tomorrow');
+        return this.weekList.createTask(task, referenceId === 'tomorrow');
       }
     },
     onForceSave: (taskId: string, referenceId: string) => {

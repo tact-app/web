@@ -84,6 +84,7 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
             display='flex'
             alignItems='center'
             justifyContent='center'
+            tabIndex={-1}
             isRound
             onClick={() => store.handleRemoveTag(id, autoSave)}
         >

@@ -1,9 +1,10 @@
 import { makeAutoObservable, reaction } from 'mobx';
+import { cloneDeep, isEqual } from 'lodash';
 import { TaskData, TaskStatus } from '../../types';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import React, { MouseEvent } from 'react';
-import { TaskQuickEditorStore } from '../../../TaskQuickEditor/store';
+import { TaskQuickEditorProps, TaskQuickEditorStore } from '../../../TaskQuickEditor/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
 import { TasksListStore } from '../../store';
 import { subscriptions } from '../../../../../helpers/subscriptions';
@@ -26,6 +27,7 @@ export type TaskItemProps = {
   onFocus?: (taskId: string, multiselect?: 'single' | 'many') => void;
   onStatusChange?: (taskId: string, status: TaskStatus) => void;
   onWontDoWithComment?: (taskId: string) => void;
+  callbacks: TaskQuickEditorProps['callbacks'];
 };
 
 export class TaskItemStore {
@@ -50,6 +52,7 @@ export class TaskItemStore {
   onStatusChange: TaskItemProps['onStatusChange'];
   onToggleMenu: TaskItemProps['onToggleMenu'];
   onWontDoWithComment: TaskItemProps['onWontDoWithComment'];
+  callbacks: TaskQuickEditorProps['callbacks'];
 
   get isMultiSelected() {
     return this.parent.draggableList.focused.length > 1;
@@ -204,6 +207,35 @@ export class TaskItemStore {
         }
       ),
       reaction(
+        () => [this.isFocused],
+        async () => {
+          const task = cloneDeep(this.task);
+
+          try {
+            const tags = this.quickEdit.modes.tag.tags.map((tag) => tag.id);
+
+            if (
+                !this.isFocused && (
+                    task.title !== this.quickEdit.value ||
+                    !isEqual(task.tags, tags) ||
+                    task.priority !== this.quickEdit.modes.priority.priority
+                )
+            ) {
+              this.task = {
+                ...this.task,
+                title: this.quickEdit.value,
+                tags,
+                priority: this.quickEdit.modes.priority.priority,
+              };
+
+              await this.callbacks.onSave(this.task);
+            }
+          } catch (e) {
+            this.task = task;
+          }
+        }
+      ),
+      reaction(
         () => [
           this.isFocused,
           this.parent.draggableList.focused.length,
@@ -234,6 +266,7 @@ export class TaskItemStore {
     onWontDoWithComment,
     onToggleMenu,
     isDragging,
+    callbacks,
   }: TaskItemProps) => {
     this.task = task;
 
@@ -243,6 +276,7 @@ export class TaskItemStore {
     this.onToggleMenu = onToggleMenu;
 
     this.isDragging = isDragging;
+    this.callbacks = callbacks;
   };
 }
 

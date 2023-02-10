@@ -73,16 +73,16 @@ export class TasksListWithCreatorStore {
       onSave: this.defaultSave
         ? (task, withShift, referenceId) => {
             if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
-              this.root.api.tasks.create(Lists.TODAY, task, 'bottom');
+              return this.root.api.tasks.create(Lists.TODAY, task, 'bottom');
             } else if (referenceToList[referenceId] === Lists.WEEK) {
-              this.root.api.tasks.create(
+              return this.root.api.tasks.create(
                 Lists.WEEK,
                 task,
                 referenceId === 'tomorrow' ? 'top' : 'bottom'
               );
             }
 
-            this.list.createTask(task, withShift);
+            return this.list.createTask(task, withShift);
           }
         : this.list.createTask,
       onForceSave: (taskId: string) => {

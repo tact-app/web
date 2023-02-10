@@ -380,7 +380,7 @@ export class TasksListStore {
       this.order.push(task.id);
     }
 
-    this.root.api.tasks.create(this.listId, task, placement);
+    return this.root.api.tasks.create(this.listId, task, placement);
   };
 
   deleteTasks = (ids: string[]) => {
@@ -403,11 +403,11 @@ export class TasksListStore {
     });
   };
 
-  updateTask = (task: TaskData) => {
+  updateTask = async (task: TaskData) => {
     task.title = task.title.trim();
 
     this.items[task.id] = task;
-    this.root.api.tasks.update({ id: task.id, fields: toJS(task) });
+    await this.root.api.tasks.update({ id: task.id, fields: toJS(task) });
 
     this.setEditingTask(null);
   };
