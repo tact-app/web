@@ -27,8 +27,8 @@ export type TaskProps = {
     onNextItem?: (taskId: string, stay?: boolean) => void;
     onPreviousItem?: (taskId: string, stay?: boolean) => void;
     onStatusChange?: (taskId: string, status: TaskStatus) => void;
-    onTaskChange?: (task: TaskData) => void;
-    onTagCreate?: (tag: TaskTag) => void;
+    onTaskChange?: (task: TaskData) => Promise<void>;
+    onTagCreate?: (tag: TaskTag) => Promise<void>;
     onFocus?: () => void;
   };
   isExpanded?: boolean;
@@ -180,7 +180,7 @@ class TaskStore {
   };
 
   handleTaskChange = (task: TaskData) => {
-    this.callbacks.onTaskChange?.(task);
+    return this.callbacks.onTaskChange?.(task);
   };
 
   loadDescription = async () => {
