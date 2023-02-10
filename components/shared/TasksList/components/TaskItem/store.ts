@@ -1,4 +1,5 @@
 import { makeAutoObservable, reaction } from 'mobx';
+import isEqual from 'lodash.isequal';
 import { TaskData, TaskStatus } from '../../types';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
@@ -200,6 +201,20 @@ export class TaskItemStore {
         () => {
           if (this.isFocused && !this.isMultiSelected) {
             this.boxRef?.focus();
+          }
+        }
+      ),
+      reaction(
+        () => [this.isFocused],
+        () => {
+          if (
+            !this.isFocused && (
+              this.task.title !== this.quickEdit.value ||
+              !isEqual(this.task.tags, this.quickEdit.modes.tag.tags) ||
+              this.task.priority !== this.quickEdit.modes.priority.currentPriority
+            )
+          ) {
+            this.quickEdit.saveTask();
           }
         }
       ),

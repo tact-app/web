@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { Box, BoxProps, chakra, ChakraProps } from '@chakra-ui/react';
 import React, { PropsWithChildren } from 'react';
-import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { Draggable, DragDropContext, Droppable, useMouseSensor, useTouchSensor } from 'react-beautiful-dnd';
 import { TaskDragIcon } from '../Icons/TaskDragIcon';
 import { DraggableListComponentProps, useDraggableListStore } from './store';
 import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
@@ -20,7 +20,8 @@ export const DraggableListContext = observer(function DraggableListContext({
     <DragDropContext
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      sensors={sensors}
+      sensors={[useMouseSensor, useTouchSensor, ...sensors]}
+      enableDefaultSensors={false}
     >
       {children}
     </DragDropContext>
