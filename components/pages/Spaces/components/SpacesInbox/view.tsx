@@ -57,7 +57,7 @@ export const SpacesInboxView = observer(function SpacesInboxView(
           }}
         >
           {!store.filteredItems.length && (
-              <chakra.div w={'100%'} textAlign='center' m={2}>
+              <chakra.div textAlign='center' m={2}>
                 <chakra.span
                     fontSize='sm'
                     fontWeight='normal'

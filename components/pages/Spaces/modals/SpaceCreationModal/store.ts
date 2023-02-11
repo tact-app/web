@@ -40,14 +40,14 @@ export class SpaceCreationModalStore {
 
   isOpen: boolean = true;
   isEmojiPickerOpen: boolean = false;
-  isСongratulationsModal: boolean  = false;
+  isСongratulationsModal: boolean = false;
   isDescriptionLoading: boolean = true;
   isEditMode: boolean = false;
 
   descriptionLimit: number = 200;
   selectedAccountId: string = this.root.user.data.accounts[0].id;
   existedSpace: SpaceData | null = null;
-  newSpace: SpaceData | null  = null;
+  newSpace: SpaceData | null = null;
   icon: string = '';
   color = colors[Math.floor(Math.random() * colors.length)];
   name: string = '';
@@ -78,7 +78,7 @@ export class SpaceCreationModalStore {
   };
 
   handleRemoveEmoji = () => {
-      this.icon = ''
+    this.icon = ''
   }
 
   handleEmojiSelect = (emoji: { native: string }) => {
@@ -149,7 +149,11 @@ export class SpaceCreationModalStore {
         this.root.resources.spaces.add(newSpace);
         this.callbacks.onSave?.(newSpace);
         this.newSpace = newSpace
-        this.isСongratulationsModal = true
+        if (this.callbacks?.onConnect) {
+          this.isСongratulationsModal = true
+        } else {
+          this.handleClose();
+        }
       }
     }
   };

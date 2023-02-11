@@ -1,9 +1,9 @@
+import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { Modes, useTaskQuickEditorStore } from './store';
-import { SpacesSmallIcon } from '../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
 import { Box, Button, ButtonProps, chakra } from '@chakra-ui/react';
-import React from 'react';
 import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
+import { ModalsSwitcher } from '../../../helpers/ModalsController';
 
 export const TaskQuickEditorSpace = observer(function TaskQuickEditorSpace({
   withTitle,
@@ -15,6 +15,7 @@ export const TaskQuickEditorSpace = observer(function TaskQuickEditorSpace({
 } & ButtonProps) {
   const store = useTaskQuickEditorStore();
   const space = store.modes.space.selectedSpace;
+  const suggestions = store.modes.space.suggestions
 
   return space ? (
     <Button
@@ -45,40 +46,23 @@ export const TaskQuickEditorSpace = observer(function TaskQuickEditorSpace({
       {...rest}
     >
       <TaskQuickEditorMenu
-        items={store.modes.space.suggestions}
+        items={suggestions}
         openForMode={Modes.SPACE}
       />
       <Box p={iconSize > 5 ? 1 : 0.5} h='100%'>
-        {withTitle ? (
-          <chakra.span
-            borderRadius='full'
-            pl={2}
-            pr={2}
-            maxW={28}
-            h='100%'
-            verticalAlign='middle'
-            transitionProperty='common'
-            transitionDuration='normal'
-            bg={space.color + '.200'}
-            color={space.color + '.500'}
-            display='flex'
-            alignItems='center'
-          >
-            <chakra.span
-              overflow='hidden'
-              textOverflow='ellipsis'
-              fontWeight={600}
-              fontSize='sm'
-            >
-              {space.name}
-            </chakra.span>
-          </chakra.span>
-        ) : (
-          <chakra.div flex={1} display='flex' alignItems='center'>
-            <SpacesSmallIcon space={space} size={iconSize} />
-          </chakra.div>
-        )}
+        <chakra.div borderRadius='full'
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          w={iconSize}
+          h={iconSize}
+          fontWeight={600}
+          fontSize={iconSize > 6 ? 'lg' : 'sm'}
+          color={space.color + '.500'}>
+          {space.icon || space.name[0]}
+        </chakra.div>
       </Box>
+      <ModalsSwitcher controller={store.modals.controller} />
     </Button>
   ) : null;
 });

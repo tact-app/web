@@ -33,6 +33,7 @@ import {
   faICursor,
   faSquareArrowUpRight,
   faXmark,
+  faSolarSystem,
 } from '@fortawesome/pro-light-svg-icons';
 import { IconDefinition } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -117,6 +118,15 @@ const singleTaskItems = (store: TaskItemStore) => [
     icon: faBullseyePointer,
     command: '⌥G',
     hotkey: 'alt+g',
+  },
+  {
+    onClick: () => {
+      store.parent.modals.openSpaceChangeModal(store.task.id);
+    },
+    title: 'Change space',
+    icon: faSolarSystem,
+    hotkey: ['alt+u'],
+    command: '⌥U',
   },
   null,
   {
@@ -295,7 +305,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
     return { keyMap, hotkeyHandlers };
   }, [items, store]);
 
-  useListNavigation(store.menuNavigation,keyMap, hotkeyHandlers);
+  useListNavigation(store.menuNavigation, keyMap, hotkeyHandlers);
 
   return (
     <Portal>

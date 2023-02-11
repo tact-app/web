@@ -81,7 +81,8 @@ export class DraggableListStore {
     return (
       !this.isDraggingActive &&
       !this.isControlDraggingActive &&
-      this.isForceHotkeysActive
+      this.isForceHotkeysActive &&
+      !this.root.isModalOpen
     );
   }
 
@@ -248,7 +249,7 @@ export class DraggableListStore {
       return null;
     }
 
-    const preDrag = this.DnDApi.tryGetLock(this.focusedItemIds[0], () => {});
+    const preDrag = this.DnDApi.tryGetLock(this.focusedItemIds[0], () => { });
 
     if (preDrag) {
       this.isControlDraggingActive = true;

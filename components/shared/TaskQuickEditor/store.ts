@@ -14,6 +14,7 @@ import { TAGS_ID } from './TaskQuickEditorTags';
 import { GoalModeStore } from './modes/GoalModeStore';
 import { ReferenceModeStore } from './modes/ReferenceModeStore';
 import { SpacesInboxItemData } from '../../pages/Spaces/types';
+import { TasksEditorModals } from './modals/store';
 
 export type TaskQuickEditorProps = {
   callbacks: {
@@ -69,7 +70,8 @@ export class TaskQuickEditorStore {
     onOpen: (isOpen: boolean) => this.callbacks.onSuggestionsMenuOpen?.(isOpen),
   });
 
-  order = [Modes.TAG, Modes.PRIORITY, Modes.GOAL, Modes.SPACE];
+  modals = new TasksEditorModals(this.root);
+  order = [Modes.TAG, Modes.SPACE, Modes.PRIORITY, Modes.GOAL];
   callbacks: TaskQuickEditorProps['callbacks'];
 
   modes = {
@@ -90,6 +92,7 @@ export class TaskQuickEditorStore {
     }),
     [Modes.SPACE]: new SpaceModeStore(this.root, {
       onExit: () => this.exitMode(),
+      onCreate: this.modals.openSpaceCreationModal
     }),
     [Modes.GOAL]: new GoalModeStore(this.root, {
       onExit: () => this.exitMode(),
@@ -496,6 +499,10 @@ export class TaskQuickEditorStore {
 
   handleKeyDownModeButton =
     (modeType: Modes) => (e: KeyboardEvent<HTMLInputElement>) => {
+      if (this.root.isModalOpen) {
+        return
+      }
+
       if (
         e.key === 'Enter' &&
         this.suggestionsMenu.openForMode === Modes.DEFAULT

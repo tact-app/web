@@ -41,7 +41,7 @@ export class TasksListWithCreatorStore {
   taskCreatorAdditions: TaskQuickEditorProps['callbacks'] = {};
 
   get isHotkeysEnabled() {
-    return this.list.isHotkeysEnabled && !this.creator.isMenuOpen;
+    return this.list.isHotkeysEnabled && !this.creator.isMenuOpen && !this.root.isModalOpen;
   }
 
   get tasksListCallbacks(): TasksListProps['callbacks'] {

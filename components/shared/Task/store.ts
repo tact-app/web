@@ -68,7 +68,7 @@ class TaskStore {
   isDescriptionLoading: boolean = true;
   descriptionId: string = '';
   descriptionContent: DescriptionStore = new DescriptionStore();
-  modesOrder = [Modes.PRIORITY, Modes.GOAL, Modes.SPACE, Modes.TAG];
+  modesOrder = [Modes.SPACE, Modes.PRIORITY, Modes.GOAL, Modes.TAG];
 
   get inputSpace() {
     return this.root.resources.spaces.getById(this.data?.input.spaceId);
@@ -227,12 +227,12 @@ class TaskStore {
         fireImmediately: true,
       }),
       reaction(
-          () => [this.isEditorFocused, this.descriptionId],
-          () => {
-            if (this.isEditorFocused && this.editor && !this.editor.isDestroyed) {
-              this.editor.commands.focus(true);
-            }
+        () => [this.isEditorFocused, this.descriptionId],
+        () => {
+          if (this.isEditorFocused && this.editor && !this.editor.isDestroyed) {
+            this.editor.commands.focus(true);
           }
+        }
       )
     );
 
