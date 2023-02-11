@@ -409,12 +409,8 @@ export class TaskQuickEditorStore {
         index
       );
       this.suggestionsMenu.closeForMode();
-
-      if (this.isInputFocused) {
-        this.setFocus(true);
-      } else if (!this.keepFocus) {
-        this.saveTask();
-      }
+      this.saveTask();
+      this.setFocus(true);
     }
   };
 
