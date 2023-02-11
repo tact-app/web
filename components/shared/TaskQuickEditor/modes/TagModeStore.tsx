@@ -112,7 +112,7 @@ export class TagModeStore {
       setTimeout(() => {
         if (!this.isCollapsed) {
           if (this.containerRef.scrollWidth > this.containerRef.clientWidth) {
-            this.isCollapsed = true;
+            this.toggleIsCollapsed(true);
           }
         } else {
           const totalWidth = this.tags.reduce(
@@ -121,12 +121,16 @@ export class TagModeStore {
           );
 
           if (totalWidth < this.containerRef.clientWidth) {
-            this.isCollapsed = false;
+            this.toggleIsCollapsed(false);
           }
         }
       });
     }
   };
+
+  toggleIsCollapsed = (isCollapsed: boolean) => {
+    this.isCollapsed = isCollapsed;
+  }
 
   focus = (corner: 'first' | 'last') => {
     if (this.isCollapsed && !this.isCollapseOpen) {
@@ -193,17 +197,13 @@ export class TagModeStore {
     this.tags.splice(index, 1);
 
     if (this.tags.length === 0) {
-      this.isCollapsed = false;
+      this.toggleIsCollapsed(false);
       this.isCollapseOpen = false;
     }
   };
 
   addTag = (tag: TaskTag) => {
     this.tags.push(tag);
-
-    if (!this.isCollapsed) {
-      this.checkOverflow();
-    }
   };
 
   createNewTag = () => {
