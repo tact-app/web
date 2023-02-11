@@ -57,7 +57,7 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
           _focus={{
             boxShadow: 'none',
             span: {
-              'box-shadow': 'inset 0px 0px 0px 2px var(--chakra-colors-blue-600)'
+              boxShadow: 'inset 0px 0px 0px 2px var(--chakra-colors-blue-600)'
             }
           }}
           {...buttonProps}
@@ -86,7 +86,10 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
             justifyContent='center'
             tabIndex={-1}
             isRound
-            onClick={() => store.handleRemoveTag(id, autoSave)}
+            onClick={() => {
+              store.handleRemoveTag(id, autoSave);
+              store.suggestionsMenu.openFor(Modes.TAG)
+            }}
         >
           <FontAwesomeIcon
               icon={faXmark}
@@ -132,6 +135,7 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
   autoSave?: boolean;
 }) {
   const store = useTaskQuickEditorStore();
+  const isOpen = store.suggestionsMenu.openForMode === Modes.TAG
 
   useEffect(() => {
     store.modes.tag.setIsCollapsable(collapsable);
@@ -150,7 +154,7 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
     >
       {store.modes.tag.isCollapsed ? (
           <Popover
-            isOpen={store.modes.tag.isCollapseOpen}
+            isOpen={isOpen}
             onOpen={store.modes.tag.handleCollapseOpen}
             onClose={store.modes.tag.handleCollapseClose}
             offset={[0, 16]}
@@ -160,6 +164,10 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
           >
             <PopoverTrigger>
               <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  store.suggestionsMenu.openFor(Modes.TAG);
+                }}
                 ref={store.modes.tag.setCollapseRef}
                 onKeyDown={store.modes.tag.handleCollapseButtonKeyDown}
                 onFocus={store.handleModeFocus(Modes.TAG)}
@@ -191,7 +199,10 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
               </Button>
             </PopoverTrigger>
             <Portal>
-              <PopoverContent w='auto' minW='3xs'>
+              <PopoverContent
+                  onFocus={store.handleFocusMenu}
+                  w='auto'
+              >
                 <PopoverBody
                     display='flex'
                     flexDirection='column'
@@ -202,7 +213,6 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
                     <TaskQuickEditorTagsList
                         buttonProps={buttonProps}
                         autoSave={autoSave}
-                        disableAnimating
                     />
                   </VStack>
                 </PopoverBody>
