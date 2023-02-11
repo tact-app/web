@@ -105,7 +105,7 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
       {store.modes.tag.tags.map((tag) =>
           disableAnimating
               ?
-                <motion.span>
+                <motion.span key={tag.title}>
                     {renderContent(tag)}
                 </motion.span>
               : (
@@ -143,6 +143,12 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
   useEffect(() => {
     store.modes.tag.setIsCollapsable(collapsable);
   }, [store.modes.tag, collapsable]);
+
+  useEffect(() => {
+    if (store.modes.tag.tags.length && !store.modes.tag.isCollapsed) {
+      store.modes.tag.checkOverflow();
+    }
+  }, [store.modes.tag.tags.length, store.modes.tag.isCollapsed])
 
   if (!store.modes.tag.tags.length) {
     return null;

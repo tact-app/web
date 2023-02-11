@@ -204,10 +204,6 @@ export class TagModeStore {
 
   addTag = (tag: TaskTag) => {
     this.tags.push(tag);
-
-    if (!this.isCollapsed) {
-      this.checkOverflow();
-    }
   };
 
   createNewTag = () => {
