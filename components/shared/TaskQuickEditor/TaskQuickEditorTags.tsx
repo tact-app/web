@@ -104,7 +104,10 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
     <AnimatePresence mode='popLayout' initial={false}>
       {store.modes.tag.tags.map((tag) =>
           disableAnimating
-              ? renderContent(tag)
+              ?
+                <motion.span>
+                    {renderContent(tag)}
+                </motion.span>
               : (
                   <motion.span
                       layout
@@ -213,6 +216,7 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
                     <TaskQuickEditorTagsList
                         buttonProps={buttonProps}
                         autoSave={autoSave}
+                        disableAnimating
                     />
                   </VStack>
                 </PopoverBody>
