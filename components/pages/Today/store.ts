@@ -141,6 +141,7 @@ export class TodayStore {
     return (
       !this.todayListWithCreator.list.modals.controller.isOpen &&
       !this.weekList.modals.controller.isOpen
+      && !this.root.isModalOpen
     );
   }
 

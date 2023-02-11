@@ -25,6 +25,7 @@ export const SpaceCreationEmojiSelect = observer(
                 onOpen={store.openEmojiPicker}
                 onClose={store.closeEmojiPicker}
                 closeOnEsc={false}
+                placement='right'
                 isLazy
             >
                 <PopoverTrigger>

@@ -2,12 +2,12 @@ import React from 'react';
 import { makeAutoObservable } from 'mobx';
 import { chakra } from '@chakra-ui/react';
 import { SpacesSmallIcon } from '../../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/pro-solid-svg-icons';
 import { RootStore } from '../../../../stores/RootStore';
+import { HeavyPlusIcon } from '../../Icons/HeavyPlusIcon';
 
 export type SpaceModeCallbacks = {
   onExit: () => void;
+  onCreate: () => void;
 };
 
 export class SpaceModeStore {
@@ -40,8 +40,8 @@ export class SpaceModeStore {
   get filteredSpaces() {
     const spaceName = this.strValue.slice(1).toLowerCase();
 
-    return this.root.resources.spaces.list.filter(({ name, id }) =>
-      name.toLowerCase().startsWith(spaceName)
+    return this.root.resources.spaces.list.filter(({ name, id, type }) =>
+      name.toLowerCase().startsWith(spaceName) && id !== this.selectedSpaceId && type !== 'all'
     );
   }
 
@@ -71,14 +71,11 @@ export class SpaceModeStore {
         justifyContent='space-between'
       >
         <chakra.span display='flex' alignItems='center'>
-          <SpacesSmallIcon space={space} />
+          <SpacesSmallIcon space={space} size={6} borderRadius={4} bgOpacity='.100' />
           <chakra.span ml={3} mr={3} overflow='hidden' textOverflow='ellipsis'>
             {space.name}
           </chakra.span>
         </chakra.span>
-        {space.id === this.selectedSpaceId ? (
-          <FontAwesomeIcon icon={faCheck} fixedWidth />
-        ) : null}
       </chakra.div>
     ));
 
@@ -89,6 +86,26 @@ export class SpaceModeStore {
         spaces.push(<>You haven&apos;t created any space yet</>);
       }
     }
+
+    spaces.push(
+      <chakra.span
+        display='flex'
+        alignItems='center'>
+        <chakra.div
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          borderRadius='full'
+          borderWidth={2}
+          borderColor='gray.200'
+          w={6}
+          h={6}
+        >
+          <HeavyPlusIcon />
+        </chakra.div>
+        <chakra.span ml={3}>Create new space</chakra.span>
+      </chakra.span>
+    );
 
     return spaces;
   }
@@ -116,16 +133,10 @@ export class SpaceModeStore {
   };
 
   handleSuggestionSelect = (index: number) => {
-    if (this.filteredSpaces.length && index < this.filteredSpaces.length) {
-      if (this.filteredSpaces[index].id === this.selectedSpaceId) {
-        const newId = this.defaultSpace.id;
-
-        if (newId !== this.selectedSpaceId) {
-          this.selectedSpaceId = newId;
-        }
-      } else {
-        this.selectedSpaceId = this.filteredSpaces[index].id;
-      }
+    if (index === this.filteredSpaces.length) {
+      this.callbacks.onCreate();
+    } else if (this.filteredSpaces.length) {
+      this.selectedSpaceId = this.filteredSpaces[index].id;
     }
 
     this.disable();

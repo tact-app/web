@@ -63,6 +63,7 @@ export class TasksListStore {
   keyMap = {
     DONE: ['alt+d', 'd'],
     GOAL: 'alt+g',
+    SPACE: 'alt+u',
     MOVE: 'alt+m',
     WONT_DO: ['alt+shift+w'],
     FORCE_WONT_DO: ['alt+w'],
@@ -119,6 +120,12 @@ export class TasksListStore {
         this.modals.openGoalAssignModal();
       }
     },
+    SPACE: (e) => {
+      e.preventDefault();
+      if (this.draggableList.focused.length) {
+        this.modals.openSpaceChangeModal();
+      }
+    },
     OPEN: () => {
       if (!this.openedTask) {
         if (this.draggableList.focused.length) {
@@ -159,7 +166,8 @@ export class TasksListStore {
       !this.isItemMenuOpen &&
       !this.draggableList.isDraggingActive &&
       !this.draggableList.isControlDraggingActive &&
-      !this.modals.controller.isOpen
+      !this.modals.controller.isOpen &&
+      !this.root.isModalOpen
     );
   }
 
@@ -287,7 +295,7 @@ export class TasksListStore {
     taskIds.forEach((id) => {
       // TODO:debt find a way to avoid cloning
       //  see https://linear.app/octolab/issue/TACT-115/sync-the-goal-field-after-a-quick-edit-of-a-task
-      this.items[id] = {...cloneDeep(this.items[id]), goalId};
+      this.items[id] = { ...cloneDeep(this.items[id]), goalId };
     });
 
     this.root.api.tasks.assignGoal({

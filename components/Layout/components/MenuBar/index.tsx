@@ -8,7 +8,7 @@ import { useRootStore } from '../../../../stores/RootStore';
 import {
   faBullseyePointer,
   faCalendarWeek,
-  faMailboxFlagUp,
+  faInbox,
 } from '@fortawesome/pro-light-svg-icons';
 import { isMac } from '../../../../helpers/os';
 
@@ -21,7 +21,7 @@ const NAV_ITEMS: Array<NavItem> = [
   },
   {
     label: 'Inbox',
-    icon: faMailboxFlagUp,
+    icon: faInbox,
     hotkey: () => (isMac() ? '⌥⇧I' : 'Alt+Shift+I'),
     href: routes.INBOX,
   },

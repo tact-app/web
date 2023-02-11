@@ -89,6 +89,7 @@ export const CalendarView = observer(function CalendarView() {
             maxValue={store.dayEndTime}
             block={CalendarTableEvent}
             callbacks={store.resizableBlocksCallbacks}
+            isHotkeysEnabled={!store.root.isModalOpen}
           >
             <Box display='flex' position='relative' w='100%' h='fit-content'>
               <CalendarTableTimes />

@@ -1,4 +1,4 @@
-import { makeObservable, runInAction } from 'mobx';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { enableStaticRendering } from 'mobx-react-lite';
 import { createContext, PropsWithChildren, useContext } from 'react';
 import UserStore from './UserStore';
@@ -17,6 +17,7 @@ export class RootStore {
   constructor() {
     makeObservable(this, {
       isLoading: true,
+      isModalOpen: observable,
     });
   }
 
@@ -45,6 +46,7 @@ export class RootStore {
   };
 
   isLoading = true;
+  isModalOpen = false;
   router: NextRouter;
 
   resources = {
@@ -59,6 +61,10 @@ export class RootStore {
   setRouter = (router: NextRouter) => {
     this.router = router;
   };
+
+  toggleModal = (isOpen: boolean) => {
+    this.isModalOpen = isOpen
+  }
 
   init = async () => {
     await this.user.init();
