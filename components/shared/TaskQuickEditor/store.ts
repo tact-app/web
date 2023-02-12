@@ -87,6 +87,10 @@ export class TaskQuickEditorStore {
           this.focusPrevFilledMode();
         } else if (direction === NavigationDirections.RIGHT) {
           this.focusNextFilledMode();
+        } else if (direction === NavigationDirections.DOWN) {
+          this.callbacks.onNavigate?.(direction);
+        } else if (direction === NavigationDirections.UP) {
+          this.setFocus(true);
         }
       },
     }),
@@ -541,13 +545,18 @@ export class TaskQuickEditorStore {
             return true;
           } else if (e.key === 'ArrowLeft' && this.focusPrevFilledMode()) {
             return true;
-          } else if (
-            this.callbacks.onModeNavigate?.(
-              modeType,
-              castArrowToDirection(e.key)
-            )
-          ) {
+          } else if (e.key === 'ArrowDown') {
+            if (modeType === Modes.PRIORITY) {
+              if (this.modes.tag.tags.length) {
+                this.focusMode(Modes.TAG, 'first');
+              } else {
+                this.callbacks.onNavigate?.(NavigationDirections.DOWN);
+              }
+            }
+
             return true;
+          } else if (e.key === 'ArrowUp') {
+            this.callbacks.onNavigate?.(NavigationDirections.UP);
           } else {
             this.setFocus(true);
             return true;
@@ -614,7 +623,9 @@ export class TaskQuickEditorStore {
       if (!hasRange && isCorner) {
         e.preventDefault();
 
-        if (this.callbacks.onNavigate?.(castArrowToDirection(e.key))) {
+        if (e.key === 'ArrowDown' && this.modes.tag.tags.length && this.focusedMode !== Modes.TAG) {
+          this.focusMode(Modes.TAG, 'first');
+        } else if (this.callbacks.onNavigate?.(castArrowToDirection(e.key))) {
           this.leave();
         }
       }
