@@ -666,6 +666,10 @@ export class TodayStore {
 
   setFocusModeConfiguration = (data: FocusConfigurationData) => {
     this.focusModeConfiguration = data;
+
+    if (!data.goals.includes(this.allTasks[this.openedTask]?.goalId)) {
+      this.closeTask();
+    }
   };
 
   update = () => null;
