@@ -33,7 +33,7 @@
     "@fortawesome/pro-solid-svg-icons": "^6.2.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@sentry/nextjs": "^7.37.1",
-    "@tanstack/react-virtual": "^3.0.0-beta.45",
+    "@tanstack/react-virtual": "^3.0.0-beta.47",
     "@tiptap/core": "^2.0.0-beta.217",
     "@tiptap/extension-highlight": "^2.0.0-beta.217",
     "@tiptap/extension-link": "^2.0.0-beta.217",
