@@ -29,14 +29,14 @@ export const GoalCreationEmojiSelect = observer(
             variant='filled'
             bg={store.color}
             borderRadius='full'
-            size='lg'
+            size='sm'
             p={0}
             mr={4}
             display='flex'
             justifyContent='center'
             alignItems='center'
           >
-            <Text fontSize={'3xl'}>{store.icon}</Text>
+            <Text fontSize='xl'>{store.icon}</Text>
           </Button>
         </PopoverTrigger>
         <PopoverContent w='auto'>

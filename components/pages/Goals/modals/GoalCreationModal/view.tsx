@@ -5,7 +5,6 @@ import { useGoalCreationModalStore } from './store';
 import { BackArrowIcon } from '../../../../shared/Icons/BackArrowIcon';
 import { GoalCreationStepsSwitcher } from './components/GoalCreationStepsSwitcher';
 import { GoalCreationModalSteps } from './types';
-import { GoalCreationEmojiSelect } from './components/GoalCreationEmojiSelect';
 import {
   Modal,
   ModalBody,
@@ -48,9 +47,6 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
             </Text>
           </Button>
           <Center flex={1} minH={12}>
-            {store.step === GoalCreationModalSteps.FILL_DESCRIPTION ? (
-              <GoalCreationEmojiSelect />
-            ) : null}
             <Heading variant='h1' fontSize='2rem'>
               Goal setting
             </Heading>
