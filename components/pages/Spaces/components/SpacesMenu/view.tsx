@@ -52,107 +52,110 @@ export const SpacesMenuView = observer(function SpacesMenuView(
           <ExpandIcon />
         </chakra.div>
       </IconButton>{' '}
-      <Accordion
-        w='100%'
-        onChange={store.handleSpaceChange}
-        index={store.isExpanded ? store.currentSpaceIndex : null}
-      >
-        {store.root.resources.spaces.list.map((space, index) => {
-          const { id, name, color, children } = space;
+      <chakra.div flex={1} overflowY='auto' height='calc(100% - var(--chakra-sizes-10))'>
+        <Accordion
+          w='100%'
+          onChange={store.handleSpaceChange}
+          index={store.isExpanded ? store.currentSpaceIndex : null}
+        >
+          {store.root.resources.spaces.list.map((space, index) => {
+            const { id, name, color, children } = space;
 
-          return (
-            <AccordionItem
-              key={id}
-              border={0}
-              w='100%'
-              mb={1}
-              isFocusable={false}
-              unselectable='on'
-            >
-              <AccordionButton
-                onClick={() => store.handleSpaceClick(index)}
-                borderRadius='lg'
-                overflow='hidden'
-                display='flex'
-                justifyContent='space-between'
-                tabIndex={-1}
-                h={10}
-                _focus={{ boxShadow: 'none' }}
-                bg={
-                  store.currentSpaceId === id &&
-                  (store.selectedPath.length === 0 || !store.isExpanded
-                    ? color + '.100'
-                    : store.focusedPath.length === 0
-                    ? color + '.75'
-                    : 'transparent')
-                }
-                p={1}
-                _hover={{
-                  bg: color + '.75',
-                }}
+            return (
+              <AccordionItem
+                key={id}
+                border={0}
+                w='100%'
+                mb={1}
+                isFocusable={false}
+                unselectable='on'
               >
-                <Box display='flex' alignItems='center' minWidth={10}>
-                  <SpacesSmallIcon space={space} />
-                  <Text
-                    ml={2}
-                    whiteSpace='nowrap'
-                    fontSize='md'
-                    fontWeight='medium'
-                    color={color + '.500'}
-                    overflow='hidden'
-                    textOverflow='ellipsis'
-                  >
-                    {name}
-                  </Text>
-                </Box>
-                {store.currentSpaceId === id && id !== 'all' && (
-                  <chakra.div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      store.callbacks.onSpaceSettingsClick?.(space);
-                    }}
-                    minW={6}
-                    aria-label='space-settings'
-                    borderRadius='lg'
-                    _hover={{
-                      bg: color + '.100',
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faGear}
-                      color={`var(--chakra-colors-${color + '-500'})`}
+                <AccordionButton
+                  onClick={() => store.handleSpaceClick(index)}
+                  borderRadius='lg'
+                  overflow='hidden'
+                  display='flex'
+                  justifyContent='space-between'
+                  tabIndex={-1}
+                  h={10}
+                  _focus={{ boxShadow: 'none' }}
+                  bg={
+                    store.currentSpaceId === id &&
+                    (store.selectedPath.length === 0 || !store.isExpanded
+                      ? color + '.100'
+                      : store.focusedPath.length === 0
+                        ? color + '.75'
+                        : 'transparent')
+                  }
+                  p={1}
+                  _hover={{
+                    bg: color + '.75',
+                  }}
+                >
+                  <Box display='flex' alignItems='center' minWidth={10}>
+                    <SpacesSmallIcon space={space} />
+                    <Text
+                      ml={2}
+                      whiteSpace='nowrap'
+                      fontSize='md'
+                      fontWeight='medium'
+                      color={color + '.500'}
+                      overflow='hidden'
+                      textOverflow='ellipsis'
+                    >
+                      {name}
+                    </Text>
+                  </Box>
+                  {store.currentSpaceId === id && id !== 'all' && (
+                    <chakra.div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        store.callbacks.onSpaceSettingsClick?.(space);
+                      }}
+                      minW={6}
+                      aria-label='space-settings'
+                      borderRadius='lg'
+                      _hover={{
+                        bg: color + '.100',
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faGear}
+                        color={`var(--chakra-colors-${color + '-500'})`}
+                      />
+                    </chakra.div>
+                  )}
+                </AccordionButton>
+                <AccordionPanel p={0} pl={4}>
+                  {children?.map((origin) => (
+                    <SpacesMenuOrigin key={origin.id} space={id} item={origin} />
+                  ))}
+                  {id !== 'all' && (
+                    <SpacesMenuAdd
+                      isFocused={
+                        store.focusedPath.length === 1 &&
+                        store.focusedPath[0] === null
+                      }
+                      onClick={() =>
+                        store.callbacks.onSpaceOriginAddClick?.(space)
+                      }
+                      title='Connect apps'
+                      size='sm'
                     />
-                  </chakra.div>
-                )}
-              </AccordionButton>
-              <AccordionPanel p={0} pl={4}>
-                {children?.map((origin) => (
-                  <SpacesMenuOrigin key={origin.id} space={id} item={origin} />
-                ))}
-                {id !== 'all' && (
-                  <SpacesMenuAdd
-                    isFocused={
-                      store.focusedPath.length === 1 &&
-                      store.focusedPath[0] === null
-                    }
-                    onClick={() =>
-                      store.callbacks.onSpaceOriginAddClick?.(space)
-                    }
-                    title='Connect apps'
-                    size='sm'
-                  />
-                )}
-              </AccordionPanel>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
-      <SpacesMenuAdd
-        onClick={store.callbacks.onSpaceCreationClick}
-        isFocused={props.isHotkeysEnabled && store.currentSpaceIndex === null}
-        title='Create new space'
-        size='lg'
-      />
+                  )}
+                </AccordionPanel>
+              </AccordionItem>
+            );
+          })}
+
+          <SpacesMenuAdd
+            onClick={store.callbacks.onSpaceCreationClick}
+            isFocused={props.isHotkeysEnabled && store.currentSpaceIndex === null}
+            title='Create new space'
+            size='lg'
+          />
+        </Accordion>
+      </chakra.div>
     </Box>
   );
 });
