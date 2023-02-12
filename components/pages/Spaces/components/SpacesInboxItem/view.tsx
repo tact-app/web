@@ -58,6 +58,7 @@ export const SpacesInboxItemView = observer(function SpacesInboxItemView(
               isHotkeysEnabled={store.isHotkeysEnabled}
               tasksListCallbacks={store.tasksListCallbacks}
               taskCreatorCallbacks={store.taskCreatorCallbacks}
+              dnd={false}
             />
           </DraggableListContext>
         </Box>

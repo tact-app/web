@@ -156,7 +156,7 @@ export const DraggableListView = observer(function DraggableListView({
       <DraggableListDroppable id={droppableId}>
         {store.items.map((id, index) => {
           return (
-            <Draggable draggableId={id} index={index} key={id}>
+            <Draggable draggableId={id} index={index} key={id} isDragDisabled={!store.isDndActive}>
               {(provided, snapshot) => (
                 <Box
                   ref={provided.innerRef}
