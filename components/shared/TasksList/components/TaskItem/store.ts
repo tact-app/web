@@ -47,6 +47,7 @@ export class TaskItemStore {
   isMenuOpen: boolean = false;
   isMouseDown: boolean = false;
   isDragging: boolean = false;
+  isOpenByContextMenu: boolean = false;
 
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
@@ -115,6 +116,14 @@ export class TaskItemStore {
   setBoxRef = (ref: HTMLDivElement | null) => {
     this.boxRef = ref;
   };
+
+  handleContextMenu = (e) => {
+    e.preventDefault()
+    if (!this.isOpenByContextMenu) {
+      this.openMenu();
+    }
+    this.isOpenByContextMenu = !this.isOpenByContextMenu;
+  }
 
   toggleMenu = () => {
     this.isMenuOpen = !this.isMenuOpen;
