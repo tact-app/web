@@ -47,7 +47,10 @@ export class TaskItemStore {
   isMenuOpen: boolean = false;
   isMouseDown: boolean = false;
   isDragging: boolean = false;
+
   isOpenByContextMenu: boolean = false;
+  xPosContextMenu: string;
+  yPosContextMenu: string;
 
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
@@ -117,17 +120,24 @@ export class TaskItemStore {
     this.boxRef = ref;
   };
 
-  handleContextMenu = (e) => {
-    e.preventDefault()
-    if (!this.isOpenByContextMenu) {
+  handleContextMenu = (e: MouseEvent) => {
+    e.preventDefault();
+    if (!this.isMenuOpen) {
+      this.xPosContextMenu = e.pageX + "px";
+      this.yPosContextMenu = e.pageY + "px";
+      console.log({xPosContextMenu: this.xPosContextMenu, yPosContextMenu: this.yPosContextMenu});
+      this.toggleContextMenu(true);
       this.openMenu();
     }
-    this.isOpenByContextMenu = !this.isOpenByContextMenu;
   }
 
   toggleMenu = () => {
     this.isMenuOpen = !this.isMenuOpen;
     this.onToggleMenu(this.isMenuOpen);
+  };
+
+  toggleContextMenu = (isContextMenu: boolean) => {
+    this.isOpenByContextMenu = isContextMenu;
   };
 
   openMenu = () => {
@@ -136,9 +146,12 @@ export class TaskItemStore {
   };
 
   closeMenu = () => {
-    this.isMenuOpen = false;
-    this.onToggleMenu(false);
-  };
+    setTimeout(() => {
+      this.toggleMenu();
+      this.onToggleMenu(false);
+      this.toggleContextMenu(false);
+    });
+  }
 
   handleMouseDown = () => {
     this.isMouseDown = true;

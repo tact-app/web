@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import {
+  Box,
   Button,
   chakra,
   Divider,
@@ -309,24 +310,34 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
 
   return (
     <Portal>
-      <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
-        <PopoverContent
-          tabIndex={-1}
-          p={0}
-          shadow='lg'
-          overflow='hidden'
-          w='auto'
-          minW={72}
-          onFocus={store.menuNavigation.handleFocus}
-        >
-          <PopoverBody p={0}>
-            <TaskItemMenuItems
-              refs={store.menuNavigation.setRefs}
-              items={items}
-            />
-          </PopoverBody>
-        </PopoverContent>
-      </Fade>
+      <Box
+       // TODO:debt find a way to not use !important
+        __css={store.isOpenByContextMenu && store.isMenuOpen ? {
+          '.chakra-popover__popper': {
+            transform: 'none!important',
+            left: store.xPosContextMenu + '!important',
+            top: store.yPosContextMenu + '!important',
+          }
+        } : undefined}>
+        <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
+          <PopoverContent
+            tabIndex={-1}
+            p={0}
+            shadow='lg'
+            overflow='hidden'
+            w='auto'
+            minW={72}
+            onFocus={store.menuNavigation.handleFocus}
+          >
+            <PopoverBody p={0}>
+              <TaskItemMenuItems
+                refs={store.menuNavigation.setRefs}
+                items={items}
+              />
+            </PopoverBody>
+          </PopoverContent>
+        </Fade>
+      </Box>
     </Portal>
   );
 });
@@ -345,7 +356,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
   }, [setIsAnimationInProcess]);
 
   const close = useCallback(() => {
-    setIsAnimationInProcess(true);
+    !store.isOpenByContextMenu && setIsAnimationInProcess(true);
     onClose();
     store.closeMenu();
   }, [onClose, store]);
