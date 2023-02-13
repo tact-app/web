@@ -18,6 +18,9 @@ export const SpacesMenuAdd = (props: {
     overflow='hidden'
     justifyContent='start'
     w='100%'
+    _focus={{
+      boxShadow: 'none'
+    }}
   >
     <chakra.div
       display='flex'
