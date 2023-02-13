@@ -125,7 +125,6 @@ export class TaskItemStore {
     if (!this.isMenuOpen) {
       this.xPosContextMenu = e.pageX + "px";
       this.yPosContextMenu = e.pageY + "px";
-      console.log({xPosContextMenu: this.xPosContextMenu, yPosContextMenu: this.yPosContextMenu});
       this.toggleContextMenu(true);
       this.openMenu();
     }
