@@ -8,15 +8,16 @@
 - [TACT-104](https://linear.app/octolab/issue/TACT-104/bad-experience-with-esc-and-task-editing): Bad experience with Esc and task editing (#450)
 - [TACT-170](https://linear.app/octolab/issue/TACT-170/add-crosses-to-tags): Add crosses to tags (#369, #401)
 - [TACT-203](https://linear.app/octolab/issue/TACT-203/bad-editor-unfocusing-experience): Bad editor unfocusing experience (#360)
-- [TACT-210](https://linear.app/octolab/issue/TACT-210/implement-new-space-and-origin-creation-on-client-side): Implement new space and origin creation on client side (#402)
-- [TACT-233](https://linear.app/octolab/issue/TACT-233/when-scaling-the-window-the-page-collapses-completely): When scaling the window, the page collapses completely (#379, #383)
+- [TACT-210](https://linear.app/octolab/issue/TACT-210/implement-new-space-and-origin-creation-on-client-side): Implement new space and origin creation on client side (#402, #464)
+- [TACT-241](https://linear.app/octolab/issue/TACT-241/strange-appearance-of-the-target-binding-window): Strange appearance of the target binding window (#466)
 - [TACT-255](https://linear.app/octolab/issue/TACT-255/fix-dependency-tree): Fix dependency tree (#409)
 
 ## Bugfixes
 
-- [TACT-118](https://linear.app/octolab/issue/TACT-118/exclude-all-spaces-from-the-suggestion): Exclude All spaces from the suggestion (#449)
+- [TACT-118](https://linear.app/octolab/issue/TACT-118/exclude-all-spaces-from-the-suggestion): Exclude All spaces from the suggestion (#449, #463)
+- [TACT-233](https://linear.app/octolab/issue/TACT-233/when-scaling-the-window-the-page-collapses-completely): When scaling the window, the page collapses completely (#379, #383)
 - [TACT-242](https://linear.app/octolab/issue/TACT-242/floating-tag-and-focus-on-hidden-delete-button-x): Floating tag and focus on hidden delete button (#447)
-- [TACT-257](https://linear.app/octolab/issue/TACT-257/window-overlay-in-today-tab): Window Overlay in Today Tab (#454)
+- [TACT-257](https://linear.app/octolab/issue/TACT-257/window-overlay-in-today-tab): Window Overlay in Today Tab (#454, #465)
 
 ## Dependencies
 
@@ -87,7 +88,7 @@
 ## Active contributors
 
 Special thanks to the following contributors for their contributions to this release:
-- @kamilsk, lead
+- @kamilsk, Lead
 - @al-petrushin
 - @DimovyM
-- @Tatiana683, quality
+- @Tatiana683, QA
