@@ -28,7 +28,12 @@ export const TaskSpaceChangeModalView = observer(
           onFocus={store.navigation.handleFocus}
         >
           <ModalHeader>My spaces</ModalHeader>
-          <ModalBody maxH={80} overflow='scroll' pl={5} pr={5}>
+          <ModalBody
+            maxH={80}
+            overflow='auto'
+            pl={5}
+            pr={5}
+          >
             <SpacesSelection
               setRefs={store.navigation.setRefs}
               checked={store.selectedSpaceId ? [store.selectedSpaceId] : []}
