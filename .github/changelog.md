@@ -87,5 +87,7 @@
 ## Active contributors
 
 Special thanks to the following contributors for their contributions to this release:
+- @kamilsk, lead
 - @al-petrushin
 - @DimovyM
+- @Tatiana683, quality
