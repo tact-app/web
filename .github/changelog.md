@@ -4,6 +4,7 @@
 
 - [TACT-92](https://linear.app/octolab/issue/TACT-92/simplify-the-logic-of-the-editor-while-task-switching): Simplify the logic of the editor while task switching (#423)
 - [TACT-93](https://linear.app/octolab/issue/TACT-93/activate-editing-mode-by-clicking-on-wide-area): Activate editing mode by clicking on wide area (#360)
+- [TACT-99](https://linear.app/octolab/issue/TACT-99/support-dnd-on-random-place-of-a-task-change-cursor-to-pointer-for): Support d'n'd on random place of a task, change cursor to pointer for task list (#384)
 - [TACT-100](https://linear.app/octolab/issue/TACT-100/rework-touch-and-click-experience): Rework touch and click experience (#384)
 - [TACT-104](https://linear.app/octolab/issue/TACT-104/bad-experience-with-esc-and-task-editing): Bad experience with Esc and task editing (#450)
 - [TACT-170](https://linear.app/octolab/issue/TACT-170/add-crosses-to-tags): Add crosses to tags (#369, #401)
@@ -15,6 +16,7 @@
 ## Bugfixes
 
 - [TACT-118](https://linear.app/octolab/issue/TACT-118/exclude-all-spaces-from-the-suggestion): Exclude All spaces from the suggestion (#449, #463)
+- [TACT-212](https://linear.app/octolab/issue/TACT-212/drop-menu-hides-behind-task-list): Drop menu hides behind task list (#369)
 - [TACT-233](https://linear.app/octolab/issue/TACT-233/when-scaling-the-window-the-page-collapses-completely): When scaling the window, the page collapses completely (#379, #383)
 - [TACT-242](https://linear.app/octolab/issue/TACT-242/floating-tag-and-focus-on-hidden-delete-button-x): Floating tag and focus on hidden delete button (#447)
 - [TACT-257](https://linear.app/octolab/issue/TACT-257/window-overlay-in-today-tab): Window Overlay in Today Tab (#454, #465)
@@ -92,3 +94,7 @@ Special thanks to the following contributors for their contributions to this rel
 - @al-petrushin
 - @DimovyM
 - @Tatiana683, QA
+
+## Full changelog
+
+Compare view [v0.0.10...v0.1.0](https://github.com/tact-app/web/compare/v0.0.10...v0.1.0).
