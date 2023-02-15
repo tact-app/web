@@ -141,7 +141,7 @@ $ run vercel --force
 ## License
 
 GNU Affero General Public License v3.0 or later.
-See [COPYING](COPYING) to see the full text.
+See [LICENSE](LICENSE) to see the full text.
 
 We use [CLA assistant][] to sign copyright agreements while contributing.
 See [CLA][] to see the full text.

@@ -1,5 +1,6 @@
 {
   "name": "tact.web",
+  "license": "AGPL-3.0-later",
   "private": true,
   "engines": {
     "npm": "^8.0.0",
