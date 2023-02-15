@@ -319,10 +319,12 @@ export class TodayStore {
       this.focusedBlock = this.lastFocusedBlock;
       this.lastFocusedList.draggableList.restoreSavedFocusedItems();
       secondList.draggableList.resetSavedFocusedItems();
+      this.lastFocusedList.draggableList.focusFirstItem();
     } else if (secondList.draggableList.hasFocusableItems) {
       this.focusedBlock = newFocusedBlock;
       secondList.draggableList.restoreSavedFocusedItems();
       this.lastFocusedList.draggableList.resetSavedFocusedItems();
+      secondList.draggableList.focusFirstItem();
     }
   };
 
