@@ -114,7 +114,7 @@ export const DefaultDraggableListDragHandler = observer(
         outline='none'
       >
         {!store.checkItemActivity || store.checkItemActivity(id) ? (
-          <Box cursor='grab' aria-label='Drag' outline='none'>
+          <Box cursor='grab' aria-label='Drag'>
             <TaskDragIcon />
           </Box>
         ) : null}
