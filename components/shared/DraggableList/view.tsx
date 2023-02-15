@@ -93,6 +93,10 @@ export const DefaultDraggableListDragHandler = observer(
   }) {
     const store = useDraggableListStore();
 
+    if (!store.isDndActive) {
+      return null;
+    }
+
     return (
       <Box
         position='absolute'
