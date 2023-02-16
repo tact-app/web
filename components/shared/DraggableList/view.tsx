@@ -111,6 +111,7 @@ export const DefaultDraggableListDragHandler = observer(
         }}
         {...provided.dragHandleProps}
         tabIndex={-1}
+        outline='none'
       >
         {!store.checkItemActivity || store.checkItemActivity(id) ? (
           <Box cursor='grab' aria-label='Drag'>
