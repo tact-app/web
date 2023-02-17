@@ -1,0 +1,100 @@
+# Release notes, v0.1.0
+
+## Improvements
+
+- [TACT-92](https://linear.app/octolab/issue/TACT-92/simplify-the-logic-of-the-editor-while-task-switching): Simplify the logic of the editor while task switching (#423)
+- [TACT-93](https://linear.app/octolab/issue/TACT-93/activate-editing-mode-by-clicking-on-wide-area): Activate editing mode by clicking on wide area (#360)
+- [TACT-99](https://linear.app/octolab/issue/TACT-99/support-dnd-on-random-place-of-a-task-change-cursor-to-pointer-for): Support d'n'd on random place of a task, change cursor to pointer for task list (#384)
+- [TACT-100](https://linear.app/octolab/issue/TACT-100/rework-touch-and-click-experience): Rework touch and click experience (#384)
+- [TACT-104](https://linear.app/octolab/issue/TACT-104/bad-experience-with-esc-and-task-editing): Bad experience with Esc and task editing (#450)
+- [TACT-170](https://linear.app/octolab/issue/TACT-170/add-crosses-to-tags): Add crosses to tags (#369, #401)
+- [TACT-203](https://linear.app/octolab/issue/TACT-203/bad-editor-unfocusing-experience): Bad editor unfocusing experience (#360)
+- [TACT-210](https://linear.app/octolab/issue/TACT-210/implement-new-space-and-origin-creation-on-client-side): Implement new space and origin creation on client side (#402, #464)
+- [TACT-241](https://linear.app/octolab/issue/TACT-241/strange-appearance-of-the-target-binding-window): Strange appearance of the target binding window (#466)
+- [TACT-255](https://linear.app/octolab/issue/TACT-255/fix-dependency-tree): Fix dependency tree (#409)
+
+## Bugfixes
+
+- [TACT-118](https://linear.app/octolab/issue/TACT-118/exclude-all-spaces-from-the-suggestion): Exclude All spaces from the suggestion (#449, #463)
+- [TACT-212](https://linear.app/octolab/issue/TACT-212/drop-menu-hides-behind-task-list): Drop menu hides behind task list (#369)
+- [TACT-233](https://linear.app/octolab/issue/TACT-233/when-scaling-the-window-the-page-collapses-completely): When scaling the window, the page collapses completely (#379, #383)
+- [TACT-242](https://linear.app/octolab/issue/TACT-242/floating-tag-and-focus-on-hidden-delete-button-x): Floating tag and focus on hidden delete button (#447)
+- [TACT-257](https://linear.app/octolab/issue/TACT-257/window-overlay-in-today-tab): Window Overlay in Today Tab (#454, #465)
+
+## Dependencies
+
+### Production
+
+- feat(deps): bump @fortawesome/fontawesome-pro from 6.2.1 to 6.3.0 (#404)
+- feat(deps): bump @sentry/nextjs from 7.34.0 to 7.35.0
+- feat(deps): bump @sentry/nextjs from 7.35.0 to 7.36.0
+- feat(deps): bump @sentry/nextjs from 7.36.0 to 7.37.1 (#448)
+- feat(deps): bump @tanstack/react-virtual from 3.0.0-beta.41 to 3.0.0-beta.42 (#374)
+- feat(deps): bump @tanstack/react-virtual from 3.0.0-beta.41 to 3.0.0-beta.43 (#380)
+- feat(deps): bump @tanstack/react-virtual from 3.0.0-beta.43 to 3.0.0-beta.44 (#387)
+- feat(deps): bump @tanstack/react-virtual from 3.0.0-beta.44 to 3.0.0-beta.45 (#389)
+- feat(deps): bump @tanstack/react-virtual from 3.0.0-beta.45 to 3.0.0-beta.47 (#452)
+- feat(deps): bump @tiptap/core from 2.0.0-beta.209 to 2.0.0-beta.212
+- feat(deps): bump @tiptap/core from 2.0.0-beta.212 to 2.0.0-beta.216 (#429)
+- feat(deps): bump @tiptap/core from 2.0.0-beta.216 to 2.0.0-beta.217 (#438)
+- feat(deps): bump @tiptap/extension-highlight from 2.0.0-beta.209 to 2.0.0-beta.212 (#371)
+- feat(deps): bump @tiptap/extension-highlight from 2.0.0-beta.212 to 2.0.0-beta.216 (#430)
+- feat(deps): bump @tiptap/extension-highlight from 2.0.0-beta.216 to 2.0.0-beta.217 (#441)
+- feat(deps): bump @tiptap/extension-link from 2.0.0-beta.209 to 2.0.0-beta.212
+- feat(deps): bump @tiptap/extension-link from 2.0.0-beta.212 to 2.0.0-beta.217 (#435)
+- feat(deps): bump @tiptap/extension-placeholder from 2.0.0-beta.209 to 2.0.0-beta.212 (#376)
+- feat(deps): bump @tiptap/extension-placeholder from 2.0.0-beta.212 to 2.0.0-beta.216 (#428)
+- feat(deps): bump @tiptap/extension-placeholder from 2.0.0-beta.216 to 2.0.0-beta.217 (#445)
+- feat(deps): bump @tiptap/extension-task-item from 2.0.0-beta.209 to 2.0.0-beta.212 (#375)
+- feat(deps): bump @tiptap/extension-task-item from 2.0.0-beta.212 to 2.0.0-beta.216 (#426)
+- feat(deps): bump @tiptap/extension-task-item from 2.0.0-beta.216 to 2.0.0-beta.217 (#437)
+- feat(deps): bump @tiptap/extension-task-list from 2.0.0-beta.209 to 2.0.0-beta.212 (#373)
+- feat(deps): bump @tiptap/extension-task-list from 2.0.0-beta.212 to 2.0.0-beta.216 (#432)
+- feat(deps): bump @tiptap/extension-task-list from 2.0.0-beta.216 to 2.0.0-beta.217 (#446)
+- feat(deps): bump @tiptap/extension-underline from 2.0.0-beta.209 to 2.0.0-beta.212 (#377)
+- feat(deps): bump @tiptap/extension-underline from 2.0.0-beta.212 to 2.0.0-beta.216 (#434)
+- feat(deps): bump @tiptap/extension-underline from 2.0.0-beta.216 to 2.0.0-beta.217 (#442)
+- feat(deps): bump @tiptap/react from 2.0.0-beta.209 to 2.0.0-beta.212
+- feat(deps): bump @tiptap/react from 2.0.0-beta.212 to 2.0.0-beta.216 (#431)
+- feat(deps): bump @tiptap/react from 2.0.0-beta.216 to 2.0.0-beta.217 (#443)
+- feat(deps): bump @tiptap/starter-kit from 2.0.0-beta.209 to 2.0.0-beta.212
+- feat(deps): bump @tiptap/starter-kit from 2.0.0-beta.212 to 2.0.0-beta.216 (#427)
+- feat(deps): bump @tiptap/starter-kit from 2.0.0-beta.216 to 2.0.0-beta.217 (#439)
+- feat(deps): bump @tiptap/suggestion from 2.0.0-beta.209 to 2.0.0-beta.212 (#372)
+- feat(deps): bump @tiptap/suggestion from 2.0.0-beta.212 to 2.0.0-beta.216 (#433)
+- feat(deps): bump @tiptap/suggestion from 2.0.0-beta.216 to 2.0.0-beta.217 (#440)
+- feat(deps): bump allotment from 1.17.1 to 1.18.0 (#370)
+- feat(deps): bump framer-motion from 8.5.5 to 9.0.0
+- feat(deps): bump framer-motion from 9.0.0 to 9.0.1 (#378)
+- feat(deps): bump framer-motion from 9.0.1 to 9.0.2 (#396)
+- feat(deps): bump mobx from 6.7.0 to 6.8.0 (#444)
+- feat(deps): bump react-hotkeys-hook from 4.3.4 to 4.3.5 (#385)
+
+### Development
+
+- chore(deps-dev): bump @types/node from 18.11.18 to 18.11.19 (#381)
+- chore(deps-dev): bump @types/node from 18.11.19 to 18.13.0 (#395)
+- chore(deps-dev): bump @types/react from 18.0.27 to 18.0.28 (#453)
+- chore(deps-dev): bump eslint from 8.33.0 to 8.34.0 (#451)
+- chore(deps-dev): bump prettier from 2.8.3 to 2.8.4 (#406)
+- tools(deps): bump vercel from 28.14.1 to 28.15.0
+- tools(deps): bump vercel from 28.15.0 to 28.15.1 in /tools (#386)
+- tools(deps): bump vercel from 28.15.1 to 28.15.2 in /tools (#405)
+- tools(deps): bump vercel from 28.15.2 to 28.15.3 in /tools (#425)
+
+## Misc
+
+- dev: allow to skip token setup (#363)
+- ci/cd: dependabot: increase open-pull-requests-limit
+
+## Active contributors
+
+Special thanks to the following contributors for their contributions to this release:
+- @kamilsk, Lead
+- @al-petrushin
+- @DimovyM
+- @Tatiana683, QA
+
+## Full changelog
+
+Compare view [v0.0.10...v0.1.0](https://github.com/tact-app/web/compare/v0.0.10...v0.1.0).

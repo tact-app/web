@@ -103,12 +103,17 @@ export class FocusConfigurationStore {
   };
 
   handleBlur = () => {
+    if (!this.isFocused) {
+      return;
+    }
+
     this.navigation.disable();
     this.isBlockFocused = false;
     this.callbacks.onBlur?.();
   };
 
   handleSelectGoal = () => {
+    this.isBlockFocused = true;
     this.data.goals = this.goalsSelection.checked;
     this.sendChanges();
   };

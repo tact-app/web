@@ -56,6 +56,8 @@ export const SpacesMenuView = observer(function SpacesMenuView(
         w='100%'
         onChange={store.handleSpaceChange}
         index={store.isExpanded ? store.currentSpaceIndex : null}
+        overflowY='auto'
+        height='calc(100% - var(--chakra-sizes-10))'
       >
         {store.root.resources.spaces.list.map((space, index) => {
           const { id, name, color, children } = space;
@@ -146,13 +148,14 @@ export const SpacesMenuView = observer(function SpacesMenuView(
             </AccordionItem>
           );
         })}
+
+        <SpacesMenuAdd
+          onClick={store.callbacks.onSpaceCreationClick}
+          isFocused={props.isHotkeysEnabled && store.currentSpaceIndex === null}
+          title='Create new space'
+          size='lg'
+        />
       </Accordion>
-      <SpacesMenuAdd
-        onClick={store.callbacks.onSpaceCreationClick}
-        isFocused={props.isHotkeysEnabled && store.currentSpaceIndex === null}
-        title='Create new space'
-        size='lg'
-      />
     </Box>
   );
 });

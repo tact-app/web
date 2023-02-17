@@ -93,6 +93,10 @@ export const DefaultDraggableListDragHandler = observer(
   }) {
     const store = useDraggableListStore();
 
+    if (!store.isDndActive) {
+      return null;
+    }
+
     return (
       <Box
         position='absolute'
@@ -111,6 +115,7 @@ export const DefaultDraggableListDragHandler = observer(
         }}
         {...provided.dragHandleProps}
         tabIndex={-1}
+        outline='none'
       >
         {!store.checkItemActivity || store.checkItemActivity(id) ? (
           <Box cursor='grab' aria-label='Drag'>
@@ -156,7 +161,7 @@ export const DraggableListView = observer(function DraggableListView({
       <DraggableListDroppable id={droppableId}>
         {store.items.map((id, index) => {
           return (
-            <Draggable draggableId={id} index={index} key={id}>
+            <Draggable draggableId={id} index={index} key={id} isDragDisabled={!store.isDndActive}>
               {(provided, snapshot) => (
                 <Box
                   ref={provided.innerRef}
