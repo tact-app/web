@@ -49,7 +49,7 @@ export class TaskItemStore {
   isDragging: boolean = false;
 
   isOpenByContextMenu: boolean = false;
-  xPosContextMenu: string;
+  xPosContextMenu: number;
 
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
@@ -98,7 +98,7 @@ export class TaskItemStore {
   handleKeyUp = (e: KeyboardEvent) => {
     if (e.key === 'Alt') {
       if (this.isAltPressed) {
-        this.toggleMenu();
+        this.toggleMenu(!this.isMenuOpen);
       }
 
       this.isAltPressed = false;

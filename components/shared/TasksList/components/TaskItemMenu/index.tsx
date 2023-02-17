@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite';
 import {
-  Box,
   Button,
   chakra,
   Divider,

@@ -5,7 +5,7 @@ interface PopoverWrapperProps {
     positionByMouse: boolean;
     children: ReactNode;
     isOpen: boolean;
-    left: string;
+    left: number;
 }
 
 export const PopoverWrapper: FC<PopoverWrapperProps> = ({ positionByMouse, children, isOpen, left }) => {
@@ -26,7 +26,7 @@ export const PopoverWrapper: FC<PopoverWrapperProps> = ({ positionByMouse, child
                 }
             })
         }
-    }, [])
+    }, [isOpen, positionByMouse, left])
 
     return (
         <Box
