@@ -396,12 +396,12 @@ export class TaskQuickEditorStore {
   };
 
   saveTask = (withShift?: boolean, force?: boolean) => {
-    if (this.callbacks.onSave && this.value) {
-      const title = this.value.trim();
+    this.value = this.value.trim();
 
+    if (this.callbacks.onSave && this.value) {
       const task: TaskData = {
         ...(toJS(this.task) || {}),
-        title,
+        title: this.value,
         input: toJS(this.task?.input || this.inputData),
         id: this.task ? this.task.id : uuidv4(),
         tags: this.modes.tag.tags.map(({ id }) => id),
@@ -504,10 +504,10 @@ export class TaskQuickEditorStore {
     } else {
       e.stopPropagation();
 
-      if (!this.isModeActive) {
-        this.handleKeyDownInStdMode(e);
-      } else {
+      if (this.isModeActive) {
         this.handleKeyDownWithActiveMode(e);
+      } else {
+        this.handleKeyDownInStdMode(e);
       }
     }
   };
@@ -546,6 +546,8 @@ export class TaskQuickEditorStore {
       this.handleLeaveAndRestoreTask();
     } else if (e.key === 'Enter') {
       e.stopPropagation();
+      e.preventDefault();
+
       if (!this.keepFocus) {
         this.callbacks.onNavigate?.(NavigationDirections.ENTER);
       }
