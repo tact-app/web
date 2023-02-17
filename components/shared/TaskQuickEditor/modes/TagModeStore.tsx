@@ -360,6 +360,10 @@ export class TagModeStore {
           this.callbacks.onFocusLeave(NavigationDirections.RIGHT);
         }
       }
+    } else if (!this.isCollapsable && e.key === 'ArrowDown') {
+      this.callbacks.onFocusLeave(NavigationDirections.DOWN);
+    } else if (!this.isCollapsable && e.key === 'ArrowUp') {
+      this.callbacks.onFocusLeave(NavigationDirections.UP);
     } else if (e.key === 'Escape') {
       if (this.isCollapsed) {
         e.preventDefault();
