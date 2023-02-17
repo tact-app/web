@@ -319,10 +319,12 @@ export class TodayStore {
       this.focusedBlock = this.lastFocusedBlock;
       this.lastFocusedList.draggableList.restoreSavedFocusedItems();
       secondList.draggableList.resetSavedFocusedItems();
+      this.lastFocusedList.draggableList.focusFirstItem();
     } else if (secondList.draggableList.hasFocusableItems) {
       this.focusedBlock = newFocusedBlock;
       secondList.draggableList.restoreSavedFocusedItems();
       this.lastFocusedList.draggableList.resetSavedFocusedItems();
+      secondList.draggableList.focusFirstItem();
     }
   };
 
@@ -666,6 +668,10 @@ export class TodayStore {
 
   setFocusModeConfiguration = (data: FocusConfigurationData) => {
     this.focusModeConfiguration = data;
+
+    if (!data.goals.includes(this.allTasks[this.openedTask]?.goalId)) {
+      this.closeTask();
+    }
   };
 
   update = () => null;
