@@ -25,11 +25,9 @@ export const TAGS_ID = 'task-quick-editor-tags';
 
 const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
   buttonProps,
-  autoSave,
   disableAnimating = false,
 }: {
   buttonProps: ButtonProps;
-  autoSave: boolean;
   disableAnimating?: boolean;
 }) {
   const store = useTaskQuickEditorStore();
@@ -87,7 +85,7 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
             tabIndex={-1}
             isRound
             onClick={() => {
-              store.handleRemoveTag(id, autoSave);
+              store.modes.tag.removeTag(id);
               store.suggestionsMenu.openFor(Modes.TAG)
             }}
         >
@@ -148,7 +146,11 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
     if (store.modes.tag.tags.length && !store.modes.tag.isCollapsed) {
       store.modes.tag.checkOverflow();
     }
-  }, [store.modes.tag.tags.length, store.modes.tag.isCollapsed])
+  }, [store.modes.tag.tags.length, store.modes.tag.isCollapsed]);
+
+  useEffect(() => {
+    store.modes.tag.autoSave = autoSave;
+  }, [autoSave]);
 
   if (!store.modes.tag.tags.length) {
     return null;
@@ -221,7 +223,6 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
                   <VStack alignItems='start'>
                     <TaskQuickEditorTagsList
                         buttonProps={buttonProps}
-                        autoSave={autoSave}
                         disableAnimating
                     />
                   </VStack>
@@ -232,7 +233,6 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
       ) : (
         <TaskQuickEditorTagsList
             buttonProps={buttonProps}
-            autoSave={autoSave}
         />
       )}
     </Box>

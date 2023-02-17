@@ -74,33 +74,76 @@ export class TaskQuickEditorStore {
   order = [Modes.TAG, Modes.SPACE, Modes.PRIORITY, Modes.GOAL];
   callbacks: TaskQuickEditorProps['callbacks'];
 
-  modes = {
-    [Modes.PRIORITY]: new PriorityModeStore(this.root, {
-      onExit: () => this.exitMode(),
-      onChangeSuggestionIndex: (index: number) =>
-        this.suggestionsMenu.setIndex(index),
-    }),
-    [Modes.TAG]: new TagModeStore(this.root, {
-      onExit: () => this.exitMode(),
-      onFocusLeave: (direction: NavigationDirections) => {
-        if (direction === NavigationDirections.LEFT) {
-          this.focusPrevFilledMode();
-        } else if (direction === NavigationDirections.RIGHT) {
-          this.focusNextFilledMode();
+  handleKeyDownModeButton =
+    (modeType: Modes) => (e: KeyboardEvent<HTMLInputElement>) => {
+      if (this.root.isModalOpen) {
+        return
+      }
+
+      if (
+        e.key === 'Enter' &&
+        this.suggestionsMenu.openForMode === Modes.DEFAULT
+      ) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        this.suggestionsMenu.openFor(modeType);
+
+        return true;
+      } else if (e.key === 'Escape') {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (this.suggestionsMenu.openForMode !== Modes.DEFAULT) {
+          if (this.suggestionsMenu.isOpen) {
+            this.suggestionsMenu.closeForMode();
+            this.focusMode(modeType, 'first');
+          } else {
+            this.handleLeaveAndRestoreTask();
+          }
+        } else {
+          this.setFocus(true);
         }
-      },
-    }),
-    [Modes.SPACE]: new SpaceModeStore(this.root, {
-      onExit: () => this.exitMode(),
-      onCreate: this.modals.openSpaceCreationModal
-    }),
-    [Modes.GOAL]: new GoalModeStore(this.root, {
-      onExit: () => this.exitMode(),
-    }),
-    [Modes.REFERENCE]: new ReferenceModeStore(this.root, {
-      onExit: () => this.exitMode(),
-    }),
-  };
+
+        return true;
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        e.stopPropagation();
+        this.modes[modeType].reset();
+        this.setFocus(true);
+        return true;
+      } else if (this.suggestionsMenu.openForMode === Modes.DEFAULT) {
+        if (
+          e.key === 'ArrowDown' ||
+          e.key === 'ArrowUp' ||
+          e.key === 'ArrowLeft' ||
+          e.key === 'ArrowRight'
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          if (e.key === 'ArrowRight' && this.focusNextFilledMode()) {
+            return true;
+          } else if (e.key === 'ArrowLeft' && this.focusPrevFilledMode()) {
+            return true;
+          } else if (
+            this.callbacks.onModeNavigate?.(
+              modeType,
+              castArrowToDirection(e.key)
+            )
+          ) {
+            return true;
+          } else {
+            this.setFocus(true);
+            return true;
+          }
+        } else {
+          return false;
+        }
+      }
+
+      return this.handleSuggestionMenuNavigation(e);
+    };
 
   modeStartPos = 0;
   modeEndPos = 0;
@@ -493,95 +536,6 @@ export class TaskQuickEditorStore {
     return false;
   };
 
-  handleKeyDownModeButton =
-    (modeType: Modes) => (e: KeyboardEvent<HTMLInputElement>) => {
-      if (this.root.isModalOpen) {
-        return
-      }
-
-      if (
-        e.key === 'Enter' &&
-        this.suggestionsMenu.openForMode === Modes.DEFAULT
-      ) {
-        e.stopPropagation();
-        e.preventDefault();
-
-        this.suggestionsMenu.openFor(modeType);
-
-        return true;
-      } else if (e.key === 'Escape') {
-        e.stopPropagation();
-        e.preventDefault();
-
-        if (this.suggestionsMenu.openForMode !== Modes.DEFAULT) {
-          this.suggestionsMenu.closeForMode();
-          this.focusMode(modeType, 'first');
-        } else {
-          this.setFocus(true);
-        }
-
-        return true;
-      } else if (e.key === 'Backspace') {
-        e.preventDefault();
-        e.stopPropagation();
-        this.modes[modeType].reset();
-        this.setFocus(true);
-        return true;
-      } else if (this.suggestionsMenu.openForMode === Modes.DEFAULT) {
-        if (
-          e.key === 'ArrowDown' ||
-          e.key === 'ArrowUp' ||
-          e.key === 'ArrowLeft' ||
-          e.key === 'ArrowRight'
-        ) {
-          e.preventDefault();
-          e.stopPropagation();
-
-          if (e.key === 'ArrowRight' && this.focusNextFilledMode()) {
-            return true;
-          } else if (e.key === 'ArrowLeft' && this.focusPrevFilledMode()) {
-            return true;
-          } else if (
-            this.callbacks.onModeNavigate?.(
-              modeType,
-              castArrowToDirection(e.key)
-            )
-          ) {
-            return true;
-          } else {
-            this.setFocus(true);
-            return true;
-          }
-        } else {
-          return false;
-        }
-      }
-
-      return this.handleSuggestionMenuNavigation(e);
-    };
-
-  handleKeyDownWithActiveMode = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (this.handleSuggestionMenuNavigation(e)) {
-      return true;
-    }
-
-    if (e.key === 'Escape') {
-      e.stopPropagation();
-      e.preventDefault();
-
-      this.exitMode(true);
-
-      return true;
-    } else if (e.key === 'Backspace' && this.activeMode.strValue.length === 1) {
-      e.stopPropagation();
-      e.preventDefault();
-      this.activeMode.disable();
-      return true;
-    }
-
-    return false;
-  };
-
   handleKeyDownInStdMode = (e: KeyboardEvent<HTMLInputElement>) => {
     const mode = this.getMatchMode(e.key);
     const target = e.target as HTMLInputElement;
@@ -589,10 +543,7 @@ export class TaskQuickEditorStore {
     if (e.key === 'Escape') {
       e.stopPropagation();
 
-      if (this.callbacks.onNavigate?.(NavigationDirections.INVARIANT)) {
-        this.leave(true);
-        this.restoreTask();
-      }
+      this.handleLeaveAndRestoreTask();
     } else if (e.key === 'Enter') {
       e.stopPropagation();
       if (!this.keepFocus) {
@@ -632,6 +583,35 @@ export class TaskQuickEditorStore {
       e.stopPropagation();
     }
   };
+
+  handleKeyDownWithActiveMode = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (this.handleSuggestionMenuNavigation(e)) {
+      return true;
+    }
+
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      e.preventDefault();
+
+      this.exitMode(true);
+
+      return true;
+    } else if (e.key === 'Backspace' && this.activeMode.strValue.length === 1) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.activeMode.disable();
+      return true;
+    }
+
+    return false;
+  };
+
+  handleLeaveAndRestoreTask = () => {
+    if (this.callbacks.onNavigate?.(NavigationDirections.INVARIANT)) {
+      this.leave(true);
+      this.restoreTask();
+    }
+  }
 
   handleKeyDownMainMenu = (e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Tab') {
@@ -699,19 +679,45 @@ export class TaskQuickEditorStore {
     }
   };
 
-  handleRemoveTag = (id: string, autoSave: boolean) => {
-    this.modes.tag.removeTag(id);
+  modes = {
+    [Modes.PRIORITY]: new PriorityModeStore(this.root, {
+      onExit: () => this.exitMode(),
+      onChangeSuggestionIndex: (index: number) =>
+        this.suggestionsMenu.setIndex(index),
+    }),
+    [Modes.TAG]: new TagModeStore(this.root, {
+      onExit: () => this.exitMode(),
+      onLeave: () => this.handleLeaveAndRestoreTask(),
+      onChange: (autoSave?: boolean) => {
+        if (autoSave) {
+          this.leave();
+        } else {
+          this.handleFocus();
 
-    if (autoSave) {
-      this.leave();
-    } else {
-      this.handleFocus();
-
-      if (this.modes.tag.tags.length) {
-        this.modes.tag.handleCollapseOpen();
-      }
-    }
-  }
+          if (this.modes.tag.tags.length) {
+            this.modes.tag.handleCollapseOpen();
+          }
+        }
+      },
+      onFocusLeave: (direction: NavigationDirections) => {
+        if (direction === NavigationDirections.LEFT) {
+          this.focusPrevFilledMode();
+        } else if (direction === NavigationDirections.RIGHT) {
+          this.focusNextFilledMode();
+        }
+      },
+    }),
+    [Modes.SPACE]: new SpaceModeStore(this.root, {
+      onExit: () => this.exitMode(),
+      onCreate: this.modals.openSpaceCreationModal
+    }),
+    [Modes.GOAL]: new GoalModeStore(this.root, {
+      onExit: () => this.exitMode(),
+    }),
+    [Modes.REFERENCE]: new ReferenceModeStore(this.root, {
+      onExit: () => this.exitMode(),
+    }),
+  };
 }
 
 export const {

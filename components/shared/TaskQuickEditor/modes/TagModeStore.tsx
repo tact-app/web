@@ -7,6 +7,8 @@ import { RootStore } from '../../../../stores/RootStore';
 export type TagModeCallbacks = {
   onFocusLeave: (direction: NavigationDirections) => void;
   onExit: () => void;
+  onChange: (autoSave?: boolean) => void;
+  onLeave: () => void;
 };
 
 type TagWithRef = TaskTag & { ref?: HTMLButtonElement };
@@ -23,6 +25,7 @@ export class TagModeStore {
   isCollapsable = false;
   isCollapsed = false;
   isCollapseOpen = false;
+  autoSave = false;
 
   containerRef: HTMLDivElement | null = null;
   collapseRef?: HTMLButtonElement;
@@ -200,6 +203,8 @@ export class TagModeStore {
       this.toggleIsCollapsed(false);
       this.isCollapseOpen = false;
     }
+
+    this.callbacks.onChange(this.autoSave);
   };
 
   addTag = (tag: TaskTag) => {
@@ -355,11 +360,15 @@ export class TagModeStore {
           this.callbacks.onFocusLeave(NavigationDirections.RIGHT);
         }
       }
-    } else if (e.key === 'Escape' && this.isCollapsed) {
-      e.preventDefault();
-      e.stopPropagation();
-      this.handleCollapseClose();
-      this.collapseRef?.focus();
+    } else if (e.key === 'Escape') {
+      if (this.isCollapsed) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.handleCollapseClose();
+        this.collapseRef?.focus();
+      } else if (!this.autoSave) {
+        this.callbacks.onLeave();
+      }
     }
   };
 }
