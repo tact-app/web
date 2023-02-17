@@ -50,7 +50,6 @@ export class TaskItemStore {
 
   isOpenByContextMenu: boolean = false;
   xPosContextMenu: string;
-  yPosContextMenu: string;
 
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
@@ -123,16 +122,15 @@ export class TaskItemStore {
   handleContextMenu = (e: MouseEvent) => {
     e.preventDefault();
     if (!this.isMenuOpen) {
-      this.xPosContextMenu = e.pageX + "px";
-      this.yPosContextMenu = e.pageY + "px";
+      this.xPosContextMenu = e.pageX;
       this.toggleContextMenu(true);
       this.openMenu();
     }
   }
 
-  toggleMenu = () => {
-    this.isMenuOpen = !this.isMenuOpen;
-    this.onToggleMenu(this.isMenuOpen);
+  toggleMenu = (isOpen: boolean) => {
+    this.isMenuOpen = isOpen;
+    this.onToggleMenu(isOpen);
   };
 
   toggleContextMenu = (isContextMenu: boolean) => {
@@ -146,7 +144,7 @@ export class TaskItemStore {
 
   closeMenu = () => {
     setTimeout(() => {
-      this.toggleMenu();
+      this.toggleMenu(false);
       this.onToggleMenu(false);
       this.toggleContextMenu(false);
     });

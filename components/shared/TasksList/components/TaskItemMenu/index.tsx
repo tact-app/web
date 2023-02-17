@@ -38,6 +38,7 @@ import {
 } from '@fortawesome/pro-light-svg-icons';
 import { IconDefinition } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { PopoverWrapper } from './PopoverWrapper';
 
 const multiTaskItems = (store: TaskItemStore) => [
   {
@@ -310,15 +311,11 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
 
   return (
     <Portal>
-      <Box
-       // TODO:debt find a way to not use !important
-        __css={store.isOpenByContextMenu && store.isMenuOpen ? {
-          '.chakra-popover__popper': {
-            transform: 'none!important',
-            left: store.xPosContextMenu + '!important',
-            top: store.yPosContextMenu + '!important',
-          }
-        } : undefined}>
+      <PopoverWrapper
+        isOpen={store.isMenuOpen}
+        positionByMouse={store.isOpenByContextMenu}
+        left={store.xPosContextMenu}
+      >
         <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
           <PopoverContent
             tabIndex={-1}
@@ -337,7 +334,7 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
             </PopoverBody>
           </PopoverContent>
         </Fade>
-      </Box>
+      </PopoverWrapper>
     </Portal>
   );
 });
