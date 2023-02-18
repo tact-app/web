@@ -15,15 +15,21 @@ export const PopoverWrapper: FC<PopoverWrapperProps> = ({ positionByMouse, child
     useEffect(() => {
         if (positionByMouse && isOpen) {
             const style = window.getComputedStyle(boxRef.current.querySelector('.chakra-popover__popper'));
-            const { m41, m42 } = new WebKitCSSMatrix(style.transform);
-            const modalXposition = m41 < 0 ? left - window.innerWidth : left
+            const { m41 } = new WebKitCSSMatrix(style.transform);
+            const modalXposition = (m41 < 0 ? left - window.innerWidth : left) - m41
 
             setCss({
+                opacity: 1,
                 // TODO:debt find a way to not use !important
                 '.chakra-popover__popper': {
                     maxWidth: 288,
-                    transform: `translate(${modalXposition}px,${m42}px)!important`
+                    left: modalXposition + 'px!important'
                 }
+            })
+        }
+        else {
+            setCss({
+                opacity: 1
             })
         }
     }, [isOpen, positionByMouse, left])
@@ -31,7 +37,10 @@ export const PopoverWrapper: FC<PopoverWrapperProps> = ({ positionByMouse, child
     return (
         <Box
             ref={boxRef}
-            __css={{...css}}>
+            __css={{
+                opacity: 0,
+                ...css
+            }}>
             {children}
         </Box>
     )
