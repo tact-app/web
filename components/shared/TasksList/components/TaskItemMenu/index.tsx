@@ -360,6 +360,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
   const open = useCallback(() => {
     setIsAnimationInProcess(true);
     store.handleFocus();
+    store.quickEdit.suggestionsMenu.close();
     onOpen();
     store.openMenu();
   }, [onOpen, store]);
