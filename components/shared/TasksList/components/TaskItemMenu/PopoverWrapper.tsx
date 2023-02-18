@@ -16,14 +16,16 @@ export const PopoverWrapper: FC<PopoverWrapperProps> = ({ positionByMouse, child
         if (positionByMouse && isOpen) {
             const style = window.getComputedStyle(boxRef.current.querySelector('.chakra-popover__popper'));
             const { m41 } = new WebKitCSSMatrix(style.transform);
-            const modalXposition = (m41 < 0 ? left - window.innerWidth : left) - m41
+            const absM41 = Math.abs(m41)
+            const modalXposition = left - (m41 < 0 ? -m41 : m41)
+            const leftOffset = (modalXposition < absM41 && m41 < 0) ? absM41 : modalXposition
 
             setCss({
                 opacity: 1,
                 // TODO:debt find a way to not use !important
                 '.chakra-popover__popper': {
                     maxWidth: 288,
-                    left: modalXposition + 'px!important'
+                    ...(!(left > m41 && m41 > 0 )&& {left: leftOffset + 'px!important'})
                 }
             })
         }
