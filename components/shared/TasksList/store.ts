@@ -143,9 +143,7 @@ export class TasksListStore {
       this.sendTasks(this.draggableList.focused);
     },
     FOCUS_LEAVE_LEFT: () => {
-      if (this.openedTask) {
-        this.closeTask();
-      } else if (this.callbacks.onFocusLeave?.(NavigationDirections.LEFT)) {
+      if (this.callbacks.onFocusLeave?.(NavigationDirections.LEFT)) {
         this.draggableList.resetFocusedItem();
         this.setEditingTask(null);
       }

@@ -109,7 +109,6 @@ export class FocusConfigurationStore {
 
     this.navigation.disable();
     this.isBlockFocused = false;
-    this.callbacks.onBlur?.();
   };
 
   handleSelectGoal = () => {
@@ -121,10 +120,12 @@ export class FocusConfigurationStore {
   handleShowImportantChange = (e) => {
     this.data.showImportant = e.target.checked;
     this.sendChanges();
+    this.navigation.disable();
   };
 
   handleGoalCreateClick = () => {
     this.handleBlur();
+    this.callbacks.onBlur?.();
     this.callbacks.onGoalCreateClick?.(() => {
       setTimeout(() => {
         this.navigation.enable();

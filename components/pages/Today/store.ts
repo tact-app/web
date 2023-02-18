@@ -286,7 +286,7 @@ export class TodayStore {
   };
 
   focusCalendar = () => {
-    if (this.isCalendarExpanded) {
+    if (this.isCalendarExpanded && Object.keys(this.calendar.events).length) {
       this.prepareListsForLeave();
       this.focusedBlock = TodayBlocks.CALENDAR;
       this.calendar.focus();
@@ -309,6 +309,7 @@ export class TodayStore {
   };
 
   focusTasksList = () => {
+    const isRefocusFromFocusConfig = this.focusedBlock === TodayBlocks.FOCUS_CONFIGURATION;
     const newFocusedBlock =
       this.lastFocusedBlock === TodayBlocks.TODAY_LIST
         ? TodayBlocks.WEEK_LIST
@@ -317,14 +318,20 @@ export class TodayStore {
 
     if (this.lastFocusedList.draggableList.hasFocusableItems) {
       this.focusedBlock = this.lastFocusedBlock;
-      this.lastFocusedList.draggableList.restoreSavedFocusedItems();
-      secondList.draggableList.resetSavedFocusedItems();
-      this.lastFocusedList.draggableList.focusFirstItem();
+
+      if (isRefocusFromFocusConfig) {
+        this.lastFocusedList.draggableList.focusFirstItem();
+      } else {
+        this.lastFocusedList.draggableList.restoreSavedFocusedItems();
+      }
     } else if (secondList.draggableList.hasFocusableItems) {
       this.focusedBlock = newFocusedBlock;
-      secondList.draggableList.restoreSavedFocusedItems();
-      this.lastFocusedList.draggableList.resetSavedFocusedItems();
-      secondList.draggableList.focusFirstItem();
+
+      if (isRefocusFromFocusConfig) {
+        secondList.draggableList.focusFirstItem();
+      } else {
+        secondList.draggableList.restoreSavedFocusedItems();
+      }
     }
   };
 

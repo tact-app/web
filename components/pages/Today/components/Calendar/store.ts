@@ -1,19 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import {
-  NavigationDirections,
-  TaskData,
-} from '../../../../shared/TasksList/types';
+import { NavigationDirections, TaskData, } from '../../../../shared/TasksList/types';
 import { EventData } from './types';
-import {
-  ResizableBlocksDropItemData,
-  ResizableBlocksItemData,
-  ResizableBlocksTypes,
-} from './ResizableBlocks/types';
-import {
-  ResizableBlocksProps,
-  ResizableBlocksStore,
-} from './ResizableBlocks/store';
+import { ResizableBlocksDropItemData, ResizableBlocksItemData, ResizableBlocksTypes, } from './ResizableBlocks/types';
+import { ResizableBlocksProps, ResizableBlocksStore, } from './ResizableBlocks/store';
 import { EventColors, EventTypes } from './constants';
 import { RootStore } from '../../../../../stores/RootStore';
 
@@ -159,6 +149,10 @@ export class CalendarStore {
 
   removeEvent = (id: string) => {
     delete this.events[id];
+
+    if (!Object.keys(this.events).length) {
+      this.callbacks.onFocusLeave(NavigationDirections.LEFT);
+    }
   };
 
   focus = () => {
