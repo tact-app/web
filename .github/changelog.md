@@ -1,3 +1,87 @@
+# Release notes, v0.2.0
+
+## Improvements
+
+- [TACT-40](https://linear.app/octolab/issue/TACT-40/make-editor-context-consistent): Make editor context consistent (#459)
+- [TACT-105](https://linear.app/octolab/issue/TACT-105/improve-experience-while-tag-editing): Improve experience while tag editing (#456)
+- [TACT-216](https://linear.app/octolab/issue/TACT-216/it-isnt-possible-to-remove-one-or-more-tags-from-the-editors-list): It isn't possible to remove one or more tags from the editor's list (#461)
+- [TACT-223](https://linear.app/octolab/issue/TACT-223/no-scrolling-option-when-creating-more-than-14-spaces): No scrolling option when creating more than 14 spaces (#460)
+
+## Fixes
+
+- [TACT-245](https://linear.app/octolab/issue/TACT-245/task-with-an-empty-name-jumps-in-edit-mode): Task with an empty name jumps in edit mode (#477)
+- [TACT-247](https://linear.app/octolab/issue/TACT-247/the-presence-of-sorting-in-the-context-of-the-inbox-tab): The presence of sorting in the context of the inbox tab (#457)
+
+## Dependencies
+
+### Production
+
+- feat(deps): bump framer-motion from 9.0.3 to 9.0.4 (#479)
+- feat(deps): bump @emotion/styled from 11.10.5 to 11.10.6 (#481)
+- feat(deps): bump @emotion/react from 11.10.5 to 11.10.6 (#482)
+
+### Development
+
+- tools(deps): bump @sentry/cli from 2.12.0 to 2.13.0 in /tools (#478)
+- tools(deps): bump vercel from 28.15.6 to 28.16.2 in /tools (#480)
+
+## Miscellaneous
+
+- docs(changelog): v0.2.0 pre-release notes
+
+## Active contributors
+
+Special thanks to the following contributors for their contributions to this release:
+- @kamilsk, Lead
+- @al-petrushin
+- @Tatiana683, QA
+
+## Full changelog
+
+Compare view [v0.1.1...main](https://github.com/tact-app/web/compare/v0.1.1...main).
+
+---
+
+# Release notes, v0.1.1
+
+## Improvements
+
+- [TACT-99](https://linear.app/octolab/issue/TACT-99/support-dnd-on-random-place-of-a-task-change-cursor-to-pointer-for): Support d'n'd on random place of a task, change cursor to pointer for task list (#471)
+
+## Dependencies
+
+### Production
+
+- feat(deps): bump allotment from 1.18.0 to 1.18.1 (#462)
+- feat(deps): bump @sentry/nextjs from 7.37.1 to 7.37.2 (#468)
+- feat(deps): bump @chakra-ui/system from 2.4.0 to 2.5.0 (#469)
+- feat(deps): bump @tanstack/react-virtual from 3.0.0-beta.47 to 3.0.0-beta.48 (#472)
+- feat(deps): bump @chakra-ui/react from 2.4.9 to 2.5.1 (#474)
+- feat(deps): bump framer-motion from 9.0.2 to 9.0.3 (#475)
+
+### Development
+
+- tools(deps): bump vercel from 28.15.3 to 28.15.5 in /tools (#473)
+- tools(deps): bump vercel from 28.15.5 to 28.15.6 in /tools (#476)
+
+## Miscellaneous
+
+- docs: changelog: extend v0.1.0 by hidden parts
+- chore(org): update license layout
+
+## Active contributors
+
+Special thanks to the following contributors for their contributions to this release:
+- @kamilsk, Lead
+- @al-petrushin
+- @Tatiana683, QA
+
+## Full changelog
+
+Compare view [v0.1.0...v0.1.1](https://github.com/tact-app/web/compare/v0.1.0...v0.1.1).
+
+---
+
 # Release notes, v0.1.0
 
 ## Improvements
@@ -13,7 +97,7 @@
 - [TACT-241](https://linear.app/octolab/issue/TACT-241/strange-appearance-of-the-target-binding-window): Strange appearance of the target binding window (#466)
 - [TACT-255](https://linear.app/octolab/issue/TACT-255/fix-dependency-tree): Fix dependency tree (#409)
 
-## Bugfixes
+## Fixes
 
 - [TACT-118](https://linear.app/octolab/issue/TACT-118/exclude-all-spaces-from-the-suggestion): Exclude All spaces from the suggestion (#449, #463)
 - [TACT-212](https://linear.app/octolab/issue/TACT-212/drop-menu-hides-behind-task-list): Drop menu hides behind task list (#369)
@@ -82,7 +166,7 @@
 - tools(deps): bump vercel from 28.15.1 to 28.15.2 in /tools (#405)
 - tools(deps): bump vercel from 28.15.2 to 28.15.3 in /tools (#425)
 
-## Misc
+## Miscellaneous
 
 - dev: allow to skip token setup (#363)
 - ci/cd: dependabot: increase open-pull-requests-limit
