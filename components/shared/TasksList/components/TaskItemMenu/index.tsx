@@ -361,6 +361,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
     setIsAnimationInProcess(true);
     store.handleFocus();
     store.quickEdit.suggestionsMenu.close();
+    store.quickEdit.suggestionsMenu.closeForMode();
     onOpen();
     store.openMenu();
   }, [onOpen, store]);

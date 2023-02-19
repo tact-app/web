@@ -123,6 +123,7 @@ export class TaskItemStore {
     e.preventDefault();
     if (!this.isMenuOpen) {
       this.quickEdit.suggestionsMenu.close();
+      this.quickEdit.suggestionsMenu.closeForMode();
       this.xPosContextMenu = e.pageX;
       this.toggleContextMenu(true);
       this.openMenu();
@@ -160,6 +161,10 @@ export class TaskItemStore {
   };
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (e.ctrlKey && e.type === 'click') {
+      return
+    }
+
     if ((e.detail !== 2 || this.isFocused) && (e.target as HTMLElement).id === TASK_TITLE_ELEMENT_ID) {
       return this.parent.setEditingTask(this.task.id);
     }
