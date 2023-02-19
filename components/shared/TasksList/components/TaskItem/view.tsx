@@ -62,7 +62,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         tabIndex={store.isDisabled || store.isReadOnly ? -1 : 0}
         ref={store.setBoxRef}
         onClick={store.handleClick}
-        onContextMenu={(e) => {
+        onContextMenu={(e: Event) => {
           quickEditStore.handleClickOutside(e)
           store.handleContextMenu(e)
         }}

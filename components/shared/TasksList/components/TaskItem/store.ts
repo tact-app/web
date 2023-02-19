@@ -119,7 +119,7 @@ export class TaskItemStore {
     this.boxRef = ref;
   };
 
-  handleContextMenu = (e: MouseEvent) => {
+  handleContextMenu = (e) => {
     e.preventDefault();
     if (!this.isMenuOpen) {
       this.quickEdit.suggestionsMenu.close();
