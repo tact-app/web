@@ -36,6 +36,8 @@ export class CalendarStore {
 
   isCollapsed: boolean = false;
   isFullScreen: boolean = false;
+  isHotkeysEnabled: boolean = false;
+  shouldAnimate: boolean = false;
 
   hourHeight = '144px';
   dayGridStep = 15;
@@ -186,13 +188,28 @@ export class CalendarStore {
 
   destroy = () => {};
 
+  handleExpand = () => {
+    this.shouldAnimate = true;
+    this.callbacks.onExpand();
+  }
+
+  handleCollapse = () => {
+    this.shouldAnimate = false;
+    this.callbacks.onCollapse();
+  }
+
   update = (props: CalendarProps) => {
     this.dropItem = props.dropItem;
     this.isCollapsed = props.isCollapsed;
     this.isFullScreen = props.isFullScreen;
     this.callbacks = props.callbacks || {};
     this.tasks = props.tasks;
+    this.isHotkeysEnabled = props.isHotkeysEnabled;
     !this.isCollapsed && this.resizeBlocks.setDropItem(this.resizableBlockTask);
+
+    if (props.isHotkeysEnabled) {
+      this.shouldAnimate = false;
+    }
   };
 
   get resizableBlocksCallbacks(): ResizableBlocksProps['callbacks'] {

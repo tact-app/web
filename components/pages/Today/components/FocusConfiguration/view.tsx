@@ -17,6 +17,7 @@ import { GoalsSelectionView } from '../../../../shared/GoalsSelection/view';
 import { useRef } from 'react';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import { AnimatedBox } from "../../../../shared/AnimatedBox";
 
 export const FocusConfigurationView = observer(function FocusConfigurationView(
   props: FocusConfigurationProps
@@ -33,7 +34,10 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
   });
 
   return (
-    <Box
+    <AnimatedBox
+      animateDeps={[store.isFocused]}
+      animateCondition={store.isFocused}
+      component={Box}
       ref={ref}
       p={4}
       height='100%'
@@ -42,6 +46,15 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
       justifyContent='space-between'
       onMouseDown={store.handleMouseDown}
     >
+    {/*<Box*/}
+    {/*  ref={ref}*/}
+    {/*  p={4}*/}
+    {/*  height='100%'*/}
+    {/*  display='flex'*/}
+    {/*  flexDirection='column'*/}
+    {/*  justifyContent='space-between'*/}
+    {/*  onMouseDown={store.handleMouseDown}*/}
+    {/*>*/}
       <Box width='100%' minH={0} display='flex' flexDirection='column'>
         <HStack
           justifyContent='space-between'
@@ -126,6 +139,6 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           </Text>
         </Box>
       </Fade>
-    </Box>
+    </AnimatedBox>
   );
 });

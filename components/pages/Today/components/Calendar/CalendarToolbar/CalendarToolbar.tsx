@@ -19,12 +19,13 @@ import { CalendarProps } from '../store';
 export type CalendarToolbarProps = {
   isFullScreen?: boolean;
   callbacks: CalendarProps['callbacks'];
+  handleCollapse: () => void;
   daysCount: number;
   setResolution: (number:number) => void
   today: Date;
 };
 
-export const CalendarToolbar = ({ today, isFullScreen, callbacks, setResolution, daysCount }: CalendarToolbarProps) => (
+export const CalendarToolbar = ({ today, isFullScreen, callbacks, handleCollapse, setResolution, daysCount }: CalendarToolbarProps) => (
   <HStack justifyContent='space-between'>
     <Box display='flex' alignItems='center'>
       <Heading fontSize='2xl' fontWeight='semibold'>
@@ -103,7 +104,7 @@ export const CalendarToolbar = ({ today, isFullScreen, callbacks, setResolution,
         ml={4}
         size='sm'
         variant='ghost'
-        onClick={callbacks.onCollapse}
+        onClick={handleCollapse}
         p={1}
       >
         <TooltipWithHotkey label='Hide calendar' hotkey='Press C' hasArrow>

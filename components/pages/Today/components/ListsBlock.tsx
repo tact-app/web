@@ -16,13 +16,15 @@ import { Lists } from '../../../shared/TasksList/constants';
 import { TasksListToday } from './TasksListToday';
 import { TasksListWeekly } from './TasksListWeekly';
 import React from 'react';
-import { useTodayStore } from '../store';
+import { TodayBlocks, useTodayStore } from '../store';
+import { AnimatedBox } from "../../../shared/AnimatedBox";
 
 export const ListsBlock = observer(function ListsBlock() {
   const store = useTodayStore();
 
   return (
-    <Container
+    <AnimatedBox
+      component={Container}
       flex={1}
       maxW='container.lg'
       pt={10}
@@ -30,6 +32,24 @@ export const ListsBlock = observer(function ListsBlock() {
       display='flex'
       flexDirection='column'
       overflow='hidden'
+      animateDeps={[
+        store.focusedBlock,
+        store.todayListWithCreator.creator.isInputFocused,
+        store.focusConfiguration.isFocused,
+        store.isFocusModeActive,
+        Boolean(store.taskProps.task),
+      ]}
+      animateCondition={
+        ((store.todayListWithCreator.list.draggableList.focused.length || store.weekList.draggableList.focused.length ||
+          store.todayListWithCreator.creator.isInputFocused) && !store.taskProps.task) && (
+        (
+          [TodayBlocks.TODAY_LIST, TodayBlocks.WEEK_LIST].includes(store.focusedBlock) &&
+          (!store.isFocusModeActive && !store.focusConfiguration.isFocused)
+        ) ||
+        store.todayListWithCreator.creator.isInputFocused ||
+        !store.taskProps.task
+        )
+      }
     >
       <Box display='flex' flexDirection='column' h='100%'>
         <HStack justifyContent='space-between' pl={5} pr={5}>
@@ -103,6 +123,6 @@ export const ListsBlock = observer(function ListsBlock() {
           </Box>
         </TasksListWithCreatorStoreProvider>
       </Box>
-    </Container>
+    </AnimatedBox>
   );
 });

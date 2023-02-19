@@ -26,7 +26,6 @@ export const EditorView = observer(function EditorView() {
     <chakra.div
       className={styles.root}
       onClick={store.handleClick}
-      bg='white'
       cursor='text'
       overflow='auto'
       pb={6}

@@ -20,6 +20,7 @@ import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
 import { TaskStatus } from '../TasksList/types';
 import { TaskModesMenu } from './TaskModesMenu';
 import { TaskEditor } from './TaskEditor';
+import { AnimatedBox } from "../AnimatedBox";
 
 export const TaskView = observer(function TaskView() {
   const store = useTaskStore();
@@ -32,8 +33,12 @@ export const TaskView = observer(function TaskView() {
 
   useEffect(() => store.saveDescription, [store]);
 
+  console.log(store.isFocused)
   return (
-    <Container
+    <AnimatedBox
+      animateDeps={[store.isFocused]}
+      animateCondition={store.isFocused}
+      component={Container}
       tabIndex={0}
       onMouseDown={store.callbacks.onFocus}
       onKeyDown={store.handleContainerKeyDown}
@@ -151,6 +156,6 @@ export const TaskView = observer(function TaskView() {
           autoSave
         />
       </TaskQuickEditorStoreProvider>
-    </Container>
+    </AnimatedBox>
   );
 });

@@ -21,9 +21,9 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
       : store.task.tags.length
   );
 
-  let bg = 'white';
-  let hoveredBg = 'white';
-  let focusedBg = 'white';
+  let bg = 'transparent';
+  let hoveredBg = 'transparent';
+  let focusedBg = 'transparent';
 
   if (props.highlightActiveTasks) {
     if (!store.isDisabled) {
@@ -33,7 +33,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
     }
   } else {
     if (!store.isDragging) {
-      bg = 'white';
+      bg = 'transparent';
       hoveredBg = 'gray.100';
       focusedBg = 'gray.200';
     }

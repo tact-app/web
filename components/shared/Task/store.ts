@@ -63,6 +63,7 @@ class TaskStore {
   hasNext = true;
   isExpanded: boolean = false;
   isEditorFocused: boolean = false;
+  isFocused: boolean = false;
   callbacks: TaskProps['callbacks'];
   data: TaskData | null = null;
   isDescriptionLoading: boolean = true;
@@ -107,6 +108,7 @@ class TaskStore {
   };
 
   handleDescriptionFocus = () => {
+    this.isEditorFocused = true;
     clearTimeout(this.descriptionBlurTimeout);
   };
 
@@ -231,6 +233,18 @@ class TaskStore {
         () => {
           if (this.isEditorFocused && this.editor && !this.editor.isDestroyed) {
             this.editor.commands.focus(true);
+          }
+        }
+      ),
+      reaction(
+        () => [this.quickEditor.isInputFocused, this.isEditorFocused],
+        () => {
+          if (!this.isFocused && (this.quickEditor.isInputFocused || this.isEditorFocused)) {
+            this.isFocused = true;
+          }
+
+          if (!this.quickEditor.isInputFocused && !this.isEditorFocused) {
+            this.isFocused = false;
           }
         }
       )
