@@ -320,7 +320,9 @@ export class TodayStore {
       this.focusedBlock = this.lastFocusedBlock;
 
       if (isRefocusFromFocusConfig) {
-        this.lastFocusedList.draggableList.focusFirstItem();
+        this.lastFocusedList.draggableList.setFocusedItems(
+          this.getTasksToFocus(this.lastFocusedList.draggableList.savedFocusedItemIds)
+        );
       } else {
         this.lastFocusedList.draggableList.restoreSavedFocusedItems();
       }
@@ -328,13 +330,22 @@ export class TodayStore {
       this.focusedBlock = newFocusedBlock;
 
       if (isRefocusFromFocusConfig) {
-        secondList.draggableList.focusFirstItem();
+        secondList.draggableList.setFocusedItems(
+          this.getTasksToFocus(secondList.draggableList.savedFocusedItemIds)
+        );
       } else {
         secondList.draggableList.restoreSavedFocusedItems();
       }
     }
   };
 
+  getTasksToFocus = (savedFocusedTasks: string[]) => {
+    const allTasks = this.allTasks;
+
+    return savedFocusedTasks.filter(
+      (id) => this.focusModeConfiguration.goals.includes(allTasks[id].goalId)
+    );
+  }
   prepareListsForLeave = () => {
     const list = this.currentList;
 

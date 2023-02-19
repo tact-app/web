@@ -531,17 +531,29 @@ export class DraggableListStore {
 
     if (this.savedFocusedItemIds.length) {
       this.addFocusedItems(this.savedFocusedItemIds);
-      this.resetSavedFocusedItems();
     } else {
       this.focusFirstItem();
     }
+
+    this.resetSavedFocusedItems();
   };
 
   resetSavedFocusedItems = () => {
     this.savedFocusedItemIds = [];
   };
 
+  setFocusedItems = (ids: string[]) => {
+    if (!ids.length) {
+      this.focusFirstItem();
+    }
+
+    this.addFocusedItems(ids);
+    this.resetSavedFocusedItems();
+  };
+
   setFocusedItem = (id: string, mode?: 'single' | 'many') => {
+    this.resetSavedFocusedItems();
+
     if (this.focusedItemIds.length === 1 && this.focusedItemIds[0] === id) {
       this.callbacks.onItemSecondClick?.(id);
     } else if (!mode) {

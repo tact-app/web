@@ -77,7 +77,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           'border-color 0.2s ease-in-out',
           'background 0.2s ease-in-out',
         ]}
-        bg={store.isFocused ? focusedBg : bg}
+        bg={store.isFocused ? focusedBg : store.isPreFocused ? hoveredBg :bg}
         _groupHover={{
           bg: store.isFocused ? focusedBg : hoveredBg,
           borderColor:
