@@ -122,6 +122,7 @@ export class TaskItemStore {
   handleContextMenu = (e) => {
     e.preventDefault();
     if (!this.isMenuOpen) {
+      !this.isFocused && this.onFocus(this.task.id);
       this.quickEdit.suggestionsMenu.close();
       this.quickEdit.suggestionsMenu.closeForMode();
       this.xPosContextMenu = e.pageX;
