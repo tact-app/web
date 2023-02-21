@@ -461,13 +461,25 @@ export class TodayStore {
     }
   };
 
-  handleCloseTask = (doNotOpenCalendar = false) => {
-    this.handleCollapseTask();
-    this.resizableConfig[2].size = 0;
-
-    if (!doNotOpenCalendar && this.shouldOpenCalendar && !this.isCalendarExpanded) {
-      this.expandCalendar();
-      this.shouldOpenCalendar = false;
+  taskCreatorCallbacks: TasksListWithCreatorProps['taskCreatorCallbacks'] = {
+    onSave: (task, withShift, referenceId) => {
+      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
+        return this.todayListWithCreator.list.createTask(task, withShift);
+      } else if (referenceToList[referenceId] === Lists.WEEK) {
+        return this.weekList.createTask(task, referenceId === 'tomorrow');
+      }
+    },
+    onForceSave: (taskId: string, referenceId: string) => {
+      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
+        this.todayListWithCreator.list.openTask(taskId);
+        this.todayListWithCreator.list.draggableList.setFocusedItem(taskId);
+      } else if (referenceToList[referenceId] === Lists.WEEK) {
+        this.weekList.openTask(taskId);
+        this.weekList.draggableList.setFocusedItem(taskId);
+      }
+    },
+    onFocus: () => {
+      this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
     }
   };
 
@@ -611,6 +623,73 @@ export class TodayStore {
     newStatus: TaskStatus
   ) => {};
 
+  handleCloseTask = (doNotOpenCalendar = false) => {
+    this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+
+    this.handleCollapseTask();
+    this.resizableConfig[2].size = 0;
+
+    if (!doNotOpenCalendar && this.shouldOpenCalendar && !this.isCalendarExpanded) {
+      this.expandCalendar();
+      this.shouldOpenCalendar = false;
+    }
+  };
+
+  sendTasks = (blockName: TodayBlocks, tasks: TaskData[]) => {
+    const fromList =
+      blockName === TodayBlocks.WEEK_LIST
+        ? this.todayListWithCreator.list
+        : this.weekList;
+    const toList =
+      blockName === TodayBlocks.WEEK_LIST
+        ? this.weekList
+        : this.todayListWithCreator.list;
+
+    toList.receiveTasks(fromList.listId, toList.listId, tasks);
+
+    return true;
+  };
+
+  loadFocusModeConfiguration = async () => {
+    this.focusModeConfiguration = await this.root.api.focusConfigurations.get(
+      'default'
+    );
+  };
+
+  setFocusModeConfiguration = (data: FocusConfigurationData) => {
+    this.focusModeConfiguration = data;
+
+    if (!data.goals.includes(this.allTasks[this.openedTask]?.goalId)) {
+      this.closeTask();
+    }
+  };
+
+  update = () => null;
+
+  setShouldSetFirstFocus = () => {
+    this.shouldSetFirstFocus = true;
+  };
+
+  setFirstFocus = () => {
+    if (this.todayListWithCreator.list.order.length) {
+      this.todayListWithCreator.list.draggableList.focusFirstItem();
+    } else {
+      this.todayListWithCreator.creator.setFocus(true);
+    }
+
+    this.shouldSetFirstFocus = false;
+  };
+
+  todayTasksListCallbacks: TasksListProps['callbacks'] = {
+    onInit: this.setShouldSetFirstFocus,
+    onFocusLeave: this.handleTasksListFocusLeave,
+    onCloseTask: this.handleCloseTask,
+    onFocusChange: () => this.switchList(TodayBlocks.TODAY_LIST),
+    onSendTask: (tasks: TaskData[]) =>
+      this.sendTasks(TodayBlocks.WEEK_LIST, tasks),
+    onOpenTask: this.handleOpenTask,
+  };
+
   switchList = (blockName: TodayBlocks, saveState?: boolean) => {
     if (blockName !== this.focusedBlock) {
       if (blockName === TodayBlocks.WEEK_LIST && !this.weekList.hasTasks) {
@@ -675,80 +754,8 @@ export class TodayStore {
         this.todayListWithCreator.creator.setFocus(true);
       }
     }
-  };
 
-  sendTasks = (blockName: TodayBlocks, tasks: TaskData[]) => {
-    const fromList =
-      blockName === TodayBlocks.WEEK_LIST
-        ? this.todayListWithCreator.list
-        : this.weekList;
-    const toList =
-      blockName === TodayBlocks.WEEK_LIST
-        ? this.weekList
-        : this.todayListWithCreator.list;
-
-    toList.receiveTasks(fromList.listId, toList.listId, tasks);
-
-    return true;
-  };
-
-  loadFocusModeConfiguration = async () => {
-    this.focusModeConfiguration = await this.root.api.focusConfigurations.get(
-      'default'
-    );
-  };
-
-  setFocusModeConfiguration = (data: FocusConfigurationData) => {
-    this.focusModeConfiguration = data;
-
-    if (!data.goals.includes(this.allTasks[this.openedTask]?.goalId)) {
-      this.closeTask();
-    }
-  };
-
-  update = () => null;
-
-  setShouldSetFirstFocus = () => {
-    this.shouldSetFirstFocus = true;
-  };
-
-  setFirstFocus = () => {
-    if (this.todayListWithCreator.list.order.length) {
-      this.todayListWithCreator.list.draggableList.focusFirstItem();
-    } else {
-      this.todayListWithCreator.creator.setFocus(true);
-    }
-
-    this.shouldSetFirstFocus = false;
-  };
-
-  todayTasksListCallbacks: TasksListProps['callbacks'] = {
-    onInit: this.setShouldSetFirstFocus,
-    onFocusLeave: this.handleTasksListFocusLeave,
-    onCloseTask: this.handleCloseTask,
-    onFocusChange: () => this.switchList(TodayBlocks.TODAY_LIST),
-    onSendTask: (tasks: TaskData[]) =>
-      this.sendTasks(TodayBlocks.WEEK_LIST, tasks),
-    onOpenTask: this.handleOpenTask,
-  };
-
-  taskCreatorCallbacks: TasksListWithCreatorProps['taskCreatorCallbacks'] = {
-    onSave: (task, withShift, referenceId) => {
-      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
-        return this.todayListWithCreator.list.createTask(task, withShift);
-      } else if (referenceToList[referenceId] === Lists.WEEK) {
-        return this.weekList.createTask(task, referenceId === 'tomorrow');
-      }
-    },
-    onForceSave: (taskId: string, referenceId: string) => {
-      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
-        this.todayListWithCreator.list.openTask(taskId);
-        this.todayListWithCreator.list.draggableList.setFocusedItem(taskId);
-      } else if (referenceToList[referenceId] === Lists.WEEK) {
-        this.weekList.openTask(taskId);
-        this.weekList.draggableList.setFocusedItem(taskId);
-      }
-    },
+    this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
   };
 
   weekTasksListCallbacks: TasksListProps['callbacks'] = {

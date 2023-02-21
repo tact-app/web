@@ -38,7 +38,7 @@ export const AnimatedBlock = React.forwardRef<HTMLDivElement, Props>((
         }
       );
     }
-  }, [animateParams]);
+  }, animateParams.deps);
 
   return <Component {...compProps} ref={setRef} />;
 });
