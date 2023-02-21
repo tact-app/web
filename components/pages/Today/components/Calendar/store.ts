@@ -6,6 +6,7 @@ import { ResizableBlocksDropItemData, ResizableBlocksItemData, ResizableBlocksTy
 import { ResizableBlocksProps, ResizableBlocksStore, } from './ResizableBlocks/store';
 import { EventColors, EventTypes } from './constants';
 import { RootStore } from '../../../../../stores/RootStore';
+import { AnimatedBlockParams } from "../../../../shared/AnimatedBlock";
 
 export type CalendarProps = {
   dropItem?: TaskData;
@@ -23,6 +24,7 @@ export type CalendarProps = {
     onFocusLeave?: (direction: NavigationDirections) => void;
     onFocusItem?: (id: string) => void;
   };
+  focusHighlightParams: AnimatedBlockParams;
 };
 
 export class CalendarStore {
@@ -36,8 +38,6 @@ export class CalendarStore {
 
   isCollapsed: boolean = false;
   isFullScreen: boolean = false;
-  isHotkeysEnabled: boolean = false;
-  shouldAnimate: boolean = false;
 
   hourHeight = '144px';
   dayGridStep = 15;
@@ -49,6 +49,7 @@ export class CalendarStore {
   daysMinCountForWeek = 3;
   daysMaxCountForWeek = 7;
   dropItem: TaskData = null;
+  focusHighlightParams: AnimatedBlockParams;
 
   tasks: Record<string, TaskData> = {};
   times: string[] = Array.from({ length: 24 }).map((_, i) => `${i}:00`);
@@ -188,28 +189,14 @@ export class CalendarStore {
 
   destroy = () => {};
 
-  handleExpand = () => {
-    this.shouldAnimate = true;
-    this.callbacks.onExpand();
-  }
-
-  handleCollapse = () => {
-    this.shouldAnimate = false;
-    this.callbacks.onCollapse();
-  }
-
   update = (props: CalendarProps) => {
     this.dropItem = props.dropItem;
     this.isCollapsed = props.isCollapsed;
     this.isFullScreen = props.isFullScreen;
     this.callbacks = props.callbacks || {};
     this.tasks = props.tasks;
-    this.isHotkeysEnabled = props.isHotkeysEnabled;
+    this.focusHighlightParams = props.focusHighlightParams;
     !this.isCollapsed && this.resizeBlocks.setDropItem(this.resizableBlockTask);
-
-    if (props.isHotkeysEnabled) {
-      this.shouldAnimate = false;
-    }
   };
 
   get resizableBlocksCallbacks(): ResizableBlocksProps['callbacks'] {

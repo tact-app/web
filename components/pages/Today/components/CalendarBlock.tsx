@@ -15,6 +15,10 @@ export const CalendarBlock = observer(function CalendarBlock() {
       isCollapsed={!store.isCalendarExpanded}
       isFullScreen={store.isCalendarFullScreen}
       callbacks={store.calendarCallbacks}
+      focusHighlightParams={{
+        condition: store.currentFocusedBlock === TodayBlocks.CALENDAR,
+        deps: [store.currentFocusedBlock]
+      }}
     />
   );
 });

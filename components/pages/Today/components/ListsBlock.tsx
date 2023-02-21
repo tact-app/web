@@ -1,12 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import {
-  Box,
-  Container,
-  Heading,
-  HStack,
-  IconButton,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Container, Heading, HStack, IconButton, Tooltip, } from '@chakra-ui/react';
 import { FocusIcon } from '../../../shared/Icons/FocusIcon';
 import { TasksListWithCreatorStoreProvider } from '../../../shared/TasksListWithCreator/store';
 import { TaskCreator } from '../../../shared/TaskCreator';
@@ -17,13 +10,13 @@ import { TasksListToday } from './TasksListToday';
 import { TasksListWeekly } from './TasksListWeekly';
 import React from 'react';
 import { TodayBlocks, useTodayStore } from '../store';
-import { AnimatedBox } from "../../../shared/AnimatedBox";
+import { AnimatedBlock } from "../../../shared/AnimatedBlock";
 
 export const ListsBlock = observer(function ListsBlock() {
   const store = useTodayStore();
 
   return (
-    <AnimatedBox
+    <AnimatedBlock
       component={Container}
       flex={1}
       maxW='container.lg'
@@ -32,24 +25,10 @@ export const ListsBlock = observer(function ListsBlock() {
       display='flex'
       flexDirection='column'
       overflow='hidden'
-      animateDeps={[
-        store.focusedBlock,
-        store.todayListWithCreator.creator.isInputFocused,
-        store.focusConfiguration.isFocused,
-        store.isFocusModeActive,
-        Boolean(store.taskProps.task),
-      ]}
-      animateCondition={
-        ((store.todayListWithCreator.list.draggableList.focused.length || store.weekList.draggableList.focused.length ||
-          store.todayListWithCreator.creator.isInputFocused) && !store.taskProps.task) && (
-        (
-          [TodayBlocks.TODAY_LIST, TodayBlocks.WEEK_LIST].includes(store.focusedBlock) &&
-          (!store.isFocusModeActive && !store.focusConfiguration.isFocused)
-        ) ||
-        store.todayListWithCreator.creator.isInputFocused ||
-        !store.taskProps.task
-        )
-      }
+      animateParams={{
+        condition: store.currentFocusedBlock === TodayBlocks.TODAY_LIST,
+        deps: [store.currentFocusedBlock]
+      }}
     >
       <Box display='flex' flexDirection='column' h='100%'>
         <HStack justifyContent='space-between' pl={5} pr={5}>
@@ -123,6 +102,6 @@ export const ListsBlock = observer(function ListsBlock() {
           </Box>
         </TasksListWithCreatorStoreProvider>
       </Box>
-    </AnimatedBox>
+    </AnimatedBlock>
   );
 });

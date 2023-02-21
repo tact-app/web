@@ -20,7 +20,7 @@ import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
 import { TaskStatus } from '../TasksList/types';
 import { TaskModesMenu } from './TaskModesMenu';
 import { TaskEditor } from './TaskEditor';
-import { AnimatedBox } from "../AnimatedBox";
+import { AnimatedBlock } from "../AnimatedBlock";
 
 export const TaskView = observer(function TaskView() {
   const store = useTaskStore();
@@ -33,11 +33,12 @@ export const TaskView = observer(function TaskView() {
 
   useEffect(() => store.saveDescription, [store]);
 
-  console.log(store.isFocused)
   return (
-    <AnimatedBox
-      animateDeps={[store.isFocused]}
-      animateCondition={store.isFocused}
+    <AnimatedBlock
+      animateParams={{
+        condition: store.isFocused,
+        deps: [store.isFocused]
+      }}
       component={Container}
       tabIndex={0}
       onMouseDown={store.callbacks.onFocus}
@@ -63,8 +64,8 @@ export const TaskView = observer(function TaskView() {
             onPreviousItem={store.handlePreviousItem}
             onNextItem={store.handleNextItem}
             onClose={store.handleClose}
-            onExpand={store.handleExpand}
-            onCollapse={store.handleCollapse}
+            onExpand={store.callbacks.onExpand}
+            onCollapse={store.callbacks.onCollapse}
             hasPreviousItem={store.hasPrevious}
             hasNextItem={store.hasNext}
             isExpanded={store.isExpanded}
@@ -156,6 +157,6 @@ export const TaskView = observer(function TaskView() {
           autoSave
         />
       </TaskQuickEditorStoreProvider>
-    </AnimatedBox>
+    </AnimatedBlock>
   );
 });

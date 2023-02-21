@@ -28,6 +28,7 @@ export enum TodayBlocks {
   TODAY_LIST = 'TODAY_LIST',
   WEEK_LIST = 'WEEK_LIST',
   CALENDAR = 'CALENDAR',
+  TASK = 'TASK',
 }
 
 export class TodayStore {
@@ -51,6 +52,8 @@ export class TodayStore {
   openedTaskBlock: TodayBlocks = TodayBlocks.TODAY_LIST;
   focusedBlock: TodayBlocks = TodayBlocks.TODAY_LIST;
   shouldSetFirstFocus: boolean = false;
+
+  currentFocusedBlock: TodayBlocks | null = null;
 
   shouldOpenCalendar: boolean = false;
   isCalendarExpanded: boolean = true;
@@ -274,6 +277,8 @@ export class TodayStore {
 
         setTimeout(this.focusFocusConfiguration);
       }
+
+      this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
     } else {
       this.isSilentFocusMode = false;
       this.resizableConfig[0].width = 0;
@@ -306,6 +311,8 @@ export class TodayStore {
       this.prepareListsForLeave();
       this.focusedBlock = TodayBlocks.CALENDAR;
     }
+
+    this.currentFocusedBlock = TodayBlocks.CALENDAR;
   };
 
   focusTasksList = () => {
@@ -337,6 +344,8 @@ export class TodayStore {
         secondList.draggableList.restoreSavedFocusedItems();
       }
     }
+
+    this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
   };
 
   getTasksToFocus = (savedFocusedTasks: string[]) => {
@@ -359,6 +368,7 @@ export class TodayStore {
     this.prepareListsForLeave();
 
     this.focusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
+    this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
   };
 
   handleExpandTask = () => {
@@ -381,6 +391,8 @@ export class TodayStore {
     this.resizableConfig[3].size = 2;
     this.resizableConfig[3].width = undefined;
     this.resizableConfig[3].minWidth = 530;
+
+    this.currentFocusedBlock = TodayBlocks.CALENDAR;
   };
 
   collapseCalendar = () => {
@@ -392,6 +404,8 @@ export class TodayStore {
     this.resizableConfig[3].size = 0;
     this.resizableConfig[3].width = 57;
     this.resizableConfig[3].minWidth = undefined;
+
+    this.currentFocusedBlock = null;
   };
 
   handleListMinWidth = () => {

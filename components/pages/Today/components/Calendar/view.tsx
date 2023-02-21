@@ -17,7 +17,7 @@ import { CalendarTableEvent } from './CalendarTableEvent';
 import { useRef } from 'react';
 import { CalendarToolbar } from './CalendarToolbar/CalendarToolbar';
 import { TooltipWithHotkey } from '../../../../shared/TooltipWithHotkey';
-import { AnimatedBox } from "../../../../shared/AnimatedBox";
+import { AnimatedBlock } from "../../../../shared/AnimatedBlock";
 
 export const CalendarView = observer(function CalendarView() {
   const store = useCalendarStore();
@@ -29,10 +29,8 @@ export const CalendarView = observer(function CalendarView() {
     handler: store.handleOutsideClick,
   });
 
-  console.log(!store.isCollapsed || store.isHotkeysEnabled)
-
   return (
-    <AnimatedBox
+    <AnimatedBlock
       component={Box}
       pt={store.isCollapsed ? 0 : 10}
       pl={store.isCollapsed ? 0 : 6}
@@ -41,12 +39,11 @@ export const CalendarView = observer(function CalendarView() {
       flexDirection='column'
       h='100%'
       borderLeft='1px solid var(--chakra-colors-gray-200)'
-      animateDeps={[store.isHotkeysEnabled, store.shouldAnimate]}
-      animateCondition={store.shouldAnimate || store.isHotkeysEnabled}
+      animateParams={store.focusHighlightParams}
     >
       {store.isCollapsed ? (
         <Button
-          onClick={store.handleExpand}
+          onClick={store.callbacks.onExpand}
           variant='unstyled'
           p={3}
           pt={10}
@@ -106,6 +103,6 @@ export const CalendarView = observer(function CalendarView() {
           </ResizableBlocks>
         </Box>
       )}
-    </AnimatedBox>
+    </AnimatedBlock>
   );
 });

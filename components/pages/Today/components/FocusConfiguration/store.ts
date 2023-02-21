@@ -6,6 +6,7 @@ import {
   GoalsSelectionStore,
 } from '../../../../shared/GoalsSelection/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
+import { AnimatedBlockParams } from "../../../../shared/AnimatedBlock";
 
 export type FocusConfigurationData = {
   id: string;
@@ -23,6 +24,7 @@ export type FocusConfigurationProps = {
     onGoalCreateClick?: (cb: () => void) => void;
   };
   getItemsCount: () => number;
+  focusHighlightParams: AnimatedBlockParams;
 };
 
 export class FocusConfigurationStore {
