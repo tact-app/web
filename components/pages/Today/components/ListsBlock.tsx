@@ -26,7 +26,9 @@ export const ListsBlock = observer(function ListsBlock() {
       flexDirection='column'
       overflow='hidden'
       animateParams={{
-        condition: store.currentFocusedBlock === TodayBlocks.TODAY_LIST,
+        condition: (store.isCalendarExpanded || store.isFocusModeActive) && (
+          store.currentFocusedBlock === TodayBlocks.TODAY_LIST
+        ),
         deps: [store.currentFocusedBlock]
       }}
     >

@@ -17,6 +17,7 @@ import { DescriptionData } from '../../../types/description';
 import { Editor, JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
 import { subscriptions } from '../../../helpers/subscriptions';
+import { AnimatedBlockParams } from "../AnimatedBlock";
 
 export type TaskProps = {
   callbacks: {
@@ -36,6 +37,7 @@ export type TaskProps = {
   hasNext?: boolean;
   isEditorFocused?: boolean;
   task: TaskData;
+  animateParams?: AnimatedBlockParams;
 };
 
 class DescriptionStore {
@@ -70,6 +72,8 @@ class TaskStore {
   descriptionId: string = '';
   descriptionContent: DescriptionStore = new DescriptionStore();
   modesOrder = [Modes.SPACE, Modes.PRIORITY, Modes.GOAL, Modes.TAG];
+
+  animateParams?: AnimatedBlockParams;
 
   get inputSpace() {
     return this.root.resources.spaces.getById(this.data?.input.spaceId);
@@ -109,6 +113,7 @@ class TaskStore {
 
   handleDescriptionFocus = () => {
     this.isEditorFocused = true;
+    this.callbacks.onFocus();
     clearTimeout(this.descriptionBlurTimeout);
   };
 
@@ -257,6 +262,7 @@ class TaskStore {
     this.isExpanded = props.isExpanded;
     this.callbacks = props.callbacks;
     this.isEditorFocused = props.isEditorFocused;
+    this.animateParams = props.animateParams;
   };
 }
 

@@ -35,10 +35,12 @@ export const TaskView = observer(function TaskView() {
 
   return (
     <AnimatedBlock
-      animateParams={{
-        condition: store.isFocused,
-        deps: [store.isFocused]
-      }}
+      animateParams={
+        store.animateParams ?? {
+          condition: store.isFocused,
+          deps: [store.isFocused]
+        }
+      }
       component={Container}
       tabIndex={0}
       onMouseDown={store.callbacks.onFocus}

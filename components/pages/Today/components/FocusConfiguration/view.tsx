@@ -87,6 +87,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
             instance={store.goalsSelection}
             checked={store.data.goals}
             callbacks={store.goalsSelectionCallbacks}
+            disableGoalSelection={!store.isFocused}
           >
             <GoalsSelectionView setRefs={store.navigation.setRefs} />
           </GoalsSelectionStoreProvider>

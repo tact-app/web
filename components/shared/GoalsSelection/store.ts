@@ -11,6 +11,7 @@ export type GoalsSelectionProps = {
   setRefs?: (index: number, ref: HTMLElement) => void;
   multiple?: boolean;
   checked?: string[];
+  disableGoalSelection?: boolean;
 };
 
 export class GoalsSelectionStore {
@@ -23,12 +24,17 @@ export class GoalsSelectionStore {
   checkedGoals: Record<string, boolean> = {};
   isFocused: boolean = false;
   multiple: boolean = false;
+  disableGoalSelection: boolean = false;
 
   get checked() {
     return Object.keys(this.checkedGoals);
   }
 
   handleGoalCheck = (index: number | null) => {
+    if (this.disableGoalSelection) {
+      return;
+    }
+
     const goalId =
       index === null ? null : this.root.resources.goals.getByIndex(index).id;
 
@@ -63,6 +69,7 @@ export class GoalsSelectionStore {
   update = (props: GoalsSelectionProps) => {
     this.callbacks = props.callbacks;
     this.multiple = props.multiple;
+    this.disableGoalSelection = props.disableGoalSelection;
 
     if (props.checked) {
       if (this.multiple) {

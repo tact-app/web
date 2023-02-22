@@ -54,6 +54,7 @@ export class TodayStore {
   shouldSetFirstFocus: boolean = false;
 
   currentFocusedBlock: TodayBlocks | null = null;
+  lastOpenedBlock: TodayBlocks | null = null;
 
   shouldOpenCalendar: boolean = false;
   isCalendarExpanded: boolean = true;
@@ -174,8 +175,33 @@ export class TodayStore {
       hasPrevious: store.hasPrevTask,
       isEditorFocused: store.isEditorFocused,
       isExpanded: this.isTaskExpanded,
+      animateParams: {
+        condition: (
+          this.lastOpenedBlock === TodayBlocks.TASK || this.currentFocusedBlock === TodayBlocks.TASK
+        ),
+        deps: [this.lastOpenedBlock, this.currentFocusedBlock]
+      },
       callbacks: {
         ...store.taskCallbacks,
+        onClose: () => {
+          store.taskCallbacks.onClose();
+          this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+          this.lastOpenedBlock = null;
+        },
+        onBlur: () => {
+          this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+          this.lastOpenedBlock = null;
+          console.log("BLUR", this.currentFocusedBlock)
+          store.taskCallbacks.onBlur();
+        },
+        onFocus: () => {
+          this.currentFocusedBlock = TodayBlocks.TASK;
+        },
+        onTaskChange: async (task: TaskData) => {
+          await store.taskCallbacks.onTaskChange(task);
+
+          this.handleCloseTaskUnrelatedWithGoal(this.focusConfiguration.data);
+        },
         onExpand: this.handleExpandTask,
         onCollapse: this.handleCollapseTask,
       },
@@ -288,12 +314,14 @@ export class TodayStore {
 
   focusFocusConfiguration = () => {
     this.focusConfiguration.focus();
+    this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
   };
 
   focusCalendar = () => {
     if (this.isCalendarExpanded && Object.keys(this.calendar.events).length) {
       this.prepareListsForLeave();
       this.focusedBlock = TodayBlocks.CALENDAR;
+      this.currentFocusedBlock = TodayBlocks.CALENDAR;
       this.calendar.focus();
 
       return true;
@@ -304,6 +332,8 @@ export class TodayStore {
 
   handleCalendarFocusLeave = () => {
     this.focusTasksList();
+
+    this.lastOpenedBlock = null;
   };
 
   handleCalendarFocusItem = () => {
@@ -382,6 +412,9 @@ export class TodayStore {
   handleCollapseTask = () => {
     this.isTaskExpanded = false;
     this.resetLayout();
+
+    this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+    this.lastOpenedBlock = null;
   };
 
   expandCalendar = () => {
@@ -392,10 +425,10 @@ export class TodayStore {
     this.resizableConfig[3].width = undefined;
     this.resizableConfig[3].minWidth = 530;
 
-    this.currentFocusedBlock = TodayBlocks.CALENDAR;
+    this.lastOpenedBlock = TodayBlocks.CALENDAR;
   };
 
-  collapseCalendar = () => {
+  collapseCalendar = (resetOpenedBlock: boolean = true) => {
     this.isCalendarFullScreen = false;
     this.isCalendarExpanded = false;
 
@@ -405,7 +438,9 @@ export class TodayStore {
     this.resizableConfig[3].width = 57;
     this.resizableConfig[3].minWidth = undefined;
 
-    this.currentFocusedBlock = null;
+    if (resetOpenedBlock) {
+      this.lastOpenedBlock = null;
+    }
   };
 
   handleListMinWidth = () => {
@@ -453,10 +488,11 @@ export class TodayStore {
   };
 
   handleOpenTask = () => {
+    this.lastOpenedBlock = TodayBlocks.TASK;
     this.resizableConfig[2].size = 1;
 
     if (this.isCalendarExpanded) {
-      this.collapseCalendar();
+      this.collapseCalendar(false);
       this.shouldOpenCalendar = true;
     }
   };
@@ -659,7 +695,11 @@ export class TodayStore {
   setFocusModeConfiguration = (data: FocusConfigurationData) => {
     this.focusModeConfiguration = data;
 
-    if (!data.goals.includes(this.allTasks[this.openedTask]?.goalId)) {
+    this.handleCloseTaskUnrelatedWithGoal(data);
+  };
+
+  handleCloseTaskUnrelatedWithGoal = (focusData: FocusConfigurationData) => {
+    if (!focusData.goals.includes(this.allTasks[this.openedTask]?.goalId)) {
       this.closeTask();
     }
   };
