@@ -26,7 +26,7 @@ export const GoalCreationDescription = observer(
           flexDirection='row'
           maxW='3xl'
           width='100%'
-          alignItems='center'
+          alignItems='flex-end'
           ml={6}
           mr={6}
         >
@@ -60,7 +60,7 @@ export const GoalCreationDescription = observer(
                 store.description ? store.description.content : undefined
               }
               contentContainerProps={{
-                  maxW: '2xl',
+                  maxW: '3xl',
                   margin: 'auto',
               }}
               onUpdate={store.handleDescriptionChange}
