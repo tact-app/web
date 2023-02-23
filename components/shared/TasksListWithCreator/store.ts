@@ -92,7 +92,7 @@ export class TasksListWithCreatorStore {
       onNavigate: this.list.handleNavigation,
       onFocus: () => {
         this.list.removeFocus();
-        this.taskCreatorAdditions.onFocus();
+        this.taskCreatorAdditions.onFocus?.();
       },
       ...this.taskCreatorAdditions,
     };

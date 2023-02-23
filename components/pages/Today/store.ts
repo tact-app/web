@@ -63,6 +63,7 @@ export class TodayStore {
   isTaskExpanded: boolean = false;
   isFocusModeActive: boolean = false;
   isSilentFocusMode: boolean = false;
+  isTaskOpened: boolean = false;
 
   resizableConfig: ResizableGroupConfig[] = [
     {
@@ -184,15 +185,15 @@ export class TodayStore {
       callbacks: {
         ...store.taskCallbacks,
         onClose: () => {
-          store.taskCallbacks.onClose();
+          store.taskCallbacks.onClose?.();
           this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
           this.lastOpenedBlock = null;
+          this.isTaskOpened = false;
         },
         onBlur: () => {
           this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
           this.lastOpenedBlock = null;
-          console.log("BLUR", this.currentFocusedBlock)
-          store.taskCallbacks.onBlur();
+          store.taskCallbacks.onBlur?.();
         },
         onFocus: () => {
           this.currentFocusedBlock = TodayBlocks.TASK;
@@ -302,6 +303,7 @@ export class TodayStore {
         this.resizableConfig[0].width = FOCUS_MODE_WIDTH;
 
         setTimeout(this.focusFocusConfiguration);
+        this.lastOpenedBlock = TodayBlocks.FOCUS_CONFIGURATION;
       }
 
       this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
@@ -488,7 +490,11 @@ export class TodayStore {
   };
 
   handleOpenTask = () => {
-    this.lastOpenedBlock = TodayBlocks.TASK;
+    if (!this.isTaskOpened) {
+      this.lastOpenedBlock = TodayBlocks.TASK;
+    }
+
+    this.isTaskOpened = true;
     this.resizableConfig[2].size = 1;
 
     if (this.isCalendarExpanded) {
