@@ -49,6 +49,7 @@ export class FocusConfigurationStore {
       if (this.isFocused) {
         e.stopPropagation();
         this.isBlockFocused = false;
+        this.navigation.disable();
         this.callbacks.onBlur?.();
       }
     },

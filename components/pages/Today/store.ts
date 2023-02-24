@@ -177,7 +177,7 @@ export class TodayStore {
       isEditorFocused: store.isEditorFocused,
       isExpanded: this.isTaskExpanded,
       animateParams: {
-        condition: (
+        condition: !this.isTaskExpanded && (
           this.lastOpenedBlock === TodayBlocks.TASK || this.currentFocusedBlock === TodayBlocks.TASK
         ),
         deps: [this.lastOpenedBlock, this.currentFocusedBlock]
@@ -201,7 +201,9 @@ export class TodayStore {
         onTaskChange: async (task: TaskData) => {
           await store.taskCallbacks.onTaskChange(task);
 
-          this.handleCloseTaskUnrelatedWithGoal(this.focusConfiguration.data);
+          if (this.isFocusModeActive) {
+            this.handleCloseTaskUnrelatedWithGoal(this.focusConfiguration.data);
+          }
         },
         onExpand: this.handleExpandTask,
         onCollapse: this.handleCollapseTask,
