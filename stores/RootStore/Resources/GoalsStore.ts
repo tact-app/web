@@ -16,6 +16,10 @@ export class GoalsStore {
     return this.order.map((id) => this.map[id]);
   }
 
+  get haveGoals() {
+    return Boolean(this.order.length);
+  }
+
   get count() {
     return this.order.length;
   }

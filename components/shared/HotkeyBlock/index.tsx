@@ -38,7 +38,7 @@ export const HotkeyBlock = observer(function HotkeyBlock({
 
     return hotkey
       .split('+')
-      .map((key) => (isMac() ? macDict[key.toLowerCase()] : winDict[key.toLowerCase()] || key))
+      .map((key) => ((isMac() ? macDict[key.toLowerCase()] : winDict[key.toLowerCase()]) || key))
       .join(isMac() ? '' : '+');
   }, [hotkey]);
 

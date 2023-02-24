@@ -22,6 +22,16 @@ export class GoalsStore {
     makeAutoObservable(this);
   }
 
+  keymap = {
+    CREATE_GOAL: ['n'],
+  };
+
+  hotkeysHandlers = {
+    CREATE_GOAL: () => {
+      this.startGoalCreation();
+    },
+  };
+
   modals = new ModalsController(GoalsModals);
 
   openNewGoalConfigurationModal = () =>
