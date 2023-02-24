@@ -1,17 +1,16 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button, Text, Box, Center, Heading } from '@chakra-ui/react';
+import { Button, Text, HStack } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from './store';
 import { BackArrowIcon } from '../../../../shared/Icons/BackArrowIcon';
-import { GoalCreationStepsSwitcher } from './components/GoalCreationStepsSwitcher';
-import { GoalCreationModalSteps } from './types';
 import {
   Modal,
-  ModalBody,
   ModalContent,
-  ModalHeader,
 } from '@chakra-ui/modal';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import { GoalCreationDescription } from "./components/GoalCreationDescription";
+import { ResizableGroup } from "../../../../shared/ResizableGroup";
+import { ResizableGroupChild } from "../../../../shared/ResizableGroup/ResizableGroupChild";
 
 export const GoalCreationModalView = observer(function GoalCreationModal() {
   const store = useGoalCreationModalStore();
@@ -29,52 +28,49 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
       size='full'
     >
       <ModalContent>
-        <ModalHeader
-          position='relative'
-          display='flex'
-          alignItems='center'
-          flexDirection='row'
-        >
-          <Button
-            variant='ghost'
-            size='xs'
-            onClick={store.handleBack}
-            position='absolute'
+        <ResizableGroup>
+          <ResizableGroupChild
+            index={0}
+            config={store.resizableConfig[0]}
+            borderRight='1px'
+            borderColor='gray.200'
           >
-            <BackArrowIcon />
-            <Text fontSize='lg' color='gray.400' fontWeight='normal'>
-              Back
-            </Text>
-          </Button>
-          <Center flex={1} minH={12}>
-            <Heading variant='h1' fontSize='2rem'>
-              Goal setting
-            </Heading>
-          </Center>
-          {store.step === GoalCreationModalSteps.FILL_DESCRIPTION ? (
-            <Box
-              display='flex'
-              alignItems='center'
-              position='absolute'
-              right={6}
-            >
-              <Text fontSize='xs' fontWeight='normal' mr={4} color='gray.400'>
-                Press ⌘ S{' '}
-              </Text>
-              <Button
-                colorScheme='blue'
-                size='sm'
-                isDisabled={!store.isReadyForSave}
-                onClick={store.handleSave}
-              >
-                Save
-              </Button>
-            </Box>
-          ) : null}
-        </ModalHeader>
-        <ModalBody p={0} overflow='auto' position='relative'>
-          <GoalCreationStepsSwitcher />
-        </ModalBody>
+            <HStack flexDirection='column' width='100%'>
+              <HStack justifyContent='space-between' width='100%' maxW='3xl' pt={4} pb={8}>
+                <Button
+                  variant='ghost'
+                  size='xs'
+                  onClick={store.handleBack}
+                  p={0}
+                  pl={2}
+                  _hover={{
+                    bg: 'none'
+                  }}
+                  _active={{
+                    bg: 'none'
+                  }}
+                >
+                  <BackArrowIcon />
+                  <Text fontSize='lg' lineHeight={3} color='gray.500' fontWeight='normal' ml={2}>
+                    Back
+                  </Text>
+                </Button>
+                <Button
+                  colorScheme='blue'
+                  size='sm'
+                  isDisabled={!store.isReadyForSave}
+                  onClick={store.handleSave}
+                >
+                  Save ⌘+Enter
+                </Button>
+              </HStack>
+              <GoalCreationDescription />
+            </HStack>
+          </ResizableGroupChild>
+          <ResizableGroupChild index={1} config={store.resizableConfig[1]}>
+            Text
+          </ResizableGroupChild>
+        </ResizableGroup>
       </ModalContent>
     </Modal>
   );

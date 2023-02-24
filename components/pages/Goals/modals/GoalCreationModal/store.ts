@@ -1,14 +1,13 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
-import { GoalCreationModalSteps } from './types';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { GoalData, GoalIconVariants, GoalTemplateData } from '../../types';
-import { GoalCreationModalStepsOrder } from './constants';
+import { GoalData, GoalIconVariants } from '../../types';
 import { SyntheticEvent } from 'react';
 import { JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
 import { init } from 'emoji-mart';
 import { DescriptionData } from '../../../../../types/description';
+import { ResizableGroupConfig } from "../../../../shared/ResizableGroup/store";
 
 export type GoalCreationModalProps = {
   onClose: () => void;
@@ -65,6 +64,18 @@ export class GoalCreationModalStore {
     },
   };
 
+  resizableConfig: ResizableGroupConfig[] = [
+    {
+      size: 2,
+      minWidth: 400,
+      flexible: true,
+    },
+    {
+      size: 1,
+      minWidth: 340,
+    },
+  ];
+
   onClose: GoalCreationModalProps['onClose'];
   onSave: GoalCreationModalProps['onSave'];
 
@@ -77,9 +88,6 @@ export class GoalCreationModalStore {
   color = colors[0];
   title: string = '';
   description?: DescriptionData = undefined;
-  currentTemplate: null | GoalTemplateData = null;
-  templates: GoalTemplateData[] = [];
-  step: GoalCreationModalSteps = GoalCreationModalSteps.SELECT_TEMPLATE;
   emojiStore = new (class EmojiStore {
     data: any = '';
   })();
@@ -109,14 +117,8 @@ export class GoalCreationModalStore {
   };
 
   handleBack = () => {
-    const currentStepIndex = GoalCreationModalStepsOrder.indexOf(this.step);
-
     if (!this.isEmojiPickerOpen) {
-      if (currentStepIndex > 0 && !this.isEditMode) {
-        this.step = GoalCreationModalStepsOrder[currentStepIndex - 1];
-      } else {
-        this.handleClose();
-      }
+      this.handleClose();
     } else {
       this.closeEmojiPicker();
     }
@@ -172,11 +174,6 @@ export class GoalCreationModalStore {
     this.description.content = value;
   };
 
-  selectTemplate = (template: GoalTemplateData | null) => {
-    this.currentTemplate = template;
-    this.step = GoalCreationModalSteps.FILL_DESCRIPTION;
-  };
-
   init = async () => {
     const data = await import('@emoji-mart/data');
 
@@ -211,10 +208,6 @@ export class GoalCreationModalStore {
     this.onSave = props.onSave;
     this.existedGoal = props.goal;
     this.isEditMode = props.editMode;
-
-    if (this.isEditMode) {
-      this.step = GoalCreationModalSteps.FILL_DESCRIPTION;
-    }
 
     if (this.existedGoal) {
       this.icon = this.existedGoal.icon.value;

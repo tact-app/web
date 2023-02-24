@@ -11,8 +11,6 @@ export const GoalCreationDescription = observer(
 
     return (
       <Box
-        overflow='visible'
-        position='absolute'
         left={0}
         right={0}
         top={0}
@@ -21,6 +19,7 @@ export const GoalCreationDescription = observer(
         alignItems='center'
         flexDirection='column'
         m='auto'
+        width='100%'
       >
         <Stack
           flexDirection='row'
@@ -49,7 +48,7 @@ export const GoalCreationDescription = observer(
             }}
           />
         </Stack>
-        <Box mt={4} width='100%' flex={1}>
+        <Box mt={8} width='100%' flex={1}>
           {store.isDescriptionLoading ? (
             <Center>
               <CircularProgress isIndeterminate size='24px' />
