@@ -28,6 +28,7 @@ export enum TodayBlocks {
   TODAY_LIST = 'TODAY_LIST',
   WEEK_LIST = 'WEEK_LIST',
   CALENDAR = 'CALENDAR',
+  TASK = 'TASK',
 }
 
 export class TodayStore {
@@ -52,6 +53,9 @@ export class TodayStore {
   focusedBlock: TodayBlocks = TodayBlocks.TODAY_LIST;
   shouldSetFirstFocus: boolean = false;
 
+  currentFocusedBlock: TodayBlocks | null = null;
+  lastOpenedBlock: TodayBlocks | null = null;
+
   shouldOpenCalendar: boolean = false;
   isCalendarExpanded: boolean = true;
   isCalendarFullScreen: boolean = false;
@@ -59,6 +63,7 @@ export class TodayStore {
   isTaskExpanded: boolean = false;
   isFocusModeActive: boolean = false;
   isSilentFocusMode: boolean = false;
+  isTaskOpened: boolean = false;
 
   resizableConfig: ResizableGroupConfig[] = [
     {
@@ -171,8 +176,35 @@ export class TodayStore {
       hasPrevious: store.hasPrevTask,
       isEditorFocused: store.isEditorFocused,
       isExpanded: this.isTaskExpanded,
+      animateParams: {
+        condition: !this.isTaskExpanded && (
+          this.lastOpenedBlock === TodayBlocks.TASK || this.currentFocusedBlock === TodayBlocks.TASK
+        ),
+        deps: [this.lastOpenedBlock, this.currentFocusedBlock]
+      },
       callbacks: {
         ...store.taskCallbacks,
+        onClose: () => {
+          store.taskCallbacks.onClose?.();
+          this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+          this.lastOpenedBlock = null;
+          this.isTaskOpened = false;
+        },
+        onBlur: () => {
+          this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+          this.lastOpenedBlock = null;
+          store.taskCallbacks.onBlur?.();
+        },
+        onFocus: () => {
+          this.currentFocusedBlock = TodayBlocks.TASK;
+        },
+        onTaskChange: async (task: TaskData) => {
+          await store.taskCallbacks.onTaskChange(task);
+
+          if (this.isFocusModeActive) {
+            this.handleCloseTaskUnrelatedWithGoal(this.focusConfiguration.data);
+          }
+        },
         onExpand: this.handleExpandTask,
         onCollapse: this.handleCollapseTask,
       },
@@ -273,7 +305,10 @@ export class TodayStore {
         this.resizableConfig[0].width = FOCUS_MODE_WIDTH;
 
         setTimeout(this.focusFocusConfiguration);
+        this.lastOpenedBlock = TodayBlocks.FOCUS_CONFIGURATION;
       }
+
+      this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
     } else {
       this.isSilentFocusMode = false;
       this.resizableConfig[0].width = 0;
@@ -283,12 +318,14 @@ export class TodayStore {
 
   focusFocusConfiguration = () => {
     this.focusConfiguration.focus();
+    this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
   };
 
   focusCalendar = () => {
-    if (this.isCalendarExpanded) {
+    if (this.isCalendarExpanded && Object.keys(this.calendar.events).length) {
       this.prepareListsForLeave();
       this.focusedBlock = TodayBlocks.CALENDAR;
+      this.currentFocusedBlock = TodayBlocks.CALENDAR;
       this.calendar.focus();
 
       return true;
@@ -299,6 +336,8 @@ export class TodayStore {
 
   handleCalendarFocusLeave = () => {
     this.focusTasksList();
+
+    this.lastOpenedBlock = null;
   };
 
   handleCalendarFocusItem = () => {
@@ -306,9 +345,12 @@ export class TodayStore {
       this.prepareListsForLeave();
       this.focusedBlock = TodayBlocks.CALENDAR;
     }
+
+    this.currentFocusedBlock = TodayBlocks.CALENDAR;
   };
 
   focusTasksList = () => {
+    const isRefocusFromFocusConfig = this.focusedBlock === TodayBlocks.FOCUS_CONFIGURATION;
     const newFocusedBlock =
       this.lastFocusedBlock === TodayBlocks.TODAY_LIST
         ? TodayBlocks.WEEK_LIST
@@ -317,17 +359,36 @@ export class TodayStore {
 
     if (this.lastFocusedList.draggableList.hasFocusableItems) {
       this.focusedBlock = this.lastFocusedBlock;
-      this.lastFocusedList.draggableList.restoreSavedFocusedItems();
-      secondList.draggableList.resetSavedFocusedItems();
-      this.lastFocusedList.draggableList.focusFirstItem();
+
+      if (isRefocusFromFocusConfig) {
+        this.lastFocusedList.draggableList.setFocusedItems(
+          this.getTasksToFocus(this.lastFocusedList.draggableList.savedFocusedItemIds)
+        );
+      } else {
+        this.lastFocusedList.draggableList.restoreSavedFocusedItems();
+      }
     } else if (secondList.draggableList.hasFocusableItems) {
       this.focusedBlock = newFocusedBlock;
-      secondList.draggableList.restoreSavedFocusedItems();
-      this.lastFocusedList.draggableList.resetSavedFocusedItems();
-      secondList.draggableList.focusFirstItem();
+
+      if (isRefocusFromFocusConfig) {
+        secondList.draggableList.setFocusedItems(
+          this.getTasksToFocus(secondList.draggableList.savedFocusedItemIds)
+        );
+      } else {
+        secondList.draggableList.restoreSavedFocusedItems();
+      }
     }
+
+    this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
   };
 
+  getTasksToFocus = (savedFocusedTasks: string[]) => {
+    const allTasks = this.allTasks;
+
+    return savedFocusedTasks.filter(
+      (id) => this.focusModeConfiguration.goals.includes(allTasks[id].goalId)
+    );
+  }
   prepareListsForLeave = () => {
     const list = this.currentList;
 
@@ -341,6 +402,7 @@ export class TodayStore {
     this.prepareListsForLeave();
 
     this.focusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
+    this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
   };
 
   handleExpandTask = () => {
@@ -354,6 +416,9 @@ export class TodayStore {
   handleCollapseTask = () => {
     this.isTaskExpanded = false;
     this.resetLayout();
+
+    this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+    this.lastOpenedBlock = null;
   };
 
   expandCalendar = () => {
@@ -363,9 +428,11 @@ export class TodayStore {
     this.resizableConfig[3].size = 2;
     this.resizableConfig[3].width = undefined;
     this.resizableConfig[3].minWidth = 530;
+
+    this.lastOpenedBlock = TodayBlocks.CALENDAR;
   };
 
-  collapseCalendar = () => {
+  collapseCalendar = (resetOpenedBlock: boolean = true) => {
     this.isCalendarFullScreen = false;
     this.isCalendarExpanded = false;
 
@@ -374,6 +441,10 @@ export class TodayStore {
     this.resizableConfig[3].size = 0;
     this.resizableConfig[3].width = 57;
     this.resizableConfig[3].minWidth = undefined;
+
+    if (resetOpenedBlock) {
+      this.lastOpenedBlock = null;
+    }
   };
 
   handleListMinWidth = () => {
@@ -421,21 +492,38 @@ export class TodayStore {
   };
 
   handleOpenTask = () => {
+    if (!this.isTaskOpened) {
+      this.lastOpenedBlock = TodayBlocks.TASK;
+    }
+
+    this.isTaskOpened = true;
     this.resizableConfig[2].size = 1;
 
     if (this.isCalendarExpanded) {
-      this.collapseCalendar();
+      this.collapseCalendar(false);
       this.shouldOpenCalendar = true;
     }
   };
 
-  handleCloseTask = (doNotOpenCalendar = false) => {
-    this.handleCollapseTask();
-    this.resizableConfig[2].size = 0;
-
-    if (!doNotOpenCalendar && this.shouldOpenCalendar && !this.isCalendarExpanded) {
-      this.expandCalendar();
-      this.shouldOpenCalendar = false;
+  taskCreatorCallbacks: TasksListWithCreatorProps['taskCreatorCallbacks'] = {
+    onSave: (task, withShift, referenceId) => {
+      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
+        return this.todayListWithCreator.list.createTask(task, withShift);
+      } else if (referenceToList[referenceId] === Lists.WEEK) {
+        return this.weekList.createTask(task, referenceId === 'tomorrow');
+      }
+    },
+    onForceSave: (taskId: string, referenceId: string) => {
+      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
+        this.todayListWithCreator.list.openTask(taskId);
+        this.todayListWithCreator.list.draggableList.setFocusedItem(taskId);
+      } else if (referenceToList[referenceId] === Lists.WEEK) {
+        this.weekList.openTask(taskId);
+        this.weekList.draggableList.setFocusedItem(taskId);
+      }
+    },
+    onFocus: () => {
+      this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
     }
   };
 
@@ -579,6 +667,77 @@ export class TodayStore {
     newStatus: TaskStatus
   ) => {};
 
+  handleCloseTask = (doNotOpenCalendar = false) => {
+    this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+
+    this.handleCollapseTask();
+    this.resizableConfig[2].size = 0;
+
+    if (!doNotOpenCalendar && this.shouldOpenCalendar && !this.isCalendarExpanded) {
+      this.expandCalendar();
+      this.shouldOpenCalendar = false;
+    }
+  };
+
+  sendTasks = (blockName: TodayBlocks, tasks: TaskData[]) => {
+    const fromList =
+      blockName === TodayBlocks.WEEK_LIST
+        ? this.todayListWithCreator.list
+        : this.weekList;
+    const toList =
+      blockName === TodayBlocks.WEEK_LIST
+        ? this.weekList
+        : this.todayListWithCreator.list;
+
+    toList.receiveTasks(fromList.listId, toList.listId, tasks);
+
+    return true;
+  };
+
+  loadFocusModeConfiguration = async () => {
+    this.focusModeConfiguration = await this.root.api.focusConfigurations.get(
+      'default'
+    );
+  };
+
+  setFocusModeConfiguration = (data: FocusConfigurationData) => {
+    this.focusModeConfiguration = data;
+
+    this.handleCloseTaskUnrelatedWithGoal(data);
+  };
+
+  handleCloseTaskUnrelatedWithGoal = (focusData: FocusConfigurationData) => {
+    if (!focusData.goals.includes(this.allTasks[this.openedTask]?.goalId)) {
+      this.closeTask();
+    }
+  };
+
+  update = () => null;
+
+  setShouldSetFirstFocus = () => {
+    this.shouldSetFirstFocus = true;
+  };
+
+  setFirstFocus = () => {
+    if (this.todayListWithCreator.list.order.length) {
+      this.todayListWithCreator.list.draggableList.focusFirstItem();
+    } else {
+      this.todayListWithCreator.creator.setFocus(true);
+    }
+
+    this.shouldSetFirstFocus = false;
+  };
+
+  todayTasksListCallbacks: TasksListProps['callbacks'] = {
+    onInit: this.setShouldSetFirstFocus,
+    onFocusLeave: this.handleTasksListFocusLeave,
+    onCloseTask: this.handleCloseTask,
+    onFocusChange: () => this.switchList(TodayBlocks.TODAY_LIST),
+    onSendTask: (tasks: TaskData[]) =>
+      this.sendTasks(TodayBlocks.WEEK_LIST, tasks),
+    onOpenTask: this.handleOpenTask,
+  };
+
   switchList = (blockName: TodayBlocks, saveState?: boolean) => {
     if (blockName !== this.focusedBlock) {
       if (blockName === TodayBlocks.WEEK_LIST && !this.weekList.hasTasks) {
@@ -643,80 +802,8 @@ export class TodayStore {
         this.todayListWithCreator.creator.setFocus(true);
       }
     }
-  };
 
-  sendTasks = (blockName: TodayBlocks, tasks: TaskData[]) => {
-    const fromList =
-      blockName === TodayBlocks.WEEK_LIST
-        ? this.todayListWithCreator.list
-        : this.weekList;
-    const toList =
-      blockName === TodayBlocks.WEEK_LIST
-        ? this.weekList
-        : this.todayListWithCreator.list;
-
-    toList.receiveTasks(fromList.listId, toList.listId, tasks);
-
-    return true;
-  };
-
-  loadFocusModeConfiguration = async () => {
-    this.focusModeConfiguration = await this.root.api.focusConfigurations.get(
-      'default'
-    );
-  };
-
-  setFocusModeConfiguration = (data: FocusConfigurationData) => {
-    this.focusModeConfiguration = data;
-
-    if (!data.goals.includes(this.allTasks[this.openedTask]?.goalId)) {
-      this.closeTask();
-    }
-  };
-
-  update = () => null;
-
-  setShouldSetFirstFocus = () => {
-    this.shouldSetFirstFocus = true;
-  };
-
-  setFirstFocus = () => {
-    if (this.todayListWithCreator.list.order.length) {
-      this.todayListWithCreator.list.draggableList.focusFirstItem();
-    } else {
-      this.todayListWithCreator.creator.setFocus(true);
-    }
-
-    this.shouldSetFirstFocus = false;
-  };
-
-  todayTasksListCallbacks: TasksListProps['callbacks'] = {
-    onInit: this.setShouldSetFirstFocus,
-    onFocusLeave: this.handleTasksListFocusLeave,
-    onCloseTask: this.handleCloseTask,
-    onFocusChange: () => this.switchList(TodayBlocks.TODAY_LIST),
-    onSendTask: (tasks: TaskData[]) =>
-      this.sendTasks(TodayBlocks.WEEK_LIST, tasks),
-    onOpenTask: this.handleOpenTask,
-  };
-
-  taskCreatorCallbacks: TasksListWithCreatorProps['taskCreatorCallbacks'] = {
-    onSave: (task, withShift, referenceId) => {
-      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
-        return this.todayListWithCreator.list.createTask(task, withShift);
-      } else if (referenceToList[referenceId] === Lists.WEEK) {
-        return this.weekList.createTask(task, referenceId === 'tomorrow');
-      }
-    },
-    onForceSave: (taskId: string, referenceId: string) => {
-      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
-        this.todayListWithCreator.list.openTask(taskId);
-        this.todayListWithCreator.list.draggableList.setFocusedItem(taskId);
-      } else if (referenceToList[referenceId] === Lists.WEEK) {
-        this.weekList.openTask(taskId);
-        this.weekList.draggableList.setFocusedItem(taskId);
-      }
-    },
+    this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
   };
 
   weekTasksListCallbacks: TasksListProps['callbacks'] = {

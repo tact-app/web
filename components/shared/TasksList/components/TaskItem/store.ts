@@ -62,6 +62,10 @@ export class TaskItemStore {
     return this.parent.draggableList.focused.includes(this.task.id);
   }
 
+  get isPreFocused() {
+    return this.parent.draggableList.savedFocusedItemIds.includes(this.task.id);
+  }
+
   get isDisabled() {
     return !this.parent.checkTask(this.task.id);
   }

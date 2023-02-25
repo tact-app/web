@@ -1,12 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import {
-  Box,
-  Container,
-  Heading,
-  HStack,
-  IconButton,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Container, Heading, HStack, IconButton, Tooltip, } from '@chakra-ui/react';
 import { FocusIcon } from '../../../shared/Icons/FocusIcon';
 import { TasksListWithCreatorStoreProvider } from '../../../shared/TasksListWithCreator/store';
 import { TaskCreator } from '../../../shared/TaskCreator';
@@ -16,13 +9,15 @@ import { Lists } from '../../../shared/TasksList/constants';
 import { TasksListToday } from './TasksListToday';
 import { TasksListWeekly } from './TasksListWeekly';
 import React from 'react';
-import { useTodayStore } from '../store';
+import { TodayBlocks, useTodayStore } from '../store';
+import { AnimatedBlock } from "../../../shared/AnimatedBlock";
 
 export const ListsBlock = observer(function ListsBlock() {
   const store = useTodayStore();
 
   return (
-    <Container
+    <AnimatedBlock
+      component={Container}
       flex={1}
       maxW='container.lg'
       pt={10}
@@ -30,6 +25,14 @@ export const ListsBlock = observer(function ListsBlock() {
       display='flex'
       flexDirection='column'
       overflow='hidden'
+      animateParams={{
+        condition: store.currentFocusedBlock === TodayBlocks.TODAY_LIST && (
+          store.isCalendarExpanded ||
+          store.isFocusModeActive ||
+          store.isTaskOpened
+        ),
+        deps: [store.currentFocusedBlock]
+      }}
     >
       <Box display='flex' flexDirection='column' h='100%'>
         <HStack justifyContent='space-between' pl={5} pr={5}>
@@ -103,6 +106,6 @@ export const ListsBlock = observer(function ListsBlock() {
           </Box>
         </TasksListWithCreatorStoreProvider>
       </Box>
-    </Container>
+    </AnimatedBlock>
   );
 });
