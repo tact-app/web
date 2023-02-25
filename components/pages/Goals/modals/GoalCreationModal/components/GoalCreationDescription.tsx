@@ -20,6 +20,7 @@ export const GoalCreationDescription = observer(
         flexDirection='column'
         m='auto'
         width='100%'
+        height='100%'
       >
         <Stack
           flexDirection='row'
@@ -28,6 +29,8 @@ export const GoalCreationDescription = observer(
           alignItems='flex-end'
           ml={6}
           mr={6}
+          pl={10}
+          pr={10}
         >
           <GoalCreationEmojiSelect />
           <Input
@@ -48,23 +51,27 @@ export const GoalCreationDescription = observer(
             }}
           />
         </Stack>
-        <Box mt={8} width='100%' flex={1}>
+        <Box mt={8} width='100%' flex={1} position='relative'>
           {store.isDescriptionLoading ? (
             <Center>
               <CircularProgress isIndeterminate size='24px' />
             </Center>
           ) : (
-            <Editor
-              content={
-                store.description ? store.description.content : undefined
-              }
-              contentContainerProps={{
+            <Box position='absolute' top={0} left={0} right={0} bottom={0}>
+              <Editor
+                content={
+                  store.description ? store.description.content : undefined
+                }
+                contentContainerProps={{
                   maxW: '3xl',
                   margin: 'auto',
-              }}
-              onUpdate={store.handleDescriptionChange}
-              onSave={store.handleSave}
-            />
+                  pl: 10,
+                  pr: 10,
+                }}
+                onUpdate={store.handleDescriptionChange}
+                onSave={store.handleSave}
+              />
+            </Box>
           )}
         </Box>
       </Box>

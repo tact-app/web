@@ -66,13 +66,11 @@ export class GoalCreationModalStore {
 
   resizableConfig: ResizableGroupConfig[] = [
     {
-      size: 2,
-      minWidth: 400,
-      flexible: true,
+      size: 3,
     },
     {
-      size: 1,
-      minWidth: 340,
+      size: 0,
+      width: 400
     },
   ];
 

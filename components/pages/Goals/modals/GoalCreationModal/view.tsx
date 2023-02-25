@@ -35,14 +35,13 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
             borderRight='1px'
             borderColor='gray.200'
           >
-            <HStack flexDirection='column' width='100%'>
-              <HStack justifyContent='space-between' width='100%' maxW='3xl' pt={4} pb={8}>
+            <HStack flexDirection='column' width='100%' height='100%'>
+              <HStack justifyContent='space-between' width='100%' maxW='3xl' pt={4} pb={8} pl={10} pr={10}>
                 <Button
                   variant='ghost'
                   size='xs'
                   onClick={store.handleBack}
                   p={0}
-                  pl={2}
                   _hover={{
                     bg: 'none'
                   }}
