@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { Box, BoxProps, chakra, ChakraProps } from '@chakra-ui/react';
+import { Box, BoxProps, chakra, ChakraProps, propNames } from '@chakra-ui/react';
 import React, { PropsWithChildren } from 'react';
 import { Draggable, DragDropContext, Droppable, useMouseSensor, useTouchSensor } from 'react-beautiful-dnd';
 import { TaskDragIcon } from '../Icons/TaskDragIcon';
@@ -167,6 +167,7 @@ export const DraggableListView = observer(function DraggableListView({
                   ref={provided.innerRef}
                   index={index}
                   position='relative'
+                  className='mouse-select__selectable'
                   role='group'
                   display='flex'
                   style={getStyle(provided.draggableProps.style, snapshot)}

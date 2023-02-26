@@ -122,6 +122,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
                 id={TASK_TITLE_ELEMENT_ID}
                 transition='color 0.2s ease-in-out'
                 cursor={store.isFocused ? 'text' : 'inherit'}
+                userSelect='none'
               >
                 {store.task.title}
               </chakra.span>
