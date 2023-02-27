@@ -11,6 +11,7 @@ import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { GoalCreationDescription } from "./components/GoalCreationDescription";
 import { ResizableGroup } from "../../../../shared/ResizableGroup";
 import { ResizableGroupChild } from "../../../../shared/ResizableGroup/ResizableGroupChild";
+import { GoalCreationInformation } from "./components/GoalCreationInformation";
 
 export const GoalCreationModalView = observer(function GoalCreationModal() {
   const store = useGoalCreationModalStore();
@@ -67,7 +68,7 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
             </HStack>
           </ResizableGroupChild>
           <ResizableGroupChild index={1} config={store.resizableConfig[1]}>
-            Text
+            <GoalCreationInformation />
           </ResizableGroupChild>
         </ResizableGroup>
       </ModalContent>

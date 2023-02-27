@@ -8,6 +8,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { init } from 'emoji-mart';
 import { DescriptionData } from '../../../../../types/description';
 import { ResizableGroupConfig } from "../../../../shared/ResizableGroup/store";
+import { TasksListWithCreatorStore } from "../../../../shared/TasksListWithCreator/store";
+import { Lists } from "../../../../shared/TasksList/constants";
+import { TasksListStore } from "../../../../shared/TasksList/store";
+import { TodayBlocks } from "../../../Today/store";
+import { TaskData } from "../../../../shared/TasksList/types";
 
 export type GoalCreationModalProps = {
   onClose: () => void;
@@ -31,6 +36,12 @@ export const colors = [
   'purple.200',
 ];
 
+enum GoalCreateBlocks {
+  GOAL_EDITOR = 'GOAL_EDITOR',
+  TASK_LIST = 'TASK_LIST',
+  FINISHED_TASK_LIST = 'FINISHED_TASK_LIST',
+}
+
 export class GoalCreationModalStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
@@ -45,6 +56,9 @@ export class GoalCreationModalStore {
       },
     });
   }
+
+  listWithCreator = new TasksListWithCreatorStore(this.root);
+  finishedList = new TasksListStore(this.root);
 
   keyMap = {
     CREATE: ['meta+enter', 'meta+s'],
@@ -86,9 +100,26 @@ export class GoalCreationModalStore {
   color = colors[0];
   title: string = '';
   description?: DescriptionData = undefined;
+  focusedBlock: GoalCreateBlocks;
   emojiStore = new (class EmojiStore {
     data: any = '';
   })();
+
+  tasksListCallbacks: TasksListWithCreatorStore['tasksListCallbacks'] = {
+    onFocusLeave: () => null,
+    onOpenTask: () => null,
+    onCloseTask: () => null,
+  };
+
+  taskCreatorCallbacks: TasksListWithCreatorStore['taskCreatorCallbacks'] = {
+    onSave: () => null,
+  };
+  draggingTask: TaskData | null = null;
+  droppableIds = {
+    [Lists.TODAY]: TodayBlocks.TODAY_LIST,
+    [Lists.WEEK]: TodayBlocks.WEEK_LIST,
+    'week-button': TodayBlocks.WEEK_LIST,
+  };
 
   get isReadyForSave() {
     return !!this.title;
@@ -170,6 +201,95 @@ export class GoalCreationModalStore {
     }
 
     this.description.content = value;
+  };
+
+  get isTasksListHotkeysEnabled() {
+    return this.focusedBlock === GoalCreateBlocks.TASK_LIST;
+  }
+
+  get isFinishedTaskListHotkeysEnabled() {
+    return this.focusedBlock === GoalCreateBlocks.FINISHED_TASK_LIST;
+  }
+
+  get sensors() {
+    return [
+      (api) => {
+        this.listWithCreator.list.draggableList.setDnDApi(api);
+        this.finishedList.draggableList.setDnDApi(api);
+      },
+    ];
+  }
+
+  getListByName = (name: TodayBlocks) => {
+    return name === TodayBlocks.TODAY_LIST
+      ? this.listWithCreator.list
+      : this.finishedList;
+  };
+
+  handleDragStart = (result) => {
+    this.listWithCreator.list.draggableList.startDragging();
+    this.finishedList.draggableList.startDragging();
+
+    const taskId = result.draggableId;
+    const blockName = this.droppableIds[result.source.droppableId];
+    const list = this.getListByName(blockName);
+
+    this.draggingTask = list.items[taskId];
+  };
+
+  handleDragEnd = (result) => {
+    if (result?.destination) {
+      const destinationId = result.destination.droppableId;
+      const sourceId = result.source.droppableId;
+
+      const destinationBlock = this.droppableIds[destinationId];
+      const sourceBlock = this.droppableIds[sourceId];
+
+      const isDifferentList = destinationBlock !== sourceBlock;
+
+      if (!isDifferentList) {
+        if (destinationBlock === TodayBlocks.TODAY_LIST) {
+          this.listWithCreator.list.draggableList.endDragging(result);
+          this.finishedList.draggableList.endDragging();
+        } else if (destinationBlock === TodayBlocks.WEEK_LIST) {
+          this.finishedList.draggableList.endDragging(result);
+          this.listWithCreator.list.draggableList.endDragging();
+        } else {
+          this.listWithCreator.list.draggableList.endDragging();
+          this.finishedList.draggableList.endDragging();
+        }
+      } else {
+        if (destinationBlock === TodayBlocks.TODAY_LIST) {
+          const task = this.finishedList.detachTask(result.draggableId);
+
+          this.listWithCreator.list.receiveTasks(
+            this.finishedList.listId,
+            this.listWithCreator.list.listId,
+            [task],
+            result.destination.index
+          );
+        } else if (destinationBlock === TodayBlocks.WEEK_LIST) {
+          const task = this.listWithCreator.list.detachTask(
+            result.draggableId
+          );
+
+          this.finishedList.receiveTasks(
+            this.listWithCreator.list.listId,
+            this.finishedList.listId,
+            [task],
+            result.destination.index
+          );
+        }
+
+        this.listWithCreator.list.draggableList.endDragging();
+        this.finishedList.draggableList.endDragging();
+      }
+    } else {
+      this.listWithCreator.list.draggableList.endDragging();
+      this.finishedList.draggableList.endDragging();
+    }
+
+    this.draggingTask = null;
   };
 
   init = async () => {

@@ -530,6 +530,11 @@ export class TasksListStore {
   };
 
   loadTasks = async () => {
+    if (this.listId === Lists.NEW) {
+      this.isLoading = false;
+      return;
+    }
+
     this.isLoading = true;
 
     const { tasks, order } = await this.root.api.tasks.list(this.listId);
