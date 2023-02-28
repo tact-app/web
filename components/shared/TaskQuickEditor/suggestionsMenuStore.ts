@@ -27,6 +27,7 @@ export class TaskQuickEditorSuggestionsMenu {
       return
     }
     this.openForMode = mode;
+    this.isOpen = true;
 
     setTimeout(() => this.focusFirst());
   };

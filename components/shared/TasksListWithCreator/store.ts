@@ -64,6 +64,7 @@ export class TasksListWithCreatorStore {
       },
       onEmpty: () => {
         this.creator.setFocus(true);
+        this.tasksListAdditions.onEmpty?.();
       },
     };
   }
