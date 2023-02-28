@@ -321,6 +321,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </Layout>
       </RootStoreProvider>
+      <div id='portal'/>
     </ChakraProvider>
   );
 }

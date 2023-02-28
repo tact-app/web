@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { Box, BoxProps, chakra, ChakraProps, propNames } from '@chakra-ui/react';
+import { Box, BoxProps, chakra, ChakraProps } from '@chakra-ui/react';
 import React, { PropsWithChildren } from 'react';
 import { Draggable, DragDropContext, Droppable, useMouseSensor, useTouchSensor } from 'react-beautiful-dnd';
 import { TaskDragIcon } from '../Icons/TaskDragIcon';
@@ -75,7 +75,7 @@ const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
       }
     >
       {Prefix && <Prefix id={id} snapshot={snapshot} />}
-      <DragHandler provided={provided} snapshot={snapshot} id={id} />
+      {!store.isMouseSelection && <DragHandler provided={provided} snapshot={snapshot} id={id} />}
       <Content id={id} isFocused={isFocused} snapshot={snapshot} provided={provided} />
     </Box>
   );
@@ -168,6 +168,13 @@ export const DraggableListView = observer(function DraggableListView({
                   index={index}
                   position='relative'
                   className='mouse-select__selectable'
+                  css={{
+                    '&.selected': {
+                      '.selectable_task': {
+                        background: '#EDF2F7'
+                      }
+                    }
+                  }}
                   role='group'
                   display='flex'
                   style={getStyle(provided.draggableProps.style, snapshot)}

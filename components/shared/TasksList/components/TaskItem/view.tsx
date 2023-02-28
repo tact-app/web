@@ -20,6 +20,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
       ? quickEditStore.modes.tag.tags.length
       : store.task.tags.length
   );
+  const showTaskMenu = !store.isReadOnly && !store.isDisabled && !store.parent.draggableList.isMouseSelection
 
   let bg = 'transparent';
   let hoveredBg = 'transparent';
@@ -87,6 +88,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         }}
         {...props.provided.dragHandleProps}
         cursor='pointer !important'
+        className='selectable_task'
       >
         <Box minH={10} pl={2} display='flex' alignItems='center'>
           <div onClick={(e) => e.stopPropagation()}>
@@ -178,7 +180,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           </Box>
         )}
       </Box>
-      {!store.isReadOnly && !store.isDisabled && <TaskItemMenu />}
+      {showTaskMenu && <TaskItemMenu />}
     </Box>
   );
 });

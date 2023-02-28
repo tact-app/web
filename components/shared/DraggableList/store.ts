@@ -54,6 +54,7 @@ export class DraggableListStore {
   focusedItemIds: string[] = [];
   baseFocusedItem: number = null;
   items: string[] = [];
+  isMouseSelection: boolean = false
 
   isDndActive: boolean = true;
   isForceHotkeysActive: boolean = true;
@@ -240,15 +241,20 @@ export class DraggableListStore {
     }
   };
 
-  mouseSelect = (items, { metaKey, ctrlKey }) => {
-    if (!metaKey && !ctrlKey) {
+  finishMouseSelect = (items, { shiftKey }) => {
+    if (!shiftKey) {
       this.resetFocusedItem();
     }
 
-    const selectedIds = items
-      .map(item => item.getAttribute('data-rbd-draggable-id'))
-      .filter(item => !this.focusedItemIds.includes(item));
-    this.addFocusedItems(selectedIds)
+    const selectedIds = items.map(item => item.getAttribute('data-rbd-draggable-id'))
+    this.focusedItemIds = selectedIds
+    .filter(item => !this.focusedItemIds.includes(item))
+    .concat(this.focusedItemIds.filter(item => !selectedIds.includes(item)));
+    this.isMouseSelection = false
+  }
+
+  starthMouseSelect = () => {
+    this.isMouseSelection = true
   }
 
   selectAll = () => {

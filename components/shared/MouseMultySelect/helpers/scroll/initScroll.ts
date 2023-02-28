@@ -1,4 +1,3 @@
-import { CoordinatesAndDimensions } from './types';
 import { checkForWindowScroll } from './checkForWindowScroll';
 
 let _timer: any = null;
