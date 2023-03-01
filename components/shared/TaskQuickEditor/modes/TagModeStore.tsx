@@ -5,7 +5,7 @@ import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../../stores/RootStore';
 
 export type TagModeCallbacks = {
-  onFocusLeave: (direction: NavigationDirections) => void;
+  onFocusLeave: (direction?: NavigationDirections) => void;
   onExit: () => void;
   onChange: (autoSave?: boolean) => void;
   onLeave: () => void;
@@ -199,7 +199,7 @@ export class TagModeStore {
     const index = this.tags.findIndex((tag) => tag.id === id);
     this.tags.splice(index, 1);
 
-    if (this.tags.length === 0) {
+    if (!this.tags.length) {
       this.toggleIsCollapsed(false);
       this.isCollapseOpen = false;
     }
@@ -295,6 +295,8 @@ export class TagModeStore {
       if (!this.isCollapseOpen) {
         this.isCollapseOpen = false;
       }
+    } else if (e.key === 'Enter') {
+      e.stopPropagation();
     }
   };
 
@@ -370,6 +372,7 @@ export class TagModeStore {
         e.stopPropagation();
         this.handleCollapseClose();
         this.collapseRef?.focus();
+        this.callbacks.onFocusLeave();
       } else if (!this.autoSave) {
         this.callbacks.onLeave();
       }

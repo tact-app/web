@@ -728,17 +728,14 @@ export class TodayStore {
     this.shouldSetFirstFocus = false;
   };
 
-  todayTasksListCallbacks: TasksListProps['callbacks'] = {
-    onInit: this.setShouldSetFirstFocus,
-    onFocusLeave: this.handleTasksListFocusLeave,
-    onCloseTask: this.handleCloseTask,
-    onFocusChange: () => this.switchList(TodayBlocks.TODAY_LIST),
-    onSendTask: (tasks: TaskData[]) =>
-      this.sendTasks(TodayBlocks.WEEK_LIST, tasks),
-    onOpenTask: this.handleOpenTask,
-  };
-
   switchList = (blockName: TodayBlocks, saveState?: boolean) => {
+    if (this.focusedBlock === TodayBlocks.WEEK_LIST && !Object.keys(this.weekList.items).length) {
+      this.closeTask();
+    }
+    if (this.focusedBlock === TodayBlocks.TODAY_LIST && !Object.keys(this.todayListWithCreator.list.items).length) {
+      this.closeTask();
+    }
+
     if (blockName !== this.focusedBlock) {
       if (blockName === TodayBlocks.WEEK_LIST && !this.weekList.hasTasks) {
         return;
@@ -800,10 +797,22 @@ export class TodayStore {
         !this.todayListWithCreator.list.hasTasks
       ) {
         this.todayListWithCreator.creator.setFocus(true);
+        this.closeTask();
       }
     }
 
     this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+  };
+
+  todayTasksListCallbacks: TasksListProps['callbacks'] = {
+    onInit: this.setShouldSetFirstFocus,
+    onFocusLeave: this.handleTasksListFocusLeave,
+    onCloseTask: this.handleCloseTask,
+    onFocusChange: () => this.switchList(TodayBlocks.TODAY_LIST),
+    onSendTask: (tasks: TaskData[]) =>
+      this.sendTasks(TodayBlocks.WEEK_LIST, tasks),
+    onOpenTask: this.handleOpenTask,
+    onEmpty: () => this.switchList(TodayBlocks.WEEK_LIST),
   };
 
   weekTasksListCallbacks: TasksListProps['callbacks'] = {

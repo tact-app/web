@@ -74,48 +74,24 @@ export class TaskQuickEditorStore {
   order = [Modes.TAG, Modes.SPACE, Modes.PRIORITY, Modes.GOAL];
   callbacks: TaskQuickEditorProps['callbacks'];
 
-  modes = {
-    [Modes.PRIORITY]: new PriorityModeStore(this.root, {
-      onExit: () => this.exitMode(),
-      onChangeSuggestionIndex: (index: number) =>
-        this.suggestionsMenu.setIndex(index),
-    }),
-    [Modes.TAG]: new TagModeStore(this.root, {
-      onExit: () => this.exitMode(),
-      onLeave: () => this.handleLeaveAndRestoreTask(),
-      onChange: (autoSave?: boolean) => {
-        if (autoSave) {
-          this.leave();
-        } else {
-          this.handleFocus();
+  setFocus = (focusInput?: boolean) => {
+    this.isInputFocused = true;
 
-          if (this.modes.tag.tags.length) {
-            this.modes.tag.handleCollapseOpen();
-          }
+    if (this.isModeActive) {
+      this.suggestionsMenu.open();
+    }
+
+    if (focusInput) {
+      setTimeout(() => {
+        if (this.input) {
+          this.input.focus();
+          this.input.setSelectionRange(
+            this.savedCaretPosition,
+            this.savedCaretPosition
+          );
         }
-      },
-      onFocusLeave: (direction: NavigationDirections) => {
-        if (direction === NavigationDirections.LEFT) {
-          this.focusPrevFilledMode();
-        } else if (direction === NavigationDirections.RIGHT) {
-          this.focusNextFilledMode();
-        } else if (direction === NavigationDirections.DOWN) {
-          this.callbacks.onNavigate?.(direction);
-        } else if (direction === NavigationDirections.UP) {
-          this.setFocus(true);
-        }
-      },
-    }),
-    [Modes.SPACE]: new SpaceModeStore(this.root, {
-      onExit: () => this.exitMode(),
-      onCreate: this.modals.openSpaceCreationModal
-    }),
-    [Modes.GOAL]: new GoalModeStore(this.root, {
-      onExit: () => this.exitMode(),
-    }),
-    [Modes.REFERENCE]: new ReferenceModeStore(this.root, {
-      onExit: () => this.exitMode(),
-    }),
+      }, 100);
+    }
   };
 
   modeStartPos = 0;
@@ -247,24 +223,50 @@ export class TaskQuickEditorStore {
     this.input = input;
   };
 
-  setFocus = (focusInput?: boolean) => {
-    this.isInputFocused = true;
-
-    if (this.isModeActive) {
-      this.suggestionsMenu.open();
-    }
-
-    if (focusInput) {
-      setTimeout(() => {
-        if (this.input) {
-          this.input.focus();
-          this.input.setSelectionRange(
-            this.savedCaretPosition,
-            this.savedCaretPosition
-          );
+  modes = {
+    [Modes.PRIORITY]: new PriorityModeStore(this.root, {
+      onExit: () => this.exitMode(),
+      onChangeSuggestionIndex: (index: number) =>
+        this.suggestionsMenu.setIndex(index),
+    }),
+    [Modes.TAG]: new TagModeStore(this.root, {
+      onExit: () => this.exitMode(),
+      onLeave: () => this.handleLeaveAndRestoreTask(),
+      onChange: (autoSave?: boolean) => {
+        if (autoSave) {
+          this.leave();
+        } else {
+          if (this.modes.tag.tags.length) {
+            this.modes.tag.handleCollapseOpen();
+          }
         }
-      });
-    }
+      },
+      onFocusLeave: (direction?: NavigationDirections) => {
+        if (!direction) {
+          this.suggestionsMenu.closeForMode();
+        }
+
+        if (direction === NavigationDirections.LEFT) {
+          this.focusPrevFilledMode();
+        } else if (direction === NavigationDirections.RIGHT) {
+          this.focusNextFilledMode();
+        } else if (direction === NavigationDirections.DOWN) {
+          this.callbacks.onNavigate?.(direction);
+        } else if (direction === NavigationDirections.UP) {
+          this.setFocus(true);
+        }
+      },
+    }),
+    [Modes.SPACE]: new SpaceModeStore(this.root, {
+      onExit: () => this.exitMode(),
+      onCreate: this.modals.openSpaceCreationModal
+    }),
+    [Modes.GOAL]: new GoalModeStore(this.root, {
+      onExit: () => this.exitMode(),
+    }),
+    [Modes.REFERENCE]: new ReferenceModeStore(this.root, {
+      onExit: () => this.exitMode(),
+    }),
   };
 
   removeFocus = () => {

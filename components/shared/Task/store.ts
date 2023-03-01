@@ -113,7 +113,7 @@ class TaskStore {
 
   handleDescriptionFocus = () => {
     this.isEditorFocused = true;
-    this.callbacks.onFocus();
+    this.callbacks.onFocus?.();
     clearTimeout(this.descriptionBlurTimeout);
   };
 
@@ -138,7 +138,10 @@ class TaskStore {
   saveAndExit = () => {
     this.saveDescription();
     this.isEditorFocused = false;
-    this.callbacks.onBlur?.();
+
+    if (!this.quickEditor.isInputFocused) {
+      this.callbacks.onBlur?.();
+    }
   };
 
   handleNextItem = () => {
@@ -149,14 +152,6 @@ class TaskStore {
   handlePreviousItem = () => {
     this.handleDescriptionBlur();
     this.callbacks.onPreviousItem(this.data?.id, true);
-  };
-
-  handleExpand = () => {
-    this.callbacks.onExpand?.();
-  };
-
-  handleCollapse = () => {
-    this.callbacks.onCollapse?.();
   };
 
   handleClose = () => {
