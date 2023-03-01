@@ -4,7 +4,7 @@ import { useGoalCreationModalStore } from '../store';
 import React, { ReactElement } from "react";
 import { TasksListWithCreator } from "../../../../../shared/TasksListWithCreator";
 import { DraggableListContext } from "../../../../../shared/DraggableList/view";
-import { PropertyMenu } from "../../../../../shared/PropertyMenu";
+import { SpaceSelect } from "../../../../../shared/SpaceSelect";
 
 export const GoalCreationInformation = observer(
   function GoalCreationInformation() {
@@ -33,7 +33,7 @@ export const GoalCreationInformation = observer(
             <Tbody>
               {renderInformationItem(
                 'Space',
-                <PropertyMenu selectedId={undefined} callbacks={{ onExit: () => null }} />
+                <SpaceSelect selectedId={undefined} callbacks={{ onNavigate: () => null }} />
               )}
             </Tbody>
           </Table>
