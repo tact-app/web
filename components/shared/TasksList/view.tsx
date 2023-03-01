@@ -50,7 +50,7 @@ export const TasksListView = observer(function TasksListView(
         containerRef={listRef}
         minItemPx={5}
         minFramePx={20}
-        edgeSize={200}
+        edgeSize={0}
         notStartWithSelectableElements
         portal={portal}
         onStartSelection={store.draggableList.starthMouseSelect}
