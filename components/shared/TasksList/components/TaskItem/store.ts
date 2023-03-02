@@ -154,7 +154,7 @@ export class TaskItemStore {
 
       this.onFocus(
         this.task.id,
-        e.metaKey ? 'single' : e.shiftKey ? 'many' : undefined
+        e.metaKey || e.ctrlKey ? 'single' : e.shiftKey ? 'many' : undefined
       );
     }
   };
