@@ -1,3 +1,53 @@
+# Release notes, v0.2.0-pre.3
+
+## Improvements
+
+- [TACT-50](https://linear.app/tact/issue/TACT-50/select-tasks-by-cursor): Select tasks by cursor (#510)
+- [TACT-294](https://linear.app/tact/issue/TACT-294/tags-window-doesnt-close-when-esc-is-pressed): Tags window doesn't close when ESC is pressed (#533)
+
+## Dependencies
+
+### Production
+
+- feat(deps): bump @tanstack/react-virtual from 3.0.0-beta.49 to 3.0.0-beta.52 (#512)
+- feat(deps): bump @tiptap/extension-highlight from 2.0.0-beta.218 to 2.0.0-beta.219 (#517)
+- feat(deps): bump framer-motion from 10.0.0 to 10.0.1 (#518)
+- feat(deps): bump @sentry/nextjs from 7.38.0 to 7.39.0 (#521)
+- feat(deps): bump @tiptap/extension-placeholder from 2.0.0-beta.218 to 2.0.0-beta.219 (#523)
+- feat(deps): bump @tiptap/extension-underline from 2.0.0-beta.218 to 2.0.0-beta.219 (#524)
+- feat(deps): bump @tiptap/suggestion from 2.0.0-beta.218 to 2.0.0-beta.219 (#525)
+- feat(deps): bump @tiptap/extension-link from 2.0.0-beta.218 to 2.0.0-beta.220 (#526)
+- feat(deps): bump @tiptap/extension-task-list from 2.0.0-beta.218 to 2.0.0-beta.220 (#527)
+- feat(deps): bump @tiptap/extension-task-item from 2.0.0-beta.218 to 2.0.0-beta.220 (#528)
+- feat(deps): bump @tiptap/extension-highlight from 2.0.0-beta.218 to 2.0.0-beta.220 (#529)
+- feat(deps): bump @tiptap/starter-kit from 2.0.0-beta.218 to 2.0.0-beta.220 (#531)
+- feat(deps): bump @tiptap/react from 2.0.0-beta.218 to 2.0.0-beta.220 (#532)
+- feat(deps): bump @tiptap/extension-placeholder from 2.0.0-beta.219 to 2.0.0-beta.220 (#534)
+- feat(deps): bump @tiptap/suggestion from 2.0.0-beta.219 to 2.0.0-beta.220 (#535)
+- feat(deps): bump next from 13.2.1 to 13.2.2 (#537)
+- feat(deps): bump @tiptap/extension-underline from 2.0.0-beta.219 to 2.0.0-beta.220 (#539)
+- feat(deps): bump next from 13.2.2 to 13.2.3 (#540)
+- feat(deps): bump @sentry/nextjs from 7.39.0 to 7.40.0 (#544)
+
+### Development
+
+- chore(deps-dev): bump eslint from 8.34.0 to 8.35.0 (#511)
+- chore(deps-dev): bump @types/node from 18.14.1 to 18.14.2 (#513)
+- chore(deps-dev): bump eslint-config-next from 13.2.1 to 13.2.2 (#538)
+- tools(deps): bump vercel from 28.16.7 to 28.16.10 in /tools (#536)
+
+## Active contributors
+
+Special thanks to the following contributors for their contributions to this release:
+- @kamilsk, Lead
+- @al-petrushin
+- @DimovyM
+- @Tatiana683, QA
+
+## Full changelog
+
+Compare view [v0.2.0-pre.2...v0.2.0-pre.3](https://github.com/tact-app/web/compare/v0.2.0-pre.2...v0.2.0-pre.3).
+
 # Release notes, v0.2.0-pre.2
 
 ## Improvements
