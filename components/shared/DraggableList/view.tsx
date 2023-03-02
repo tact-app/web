@@ -75,7 +75,7 @@ const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
       }
     >
       {Prefix && <Prefix id={id} snapshot={snapshot} />}
-      <DragHandler provided={provided} snapshot={snapshot} id={id} />
+      {!store.isMouseSelection && <DragHandler provided={provided} snapshot={snapshot} id={id} />}
       <Content id={id} isFocused={isFocused} snapshot={snapshot} provided={provided} />
     </Box>
   );
@@ -167,6 +167,14 @@ export const DraggableListView = observer(function DraggableListView({
                   ref={provided.innerRef}
                   index={index}
                   position='relative'
+                  className='mouse-select__selectable'
+                  css={{
+                    '&.selected': {
+                      '.selectable_task': {
+                        background: '#EDF2F7'
+                      }
+                    }
+                  }}
                   role='group'
                   display='flex'
                   style={getStyle(provided.draggableProps.style, snapshot)}
