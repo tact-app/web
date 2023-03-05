@@ -32,6 +32,10 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
     }
   }, [isOpen, items.length, store.suggestionsMenu, store.suggestionsMenu.itemsCount]);
 
+  if (!items.length) {
+    return null;
+  }
+
   return (
     <Popover
       isOpen={isOpen}

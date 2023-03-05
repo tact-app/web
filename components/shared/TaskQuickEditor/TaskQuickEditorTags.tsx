@@ -37,7 +37,10 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
           key={title}
           variant='unstyled'
           size='xs'
-          onClick={() => store.modes.tag.focusTagById(id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            store.modes.tag.focusTagById(id);
+          }}
           ref={(el) => store.modes.tag.setTagRef(el, id)}
           onKeyDown={(e) => store.modes.tag.handleButtonKeyDown(e, id)}
           onFocus={store.handleModeFocus(Modes.TAG)}
@@ -84,9 +87,9 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
             justifyContent='center'
             tabIndex={-1}
             isRound
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               store.modes.tag.removeTag(id);
-              store.suggestionsMenu.openFor(Modes.TAG)
             }}
         >
           <FontAwesomeIcon

@@ -205,6 +205,14 @@ export class TagModeStore {
     }
 
     this.callbacks.onChange(this.autoSave);
+
+    if (!this.tags.length) {
+      this.callbacks.onFocusLeave(NavigationDirections.LEFT);
+    } else if (this.tags[index - 1]) {
+      this.focusTag(this.tags[index - 1]);
+    } else if (this.tags[index]) {
+      this.focusTag(this.tags[index]);
+    }
   };
 
   addTag = (tag: TaskTag) => {
@@ -308,17 +316,7 @@ export class TagModeStore {
 
     if (e.key === 'Backspace' || e.key === 'Delete') {
       e.preventDefault();
-      const tagIndex = this.tags.findIndex((tag) => tag.id === id);
-
       this.removeTag(id);
-
-      if (!this.tags.length) {
-        this.callbacks.onFocusLeave(NavigationDirections.LEFT);
-      } else if (this.tags[tagIndex - 1]) {
-        this.focusTag(this.tags[tagIndex - 1]);
-      } else if (this.tags[tagIndex]) {
-        this.focusTag(this.tags[tagIndex]);
-      }
     } else if (
       (!this.isCollapseOpen && e.key === 'ArrowLeft') ||
       (this.isCollapseOpen && e.key === 'ArrowUp')
