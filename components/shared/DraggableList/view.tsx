@@ -167,6 +167,7 @@ export const DraggableListView = observer(function DraggableListView({
                   ref={provided.innerRef}
                   index={index}
                   position='relative'
+                  listId={droppableId}
                   className='mouse-select__selectable'
                   css={{
                     '&.selected': {

@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import ReactDOM from 'react-dom';
 
 import { handleSelection } from './helpers/handleSelection';
 import { mouseMoveCheckToStart } from './helpers/mouseMoveCheckToStart';
 import { initScroll, clearTimer } from './helpers/scroll';
 import { MouseMovePosition, MouseMultySelectProps } from './types';
+import { Portal } from '@chakra-ui/react';
 
 let elements: HTMLCollection;
 const defaultPositionState: MouseMovePosition = {
@@ -20,7 +20,6 @@ export const MouseMultySelect = ({
   containerRef,
   minFramePx = 10,
   minItemPx = 0,
-  portal,
   edgeSize = 100,
   onClickPreventDefault = false,
   notStartWithSelectableElements = false,
@@ -153,7 +152,7 @@ export const MouseMultySelect = ({
         element.removeEventListener('mousedown', handleMouseDown);
         element.removeEventListener('mousemove', handleMoueMove);
         element.removeEventListener('selectstart', handleSelectStart);
-      } else  {
+      } else {
         document.removeEventListener('mousedown', handleMouseDown);
         document.removeEventListener('mousemove', handleMoueMove);
         document.removeEventListener('selectstart', handleSelectStart);
@@ -170,22 +169,20 @@ export const MouseMultySelect = ({
     isOpenRef.current = isOpen;
   }, [positions, isOpen]);
 
-  const renderEl = () => {
-    return (
-      <div
-        className={`${frameClassName} ${isOpen ? ` ${openFrameClassName}` : ''}`}
-        style={{
-          position: 'absolute',
-          display: `${isOpen ? 'block': 'none'}`,
-          top: `${positions.y}px`,
-          left: `${positions.x}px`,
-          width: `${positions.width}px`,
-          height: `${positions.height}px`,
-        }}
-        ref={borderRef}
-      />
-    );
-  };
-
-  return ReactDOM.createPortal(renderEl(), portal)
+  return <Portal
+  containerRef={containerRef || document}
+  children={
+    <div
+      className={`${frameClassName} ${isOpen ? ` ${openFrameClassName}` : ''}`}
+      style={{
+        position: 'absolute',
+        display: `${isOpen ? 'block' : 'none'}`,
+        top: `${positions.y}px`,
+        left: `${positions.x}px`,
+        width: `${positions.width}px`,
+        height: `${positions.height}px`,
+      }}
+      ref={borderRef}
+    />
+  } />
 };

@@ -8,104 +8,117 @@ import { TasksListStoreProvider } from '../../../shared/TasksList/store';
 import { Lists } from '../../../shared/TasksList/constants';
 import { TasksListToday } from './TasksListToday';
 import { TasksListWeekly } from './TasksListWeekly';
-import React from 'react';
+import React, { useRef } from 'react';
 import { TodayBlocks, useTodayStore } from '../store';
 import { AnimatedBlock } from "../../../shared/AnimatedBlock";
+import { MouseMultySelect } from '../../../shared/MouseMultySelect';
 
 export const ListsBlock = observer(function ListsBlock() {
   const store = useTodayStore();
+  const containerRef = useRef(null);
 
   return (
-    <AnimatedBlock
-      component={Container}
-      flex={1}
-      maxW='container.lg'
-      pt={10}
-      h='100%'
-      display='flex'
-      flexDirection='column'
-      overflow='hidden'
-      animateParams={{
-        condition: store.currentFocusedBlock === TodayBlocks.TODAY_LIST && (
-          store.isCalendarExpanded ||
-          store.isFocusModeActive ||
-          store.isTaskOpened
-        ),
-        deps: [store.currentFocusedBlock]
-      }}
-    >
-      <Box display='flex' flexDirection='column' h='100%'>
-        <HStack justifyContent='space-between' pl={5} pr={5}>
-          <Heading size='lg' mt={2.5} mb={8} pt={4}>
-            Today
-          </Heading>
-          <HStack>
-            <Tooltip label='F / ⇧F' hasArrow>
-              <IconButton
-                aria-label='focus'
-                variant='ghost'
-                onClick={store.handleToggleFocusMode}
-                stroke={store.isFocusModeActive ? 'blue.400' : 'gray.400'}
-              >
-                <FocusIcon />
-              </IconButton>
-            </Tooltip>
+    <Box ref={containerRef} h='100%'>
+      <AnimatedBlock
+        component={Container}
+        flex={1}
+        maxW='container.lg'
+        pt={10}
+        h='100%'
+        display='flex'
+        flexDirection='column'
+        overflow='hidden'
+        animateParams={{
+          condition: store.currentFocusedBlock === TodayBlocks.TODAY_LIST && (
+            store.isCalendarExpanded ||
+            store.isFocusModeActive ||
+            store.isTaskOpened
+          ),
+          deps: [store.currentFocusedBlock]
+        }}
+      >
+        <Box display='flex' flexDirection='column' h='100%'>
+          <HStack justifyContent='space-between' pl={5} pr={5}>
+            <Heading size='lg' mt={2.5} mb={8} pt={4}>
+              Today
+            </Heading>
+            <HStack>
+              <Tooltip label='F / ⇧F' hasArrow>
+                <IconButton
+                  aria-label='focus'
+                  variant='ghost'
+                  onClick={store.handleToggleFocusMode}
+                  stroke={store.isFocusModeActive ? 'blue.400' : 'gray.400'}
+                >
+                  <FocusIcon />
+                </IconButton>
+              </Tooltip>
+            </HStack>
           </HStack>
-        </HStack>
-        <TasksListWithCreatorStoreProvider
-          instance={store.todayListWithCreator}
-          tasksListCallbacks={store.todayTasksListCallbacks}
-          taskCreatorCallbacks={store.taskCreatorCallbacks}
-        >
-          <TaskCreator
-            instance={store.todayListWithCreator.creator}
-            callbacks={store.todayListWithCreator.taskCreatorCallbacks}
-            keepFocus
-            wrapperProps={{
-              ml: 5,
-              mr: 5,
-            }}
-          />
-          <Box
-            overflow='auto'
-            css={{
-              scrollbarWidth: 'none',
-              '&::-webkit-scrollbar': {
-                display: 'none',
-              },
-            }}
+          <TasksListWithCreatorStoreProvider
+            instance={store.todayListWithCreator}
+            tasksListCallbacks={store.todayTasksListCallbacks}
+            taskCreatorCallbacks={store.taskCreatorCallbacks}
           >
-            <DraggableListContext
-              onDragStart={store.handleDragStart}
-              onDragEnd={store.handleDragEnd}
-              sensors={store.sensors}
+            <TaskCreator
+              instance={store.todayListWithCreator.creator}
+              callbacks={store.todayListWithCreator.taskCreatorCallbacks}
+              keepFocus
+              wrapperProps={{
+                ml: 5,
+                mr: 5,
+              }}
+            />
+            <Box
+              overflow='auto'
+              css={{
+                scrollbarWidth: 'none',
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                },
+              }}
             >
-              <TasksListStoreProvider
-                listId={Lists.TODAY}
-                instance={store.todayListWithCreator.list}
-                isHotkeysEnabled={store.isTasksListHotkeysEnabled}
-                highlightActiveTasks={store.isFocusModeActive}
-                checkTaskActivity={store.checkFocusModeMatch}
-                callbacks={store.todayListWithCreator.tasksListCallbacks}
-                tasksReceiverName='Week'
+              <DraggableListContext
+                onDragStart={store.handleDragStart}
+                onDragEnd={store.handleDragEnd}
+                sensors={store.sensors}
               >
-                <TasksListToday />
-              </TasksListStoreProvider>
-              <TasksListStoreProvider
-                listId={Lists.WEEK}
-                instance={store.weekList}
-                isHotkeysEnabled={store.isWeekListHotkeysEnabled}
-                highlightActiveTasks={store.isFocusModeActive}
-                checkTaskActivity={store.checkFocusModeMatch}
-                callbacks={store.weekTasksListCallbacks}
-                tasksReceiverName='Today'
-              >
-                <TasksListWeekly />
-              </TasksListStoreProvider>
-            </DraggableListContext>
-          </Box>
-        </TasksListWithCreatorStoreProvider>
-      </Box>
-    </AnimatedBlock>
+                <TasksListStoreProvider
+                  listId={Lists.TODAY}
+                  instance={store.todayListWithCreator.list}
+                  isHotkeysEnabled={store.isTasksListHotkeysEnabled}
+                  highlightActiveTasks={store.isFocusModeActive}
+                  checkTaskActivity={store.checkFocusModeMatch}
+                  callbacks={store.todayListWithCreator.tasksListCallbacks}
+                  tasksReceiverName='Week'
+                >
+                  <TasksListToday />
+                </TasksListStoreProvider>
+                <TasksListStoreProvider
+                  listId={Lists.WEEK}
+                  instance={store.weekList}
+                  isHotkeysEnabled={store.isWeekListHotkeysEnabled}
+                  highlightActiveTasks={store.isFocusModeActive}
+                  checkTaskActivity={store.checkFocusModeMatch}
+                  callbacks={store.weekTasksListCallbacks}
+                  tasksReceiverName='Today'
+                >
+                  <TasksListWeekly />
+                </TasksListStoreProvider>
+              </DraggableListContext>
+            </Box>
+          </TasksListWithCreatorStoreProvider>
+        </Box>
+        {store.isMouseSelectionEnabled && <MouseMultySelect
+          containerRef={containerRef}
+          minItemPx={5}
+          minFramePx={20}
+          edgeSize={0}
+          notStartWithSelectableElements
+          onStartSelection={store.onStartSelection}
+          onFinishSelection={store.onFinishSelection}
+        />}
+      </AnimatedBlock>
+    </Box>
   );
 });

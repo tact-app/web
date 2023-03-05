@@ -7,14 +7,11 @@ import { ModalsSwitcher } from '../../../helpers/ModalsController';
 import { DraggableList } from '../DraggableList';
 import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
 import { Center, Spinner } from '@chakra-ui/react';
-import { MouseMultySelect } from '../MouseMultySelect';
 
 export const TasksListView = observer(function TasksListView(
   { dnd = true }: TasksListProps
 ) {
   const store = useTasksListStore();
-  const listRef = useRef(null);
-  const portal = document.querySelector("#portal") as HTMLElement;
 
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers, {
     enabled: store.isHotkeysEnabled,
@@ -46,16 +43,6 @@ export const TasksListView = observer(function TasksListView(
         />
       )}
       <ModalsSwitcher controller={store.modals.controller} />
-      {!store.isItemMenuOpen && !store.editingTaskId && <MouseMultySelect
-        containerRef={listRef}
-        minItemPx={5}
-        minFramePx={20}
-        edgeSize={0}
-        notStartWithSelectableElements
-        portal={portal}
-        onStartSelection={store.draggableList.starthMouseSelect}
-        onFinishSelection={store.draggableList.finishMouseSelect}
-      />}
     </>
   );
 });

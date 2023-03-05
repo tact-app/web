@@ -20,7 +20,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
       ? quickEditStore.modes.tag.tags.length
       : store.task.tags.length
   );
-  const showTaskMenu = !store.isReadOnly && !store.isDisabled && !store.parent.draggableList.isMouseSelection
+  const showTaskMenu = !store.isReadOnly && !store.isDisabled
 
   let bg = 'transparent';
   let hoveredBg = 'transparent';

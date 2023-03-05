@@ -242,15 +242,17 @@ export class DraggableListStore {
   };
 
   finishMouseSelect = (items, { shiftKey }) => {
+    this.isMouseSelection = false
+    if (!items.length && !this.focusedItemIds.length) {
+      return;
+    }
+
     if (!shiftKey) {
       this.resetFocusedItem();
     }
-
-    const selectedIds = items.map(item => item.getAttribute('data-rbd-draggable-id'))
-    this.focusedItemIds = selectedIds
-    .filter(item => !this.focusedItemIds.includes(item))
-    .concat(this.focusedItemIds.filter(item => !selectedIds.includes(item)));
-    this.isMouseSelection = false
+    this.focusedItemIds = items
+      .filter(item => !this.focusedItemIds.includes(item))
+      .concat(this.focusedItemIds.filter(item => !items.includes(item)));
   }
 
   starthMouseSelect = () => {
