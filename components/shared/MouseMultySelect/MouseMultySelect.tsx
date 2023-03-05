@@ -162,16 +162,14 @@ export const MouseMultySelect = ({
 
       if (elementBorder) elementBorder.removeEventListener('mousemove', handleMoueMove);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     myPositionRef.current = positions;
     isOpenRef.current = isOpen;
   }, [positions, isOpen]);
 
-  return <Portal
-  containerRef={containerRef || document}
-  children={
+  return <Portal containerRef={containerRef}>
     <div
       className={`${frameClassName} ${isOpen ? ` ${openFrameClassName}` : ''}`}
       style={{
@@ -184,5 +182,5 @@ export const MouseMultySelect = ({
       }}
       ref={borderRef}
     />
-  } />
+  </Portal>
 };

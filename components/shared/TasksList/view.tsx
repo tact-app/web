@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { TasksListProps, useTasksListStore } from './store';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { TaskListItem } from './components/TaskListItem';
 import { ModalsSwitcher } from '../../../helpers/ModalsController';
 import { DraggableList } from '../DraggableList';

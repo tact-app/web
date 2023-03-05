@@ -149,11 +149,11 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
     if (store.modes.tag.tags.length && !store.modes.tag.isCollapsed) {
       store.modes.tag.checkOverflow();
     }
-  }, [store.modes.tag.tags.length, store.modes.tag.isCollapsed]);
+  }, [store.modes.tag.tags.length, store.modes.tag.isCollapsed]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     store.modes.tag.autoSave = autoSave;
-  }, [autoSave]);
+  }, [autoSave]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!store.modes.tag.tags.length) {
     return null;
