@@ -18,6 +18,7 @@ const defaultPositionState: MouseMovePosition = {
 
 export const MouseMultySelect = ({
   containerRef,
+  portal,
   minFramePx = 10,
   minItemPx = 0,
   edgeSize = 100,
@@ -169,7 +170,7 @@ export const MouseMultySelect = ({
     isOpenRef.current = isOpen;
   }, [positions, isOpen]);
 
-  return <Portal containerRef={containerRef}>
+  return <Portal containerRef={portal}>
     <div
       className={`${frameClassName} ${isOpen ? ` ${openFrameClassName}` : ''}`}
       style={{
