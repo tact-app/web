@@ -5,6 +5,7 @@ import React, { ReactElement } from "react";
 import { TasksListWithCreator } from "../../../../../shared/TasksListWithCreator";
 import { DraggableListContext } from "../../../../../shared/DraggableList/view";
 import { SpaceSelect } from "../../../../../shared/SpaceSelect";
+import { DatePicker } from "../../../../../shared/DatePicker/DatePicker";
 
 export const GoalCreationInformation = observer(
   function GoalCreationInformation() {
@@ -33,7 +34,15 @@ export const GoalCreationInformation = observer(
             <Tbody>
               {renderInformationItem(
                 'Space',
-                <SpaceSelect selectedId={undefined} callbacks={{ onNavigate: () => null }} />
+                <SpaceSelect selectedId={store.goal.spaceId} onChange={store.handleSpaceChange} />
+              )}
+              {renderInformationItem(
+                'Start date',
+                <DatePicker value={store.goal.startDate} onChange={store.handleStartDateChange} />
+              )}
+              {renderInformationItem(
+                'Target date',
+                <DatePicker value={store.goal.targetDate} onChange={store.handleTargetDateChange} />
               )}
             </Tbody>
           </Table>
@@ -48,7 +57,7 @@ export const GoalCreationInformation = observer(
             <TasksListWithCreator
               defaultSave
               instance={store.listWithCreator}
-              listId={store.existedGoal?.listId ?? 'new'}
+              listId={store.goal.listId}
               // isHotkeysEnabled={store.isHotkeysEnabled}
               tasksListCallbacks={store.tasksListCallbacks}
               taskCreatorCallbacks={store.taskCreatorCallbacks}

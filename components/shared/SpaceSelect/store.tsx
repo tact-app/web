@@ -13,17 +13,14 @@ import { ModalsTypes } from "../TasksList/modals/store";
 import { SpaceData } from "../../pages/Spaces/types";
 import { NavigationDirections } from "../../../types/navigation";
 
-export type PropertyMenuCallbacks = {
-  onNavigate: (direction: NavigationDirections) => void;
-};
-
 export type SpaceSelectProps = {
-  callbacks: PropertyMenuCallbacks;
+  onChange(spaceId: string): void;
+  onNavigate?(direction: NavigationDirections): void;
   selectedId?: string | null;
 }
 
 export class SpaceSelectStore {
-  callbacks: PropertyMenuCallbacks;
+  callbacks: Pick<SpaceSelectProps, 'onChange' | 'onNavigate'>;
 
   buttonContainerRef: HTMLButtonElement | null = null;
   menuRef: HTMLDivElement | null = null;
@@ -62,15 +59,16 @@ export class SpaceSelectStore {
     };
   }
 
-  update(props: SpaceSelectProps) {
-    this.callbacks = props.callbacks;
-    this.selectedSpaceId = props.selectedId;
+  update({ onChange, onNavigate, selectedId }: SpaceSelectProps) {
+    this.callbacks = { onChange, onNavigate };
+    this.selectedSpaceId = selectedId;
 
     if (!this.selectedSpaceId) {
       const defaultSpace = this.root.resources.spaces.list.find(
         (space) => space.type === 'personal'
       );
       this.selectedSpaceId = defaultSpace.id;
+      this.callbacks.onChange(defaultSpace.id);
     }
   };
 
@@ -81,6 +79,7 @@ export class SpaceSelectStore {
   handleSuggestionSelect(id: string) {
     this.selectedSpaceId = id;
 
+    this.callbacks.onChange(id);
     this.toggleMenu();
   };
 
@@ -141,6 +140,7 @@ export class SpaceSelectStore {
             this.root.api.spaces.add(space);
             this.controller.close();
             this.selectedSpaceId = space.id;
+            this.callbacks.onChange(space.id);
           },
           onClose: () => {
             this.controller.close();

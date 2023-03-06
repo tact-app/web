@@ -27,7 +27,7 @@ export const GoalCreationEmojiSelect = observer(
         <PopoverTrigger>
           <Button
             variant='filled'
-            bg={store.color}
+            bg={store.goal.icon.color}
             borderRadius='full'
             size='sm'
             p={0}
@@ -36,7 +36,7 @@ export const GoalCreationEmojiSelect = observer(
             justifyContent='center'
             alignItems='center'
           >
-            <Text fontSize='xl'>{store.icon}</Text>
+            <Text fontSize='xl'>{store.goal.icon.value}</Text>
           </Button>
         </PopoverTrigger>
         <PopoverContent w='auto'>
@@ -48,7 +48,7 @@ export const GoalCreationEmojiSelect = observer(
                     onClick={() => store.handleColorSelect(color)}
                     key={color}
                     borderColor={
-                      color === store.color
+                      color === store.goal.icon.color
                         ? color.replace(/\d+/, '400')
                         : 'transparent'
                     }

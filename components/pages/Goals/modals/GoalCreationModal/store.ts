@@ -86,6 +86,9 @@ export class GoalCreationModalStore {
       size: 0,
       width: 400
     },
+    {
+      size: 0,
+    },
   ];
 
   onClose: GoalCreationModalProps['onClose'];
@@ -94,13 +97,28 @@ export class GoalCreationModalStore {
   isOpen = true;
   isEmojiPickerOpen = false;
   isDescriptionLoading: boolean = true;
-  isEditMode: boolean = false;
-  existedGoal: GoalData | null = null;
-  icon: string = '';
-  color = colors[0];
-  title: string = '';
-  description?: DescriptionData = undefined;
+
   focusedBlock: GoalCreateBlocks;
+
+  goal: GoalData = {
+    id: uuidv4(),
+    listId: 'default',
+    title: '',
+    startDate: '',
+    targetDate: '',
+    spaceId: '',
+    icon: {
+      type: GoalIconVariants.EMOJI,
+      color: '',
+      value: '',
+    },
+  };
+  description: DescriptionData = {
+    id: uuidv4(),
+    content: undefined,
+  };
+  taskList: TaskData[] = [];
+
   emojiStore = new (class EmojiStore {
     data: any = '';
   })();
@@ -112,7 +130,9 @@ export class GoalCreationModalStore {
   };
 
   taskCreatorCallbacks: TasksListWithCreatorStore['taskCreatorCallbacks'] = {
-    onSave: () => null,
+    onSave: (task) => {
+      this.taskList.push(task);
+    },
   };
   draggingTask: TaskData | null = null;
   droppableIds = {
@@ -122,7 +142,7 @@ export class GoalCreationModalStore {
   };
 
   get isReadyForSave() {
-    return !!this.title;
+    return !!this.goal.title;
   }
 
   openEmojiPicker = () => {
@@ -134,16 +154,28 @@ export class GoalCreationModalStore {
   };
 
   handleEmojiSelect = (emoji: { native: string }) => {
-    this.icon = emoji.native;
+    this.goal.icon.value = emoji.native;
   };
 
   handleColorSelect = (color: string) => {
-    this.color = color;
+    this.goal.icon.color = color;
   };
 
   handleTitleChange = (e: SyntheticEvent) => {
-    this.title = (e.target as HTMLInputElement).value;
+    this.goal.title = (e.target as HTMLInputElement).value;
   };
+
+  handleSpaceChange = (value: string) => {
+    this.goal.spaceId = value;
+  }
+
+  handleStartDateChange = (value: string) => {
+    this.goal.startDate = value;
+  }
+
+  handleTargetDateChange = (value: string) => {
+    this.goal.targetDate = value;
+  }
 
   handleBack = () => {
     if (!this.isEmojiPickerOpen) {
@@ -167,39 +199,17 @@ export class GoalCreationModalStore {
 
   handleSave = () => {
     if (this.isReadyForSave) {
-      const isDescriptionCreated = Boolean(
-        (!this.existedGoal || !this.existedGoal.descriptionId) &&
-          this.description
-      );
-
-      this.onSave?.(
-        {
-          id: this.existedGoal ? this.existedGoal.id : uuidv4(),
-          listId: 'default',
-          title: this.title,
-          descriptionId: this.description ? this.description.id : undefined,
-          icon: {
-            type: GoalIconVariants.EMOJI,
-            color: this.color,
-            value: this.icon,
-          },
-        },
-        this.description,
-        isDescriptionCreated
-      );
+      const goal = {
+        ...this.goal,
+        descriptionId: this.description.id,
+      };
+      this.onSave?.(goal, this.description);
 
       this.handleClose();
     }
   };
 
   handleDescriptionChange = (value: JSONContent) => {
-    if (!this.description) {
-      this.description = {
-        id: uuidv4(),
-        content: value,
-      };
-    }
-
     this.description.content = value;
   };
 
@@ -298,7 +308,7 @@ export class GoalCreationModalStore {
     runInAction(() => {
       this.emojiStore.data = data.default;
 
-      if (!this.existedGoal) {
+      if (!this.goal.icon.value && !this.goal.icon.color) {
         const data = this.emojiStore.data;
         const selectedCategories = ['people', 'activity', 'objects'];
         const categories = data.categories.filter(({ id }) =>
@@ -313,10 +323,10 @@ export class GoalCreationModalStore {
         const randomEmoji = data.emojis[randomEmojiKey];
 
         if (randomEmoji) {
-          this.icon = randomEmoji.skins[0].native;
+          this.goal.icon.value = randomEmoji.skins[0].native;
         }
 
-        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.goal.icon.color = colors[Math.floor(Math.random() * colors.length)];
       }
     });
   };
@@ -324,27 +334,22 @@ export class GoalCreationModalStore {
   update = async (props: GoalCreationModalProps) => {
     this.onClose = props.onClose;
     this.onSave = props.onSave;
-    this.existedGoal = props.goal;
-    this.isEditMode = props.editMode;
+    this.goal = { ...this.goal, ...props.goal };
 
-    if (this.existedGoal) {
-      this.icon = this.existedGoal.icon.value;
-      this.color = this.existedGoal.icon.color;
-      this.title = this.existedGoal.title;
+    if (this.goal.descriptionId) {
+      this.isDescriptionLoading = true;
+      const description =
+        (await this.root.api.descriptions.get(
+          this.goal.descriptionId
+        )) || undefined;
 
-      if (this.existedGoal.descriptionId) {
-        this.isDescriptionLoading = true;
-        const description =
-          (await this.root.api.descriptions.get(
-            this.existedGoal.descriptionId
-          )) || undefined;
-
-        runInAction(() => {
-          this.description = description;
-          this.isDescriptionLoading = false;
-        });
-      }
+      runInAction(() => {
+        this.description = description;
+        this.isDescriptionLoading = false;
+      });
     }
+
+    console.log(this.goal)
 
     runInAction(() => {
       this.isDescriptionLoading = false;

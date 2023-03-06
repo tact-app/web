@@ -21,6 +21,9 @@ export type GoalData = {
   id: string;
   title: string;
   listId: string;
+  startDate: string;
+  targetDate: string;
+  spaceId: string;
   descriptionId?: string;
   icon?: GoalIconData;
 };

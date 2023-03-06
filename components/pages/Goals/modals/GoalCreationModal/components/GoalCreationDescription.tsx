@@ -31,7 +31,7 @@ export const GoalCreationDescription = observer(
           <GoalCreationEmojiSelect />
           <Input
             size='lg'
-            value={store.title}
+            value={store.goal.title}
             autoFocus
             placeholder='Goal Name'
             _placeholder={{ color: 'gray.400' }}
