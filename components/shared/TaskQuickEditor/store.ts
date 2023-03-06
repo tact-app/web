@@ -34,6 +34,7 @@ export type TaskQuickEditorProps = {
   keepFocus?: boolean;
   task?: TaskData;
   enableReferences?: boolean;
+  isCreator?: boolean;
 };
 
 export enum Modes {
@@ -109,6 +110,7 @@ export class TaskQuickEditorStore {
   value: string = '';
   isInputFocused: boolean = false;
   isMenuFocused: boolean = false;
+  isCreator: boolean = false;
   input: HTMLInputElement | null = null;
 
   savedCaretPosition: number = this.task ? this.task.title.length : 0;
@@ -653,12 +655,14 @@ export class TaskQuickEditorStore {
     keepFocus,
     enableReferences,
     input,
+    isCreator,
   }: TaskQuickEditorProps) => {
     this.callbacks = callbacks || {};
     this.keepFocus = keepFocus;
     this.order = order || this.order;
     this.enableReferences = enableReferences;
     this.inputData = input;
+    this.isCreator = isCreator;
 
     const defaultSpaceId = task?.spaceId || input?.spaceId;
 
@@ -713,7 +717,7 @@ export class TaskQuickEditorStore {
       if (!hasRange && isCorner) {
         e.preventDefault();
 
-        if (e.key === 'ArrowDown' && this.modes.tag.tags.length && this.focusedMode !== Modes.TAG) {
+        if (e.key === 'ArrowDown' && this.modes.tag.tags.length && this.focusedMode !== Modes.TAG && !this.isCreator) {
           this.focusMode(Modes.TAG, 'first');
         } else if (this.callbacks.onNavigate?.(castArrowToDirection(e.key))) {
           this.leave();

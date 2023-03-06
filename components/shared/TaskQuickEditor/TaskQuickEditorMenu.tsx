@@ -27,7 +27,7 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
     : store.suggestionsMenu.isOpen;
 
   useEffect(() => {
-    if (isOpen && items.length !== store.suggestionsMenu.itemsCount) {
+    if (isOpen && items.length && items.length !== store.suggestionsMenu.itemsCount) {
       store.suggestionsMenu.setCount(items.length);
     }
   }, [isOpen, items.length, store.suggestionsMenu, store.suggestionsMenu.itemsCount]);
