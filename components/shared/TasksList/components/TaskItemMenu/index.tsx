@@ -37,6 +37,7 @@ import {
 } from '@fortawesome/pro-light-svg-icons';
 import { IconDefinition } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { PopoverWrapper } from './PopoverWrapper';
 
 const multiTaskItems = (store: TaskItemStore) => [
   {
@@ -309,24 +310,30 @@ const TaskItemMenuContent = observer(function TaskItemMenuContent({
 
   return (
     <Portal>
-      <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
-        <PopoverContent
-          tabIndex={-1}
-          p={0}
-          shadow='lg'
-          overflow='hidden'
-          w='auto'
-          minW={72}
-          onFocus={store.menuNavigation.handleFocus}
-        >
-          <PopoverBody p={0}>
-            <TaskItemMenuItems
-              refs={store.menuNavigation.setRefs}
-              items={items}
-            />
-          </PopoverBody>
-        </PopoverContent>
-      </Fade>
+      <PopoverWrapper
+        isOpen={store.isMenuOpen}
+        positionByMouse={store.isOpenByContextMenu}
+        left={store.xPosContextMenu}
+      >
+        <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
+          <PopoverContent
+            tabIndex={-1}
+            p={0}
+            shadow='lg'
+            overflow='hidden'
+            w='auto'
+            minW={72}
+            onFocus={store.menuNavigation.handleFocus}
+          >
+            <PopoverBody p={0}>
+              <TaskItemMenuItems
+                refs={store.menuNavigation.setRefs}
+                items={items}
+              />
+            </PopoverBody>
+          </PopoverContent>
+        </Fade>
+      </PopoverWrapper>
     </Portal>
   );
 });
@@ -345,7 +352,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
   }, [setIsAnimationInProcess]);
 
   const close = useCallback(() => {
-    setIsAnimationInProcess(true);
+    !store.isOpenByContextMenu && setIsAnimationInProcess(true);
     onClose();
     store.closeMenu();
   }, [onClose, store]);
@@ -353,6 +360,8 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
   const open = useCallback(() => {
     setIsAnimationInProcess(true);
     store.handleFocus();
+    store.quickEdit.suggestionsMenu.close();
+    store.quickEdit.suggestionsMenu.closeForMode();
     onOpen();
     store.openMenu();
   }, [onOpen, store]);

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Box, Checkbox, chakra, Tag, useOutsideClick } from '@chakra-ui/react';
+import { Box, Checkbox, chakra, Tag } from '@chakra-ui/react';
+import { useOutsideClick } from '@chakra-ui/react-use-outside-click'
 import { TaskStatus } from '../../types';
 import { TaskItemProps, useTaskItemStore, TASK_TITLE_ELEMENT_ID } from './store';
 import { TaskItemMenu } from '../TaskItemMenu';
@@ -41,7 +42,8 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
   }
 
   useOutsideClick({
-    enabled: store.isEditMode || store.quickEdit.isMenuFocused,
+    listenContextMenu: true,
+    enabled: store.isEditMode || store.quickEdit.isMenuFocused || quickEditStore.suggestionsMenu.isOpen,
     ref: ref,
     handler: quickEditStore.handleClickOutside,
   });
@@ -60,6 +62,10 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         tabIndex={store.isDisabled || store.isReadOnly ? -1 : 0}
         ref={store.setBoxRef}
         onClick={store.handleClick}
+        onContextMenu={(e: Event) => {
+          quickEditStore.handleClickOutside(e)
+          store.handleContextMenu(e)
+        }}
         onMouseDown={store.handleMouseDown}
         onMouseUp={store.handleMouseUp}
         onFocus={store.handleFocus}

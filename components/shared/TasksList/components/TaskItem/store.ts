@@ -48,6 +48,9 @@ export class TaskItemStore {
   isMouseDown: boolean = false;
   isDragging: boolean = false;
 
+  isOpenByContextMenu: boolean = false;
+  xPosContextMenu: number;
+
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
   onToggleMenu: TaskItemProps['onToggleMenu'];
@@ -95,7 +98,7 @@ export class TaskItemStore {
   handleKeyUp = (e: KeyboardEvent) => {
     if (e.key === 'Alt') {
       if (this.isAltPressed) {
-        this.toggleMenu();
+        this.toggleMenu(!this.isMenuOpen);
       }
 
       this.isAltPressed = false;
@@ -116,9 +119,25 @@ export class TaskItemStore {
     this.boxRef = ref;
   };
 
-  toggleMenu = () => {
-    this.isMenuOpen = !this.isMenuOpen;
-    this.onToggleMenu(this.isMenuOpen);
+  handleContextMenu = (e) => {
+    e.preventDefault();
+    if (!this.isMenuOpen) {
+      !this.isFocused && this.onFocus(this.task.id);
+      this.quickEdit.suggestionsMenu.close();
+      this.quickEdit.suggestionsMenu.closeForMode();
+      this.xPosContextMenu = e.pageX;
+      this.toggleContextMenu(true);
+      this.openMenu();
+    }
+  }
+
+  toggleMenu = (isOpen: boolean) => {
+    this.isMenuOpen = isOpen;
+    this.onToggleMenu(isOpen);
+  };
+
+  toggleContextMenu = (isContextMenu: boolean) => {
+    this.isOpenByContextMenu = isContextMenu;
   };
 
   openMenu = () => {
@@ -127,9 +146,12 @@ export class TaskItemStore {
   };
 
   closeMenu = () => {
-    this.isMenuOpen = false;
-    this.onToggleMenu(false);
-  };
+    setTimeout(() => {
+      this.toggleMenu(false);
+      this.onToggleMenu(false);
+      this.toggleContextMenu(false);
+    });
+  }
 
   handleMouseDown = () => {
     this.isMouseDown = true;
@@ -140,6 +162,10 @@ export class TaskItemStore {
   };
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (e.ctrlKey && e.type === 'click') {
+      return
+    }
+
     if ((e.detail !== 2 || this.isFocused) && (e.target as HTMLElement).id === TASK_TITLE_ELEMENT_ID) {
       return this.parent.setEditingTask(this.task.id);
     }
