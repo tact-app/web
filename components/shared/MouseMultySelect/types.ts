@@ -5,7 +5,6 @@ export type TOnStart = (e: MouseEvent) => void;
 
 export interface MouseMultySelectProps {
   containerRef?: MutableRefObject<HTMLElement | null>;
-  portal: HTMLElement;
   minFramePx?: number;
   minItemPx? : number;
   edgeSize? : number;

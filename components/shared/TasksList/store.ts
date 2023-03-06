@@ -168,6 +168,17 @@ export class TasksListStore {
       !this.root.isModalOpen
     );
   }
+  get isMouseSelectionEnabled() {
+    return !!(
+      !this.editingTaskId &&
+      !this.isItemMenuOpen &&
+      !this.draggableList.isDraggingActive &&
+      !this.draggableList.isControlDraggingActive &&
+      !this.modals.controller.isOpen &&
+      !this.root.isModalOpen &&
+      !this.highlightActiveTasks
+    );
+  }
 
   get isMultiselect() {
     return this.draggableList.focused.length > 1;

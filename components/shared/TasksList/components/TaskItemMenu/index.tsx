@@ -338,6 +338,8 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
   });
   const [isAnimationInProcess, setIsAnimationInProcess] = useState(false);
 
+  const isMouseSelection = store.parent.draggableList.isMouseSelection;
+
   const stopAnimation = useCallback(() => {
     setIsAnimationInProcess(false);
   }, [setIsAnimationInProcess]);
@@ -389,7 +391,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
           variant='unstyled'
           borderRadius='none'
           _groupHover={{
-            visibility: 'visible',
+            visibility: !isMouseSelection && 'visible',
           }}
           _before={{
             content: '""',

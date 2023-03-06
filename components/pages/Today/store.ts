@@ -230,6 +230,32 @@ export class TodayStore {
     };
   }
 
+  get isMouseSelectionEnabled(){
+    return this.todayListWithCreator.list.isMouseSelectionEnabled &&
+    this.weekList.isMouseSelectionEnabled
+  }
+
+  onStartSelection = () => {
+    this.todayListWithCreator.list.draggableList.starthMouseSelect();
+    this.weekList.draggableList.starthMouseSelect();
+  }
+
+  onFinishSelection = (items, event) => {
+    const selectedIds = items.reduce((acc, cur) => {
+      const listId = cur.getAttribute('listId') as 'week' | 'today'
+
+      acc[listId].push(cur.getAttribute('data-rbd-draggable-id'))
+
+      return acc
+    }, {
+      week: [],
+      today: []
+    })
+
+    this.todayListWithCreator.list.draggableList.finishMouseSelect(selectedIds.today, event);
+    this.weekList.draggableList.finishMouseSelect(selectedIds.week, event);
+  }
+
   closeTask = () => {
     this.currentList.closeTask();
   };
