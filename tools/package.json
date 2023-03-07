@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {},
   "dependencies": {
-    "@sentry/cli": "^2.14.3",
+    "@sentry/cli": "^2.14.4",
     "depcheck": "^1.4.3",
     "vercel": "^28.16.12"
   }
