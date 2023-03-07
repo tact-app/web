@@ -24,6 +24,7 @@ export const TaskCreator = observer(function TaskCreator(
       {...props}
       order={modesOrder}
       enableReferences
+      isCreator
     >
       <TaskCreatorView {...props} />
     </TaskQuickEditorStoreProvider>

@@ -38,7 +38,7 @@ export const AnimatedBlock = React.forwardRef<HTMLDivElement, Props>((
         }
       );
     }
-  }, [animateParams.deps]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, animateParams.deps); // eslint-disable-line react-hooks/exhaustive-deps
 
   return <Component {...compProps} ref={setRef} />;
 });
