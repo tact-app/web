@@ -4,6 +4,6 @@
   "dependencies": {
     "@sentry/cli": "^2.14.3",
     "depcheck": "^1.4.3",
-    "vercel": "^28.16.12"
+    "vercel": "^28.16.13"
   }
 }
