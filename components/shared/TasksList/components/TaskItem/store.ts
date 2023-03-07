@@ -9,6 +9,7 @@ import { ListNavigation } from '../../../../../helpers/ListNavigation';
 import { TasksListStore } from '../../store';
 import { subscriptions } from '../../../../../helpers/subscriptions';
 import { checkKeyCombination, checkKeyCombinations } from '../../../../../helpers/combinations';
+import { isMac } from '../../../../../helpers/os';
 
 const IGNORED_COMBINATIONS = ['Alt+D'];
 export const TASK_TITLE_ELEMENT_ID = 'task-title';
@@ -162,7 +163,7 @@ export class TaskItemStore {
   };
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    if (e.ctrlKey && e.type === 'click') {
+    if (e.ctrlKey && e.type === 'click' && isMac()) {
       return
     }
 
