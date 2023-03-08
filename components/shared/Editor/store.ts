@@ -145,7 +145,11 @@ class EditorStore {
     }
   };
 
-  handleBlur = () => {
+  handleBlur = ({ event }: { event: FocusEvent }) => {
+    if (event.relatedTarget) {
+      return;
+    }
+
     this.onBlur?.();
   };
 
