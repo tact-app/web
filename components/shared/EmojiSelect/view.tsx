@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite';
 import Picker from '@emoji-mart/react';
-import { colors, useGoalCreationModalStore } from '../store';
 import {
   Box,
   Button,
@@ -11,10 +10,14 @@ import {
   PopoverTrigger,
   Text,
 } from '@chakra-ui/react';
+import { EMOJI_SELECT_COLORS, EmojiSelectProps, useEmojiSelectStore } from "./store";
 
-export const GoalCreationEmojiSelect = observer(
-  function GoalCreationEmojiSelect() {
-    const store = useGoalCreationModalStore();
+export const EmojiSelectComponent = observer(
+  function EmojiSelectComponent({
+    size = 8,
+    iconFontSize = 'xl'
+  }: Pick<EmojiSelectProps, 'iconFontSize' | 'size'>) {
+    const store = useEmojiSelectStore();
 
     return (
       <Popover
@@ -27,28 +30,29 @@ export const GoalCreationEmojiSelect = observer(
         <PopoverTrigger>
           <Button
             variant='filled'
-            bg={store.goal.icon.color}
+            bg={store.color}
             borderRadius='full'
-            size='sm'
             p={0}
-            mr={4}
+            w={size}
+            h={size}
+            minW='auto'
             display='flex'
             justifyContent='center'
             alignItems='center'
           >
-            <Text fontSize='xl'>{store.goal.icon.value}</Text>
+            <Text fontSize={iconFontSize}>{store.icon}</Text>
           </Button>
         </PopoverTrigger>
         <PopoverContent w='auto'>
           <PopoverBody p={0}>
             <Box display='flex' justifyContent='center'>
               <HStack p={2}>
-                {colors.map((color) => (
+                {EMOJI_SELECT_COLORS.map((color) => (
                   <Button
                     onClick={() => store.handleColorSelect(color)}
                     key={color}
                     borderColor={
-                      color === store.goal.icon.color
+                      color === store.color
                         ? color.replace(/\d+/, '400')
                         : 'transparent'
                     }
@@ -65,7 +69,7 @@ export const GoalCreationEmojiSelect = observer(
             <Picker
               autoFocus
               theme='light'
-              data={store.emojiStore.data}
+              data={store.root.emojiData}
               onEmojiSelect={store.handleEmojiSelect}
             />
           </PopoverBody>

@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite';
-import { Box, Center, CircularProgress, Input, Stack } from '@chakra-ui/react';
+import { Box, Center, CircularProgress, Input, Flex } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
 import { Editor } from '../../../../../shared/Editor';
-import { GoalCreationEmojiSelect } from './GoalCreationEmojiSelect';
 import React from "react";
+import { EmojiSelect } from "../../../../../shared/EmojiSelect";
 
 export const GoalCreationDescription = observer(
   function GoalCreationDescription() {
@@ -18,7 +18,7 @@ export const GoalCreationDescription = observer(
         width='100%'
         height='100%'
       >
-        <Stack
+        <Flex
           flexDirection='row'
           maxW='3xl'
           width='100%'
@@ -28,7 +28,12 @@ export const GoalCreationDescription = observer(
           pl={10}
           pr={10}
         >
-          <GoalCreationEmojiSelect />
+          <EmojiSelect
+            icon={store.goal.icon.value}
+            color={store.goal.icon.color}
+            onColorChange={store.handleColorSelect}
+            onIconChange={store.handleEmojiSelect}
+          />
           <Input
             size='lg'
             value={store.goal.title}
@@ -40,13 +45,14 @@ export const GoalCreationDescription = observer(
             fontSize='md'
             fontWeight='semibold'
             flex={1}
+            ml={4}
             height='2rem'
             _focusVisible={{
               borderColor: 'blue.400',
               boxShadow: 'none',
             }}
           />
-        </Stack>
+        </Flex>
         <Box mt={8} width='100%' flex={1} position='relative'>
           {store.isDescriptionLoading ? (
             <Center>

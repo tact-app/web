@@ -14,6 +14,8 @@ import { GoalsStore } from './Resources/GoalsStore';
 enableStaticRendering(typeof window === 'undefined');
 
 export class RootStore {
+  emojiData: any;
+
   constructor() {
     makeObservable(this, {
       isLoading: true,
@@ -66,9 +68,18 @@ export class RootStore {
     this.isModalOpen = isOpen
   }
 
+  loadEmoji = async () => {
+    const response = await fetch(
+      'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
+    );
+
+    this.emojiData = response.json();
+  }
+
   init = async () => {
     await this.user.init();
     await Promise.all([
+      this.loadEmoji(),
       this.resources.spaces.init(),
       this.resources.tags.init(),
       this.resources.goals.init(),

@@ -153,8 +153,8 @@ export class GoalCreationModalStore {
     this.isEmojiPickerOpen = false;
   };
 
-  handleEmojiSelect = (emoji: { native: string }) => {
-    this.goal.icon.value = emoji.native;
+  handleEmojiSelect = (emoji: string) => {
+    this.goal.icon.value = emoji;
   };
 
   handleColorSelect = (color: string) => {

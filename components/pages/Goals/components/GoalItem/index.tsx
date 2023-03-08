@@ -4,9 +4,9 @@ import { useGoalsStore } from '../../store';
 import { DatePicker } from "../../../../shared/DatePicker/DatePicker";
 import { faCircleCheck, faCircleMinus } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { GoalIcon } from "../GoalIcon";
 import React from "react";
 import { GoalDataExtended } from "../../types";
+import { EmojiSelect } from "../../../../shared/EmojiSelect";
 
 export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExtended }) {
   const store = useGoalsStore();
@@ -30,7 +30,12 @@ export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExt
       float='left'
     >
       <Flex>
-        <GoalIcon icon={goal.icon} size={12} />
+        <EmojiSelect
+          icon={goal.icon.value}
+          color={goal.icon.color}
+          size={12}
+          iconFontSize='3xl'
+        />
         <chakra.div ml={2}>
           <Text fontSize='md' fontWeight='semibold'>{goal.title}</Text>
           <Flex mt={1} fontSize='xs' color='gray.500'>
