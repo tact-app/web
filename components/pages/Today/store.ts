@@ -54,7 +54,6 @@ export class TodayStore {
   shouldSetFirstFocus: boolean = false;
 
   currentFocusedBlock: TodayBlocks | null = null;
-  lastOpenedBlock: TodayBlocks | null = null;
 
   shouldOpenCalendar: boolean = false;
   isCalendarExpanded: boolean = true;
@@ -177,22 +176,18 @@ export class TodayStore {
       isEditorFocused: store.isEditorFocused,
       isExpanded: this.isTaskExpanded,
       animateParams: {
-        condition: !this.isTaskExpanded && (
-          this.lastOpenedBlock === TodayBlocks.TASK || this.currentFocusedBlock === TodayBlocks.TASK
-        ),
-        deps: [this.lastOpenedBlock, this.currentFocusedBlock]
+        condition: !this.isTaskExpanded && this.currentFocusedBlock === TodayBlocks.TASK,
+        deps: [this.currentFocusedBlock]
       },
       callbacks: {
         ...store.taskCallbacks,
         onClose: () => {
           store.taskCallbacks.onClose?.();
           this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
-          this.lastOpenedBlock = null;
           this.isTaskOpened = false;
         },
         onBlur: () => {
           this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
-          this.lastOpenedBlock = null;
           store.taskCallbacks.onBlur?.();
         },
         onFocus: () => {
@@ -331,7 +326,6 @@ export class TodayStore {
         this.resizableConfig[0].width = FOCUS_MODE_WIDTH;
 
         setTimeout(this.focusFocusConfiguration);
-        this.lastOpenedBlock = TodayBlocks.FOCUS_CONFIGURATION;
       }
 
       this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
@@ -362,8 +356,6 @@ export class TodayStore {
 
   handleCalendarFocusLeave = () => {
     this.focusTasksList();
-
-    this.lastOpenedBlock = null;
   };
 
   handleCalendarFocusItem = () => {
@@ -444,7 +436,6 @@ export class TodayStore {
     this.resetLayout();
 
     this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
-    this.lastOpenedBlock = null;
   };
 
   expandCalendar = () => {
@@ -454,11 +445,9 @@ export class TodayStore {
     this.resizableConfig[3].size = 2;
     this.resizableConfig[3].width = undefined;
     this.resizableConfig[3].minWidth = 530;
-
-    this.lastOpenedBlock = TodayBlocks.CALENDAR;
   };
 
-  collapseCalendar = (resetOpenedBlock: boolean = true) => {
+  collapseCalendar = ( ) => {
     this.isCalendarFullScreen = false;
     this.isCalendarExpanded = false;
 
@@ -467,10 +456,6 @@ export class TodayStore {
     this.resizableConfig[3].size = 0;
     this.resizableConfig[3].width = 57;
     this.resizableConfig[3].minWidth = undefined;
-
-    if (resetOpenedBlock) {
-      this.lastOpenedBlock = null;
-    }
   };
 
   handleListMinWidth = () => {
@@ -518,15 +503,11 @@ export class TodayStore {
   };
 
   handleOpenTask = () => {
-    if (!this.isTaskOpened) {
-      this.lastOpenedBlock = TodayBlocks.TASK;
-    }
-
     this.isTaskOpened = true;
     this.resizableConfig[2].size = 1;
 
     if (this.isCalendarExpanded) {
-      this.collapseCalendar(false);
+      this.collapseCalendar();
       this.shouldOpenCalendar = true;
     }
   };

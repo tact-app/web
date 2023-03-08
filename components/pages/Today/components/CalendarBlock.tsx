@@ -16,11 +16,11 @@ export const CalendarBlock = observer(function CalendarBlock() {
       isFullScreen={store.isCalendarFullScreen}
       callbacks={store.calendarCallbacks}
       focusHighlightParams={{
-        condition: !store.isCalendarFullScreen && store.isCalendarExpanded && (
-          store.currentFocusedBlock === TodayBlocks.CALENDAR ||
-          store.lastOpenedBlock === TodayBlocks.CALENDAR
-        ),
-        deps: [store.currentFocusedBlock, store.lastOpenedBlock]
+        condition:
+          !store.isCalendarFullScreen &&
+          store.isCalendarExpanded &&
+          store.currentFocusedBlock === TodayBlocks.CALENDAR,
+        deps: [store.currentFocusedBlock]
       }}
     />
   );

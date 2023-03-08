@@ -237,10 +237,6 @@ export class TaskQuickEditorStore {
       onChange: (autoSave?: boolean) => {
         if (autoSave) {
           this.leave();
-        } else {
-          if (this.modes.tag.tags.length) {
-            this.modes.tag.handleCollapseOpen();
-          }
         }
       },
       onFocusLeave: (direction?: NavigationDirections) => {
