@@ -7,6 +7,8 @@ const getTasksApi = (apiService: ApiService) => ({
       `/api/tasks`,
       { id }
     ),
+  all: () =>
+    apiService.get<TaskData[]>(`/api/tasks/all`),
   map: (taskIds: string[]) =>
     apiService.post<Record<string, TaskData>>(`/api/tasks/map`, { taskIds }),
   create: (listId: string, task: TaskData, placement: 'top' | 'bottom') =>

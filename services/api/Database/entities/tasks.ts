@@ -56,6 +56,9 @@ const data = {
         order: tasksList.taskIds,
       };
     },
+    '/api/tasks/all': async (db: DB) => {
+      return await db.getAll('tasks');
+    },
   },
   post: {
     '/api/tasks/create': async (

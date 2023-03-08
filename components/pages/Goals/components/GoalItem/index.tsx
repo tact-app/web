@@ -1,95 +1,79 @@
 import { observer } from 'mobx-react-lite';
-import { chakra, Box, Button, Text, Flex, HStack } from '@chakra-ui/react';
+import { chakra, Box, Text, Flex } from '@chakra-ui/react';
 import { useGoalsStore } from '../../store';
-import { GoalIconVariants } from '../../types';
 import { DatePicker } from "../../../../shared/DatePicker/DatePicker";
+import { faCircleCheck, faCircleMinus } from "@fortawesome/pro-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { GoalIcon } from "../GoalIcon";
+import React from "react";
+import { GoalDataExtended } from "../../types";
 
-export const GoalItem = observer(function GoalItem({ id }: { id: string }) {
+export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExtended }) {
   const store = useGoalsStore();
-  const item = store.root.resources.goals.map[id];
+
+  const handleChangeStartDate = (date: string) => {
+    store.updateGoal({ ...goal, startDate: date });
+  };
+  const handleChangeTargetDate = (date: string) => {
+    store.updateGoal({ ...goal, targetDate: date });
+  };
 
   return (
-    <Box borderWidth={1} borderRadius={8} borderColor='gray.200' p={4} w={80}>
+    <Box
+      borderWidth={1}
+      borderRadius={8}
+      borderColor='gray.200'
+      p={4}
+      w={80}
+      mr={6}
+      mb={6}
+      float='left'
+    >
       <Flex>
-        <Flex
-          alignItems='center'
-          justifyContent='center'
-          w={12}
-          h={12}
-          borderRadius='full'
-          bg={item.icon.color}
-        >
-          <Text fontSize='xl'>{item.icon.value}</Text>
-        </Flex>
+        <GoalIcon icon={goal.icon} size={12} />
         <chakra.div ml={2}>
-          <Text fontSize='md' fontWeight='semibold'>{item.title}</Text>
-          <chakra.span mt={1} color='gray.500'>All task: 10</chakra.span>
+          <Text fontSize='md' fontWeight='semibold'>{goal.title}</Text>
+          <Flex mt={1} fontSize='xs' color='gray.500'>
+            <chakra.span>All task: {goal.allTasks.length}</chakra.span>
+            <chakra.span ml={2}>
+              <FontAwesomeIcon icon={faCircleCheck} color='var(--chakra-colors-blue-400' /> {goal.doneTasks.length}
+            </chakra.span>
+            <chakra.span ml={2}>
+              <FontAwesomeIcon icon={faCircleMinus} color='var(--chakra-colors-gray-400' /> {goal.wontDoTasks.length}
+            </chakra.span>
+          </Flex>
         </chakra.div>
       </Flex>
-      <Flex mt={2}>
-        <HStack flexDirection='column' alignItems='flex-start' width='50%'>
-          <chakra.span>
+      <Flex mt={2} color='gray.500'>
+        <Flex flexDirection='column' alignItems='flex-start' width='50%'>
+          <Text fontSize='xs' lineHeight={4}>
             Start date:
-          </chakra.span>
-          <chakra.span>
-            <DatePicker showIconOnlyIfEmpty value={item.startDate} onChange={() => null} />
-          </chakra.span>
-        </HStack>
-        <HStack flexDirection='column' alignItems='flex-start' width='50%'>
-          <chakra.span>
+          </Text>
+          <chakra.div mt={1}>
+            <DatePicker
+              fontSize='xs'
+              iconFontSize={14}
+              showIconOnlyIfEmpty
+              value={goal.startDate}
+              onChange={handleChangeStartDate}
+            />
+          </chakra.div>
+        </Flex>
+        <Flex flexDirection='column' alignItems='flex-start' width='50%'>
+          <Text fontSize='xs' lineHeight={4}>
             Target date:
-          </chakra.span>
-          <chakra.span>
-            <DatePicker showIconOnlyIfEmpty value={item.targetDate} onChange={() => null} />
-          </chakra.span>
-        </HStack>
+          </Text>
+          <chakra.div mt={1}>
+            <DatePicker
+              fontSize='xs'
+              iconFontSize={14}
+              showIconOnlyIfEmpty
+              value={goal.targetDate}
+              onChange={handleChangeTargetDate}
+            />
+          </chakra.div>
+        </Flex>
       </Flex>
     </Box>
-  );
-
-  return (
-    <Button
-      onClick={() => store.editGoal(id)}
-      variant='outline'
-      borderRadius='xl'
-      h={60}
-      w={56}
-      p={2}
-      mr={10}
-      mb={10}
-      display='inline-flex'
-      flexDirection='column'
-      justifyContent='start'
-    >
-      <Box
-        mb={4}
-        mt={6}
-        w='7.375rem'
-        h='7.375rem'
-        mr='auto'
-        ml='auto'
-        borderRadius='full'
-        display='flex'
-        justifyContent='center'
-        flexDirection='column'
-        bg={item.icon?.color}
-      >
-        {item.icon && item.icon.type === GoalIconVariants.EMOJI ? (
-          <Text fontSize='7xl'>{item.icon.value}</Text>
-        ) : null}
-      </Box>
-      <Text
-        fontSize='lg'
-        fontWeight='semibold'
-        color='gray.400'
-        width='100%'
-        flex={1}
-        textOverflow='ellipsis'
-        whiteSpace='nowrap'
-        overflow='hidden'
-      >
-        {item.title}
-      </Text>
-    </Button>
   );
 });

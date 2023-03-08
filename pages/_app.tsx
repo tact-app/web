@@ -175,6 +175,8 @@ const theme = extendTheme({
           },
         },
         '.react-datepicker-wrapper': {
+          width: 'auto',
+
           '.react-datepicker-ignore-onclickoutside': {
             paddingLeft: 1,
             outline: 'none',
@@ -186,6 +188,13 @@ const theme = extendTheme({
               borderStyle: 'solid',
             }
           },
+          '.react-datepicker__input-container': {
+            maxWidth: '90px',
+            width: 'auto',
+          },
+          '.react-datepicker__input-container input': {
+            width: '100%',
+          }
         },
         '.react-datepicker': {
           fontFamily: 'var(--chakra-fonts-body)',

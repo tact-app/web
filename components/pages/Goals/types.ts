@@ -1,4 +1,5 @@
 import { JSONContent } from '@tiptap/core';
+import { TaskData, TaskStatus } from "../../shared/TasksList/types";
 
 export enum GoalIconVariants {
   EMOJI = 'emoji',
@@ -26,6 +27,13 @@ export type GoalData = {
   spaceId: string;
   descriptionId?: string;
   icon?: GoalIconData;
+};
+
+export type GoalDataExtended = GoalData & {
+  doneTasks: TaskData[];
+  wontDoTasks: TaskData[];
+  toDoTasks: TaskData[];
+  allTasks: TaskData[];
 };
 
 export type GoalTemplateIcon = {

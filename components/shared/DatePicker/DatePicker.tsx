@@ -1,19 +1,28 @@
 import React, { useState, useRef } from 'react';
 import ReactDatePicker, { ReactDatePickerCustomHeaderProps } from 'react-datepicker';
-import { Flex, chakra } from "@chakra-ui/react";
+import { Flex, chakra, FlexProps } from "@chakra-ui/react";
 import { faCalendarCirclePlus, faAngleLeft, faAngleRight } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 
-type Props = {
+type Props = Omit<FlexProps, 'onChange' | 'onFocus' | 'onBlur'> & {
   value: string;
   showIconOnlyIfEmpty?: boolean;
+  iconFontSize?: number;
   onChange(value: string): void;
   onFocus?(): void;
   onBlur?(): void;
 }
 
-export function DatePicker({ value, showIconOnlyIfEmpty, onChange, onFocus, onBlur }: Props) {
+export function DatePicker({
+  value,
+  showIconOnlyIfEmpty,
+  iconFontSize = 20,
+  onChange,
+  onFocus,
+  onBlur,
+  ...flexProps
+}: Props) {
   const ref = useRef<ReactDatePicker>();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -73,13 +82,13 @@ export function DatePicker({ value, showIconOnlyIfEmpty, onChange, onFocus, onBl
   };
 
   return (
-    <Flex alignItems='center'>
-      {(!showIconOnlyIfEmpty || !value || !isFocused) && (
-        <chakra.div tabIndex={-1} padding='0 7px 0 5px' cursor='pointer'>
+    <Flex alignItems='center' {...flexProps}>
+      {(!showIconOnlyIfEmpty || (!value && !isFocused)) && (
+        <chakra.div tabIndex={-1} pr={1.5} cursor='pointer'>
           <FontAwesomeIcon
             tabIndex={-1}
             color={`var(--chakra-colors-${(isFocused ? 'blue' : 'gray') + '-500'})`}
-            fontSize={20}
+            fontSize={iconFontSize}
             icon={faCalendarCirclePlus}
             style={{ outlineWidth: 0 }}
             onClick={handleIconClick}

@@ -38,11 +38,11 @@ export const GoalCreationInformation = observer(
               )}
               {renderInformationItem(
                 'Start date',
-                <DatePicker value={store.goal.startDate} onChange={store.handleStartDateChange} />
+                <DatePicker value={store.goal.startDate} onChange={store.handleStartDateChange} pl='5px' />
               )}
               {renderInformationItem(
                 'Target date',
-                <DatePicker value={store.goal.targetDate} onChange={store.handleTargetDateChange} />
+                <DatePicker value={store.goal.targetDate} onChange={store.handleTargetDateChange} pl='5px' />
               )}
             </Tbody>
           </Table>

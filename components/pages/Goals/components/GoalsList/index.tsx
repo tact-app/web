@@ -1,13 +1,15 @@
 import { observer } from 'mobx-react-lite';
-import { Box, Button, Heading, Text, Flex } from '@chakra-ui/react';
+import { Box, Heading, Text, Flex, chakra } from '@chakra-ui/react';
 import { useGoalsStore } from '../../store';
 import { GoalCreateNewButton } from '../GoalCreateNewButton';
 import React from 'react';
 import { GoalItem } from '../GoalItem';
 import ImageComponent from "../../../../shared/Image";
-import { HotkeyBlock } from "../../../../shared/HotkeyBlock";
 import mascotGoals from '../../../../../assets/images/mascot-goals.png';
 import { useHotkeysHandler } from "../../../../../helpers/useHotkeysHandler";
+import { SpacesSmallIcon } from "../../../Spaces/components/SpacesIcons/SpacesSmallIcon";
+import { faPlus } from "@fortawesome/pro-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const GoalsList = observer(function GoalsList() {
   const store = useGoalsStore();
@@ -16,25 +18,40 @@ export const GoalsList = observer(function GoalsList() {
     enabled: !store.modals.isOpen
   });
 
+  console.log(store.root.resources.spaces.list)
+
   return (
     <Box pl={32} pr={32}>
-      <Heading
-        textAlign={store.root.resources.goals.haveGoals ? 'initial' : 'center'}
-        size='md'
-        mt={2.5}
-        mb={8}
-        pt={4}
+      <Flex
+        justifyContent={store.root.resources.goals.haveGoals ? 'space-between' : 'center'}
+        alignItems='center'
       >
-        Goals
-      </Heading>
+        <Heading size='lg' mt={2.5} mb={8} pt={4}>
+          Goals
+        </Heading>
+        {store.root.resources.goals.haveGoals && (
+          <GoalCreateNewButton>
+            <FontAwesomeIcon icon={faPlus} fontSize={18} />
+            <chakra.span ml={3}>New goal</chakra.span>
+          </GoalCreateNewButton>
+        )}
+      </Flex>
       <Box>
         {store.root.resources.goals.haveGoals
-          ? [
-              <GoalCreateNewButton key='create-new-goal' />,
-              store.root.resources.goals.order.map((goalId) => (
-                <GoalItem key={goalId} id={goalId} />
-              ))
-            ]
+          ? Object.entries(store.extendedGoals).map(([spaceId, goals]) => (
+              <chakra.div key={spaceId}>
+                <Flex mb={4} alignItems='center'>
+                  <SpacesSmallIcon
+                    space={store.root.resources.spaces.getById(spaceId)}
+                    size={8}
+                    borderRadius={4}
+                    bgOpacity='.100'
+                  />
+                  <Text ml={2} color='gray.700'>{store.root.resources.spaces.getById(spaceId).name}</Text>
+                </Flex>
+                <chakra.div>{goals.map((goal) => <GoalItem key={goal.id} goal={goal} />)}</chakra.div>
+              </chakra.div>
+            ))
           : (
             <Flex
               flexDirection='column'
@@ -58,34 +75,9 @@ export const GoalsList = observer(function GoalsList() {
                 help you focus and&nbsp;complete only essential things that
                 bring you closer to it, postponing or&nbsp;canceling the rest.
               </Text>
-              <Button
-                onClick={store.startGoalCreation}
-                size='md'
-                minH={8}
-                mb={2}
-                bg='blue.400'
-                color='white'
-                _hover={{
-                  bg: 'blue.500',
-                }}
-                _focus={{
-                  boxShadow: 'var(--chakra-shadows-outline)',
-                  outline: 'none',
-                }}
-              >
+              <GoalCreateNewButton withHotkey>
                 Create new goal 🎯
-              </Button>
-              <Text
-                fontSize='xs'
-                fontWeight='normal'
-                lineHeight={4}
-                color='gray.400'
-                display='flex'
-                justifyContent='center'
-              >
-                Press
-                <HotkeyBlock hotkey='N' ml={1} fontSize='xs' lineHeight={4} />
-              </Text>
+              </GoalCreateNewButton>
             </Flex>
           )}
       </Box>

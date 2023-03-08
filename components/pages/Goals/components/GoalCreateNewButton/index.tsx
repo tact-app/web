@@ -1,34 +1,49 @@
 import { observer } from 'mobx-react-lite';
-import { Box, Button, Text } from '@chakra-ui/react';
-import { LargePlusIcon } from '../../../../shared/Icons/LargePlusIcon';
+import { Button, Text } from '@chakra-ui/react';
 import { useGoalsStore } from '../../store';
+import React, { ReactNode } from "react";
+import { HotkeyBlock } from "../../../../shared/HotkeyBlock";
 
-export const GoalCreateNewButton = observer(function GoalCreateNewButton() {
+type Props = {
+  children: ReactNode;
+  withHotkey?: boolean;
+}
+
+export const GoalCreateNewButton = observer(function GoalCreateNewButton({ children, withHotkey }: Props) {
   const store = useGoalsStore();
 
   return (
-    <Button
-      onClick={store.startGoalCreation}
-      size='xl'
-      display='inline-flex'
-      flexDirection='column'
-      alignItems='center'
-      borderRadius='xl'
-      h={60}
-      w={56}
-      pt={6}
-      pl={14}
-      pr={14}
-      pb={6}
-      mb={10}
-      mr={10}
-    >
-      <Box mb={6}>
-        <LargePlusIcon />
-      </Box>
-      <Text fontSize='lg' fontWeight='semibold' color='gray.400'>
-        New goal
-      </Text>
-    </Button>
+    <>
+      <Button
+        onClick={store.startGoalCreation}
+        size='md'
+        minH={8}
+        mb={2}
+        bg='blue.400'
+        color='white'
+        _hover={{
+          bg: 'blue.500',
+        }}
+        _focus={{
+          boxShadow: 'var(--chakra-shadows-outline)',
+          outline: 'none',
+        }}
+      >
+        {children}
+      </Button>
+      {withHotkey && (
+        <Text
+          fontSize='xs'
+          fontWeight='normal'
+          lineHeight={4}
+          color='gray.400'
+          display='flex'
+          justifyContent='center'
+        >
+          Press
+          <HotkeyBlock hotkey='N' ml={1} fontSize='xs' lineHeight={4} />
+        </Text>
+      )}
+    </>
   );
 });
