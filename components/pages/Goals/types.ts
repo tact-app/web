@@ -29,11 +29,19 @@ export type GoalData = {
   icon?: GoalIconData;
 };
 
+
+export enum GoalState {
+  IS_COMING = 'is-coming',
+  TIME_TO_ACHIEVE = 'time-to-achieve',
+  END_DATE_ALREADY_PASSED = 'end-date-already-passed',
+}
+
 export type GoalDataExtended = GoalData & {
   doneTasks: TaskData[];
   wontDoTasks: TaskData[];
   toDoTasks: TaskData[];
   allTasks: TaskData[];
+  state: GoalState;
 };
 
 export type GoalTemplateIcon = {

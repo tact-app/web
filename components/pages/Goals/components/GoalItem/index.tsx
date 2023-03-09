@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { chakra, Box, Text, Flex } from '@chakra-ui/react';
+import { chakra, Box, Text, Flex, Tooltip } from '@chakra-ui/react';
 import { useGoalsStore } from '../../store';
 import { DatePicker } from "../../../../shared/DatePicker/DatePicker";
 import {
@@ -10,16 +10,44 @@ import {
   faPenToSquare,
 } from "@fortawesome/pro-regular-svg-icons";
 import {
+  faAlarmClock,
+  faCalendarClock,
+  faCalendarCircleExclamation,
+} from "@fortawesome/pro-light-svg-icons"
+import {
   faCircleCheck as faCircleCheckSolid,
   faCircleMinus as faCircleMinusSolid
 } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { GoalDataExtended } from "../../types";
+import { GoalDataExtended, GoalState } from "../../types";
 import { EmojiSelect } from "../../../../shared/EmojiSelect";
 import { ActionMenu } from "../../../../shared/ActionMenu";
+import { EditableTitle } from "../../../../shared/EditableTitle";
 
-export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExtended }) {
+type Props = {
+  goal: GoalDataExtended
+};
+
+const GOAL_STATE_PARAMS = {
+  [GoalState.IS_COMING]: {
+    color: 'green.400',
+    icon: faAlarmClock,
+    tooltipTitle: 'Is coming soon',
+  },
+  [GoalState.TIME_TO_ACHIEVE]: {
+    color: 'orange.400',
+    icon: faCalendarCircleExclamation,
+    tooltipTitle: <>Time to achieve this goal<br/>is coming to an end</>,
+  },
+  [GoalState.END_DATE_ALREADY_PASSED]: {
+    color: 'red.400',
+    icon: faCalendarClock,
+    tooltipTitle: <>The end date for the goal<br/>has already passed</>,
+  },
+}
+
+export const GoalItem = observer(function GoalItem({ goal }: Props) {
   const store = useGoalsStore();
 
   const actions = [
@@ -41,7 +69,7 @@ export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExt
     <Box
       borderWidth={1}
       borderRadius={8}
-      borderColor='gray.200'
+      borderColor={goal.state ? GOAL_STATE_PARAMS[goal.state].color : 'gray.200'}
       p={4}
       w={80}
       mr={6}
@@ -57,7 +85,7 @@ export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExt
           iconFontSize='3xl'
         />
         <chakra.div ml={2}>
-          <Text fontSize='md' fontWeight='semibold'>{goal.title}</Text>
+          <EditableTitle value={goal.title} />
           <Flex mt={1} fontSize='xs' color='gray.500'>
             <chakra.span>All task: {goal.allTasks.length}</chakra.span>
             <chakra.span ml={2}>
@@ -123,6 +151,36 @@ export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExt
         })}
         triggerIconFontSize={18}
       />
+
+      {goal.state && (
+        <Tooltip
+          label={
+            <chakra.span display='flex' fontSize='xs' fontWeight='normal' textAlign='center'>
+              {GOAL_STATE_PARAMS[goal.state].tooltipTitle}
+            </chakra.span>
+          }
+          placement='top'
+          offset={[0, 10]}
+          hasArrow
+        >
+          <chakra.div
+            w={6}
+            h={6}
+            bg='white'
+            position='absolute'
+            top={-3}
+            left={-3}
+            color={GOAL_STATE_PARAMS[goal.state].color}
+            boxShadow='0px 2px 3px rgba(99, 99, 99, 0.09)'
+            borderRadius='full'
+            display='flex'
+            alignItems='center'
+            justifyContent='center'
+          >
+            <FontAwesomeIcon fontSize={14} icon={GOAL_STATE_PARAMS[goal.state].icon} />
+          </chakra.div>
+        </Tooltip>
+      )}
     </Box>
   );
 });

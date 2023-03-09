@@ -4,7 +4,7 @@ import { getProvider } from '../../../helpers/StoreProvider';
 import { ModalsController } from '../../../helpers/ModalsController';
 import { GoalCreationModal } from './modals/GoalCreationModal';
 import { GoalConfigurationModal } from './modals/GoalConfigurationModal';
-import { GoalData, GoalDataExtended } from './types';
+import { GoalData, GoalDataExtended, GoalState } from './types';
 import { DescriptionData } from '../../../types/description';
 import { TaskData, TaskStatus } from "../../shared/TasksList/types";
 import { omit } from 'lodash';
@@ -58,7 +58,7 @@ export class GoalsStore {
   }
 
   get extendedGoals() {
-    return Object.entries(this.root.resources.goals.map).reduce((acc, [id, goal]) => ({
+    return Object.entries(this.root.resources.goals.map).reduce((acc, [id, goal], index) => ({
       ...acc,
       [goal.spaceId]: [
         ...(acc[goal.spaceId] ?? []),
@@ -67,7 +67,14 @@ export class GoalsStore {
           doneTasks: this.taskListByGoal[id]?.[TaskStatus.DONE] ?? [],
           wontDoTasks: this.taskListByGoal[id]?.[TaskStatus.WONT_DO] ?? [],
           toDoTasks: this.taskListByGoal[id]?.[TaskStatus.TODO] ?? [],
-          allTasks: this.taskListByGoal[id]?.all ?? []
+          allTasks: this.taskListByGoal[id]?.all ?? [],
+          state: index === 1
+            ? GoalState.IS_COMING
+            : index === 2
+              ? GoalState.TIME_TO_ACHIEVE
+              : index === 3
+                ? GoalState.END_DATE_ALREADY_PASSED
+                : undefined
         },
       ],
     }), {} as Record<string, GoalDataExtended[]>)

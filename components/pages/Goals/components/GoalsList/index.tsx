@@ -10,6 +10,7 @@ import { useHotkeysHandler } from "../../../../../helpers/useHotkeysHandler";
 import { SpacesSmallIcon } from "../../../Spaces/components/SpacesIcons/SpacesSmallIcon";
 import { faPlus } from "@fortawesome/pro-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { EditableTitle } from "../../../../shared/EditableTitle";
 
 export const GoalsList = observer(function GoalsList() {
   const store = useGoalsStore();
@@ -47,7 +48,11 @@ export const GoalsList = observer(function GoalsList() {
                     borderRadius={4}
                     bgOpacity='.100'
                   />
-                  <Text ml={2} color='gray.700'>{store.root.resources.spaces.getById(spaceId).name}</Text>
+                  <EditableTitle
+                    widthByTitle
+                    sharedProps={{ color: 'gray.700', ml: 2 }}
+                    value={store.root.resources.spaces.getById(spaceId).name}
+                  />
                 </Flex>
                 <chakra.div>{goals.map((goal) => <GoalItem key={goal.id} goal={goal} />)}</chakra.div>
               </chakra.div>

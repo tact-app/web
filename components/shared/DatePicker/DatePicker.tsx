@@ -102,6 +102,7 @@ export function DatePicker({
         selected={value ? new Date(value) : undefined}
         onChange={handleChange}
         portalId="date-picker-portal"
+        placeholderText={!value && isFocused ? 'DD.MM.YYYY' : ''}
         onFocus={handleFocus}
         onBlur={handleBlur}
         ref={ref}
