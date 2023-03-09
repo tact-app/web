@@ -2,14 +2,33 @@ import { observer } from 'mobx-react-lite';
 import { chakra, Box, Text, Flex } from '@chakra-ui/react';
 import { useGoalsStore } from '../../store';
 import { DatePicker } from "../../../../shared/DatePicker/DatePicker";
-import { faCircleCheck, faCircleMinus } from "@fortawesome/pro-solid-svg-icons";
+import {
+  faCircleCheck,
+  faCircleMinus,
+  faBoxArchive,
+  faClone,
+  faPenToSquare,
+} from "@fortawesome/pro-regular-svg-icons";
+import {
+  faCircleCheck as faCircleCheckSolid,
+  faCircleMinus as faCircleMinusSolid
+} from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { GoalDataExtended } from "../../types";
 import { EmojiSelect } from "../../../../shared/EmojiSelect";
+import { ActionMenu } from "../../../../shared/ActionMenu";
 
 export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExtended }) {
   const store = useGoalsStore();
+
+  const actions = [
+    { icon: faCircleCheck, title: 'Complete', onClick: () => null, },
+    { icon: faCircleMinus, title: "Won't do", onClick: () => null, },
+    { icon: faPenToSquare, title: 'Edit', onClick: () => null, },
+    { icon: faClone, title: 'Duplicate', onClick: () => null, },
+    { icon: faBoxArchive, title: 'Archive', onClick: () => null, }
+  ];
 
   const handleChangeStartDate = (date: string) => {
     store.updateGoal({ ...goal, startDate: date });
@@ -28,6 +47,7 @@ export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExt
       mr={6}
       mb={6}
       float='left'
+      position='relative'
     >
       <Flex>
         <EmojiSelect
@@ -41,10 +61,12 @@ export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExt
           <Flex mt={1} fontSize='xs' color='gray.500'>
             <chakra.span>All task: {goal.allTasks.length}</chakra.span>
             <chakra.span ml={2}>
-              <FontAwesomeIcon icon={faCircleCheck} color='var(--chakra-colors-blue-400' /> {goal.doneTasks.length}
+              <FontAwesomeIcon icon={faCircleCheckSolid} color='var(--chakra-colors-blue-400' />{' '}
+              {goal.doneTasks.length}
             </chakra.span>
             <chakra.span ml={2}>
-              <FontAwesomeIcon icon={faCircleMinus} color='var(--chakra-colors-gray-400' /> {goal.wontDoTasks.length}
+              <FontAwesomeIcon icon={faCircleMinusSolid} color='var(--chakra-colors-gray-400' />{' '}
+              {goal.wontDoTasks.length}
             </chakra.span>
           </Flex>
         </chakra.div>
@@ -79,6 +101,28 @@ export const GoalItem = observer(function GoalItem({ goal }: { goal: GoalDataExt
           </chakra.div>
         </Flex>
       </Flex>
+
+      <ActionMenu
+        items={actions}
+        triggerButtonProps={(isOpen) => ({
+          color: isOpen ? 'blue.400' : 'gray.500',
+          position: 'absolute',
+          top: 3,
+          right: 4,
+          height: 6,
+          _hover: {
+            color: 'blue.400',
+          },
+          _focus: {
+            color: 'blue.400',
+          },
+          _focusVisible: {
+            boxShadow: 'none',
+            color: 'blue.400',
+          }
+        })}
+        triggerIconFontSize={18}
+      />
     </Box>
   );
 });
