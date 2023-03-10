@@ -45,16 +45,6 @@ enum GoalCreateBlocks {
 export class GoalCreationModalStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
-
-    init({
-      data: async () => {
-        const response = await fetch(
-          'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-        );
-
-        return response.json();
-      },
-    });
   }
 
   listWithCreator = new TasksListWithCreatorStore(this.root);

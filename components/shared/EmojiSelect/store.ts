@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { RootStore } from "../../../stores/RootStore";
+import { EmojiStore } from "../../../stores/EmojiStore";
 
 export type EmojiSelectProps = {
   icon: string;
@@ -30,7 +31,7 @@ export class EmojiSelectStore {
 
   isEmojiPickerOpen = false;
 
-  constructor(public root: RootStore) {
+  constructor() {
     makeAutoObservable(this);
   }
 
@@ -49,6 +50,10 @@ export class EmojiSelectStore {
   handleColorSelect = (color: string) => {
     this.onColorChange(color);
   };
+
+  init = async () => {
+    await EmojiStore.loadIfNotLoaded();
+  }
 
   update = ({ icon, color, onColorChange, onIconChange }: EmojiSelectProps) => {
     this.icon = icon;

@@ -5,7 +5,7 @@ import React, { ReactElement } from "react";
 import { TasksListWithCreator } from "../../../../../shared/TasksListWithCreator";
 import { DraggableListContext } from "../../../../../shared/DraggableList/view";
 import { SpaceSelect } from "../../../../../shared/SpaceSelect";
-import { DatePicker } from "../../../../../shared/DatePicker/DatePicker";
+import { DatePicker } from "../../../../../shared/DatePicker";
 
 export const GoalCreationInformation = observer(
   function GoalCreationInformation() {

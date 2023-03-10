@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { EMOJI_SELECT_COLORS, EmojiSelectProps, useEmojiSelectStore } from "./store";
+import { EmojiStore } from "../../../stores/EmojiStore";
 
 export const EmojiSelectComponent = observer(
   function EmojiSelectComponent({
@@ -69,7 +70,7 @@ export const EmojiSelectComponent = observer(
             <Picker
               autoFocus
               theme='light'
-              data={store.root.emojiData}
+              data={EmojiStore.emojiData}
               onEmojiSelect={store.handleEmojiSelect}
             />
           </PopoverBody>

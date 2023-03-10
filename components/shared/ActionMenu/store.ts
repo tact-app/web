@@ -1,13 +1,12 @@
-import { KeyboardEvent } from 'react';
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from "../../../helpers/StoreProvider";
 import { ListNavigation } from "../../../helpers/ListNavigation";
-import { ActionMenuItem, ActionMenuProps } from "./types";
+import { ActionMenuCallbacks, ActionMenuItem, ActionMenuProps } from "./types";
 
 export class ActionMenuStore {
   items: ActionMenuItem[];
-  callbacks: Pick<ActionMenuProps, 'onNavigate' | 'onToggleMenu'>;
+  callbacks: ActionMenuCallbacks;
 
   isMenuOpen = false;
 

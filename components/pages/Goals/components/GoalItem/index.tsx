@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { chakra, Box, Text, Flex, Tooltip } from '@chakra-ui/react';
 import { useGoalsStore } from '../../store';
-import { DatePicker } from "../../../../shared/DatePicker/DatePicker";
+import { DatePicker } from "../../../../shared/DatePicker";
 import {
   faCircleCheck,
   faCircleMinus,

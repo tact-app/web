@@ -17,8 +17,11 @@ export type ActionMenuViewProps = {
   triggerButtonProps?(isOpen: boolean): ButtonProps;
 };
 
-export type ActionMenuProps =  ActionMenuViewProps & {
+export type ActionMenuCallbacks = {
   onNavigate?(direction: NavigationDirections): void;
   onToggleMenu?(isOpen: boolean): void;
+};
+
+export type ActionMenuProps =  ActionMenuViewProps & ActionMenuCallbacks & {
   items: ActionMenuItem[];
 };
