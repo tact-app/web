@@ -14,8 +14,6 @@ export const DatePickerView = observer(
 
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.value && !store.isFocused);
 
-    console.log(flexProps)
-
     return (
       <Flex alignItems='center' {...flexProps}>
         {mustShowIcon && (

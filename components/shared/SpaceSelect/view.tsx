@@ -29,8 +29,6 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
     handler: store.handleClickOutside,
   });
 
-  useEffect(() => store.destroy, []);
-
   const renderContent = () => {
     if (!store.spacesExtended.length) {
       return (

@@ -339,8 +339,6 @@ export class GoalCreationModalStore {
       });
     }
 
-    console.log(this.goal)
-
     runInAction(() => {
       this.isDescriptionLoading = false;
     });

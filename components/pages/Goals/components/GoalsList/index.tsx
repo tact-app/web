@@ -19,8 +19,6 @@ export const GoalsList = observer(function GoalsList() {
     enabled: !store.modals.isOpen
   });
 
-  console.log(store.root.resources.spaces.list)
-
   return (
     <Box pl={32} pr={32}>
       <Flex
