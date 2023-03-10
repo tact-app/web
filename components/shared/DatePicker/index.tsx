@@ -6,10 +6,7 @@ import { DatePickerView } from './view';
 export const DatePicker = observer(function DatePicker(props: DatePickerProps) {
   return (
     <DatePickerStoreProvider {...props}>
-      <DatePickerView
-        showIconOnlyIfEmpty={props.showIconOnlyIfEmpty}
-        iconFontSize={props.iconFontSize}
-      />
+      <DatePickerView {...props} />
     </DatePickerStoreProvider>
   );
 });

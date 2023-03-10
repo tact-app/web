@@ -189,7 +189,7 @@ const theme = extendTheme({
             }
           },
           '.react-datepicker__input-container': {
-            maxWidth: '90px',
+            maxWidth: '100px',
             width: 'auto',
           },
           '.react-datepicker__input-container input': {

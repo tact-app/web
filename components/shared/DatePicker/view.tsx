@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from "mobx-react-lite";
 import ReactDatePicker from 'react-datepicker';
 import { Flex, chakra } from "@chakra-ui/react";
-import { faCalendarCirclePlus } from "@fortawesome/pro-light-svg-icons";
+import { faCalendarLines, faCalendarCirclePlus } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DatePickerViewProps } from "./types";
 import { DATE_PICKER_DATE_FORMAT, useDatePickerStore } from "./store";
@@ -14,17 +14,20 @@ export const DatePickerView = observer(
 
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.value && !store.isFocused);
 
+    console.log(flexProps)
+
     return (
       <Flex alignItems='center' {...flexProps}>
         {mustShowIcon && (
-          <chakra.div tabIndex={-1} pr={1.5} cursor='pointer'>
+          <chakra.div tabIndex={-1} pr={store.isFocused ? '0.2rem' : 2}>
             <FontAwesomeIcon
               id='test'
               tabIndex={-1}
               color={`var(--chakra-colors-${(store.isFocused ? 'blue' : 'gray') + '-500'})`}
               fontSize={iconFontSize}
-              icon={faCalendarCirclePlus}
+              icon={store.isFocused ? faCalendarCirclePlus : faCalendarLines}
               style={{ outlineWidth: 0 }}
+              cursor='pointer'
               onClick={store.handleIconClick}
             />
           </chakra.div>
