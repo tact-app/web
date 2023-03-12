@@ -34,6 +34,8 @@ export type TaskQuickEditorProps = {
   keepFocus?: boolean;
   task?: TaskData;
   enableReferences?: boolean;
+  disableSpaceChange?: boolean;
+  disableGoalChange?: boolean;
 };
 
 export enum Modes {
@@ -108,6 +110,8 @@ export class TaskQuickEditorStore {
   activeModeType: Modes = Modes.DEFAULT;
   focusedMode: Modes | null = null;
   inputData: SpacesInboxItemData | null = null;
+  disableSpaceChange: boolean = false;
+  disableGoalChange: boolean = false;
 
   enableReferences: boolean = true;
   isMenuOpen: boolean = false;
@@ -669,6 +673,8 @@ export class TaskQuickEditorStore {
     order,
     keepFocus,
     enableReferences,
+    disableSpaceChange,
+    disableGoalChange,
     input,
   }: TaskQuickEditorProps) => {
     this.callbacks = callbacks || {};
@@ -676,6 +682,8 @@ export class TaskQuickEditorStore {
     this.order = order || this.order;
     this.enableReferences = enableReferences;
     this.inputData = input;
+    this.disableSpaceChange = disableSpaceChange;
+    this.disableGoalChange = disableGoalChange;
 
     const defaultSpaceId = task?.spaceId || input?.spaceId;
 

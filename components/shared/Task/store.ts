@@ -35,6 +35,7 @@ export type TaskProps = {
   hasPrevious?: boolean;
   hasNext?: boolean;
   isEditorFocused?: boolean;
+  delayedCreation?: boolean;
   task: TaskData;
 };
 
@@ -67,6 +68,7 @@ class TaskStore {
   data: TaskData | null = null;
   isDescriptionLoading: boolean = true;
   descriptionId: string = '';
+  delayedCreation: boolean = false;
   descriptionContent: DescriptionStore = new DescriptionStore();
   modesOrder = [Modes.SPACE, Modes.PRIORITY, Modes.GOAL, Modes.TAG];
 
@@ -97,10 +99,12 @@ class TaskStore {
       this.descriptionContent.set(undefined);
       this.editor?.commands.setContent([]);
 
-      this.root.api.descriptions.add({
-        id: this.descriptionId,
-        content: this.descriptionContent.get(),
-      });
+      if (!this.delayedCreation) {
+        this.root.api.descriptions.add({
+          id: this.descriptionId,
+          content: this.descriptionContent.get(),
+        });
+      }
 
       this.callbacks.onTaskChange?.(this.data);
     }
@@ -118,7 +122,7 @@ class TaskStore {
   };
 
   saveDescription = () => {
-    if (this.descriptionContent.get() && this.descriptionId) {
+    if (this.descriptionContent.get() && this.descriptionId && !this.delayedCreation) {
       this.root.api.descriptions.update({
         id: this.descriptionId,
         fields: {
@@ -243,6 +247,7 @@ class TaskStore {
     this.isExpanded = props.isExpanded;
     this.callbacks = props.callbacks;
     this.isEditorFocused = props.isEditorFocused;
+    this.delayedCreation = props.delayedCreation;
   };
 }
 

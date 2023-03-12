@@ -15,6 +15,8 @@ export type TasksListWithCreatorProps = TasksListProps & {
   tasksListCallbacks?: TasksListProps['callbacks'];
   defaultSave?: boolean;
   input?: SpacesInboxItemData;
+  disableSpaceChange?: boolean;
+  disableGoalChange?: boolean;
 };
 
 export class TasksListWithCreatorStore {

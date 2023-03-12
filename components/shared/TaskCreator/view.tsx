@@ -23,6 +23,7 @@ import { TaskQuickEditorReference } from '../TaskQuickEditor/TaskQuickEditorRefe
 export type TaskCreatorProps = {
   wrapperProps: InputWrapperProps;
   isHotkeysEnabled?: boolean;
+  canChangeSpace?: boolean;
 };
 
 const TASK_CREATOR_VIEW_TAG_LIST_MIN_WIDTH = 72;
@@ -102,8 +103,8 @@ export const TaskCreatorView = observer(function TaskCreator(
                     },
                   }}
                 />
-                <TaskQuickEditorSpace />
-                <TaskQuickEditorGoal />
+                {!store.disableSpaceChange && <TaskQuickEditorSpace />}
+                {store.disableGoalChange && <TaskQuickEditorGoal />}
                 <TaskQuickEditorPriority />
                 <TaskQuickEditorMainMenu />
               </HStack>

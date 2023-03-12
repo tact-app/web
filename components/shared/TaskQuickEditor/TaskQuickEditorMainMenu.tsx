@@ -15,6 +15,7 @@ import React from 'react';
 export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
   const store = useTaskQuickEditorStore();
 
+  console.log(store.isMenuOpen)
   return (
     <chakra.div visibility={store.isInputFocused ? 'visible' : 'hidden'}>
       <Menu
@@ -36,7 +37,7 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
           <DotsIcon />
         </MenuButton>
         <Portal>
-          <MenuList p={0} shadow='lg'>
+          <MenuList p={0} shadow='lg' zIndex='modal'>
             <MenuItem
                 fontSize='sm'
                 lineHeight='5'
@@ -55,24 +56,28 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
             >
               Set priority
             </MenuItem>
-            <MenuItem
+            {!store.disableGoalChange && (
+              <MenuItem
                 fontSize='sm'
                 lineHeight='5'
                 fontWeight='normal'
                 command='*'
                 onClick={() => store.activateMode(Modes.GOAL)}
-            >
-              Add goal
-            </MenuItem>
-            <MenuItem
+              >
+                Add goal
+              </MenuItem>
+            )}
+            {!store.disableSpaceChange && (
+              <MenuItem
                 fontSize='sm'
                 lineHeight='5'
                 fontWeight='normal'
                 command='^'
                 onClick={() => store.activateMode(Modes.SPACE)}
-            >
-              Link to space
-            </MenuItem>
+              >
+                Link to space
+              </MenuItem>
+            )}
           </MenuList>
         </Portal>
       </Menu>

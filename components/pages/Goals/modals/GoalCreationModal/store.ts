@@ -113,6 +113,7 @@ export class GoalCreationModalStore {
       hasPrevious: this.listWithCreator.list.hasPrevTask,
       isEditorFocused: this.listWithCreator.list.isEditorFocused,
       isExpanded: this.isTaskExpanded,
+      delayedCreation: true,
       callbacks: {
         ...this.listWithCreator.list.taskCallbacks,
         onCollapse: () => {
