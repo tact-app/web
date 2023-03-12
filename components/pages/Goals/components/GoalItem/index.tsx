@@ -76,6 +76,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       mb={6}
       float='left'
       position='relative'
+      height={124}
     >
       <Flex>
         <EmojiSelect

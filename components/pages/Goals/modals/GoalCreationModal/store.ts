@@ -88,10 +88,9 @@ export class GoalCreationModalStore {
   isDescriptionLoading: boolean = true;
   draggingTask: TaskData | null = null;
 
-  goalId: string = uuidv4();
   goal: GoalData = {
-    id: this.goalId,
-    listId: this.goalId,
+    id: uuidv4(),
+    listId: uuidv4(),
     title: '',
     startDate: '',
     targetDate: '',
@@ -275,7 +274,6 @@ export class GoalCreationModalStore {
   update = async (props: GoalCreationModalProps) => {
     this.onClose = props.onClose;
     this.onSave = props.onSave;
-    this.goalId = props.goal.id;
     this.goal = { ...this.goal, ...props.goal };
 
     if (this.goal.descriptionId) {

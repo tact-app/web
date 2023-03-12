@@ -58,7 +58,7 @@ export const GoalCreationInformation = observer(
           >
             <TasksListWithCreator
               instance={store.listWithCreator}
-              listId={store.goal.listId}
+              listId={store.goal.id}
               tasksListCallbacks={store.tasksListCallbacks}
               delayedCreation
               disableSpaceChange
