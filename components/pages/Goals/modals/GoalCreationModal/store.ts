@@ -114,6 +114,8 @@ export class GoalCreationModalStore {
       isEditorFocused: this.listWithCreator.list.isEditorFocused,
       isExpanded: this.isTaskExpanded,
       delayedCreation: true,
+      disableSpaceChange: true,
+      disableGoalChange: true,
       callbacks: {
         ...this.listWithCreator.list.taskCallbacks,
         onCollapse: () => {

@@ -53,6 +53,8 @@ export const TaskView = observer(function TaskView() {
         callbacks={store.quickEditorCallbacks}
         order={store.modesOrder}
         task={store.data}
+        disableGoalChange={store.disableGoalChange}
+        disableSpaceChange={store.disableSpaceChange}
       >
         <ItemToolbar
             onPreviousItem={store.handlePreviousItem}

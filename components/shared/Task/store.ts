@@ -36,6 +36,8 @@ export type TaskProps = {
   hasNext?: boolean;
   isEditorFocused?: boolean;
   delayedCreation?: boolean;
+  disableSpaceChange?: boolean;
+  disableGoalChange?: boolean;
   task: TaskData;
 };
 
@@ -69,6 +71,8 @@ class TaskStore {
   isDescriptionLoading: boolean = true;
   descriptionId: string = '';
   delayedCreation: boolean = false;
+  disableSpaceChange: boolean = false;
+  disableGoalChange: boolean = false;
   descriptionContent: DescriptionStore = new DescriptionStore();
   modesOrder = [Modes.SPACE, Modes.PRIORITY, Modes.GOAL, Modes.TAG];
 
@@ -248,6 +252,8 @@ class TaskStore {
     this.callbacks = props.callbacks;
     this.isEditorFocused = props.isEditorFocused;
     this.delayedCreation = props.delayedCreation;
+    this.disableSpaceChange = props.disableSpaceChange;
+    this.disableGoalChange = props.disableGoalChange;
   };
 }
 
