@@ -149,9 +149,7 @@ export class TasksListStore {
       this.sendTasks(this.draggableList.focused);
     },
     FOCUS_LEAVE_LEFT: () => {
-      if (this.openedTask) {
-        this.closeTask();
-      } else if (this.callbacks.onFocusLeave?.(NavigationDirections.LEFT)) {
+      if (this.callbacks.onFocusLeave?.(NavigationDirections.LEFT)) {
         this.draggableList.resetFocusedItem();
         this.setEditingTask(null);
       }
@@ -174,6 +172,17 @@ export class TasksListStore {
       !this.draggableList.isControlDraggingActive &&
       !this.modals.controller.isOpen &&
       !this.root.isModalOpen
+    );
+  }
+  get isMouseSelectionEnabled() {
+    return !!(
+      !this.editingTaskId &&
+      !this.isItemMenuOpen &&
+      !this.draggableList.isDraggingActive &&
+      !this.draggableList.isControlDraggingActive &&
+      !this.modals.controller.isOpen &&
+      !this.root.isModalOpen &&
+      !this.highlightActiveTasks
     );
   }
 

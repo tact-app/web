@@ -1,13 +1,8 @@
-import React, { KeyboardEvent } from 'react';
+import { KeyboardEvent } from 'react';
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from "../../../helpers/StoreProvider";
 import { ModalsController } from "../../../helpers/ModalsController";
-import { TaskDeleteModal } from "../TasksList/modals/TaskDeleteModal";
-import { TaskWontDoModal } from "../TasksList/modals/TaskWontDoModal";
-import { TaskGoalAssignModal } from "../TasksList/modals/TaskGoalAssignModal";
-import { GoalCreationModal } from "../../pages/Goals/modals/GoalCreationModal";
-import { TaskSpaceChangeModal } from "../TasksList/modals/TaskSpaceChangeModal";
 import { SpaceCreationModal } from "../../pages/Spaces/modals/SpaceCreationModal";
 import { ModalsTypes } from "../TasksList/modals/store";
 import { SpaceData } from "../../pages/Spaces/types";

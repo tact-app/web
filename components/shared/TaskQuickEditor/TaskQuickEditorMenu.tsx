@@ -29,10 +29,14 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
   );
 
   useEffect(() => {
-    if (isOpen && items.length !== store.suggestionsMenu.itemsCount) {
+    if (isOpen && items.length && items.length !== store.suggestionsMenu.itemsCount) {
       store.suggestionsMenu.setCount(items.length);
     }
   }, [isOpen, items.length, store.suggestionsMenu, store.suggestionsMenu.itemsCount]);
+
+  if (!items.length) {
+    return null;
+  }
 
   return (
     <Popover

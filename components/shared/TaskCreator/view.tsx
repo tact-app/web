@@ -52,7 +52,7 @@ export const TaskCreatorView = observer(function TaskCreator(
   const ref = useRef(null);
 
   useOutsideClick({
-    enabled: store.isInputFocused,
+    enabled: store.isInputFocused && !store.root.isModalOpen && !store.suggestionsMenu.isOpen,
     ref: ref,
     handler: store.handleClickOutside,
   });

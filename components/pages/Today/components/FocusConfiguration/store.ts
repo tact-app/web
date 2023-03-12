@@ -6,6 +6,7 @@ import {
   GoalsSelectionStore,
 } from '../../../../shared/GoalsSelection/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
+import { AnimatedBlockParams } from "../../../../shared/AnimatedBlock";
 
 export type FocusConfigurationData = {
   id: string;
@@ -23,6 +24,7 @@ export type FocusConfigurationProps = {
     onGoalCreateClick?: (cb: () => void) => void;
   };
   getItemsCount: () => number;
+  focusHighlightParams: AnimatedBlockParams;
 };
 
 export class FocusConfigurationStore {
@@ -47,6 +49,7 @@ export class FocusConfigurationStore {
       if (this.isFocused) {
         e.stopPropagation();
         this.isBlockFocused = false;
+        this.navigation.disable();
         this.callbacks.onBlur?.();
       }
     },
@@ -103,12 +106,16 @@ export class FocusConfigurationStore {
   };
 
   handleBlur = () => {
+    if (!this.isFocused) {
+      return;
+    }
+
     this.navigation.disable();
     this.isBlockFocused = false;
-    this.callbacks.onBlur?.();
   };
 
   handleSelectGoal = () => {
+    this.isBlockFocused = true;
     this.data.goals = this.goalsSelection.checked;
     this.sendChanges();
   };
@@ -116,10 +123,12 @@ export class FocusConfigurationStore {
   handleShowImportantChange = (e) => {
     this.data.showImportant = e.target.checked;
     this.sendChanges();
+    this.navigation.disable();
   };
 
   handleGoalCreateClick = () => {
     this.handleBlur();
+    this.callbacks.onBlur?.();
     this.callbacks.onGoalCreateClick?.(() => {
       setTimeout(() => {
         this.navigation.enable();

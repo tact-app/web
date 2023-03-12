@@ -15,6 +15,7 @@ import { faEllipsis } from "@fortawesome/pro-regular-svg-icons";
 export const ActionMenuView = observer(
   function ActionMenu({
     hidden,
+    isOpenByContextMenu,
     triggerButtonProps,
     triggerIconFontSize,
     triggerIcon = faEllipsis
@@ -31,10 +32,10 @@ export const ActionMenuView = observer(
     }, [setIsAnimationInProcess]);
 
     const close = useCallback(() => {
-      setIsAnimationInProcess(true);
+      !isOpenByContextMenu && setIsAnimationInProcess(true);
       onClose();
       store.closeMenu();
-    }, [onClose, store]);
+    }, [isOpenByContextMenu, onClose, store]);
 
     const open = useCallback(() => {
       setIsAnimationInProcess(true);

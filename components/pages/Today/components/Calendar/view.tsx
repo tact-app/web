@@ -17,6 +17,7 @@ import { CalendarTableEvent } from './CalendarTableEvent';
 import { useRef } from 'react';
 import { CalendarToolbar } from './CalendarToolbar/CalendarToolbar';
 import { TooltipWithHotkey } from '../../../../shared/TooltipWithHotkey';
+import { AnimatedBlock } from "../../../../shared/AnimatedBlock";
 
 export const CalendarView = observer(function CalendarView() {
   const store = useCalendarStore();
@@ -29,7 +30,8 @@ export const CalendarView = observer(function CalendarView() {
   });
 
   return (
-    <Box
+    <AnimatedBlock
+      component={Box}
       pt={store.isCollapsed ? 0 : 10}
       pl={store.isCollapsed ? 0 : 6}
       pr={store.isCollapsed ? 0 : 4}
@@ -37,6 +39,7 @@ export const CalendarView = observer(function CalendarView() {
       flexDirection='column'
       h='100%'
       borderLeft='1px solid var(--chakra-colors-gray-200)'
+      animateParams={store.focusHighlightParams}
     >
       {store.isCollapsed ? (
         <Button
@@ -100,6 +103,6 @@ export const CalendarView = observer(function CalendarView() {
           </ResizableBlocks>
         </Box>
       )}
-    </Box>
+    </AnimatedBlock>
   );
 });

@@ -1,28 +1,8 @@
 import { observer } from 'mobx-react-lite';
-import {
-  Button,
-  chakra,
-  Divider,
-  Fade,
-  forwardRef,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
-  Portal,
-  useDisclosure,
-} from '@chakra-ui/react';
-import { TaskItemMenuIcon } from '../../../Icons/TaskItemMenuIcon';
 import { TaskItemStore, useTaskItemStore } from '../TaskItem/store';
-import React, {
-  PropsWithChildren,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import React from 'react';
 import { TaskStatus } from '../../types';
 import { Modes } from '../../../TaskQuickEditor/store';
-import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import {
   faBan,
   faBullseyePointer,
@@ -202,17 +182,26 @@ const singleTaskItems = (store: TaskItemStore) => [
 export const TaskItemMenu = observer(function TaskItemMenu() {
   const store = useTaskItemStore();
 
+  const isMouseSelection = store.parent.draggableList.isMouseSelection;
+
   return (
     <ActionMenu
       triggerIcon={faEllipsisVertical}
       items={store.isMultiSelected ? multiTaskItems(store) : singleTaskItems(store)}
       hidden={!store.isDragging}
       triggerIconFontSize={18}
+      onToggleMenu={(isOpen) => {
+        if (isOpen) {
+          store.handleFocus();
+          store.quickEdit.suggestionsMenu.close();
+          store.quickEdit.suggestionsMenu.closeForMode();
+        }
+      }}
       triggerButtonProps={() => ({
         color: 'gray.500',
 
         _groupHover: {
-          visibility: 'visible',
+          visibility: !isMouseSelection && 'visible',
         },
         _before: {
           content: '""',

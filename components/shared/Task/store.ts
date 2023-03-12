@@ -17,6 +17,7 @@ import { DescriptionData } from '../../../types/description';
 import { Editor, JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
 import { subscriptions } from '../../../helpers/subscriptions';
+import { AnimatedBlockParams } from "../AnimatedBlock";
 
 export type TaskProps = {
   callbacks: {
@@ -39,6 +40,7 @@ export type TaskProps = {
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
   task: TaskData;
+  animateParams?: AnimatedBlockParams;
 };
 
 class DescriptionStore {
@@ -66,6 +68,7 @@ class TaskStore {
   hasNext = true;
   isExpanded: boolean = false;
   isEditorFocused: boolean = false;
+  isFocused: boolean = false;
   callbacks: TaskProps['callbacks'];
   data: TaskData | null = null;
   isDescriptionLoading: boolean = true;
@@ -75,6 +78,8 @@ class TaskStore {
   disableGoalChange: boolean = false;
   descriptionContent: DescriptionStore = new DescriptionStore();
   modesOrder = [Modes.SPACE, Modes.PRIORITY, Modes.GOAL, Modes.TAG];
+
+  animateParams?: AnimatedBlockParams;
 
   get inputSpace() {
     return this.root.resources.spaces.getById(this.data?.input.spaceId);
@@ -115,6 +120,8 @@ class TaskStore {
   };
 
   handleDescriptionFocus = () => {
+    this.isEditorFocused = true;
+    this.callbacks.onFocus?.();
     clearTimeout(this.descriptionBlurTimeout);
   };
 
@@ -139,7 +146,10 @@ class TaskStore {
   saveAndExit = () => {
     this.saveDescription();
     this.isEditorFocused = false;
-    this.callbacks.onBlur?.();
+
+    if (!this.quickEditor.isInputFocused) {
+      this.callbacks.onBlur?.();
+    }
   };
 
   handleNextItem = () => {
@@ -150,14 +160,6 @@ class TaskStore {
   handlePreviousItem = () => {
     this.handleDescriptionBlur();
     this.callbacks.onPreviousItem(this.data?.id, true);
-  };
-
-  handleExpand = () => {
-    this.callbacks.onExpand?.();
-  };
-
-  handleCollapse = () => {
-    this.callbacks.onCollapse?.();
   };
 
   handleClose = () => {
@@ -241,6 +243,18 @@ class TaskStore {
             this.editor.commands.focus(true);
           }
         }
+      ),
+      reaction(
+        () => [this.quickEditor.isInputFocused, this.isEditorFocused],
+        () => {
+          if (!this.isFocused && (this.quickEditor.isInputFocused || this.isEditorFocused)) {
+            this.isFocused = true;
+          }
+
+          if (!this.quickEditor.isInputFocused && !this.isEditorFocused) {
+            this.isFocused = false;
+          }
+        }
       )
     );
 
@@ -251,6 +265,7 @@ class TaskStore {
     this.isExpanded = props.isExpanded;
     this.callbacks = props.callbacks;
     this.isEditorFocused = props.isEditorFocused;
+    this.animateParams = props.animateParams;
     this.delayedCreation = props.delayedCreation;
     this.disableSpaceChange = props.disableSpaceChange;
     this.disableGoalChange = props.disableGoalChange;

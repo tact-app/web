@@ -11,6 +11,7 @@ export const ActionMenu = observer(function ActionMenu(props: ActionMenuProps) {
         hidden={props.hidden}
         triggerButtonProps={props.triggerButtonProps}
         triggerIconFontSize={props.triggerIconFontSize}
+        isOpenByContextMenu={props.isOpenByContextMenu}
       />
     </ActionMenuStoreProvider>
   );

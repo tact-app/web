@@ -66,6 +66,7 @@ export class TasksListWithCreatorStore {
       },
       onEmpty: () => {
         this.creator.setFocus(true);
+        this.tasksListAdditions.onEmpty?.();
       },
     };
   }
@@ -92,7 +93,10 @@ export class TasksListWithCreatorStore {
         this.list.draggableList.setFocusedItem(taskId);
       },
       onNavigate: this.list.handleNavigation,
-      onFocus: this.list.removeFocus,
+      onFocus: () => {
+        this.list.removeFocus();
+        this.taskCreatorAdditions.onFocus?.();
+      },
       ...this.taskCreatorAdditions,
     };
   }

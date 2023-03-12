@@ -7,51 +7,6 @@
 
 set -euo pipefail
 
-refresh() {
-  git fetch --all --prune # TODO:bug `--tags --prune-tags` replaces tags from forks
-
-  local deps tools
-  deps=$(md5sum package-lock.json | awk '{print $1}')
-  tools=$(md5sum tools/package-lock.json | awk '{print $1}')
-
-  local remote actual target shared
-  remote=${1:-'@{u}'}
-  actual=$(git rev-parse @)
-  target=$(git rev-parse "${remote}")
-  shared="$(git merge-base @ "${remote}")"
-  if [ "${actual}" != "${target}" ]; then
-    if ! git diff-index --quiet HEAD; then
-      git stash -m 'stash before pull'
-      trap 'git stash pop' EXIT
-    fi
-    git pull --force --rebase
-  fi
-
-  if ! @deps verify package-lock.json; then
-    install --from-scratch
-    md5sum package-lock.json >node_modules/current.lock
-  fi
-
-  if ! @deps verify tools/package-lock.json; then
-    tools npm ci
-    md5sum tools/package-lock.json >tools/node_modules/current.lock
-  fi
-}
-
-@deps() {
-  case "${1}" in
-  check) depcheck --ignores=pre-commit,prettier,@fortawesome/fontawesome-pro,@types/node ;;
-  verify)
-    local file="${2:-package-lock.json}" lock
-    lock=$(dirname "${file}")/node_modules/current.lock
-    if [ ! -f "${lock}" ]; then
-      return 1
-    fi
-    [ "$(cat "${lock}")" == "$(md5sum "${file}")" ]
-    ;;
-  esac
-}
-
 setup() {
   set_fontawesome_token false || (echo The token is required && return 1)
   set_sentry_token false || true
@@ -120,14 +75,56 @@ EOF
   git config vercel.token ${VERCEL_TOKEN}
 }
 
-@node() {
-  docker run --rm -it \
-    --env-file .env \
-    -v "$(pwd)":/app \
-    -w /app \
-    "${@:2}" \
-    --entrypoint=/bin/sh \
-    node:16-alpine -c "${1}"
+refresh() {
+  git fetch --all --prune # TODO:bug `--tags --prune-tags` replaces tags from forks
+
+  local deps tools
+  deps=$(md5sum package-lock.json | awk '{print $1}')
+  tools=$(md5sum tools/package-lock.json | awk '{print $1}')
+
+  local remote actual target shared
+  remote=${1:-'@{u}'}
+  actual=$(git rev-parse @)
+  target=$(git rev-parse "${remote}")
+  shared="$(git merge-base @ "${remote}")"
+  if [ "${actual}" != "${target}" ]; then
+    if ! git diff-index --quiet HEAD; then
+      git stash -m 'stash before pull'
+      trap 'git stash pop' EXIT
+    fi
+    git pull --force --rebase
+  fi
+
+  if ! @deps verify package-lock.json; then
+    install --from-scratch
+    md5sum package-lock.json >node_modules/current.lock
+  fi
+
+  if ! @deps verify tools/package-lock.json; then
+    tools npm ci
+    md5sum tools/package-lock.json >tools/node_modules/current.lock
+  fi
+}
+
+@deps() {
+  case "${1}" in
+  check) depcheck --ignores=pre-commit,prettier,@fortawesome/fontawesome-pro,@types/node ;;
+  verify)
+    local file="${2:-package-lock.json}" lock
+    lock=$(dirname "${file}")/node_modules/current.lock
+    if [ ! -f "${lock}" ]; then
+      return 1
+    fi
+    [ "$(cat "${lock}")" == "$(md5sum "${file}")" ]
+    ;;
+  esac
+}
+
+@changelog() {
+  local latest
+  latest=$(git describe --tags --abbrev=0 2>/dev/null)
+
+  git log --oneline "${latest}"... | cat
 }
 
 # Example: run isolated
@@ -196,6 +193,18 @@ start() {
   @node 'npm run start' -p 127.0.0.1:3000:3000
 }
 
+npm() { @node "npm ${*}"; }
+
+@node() {
+  docker run --rm -it \
+    --env-file .env \
+    -v "$(pwd)":/app \
+    -w /app \
+    "${@:2}" \
+    --entrypoint=/bin/sh \
+    node:16-alpine -c "${1}"
+}
+
 # Example: run tools npm i vercel@latest
 # Example: run tools npm ci
 tools() {
@@ -204,8 +213,6 @@ tools() {
 
   (cd tools && "${@}")
 }
-
-npm() { @node "npm ${*}"; }
 
 _sentry=$(which sentry-cli || true)
 sentry() {

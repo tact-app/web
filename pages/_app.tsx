@@ -18,6 +18,11 @@ const theme = extendTheme({
         '.clear': {
           clear: 'both',
         },
+        '.mouse-select__frame': {
+          background: 'blue.75',
+          opacity: .3,
+          border: '1px solid #4299e1',
+        },
         '.ProseMirror': {
           color: 'gray.700',
           // @see https://github.com/jesster2k10/guava-cards/blob/5d5c283eb720bf503258f4e17bce3865d35fd8d3/packages/website/src/bundles/editor/ContentEditor.tsx#L86

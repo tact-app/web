@@ -48,7 +48,7 @@ export const TasksListWeekly = observer(function TasksListWeekly() {
             </Button>
           </DraggableListDroppable>
           <Collapse in={store.isWeekExpanded}>
-            <TasksListView dnd={true} />
+            <TasksListView />
           </Collapse>
         </Fade>
       ) : (

@@ -151,8 +151,10 @@ export class SpacesStore {
 
     if (this.focusedBlockId === SpacesFocusableBlocks.TREE) {
       this.focusedBlockId = SpacesFocusableBlocks.INBOX;
+      this.inboxItem.listWithCreator.list.draggableList.focusFirstItem();
     } else if (this.focusedBlockId === SpacesFocusableBlocks.INBOX) {
       if (direction === NavigationDirections.LEFT) {
+        this.inboxItem.listWithCreator.list.draggableList.resetFocusedItem();
         this.focusedBlockId = SpacesFocusableBlocks.TREE;
       } else if (this.openedItem) {
         this.focusedBlockId = SpacesFocusableBlocks.INBOX_ITEM;

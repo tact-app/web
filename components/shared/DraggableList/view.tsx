@@ -75,7 +75,7 @@ const DraggableListItemWrapper = observer(function DraggableListItemWrapper({
       }
     >
       {Prefix && <Prefix id={id} snapshot={snapshot} />}
-      <DragHandler provided={provided} snapshot={snapshot} id={id} />
+      {!store.isMouseSelection && <DragHandler provided={provided} snapshot={snapshot} id={id} />}
       <Content id={id} isFocused={isFocused} snapshot={snapshot} provided={provided} />
     </Box>
   );
@@ -92,6 +92,10 @@ export const DefaultDraggableListDragHandler = observer(
     id: string;
   }) {
     const store = useDraggableListStore();
+
+    if (!store.isDndActive) {
+      return null;
+    }
 
     return (
       <Box
@@ -111,6 +115,7 @@ export const DefaultDraggableListDragHandler = observer(
         }}
         {...provided.dragHandleProps}
         tabIndex={-1}
+        outline='none'
       >
         {!store.checkItemActivity || store.checkItemActivity(id) ? (
           <Box cursor='grab' aria-label='Drag'>
@@ -156,12 +161,21 @@ export const DraggableListView = observer(function DraggableListView({
       <DraggableListDroppable id={droppableId}>
         {store.items.map((id, index) => {
           return (
-            <Draggable draggableId={id} index={index} key={id}>
+            <Draggable draggableId={id} index={index} key={id} isDragDisabled={!store.isDndActive}>
               {(provided, snapshot) => (
                 <Box
                   ref={provided.innerRef}
                   index={index}
                   position='relative'
+                  listId={droppableId}
+                  className='mouse-select__selectable'
+                  css={{
+                    '&.selected': {
+                      '.selectable_task': {
+                        background: '#EDF2F7'
+                      }
+                    }
+                  }}
                   role='group'
                   display='flex'
                   style={getStyle(provided.draggableProps.style, snapshot)}

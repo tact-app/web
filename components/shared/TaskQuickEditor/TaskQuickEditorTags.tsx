@@ -25,11 +25,9 @@ export const TAGS_ID = 'task-quick-editor-tags';
 
 const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
   buttonProps,
-  autoSave,
   disableAnimating = false,
 }: {
   buttonProps: ButtonProps;
-  autoSave: boolean;
   disableAnimating?: boolean;
 }) {
   const store = useTaskQuickEditorStore();
@@ -39,7 +37,10 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
           key={title}
           variant='unstyled'
           size='xs'
-          onClick={() => store.modes.tag.focusTagById(id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            store.modes.tag.focusTagById(id);
+          }}
           ref={(el) => store.modes.tag.setTagRef(el, id)}
           onKeyDown={(e) => store.modes.tag.handleButtonKeyDown(e, id)}
           onFocus={store.handleModeFocus(Modes.TAG)}
@@ -86,9 +87,9 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
             justifyContent='center'
             tabIndex={-1}
             isRound
-            onClick={() => {
-              store.handleRemoveTag(id, autoSave);
-              store.suggestionsMenu.openFor(Modes.TAG)
+            onClick={(e) => {
+              e.stopPropagation();
+              store.modes.tag.removeTag(id);
             }}
         >
           <FontAwesomeIcon
@@ -148,7 +149,11 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
     if (store.modes.tag.tags.length && !store.modes.tag.isCollapsed) {
       store.modes.tag.checkOverflow();
     }
-  }, [store.modes.tag.tags.length, store.modes.tag.isCollapsed])
+  }, [store.modes.tag.tags.length, store.modes.tag.isCollapsed]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    store.modes.tag.autoSave = autoSave;
+  }, [autoSave]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!store.modes.tag.tags.length) {
     return null;
@@ -221,7 +226,6 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
                   <VStack alignItems='start'>
                     <TaskQuickEditorTagsList
                         buttonProps={buttonProps}
-                        autoSave={autoSave}
                         disableAnimating
                     />
                   </VStack>
@@ -232,7 +236,6 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
       ) : (
         <TaskQuickEditorTagsList
             buttonProps={buttonProps}
-            autoSave={autoSave}
         />
       )}
     </Box>

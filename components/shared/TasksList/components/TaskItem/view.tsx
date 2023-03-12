@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Box, Checkbox, chakra, Tag, useOutsideClick } from '@chakra-ui/react';
+import { Box, Checkbox, chakra, Tag } from '@chakra-ui/react';
+import { useOutsideClick } from '@chakra-ui/react-use-outside-click'
 import { TaskStatus } from '../../types';
 import { TaskItemProps, useTaskItemStore, TASK_TITLE_ELEMENT_ID } from './store';
 import { TaskItemMenu } from '../TaskItemMenu';
@@ -20,10 +21,11 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
       ? quickEditStore.modes.tag.tags.length
       : store.task.tags.length
   );
+  const showTaskMenu = !store.isReadOnly && !store.isDisabled
 
-  let bg = 'white';
-  let hoveredBg = 'white';
-  let focusedBg = 'white';
+  let bg = 'transparent';
+  let hoveredBg = 'transparent';
+  let focusedBg = 'transparent';
 
   if (props.highlightActiveTasks) {
     if (!store.isDisabled) {
@@ -33,14 +35,15 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
     }
   } else {
     if (!store.isDragging) {
-      bg = 'white';
+      bg = 'transparent';
       hoveredBg = 'gray.100';
       focusedBg = 'gray.200';
     }
   }
 
   useOutsideClick({
-    enabled: store.isEditMode || store.quickEdit.isMenuFocused,
+    listenContextMenu: true,
+    enabled: store.isEditMode || store.quickEdit.isMenuFocused || quickEditStore.suggestionsMenu.isOpen,
     ref: ref,
     handler: quickEditStore.handleClickOutside,
   });
@@ -59,6 +62,10 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         tabIndex={store.isDisabled || store.isReadOnly ? -1 : 0}
         ref={store.setBoxRef}
         onClick={store.handleClick}
+        onContextMenu={(e: Event) => {
+          quickEditStore.handleClickOutside(e)
+          store.handleContextMenu(e)
+        }}
         onMouseDown={store.handleMouseDown}
         onMouseUp={store.handleMouseUp}
         onFocus={store.handleFocus}
@@ -77,7 +84,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           'border-color 0.2s ease-in-out',
           'background 0.2s ease-in-out',
         ]}
-        bg={store.isFocused ? focusedBg : bg}
+        bg={store.isFocused ? focusedBg : store.isPreFocused ? hoveredBg :bg}
         _groupHover={{
           bg: store.isFocused ? focusedBg : hoveredBg,
           borderColor:
@@ -87,6 +94,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         }}
         {...props.provided.dragHandleProps}
         cursor='pointer !important'
+        className='selectable_task'
       >
         <Box minH={10} pl={2} display='flex' alignItems='center'>
           <div onClick={(e) => e.stopPropagation()}>
@@ -122,6 +130,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
                 id={TASK_TITLE_ELEMENT_ID}
                 transition='color 0.2s ease-in-out'
                 cursor={store.isFocused ? 'text' : 'inherit'}
+                userSelect='none'
               >
                 {store.task.title}
               </chakra.span>
@@ -177,7 +186,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
           </Box>
         )}
       </Box>
-      {!store.isReadOnly && !store.isDisabled && <TaskItemMenu />}
+      {showTaskMenu && <TaskItemMenu />}
     </Box>
   );
 });

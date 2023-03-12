@@ -77,7 +77,7 @@ export class SpacesInboxItemStore {
   };
 
   tasksListCallbacks: TasksListWithCreatorStore['tasksListCallbacks'] = {
-    onFocusLeave: this.callbacks.onFocusLeave,
+    onFocusLeave: (direction) => this.callbacks.onFocusLeave(direction),
     onOpenTask: this.callbacks.onOpenTask,
     onCloseTask: this.callbacks.onCloseTask,
   };

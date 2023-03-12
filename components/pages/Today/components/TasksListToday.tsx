@@ -12,7 +12,7 @@ export const TasksListToday = observer(function TasksListToday() {
   return (
     <Box>
       {store.todayListWithCreator.list.hasTasks || !store.weekList.hasTasks ? (
-        <TasksListView dnd={true} />
+        <TasksListView />
       ) : (
         <Box
           h={56}

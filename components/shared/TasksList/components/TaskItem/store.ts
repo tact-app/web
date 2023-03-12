@@ -9,6 +9,7 @@ import { ListNavigation } from '../../../../../helpers/ListNavigation';
 import { TasksListStore } from '../../store';
 import { subscriptions } from '../../../../../helpers/subscriptions';
 import { checkKeyCombination, checkKeyCombinations } from '../../../../../helpers/combinations';
+import { isMac } from '../../../../../helpers/os';
 
 const IGNORED_COMBINATIONS = ['Alt+D'];
 export const TASK_TITLE_ELEMENT_ID = 'task-title';
@@ -52,6 +53,9 @@ export class TaskItemStore {
   isMouseDown: boolean = false;
   isDragging: boolean = false;
 
+  isOpenByContextMenu: boolean = false;
+  xPosContextMenu: number;
+
   onFocus: TaskItemProps['onFocus'];
   onStatusChange: TaskItemProps['onStatusChange'];
   onToggleMenu: TaskItemProps['onToggleMenu'];
@@ -64,6 +68,10 @@ export class TaskItemStore {
 
   get isFocused() {
     return this.parent.draggableList.focused.includes(this.task.id);
+  }
+
+  get isPreFocused() {
+    return this.parent.draggableList.savedFocusedItemIds.includes(this.task.id);
   }
 
   get isDisabled() {
@@ -95,7 +103,7 @@ export class TaskItemStore {
   handleKeyUp = (e: KeyboardEvent) => {
     if (e.key === 'Alt') {
       if (this.isAltPressed) {
-        this.toggleMenu();
+        this.toggleMenu(!this.isMenuOpen);
       }
 
       this.isAltPressed = false;
@@ -116,9 +124,25 @@ export class TaskItemStore {
     this.boxRef = ref;
   };
 
-  toggleMenu = () => {
-    this.isMenuOpen = !this.isMenuOpen;
-    this.onToggleMenu(this.isMenuOpen);
+  handleContextMenu = (e) => {
+    e.preventDefault();
+    if (!this.isMenuOpen) {
+      !this.isFocused && this.onFocus(this.task.id);
+      this.quickEdit.suggestionsMenu.close();
+      this.quickEdit.suggestionsMenu.closeForMode();
+      this.xPosContextMenu = e.pageX;
+      this.toggleContextMenu(true);
+      this.openMenu();
+    }
+  }
+
+  toggleMenu = (isOpen: boolean) => {
+    this.isMenuOpen = isOpen;
+    this.onToggleMenu(isOpen);
+  };
+
+  toggleContextMenu = (isContextMenu: boolean) => {
+    this.isOpenByContextMenu = isContextMenu;
   };
 
   openMenu = () => {
@@ -127,9 +151,12 @@ export class TaskItemStore {
   };
 
   closeMenu = () => {
-    this.isMenuOpen = false;
-    this.onToggleMenu(false);
-  };
+    setTimeout(() => {
+      this.toggleMenu(false);
+      this.onToggleMenu(false);
+      this.toggleContextMenu(false);
+    });
+  }
 
   handleMouseDown = () => {
     this.isMouseDown = true;
@@ -140,6 +167,10 @@ export class TaskItemStore {
   };
 
   handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (e.ctrlKey && e.type === 'click' && isMac()) {
+      return
+    }
+
     if ((e.detail !== 2 || this.isFocused) && (e.target as HTMLElement).id === TASK_TITLE_ELEMENT_ID) {
       return this.parent.setEditingTask(this.task.id);
     }
@@ -154,7 +185,7 @@ export class TaskItemStore {
 
       this.onFocus(
         this.task.id,
-        e.metaKey ? 'single' : e.shiftKey ? 'many' : undefined
+        e.metaKey || e.ctrlKey ? 'single' : e.shiftKey ? 'many' : undefined
       );
     }
   };

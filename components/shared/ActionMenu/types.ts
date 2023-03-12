@@ -15,6 +15,7 @@ export type ActionMenuViewProps = {
   hidden?: boolean;
   triggerIconFontSize?: number;
   triggerIcon?: IconDefinition;
+  isOpenByContextMenu?: boolean;
   triggerButtonProps?(isOpen: boolean): ButtonProps;
 };
 

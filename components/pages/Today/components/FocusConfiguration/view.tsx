@@ -17,6 +17,7 @@ import { GoalsSelectionView } from '../../../../shared/GoalsSelection/view';
 import { useRef } from 'react';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import { AnimatedBlock } from "../../../../shared/AnimatedBlock";
 
 export const FocusConfigurationView = observer(function FocusConfigurationView(
   props: FocusConfigurationProps
@@ -33,7 +34,9 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
   });
 
   return (
-    <Box
+    <AnimatedBlock
+      animateParams={props.focusHighlightParams}
+      component={Box}
       ref={ref}
       p={4}
       height='100%'
@@ -126,6 +129,6 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           </Text>
         </Box>
       </Fade>
-    </Box>
+    </AnimatedBlock>
   );
 });

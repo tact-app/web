@@ -22,7 +22,12 @@ export class TaskQuickEditorSuggestionsMenu {
   hoveredIndex: number = 0;
 
   openFor = (mode: Modes) => {
+    if(mode === this.openForMode){
+      this.closeForMode();
+      return
+    }
     this.openForMode = mode;
+    this.isOpen = true;
 
     setTimeout(() => this.focusFirst());
   };

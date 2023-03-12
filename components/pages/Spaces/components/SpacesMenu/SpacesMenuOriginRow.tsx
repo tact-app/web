@@ -84,6 +84,7 @@ export const SpacesMenuOriginRow = observer(function SpacesMenuOriginRow({
           onClick={handleExpand}
           variant='unstyled'
           pr={4}
+          outline='none'
         >
           <chakra.div
             transition={'transform 0.2s ease-in-out'}

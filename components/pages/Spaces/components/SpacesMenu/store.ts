@@ -355,6 +355,8 @@ export class SpacesMenuStore {
         }
       } else if (state.children && Object.keys(state.children).length) {
         state.expanded = expand === undefined ? !state.expanded : expand;
+      } else {
+        this.callbacks.onFocusLeave('right');
       }
     }
   };

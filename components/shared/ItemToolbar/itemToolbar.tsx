@@ -45,7 +45,7 @@ export const ItemToolbar = ({
     alignItems='center'
     {...rest}
   >
-    <Box display='flex' alignItems='center'>
+    <Box display='flex' alignItems='center' onMouseDown={(e) => e.stopPropagation()}>
       {onExpand && !isExpanded && (
         <TooltipWithHotkey label='Expand' hotkey='⌘+E' hasArrow>
           <IconButton

@@ -5,8 +5,10 @@ import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../../stores/RootStore';
 
 export type TagModeCallbacks = {
-  onFocusLeave: (direction: NavigationDirections) => void;
+  onFocusLeave: (direction?: NavigationDirections) => void;
   onExit: () => void;
+  onChange: (autoSave?: boolean) => void;
+  onLeave: () => void;
 };
 
 type TagWithRef = TaskTag & { ref?: HTMLButtonElement };
@@ -23,6 +25,7 @@ export class TagModeStore {
   isCollapsable = false;
   isCollapsed = false;
   isCollapseOpen = false;
+  autoSave = false;
 
   containerRef: HTMLDivElement | null = null;
   collapseRef?: HTMLButtonElement;
@@ -196,9 +199,19 @@ export class TagModeStore {
     const index = this.tags.findIndex((tag) => tag.id === id);
     this.tags.splice(index, 1);
 
-    if (this.tags.length === 0) {
+    if (!this.tags.length) {
       this.toggleIsCollapsed(false);
       this.isCollapseOpen = false;
+    }
+
+    this.callbacks.onChange(this.autoSave);
+
+    if (!this.tags.length) {
+      this.callbacks.onFocusLeave(NavigationDirections.LEFT);
+    } else if (this.tags[index - 1]) {
+      this.focusTag(this.tags[index - 1]);
+    } else if (this.tags[index]) {
+      this.focusTag(this.tags[index]);
     }
   };
 
@@ -290,6 +303,8 @@ export class TagModeStore {
       if (!this.isCollapseOpen) {
         this.isCollapseOpen = false;
       }
+    } else if (e.key === 'Enter') {
+      e.stopPropagation();
     }
   };
 
@@ -301,17 +316,7 @@ export class TagModeStore {
 
     if (e.key === 'Backspace' || e.key === 'Delete') {
       e.preventDefault();
-      const tagIndex = this.tags.findIndex((tag) => tag.id === id);
-
       this.removeTag(id);
-
-      if (!this.tags.length) {
-        this.callbacks.onFocusLeave(NavigationDirections.LEFT);
-      } else if (this.tags[tagIndex - 1]) {
-        this.focusTag(this.tags[tagIndex - 1]);
-      } else if (this.tags[tagIndex]) {
-        this.focusTag(this.tags[tagIndex]);
-      }
     } else if (
       (!this.isCollapseOpen && e.key === 'ArrowLeft') ||
       (this.isCollapseOpen && e.key === 'ArrowUp')
@@ -355,11 +360,20 @@ export class TagModeStore {
           this.callbacks.onFocusLeave(NavigationDirections.RIGHT);
         }
       }
-    } else if (e.key === 'Escape' && this.isCollapsed) {
-      e.preventDefault();
-      e.stopPropagation();
-      this.handleCollapseClose();
-      this.collapseRef?.focus();
+    } else if (!this.isCollapsable && e.key === 'ArrowDown') {
+      this.callbacks.onFocusLeave(NavigationDirections.DOWN);
+    } else if (!this.isCollapsable && e.key === 'ArrowUp') {
+      this.callbacks.onFocusLeave(NavigationDirections.UP);
+    } else if (e.key === 'Escape') {
+      if (this.isCollapsed) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.handleCollapseClose();
+        this.collapseRef?.focus();
+        this.callbacks.onFocusLeave();
+      } else if (!this.autoSave) {
+        this.callbacks.onLeave();
+      }
     }
   };
 }

@@ -63,7 +63,7 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
               <FontAwesomeIcon icon={faTrashCan} />
             </IconButton>}
         </ModalHeader>
-        <ModalBody pb={6} overflow='scroll' position='relative'>
+        <ModalBody pb={6} position='relative'>
           <Container maxW='2xl'>
             <VStack>
               <HStack

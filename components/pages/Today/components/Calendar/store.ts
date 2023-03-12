@@ -1,21 +1,12 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import {
-  NavigationDirections,
-  TaskData,
-} from '../../../../shared/TasksList/types';
+import { NavigationDirections, TaskData, } from '../../../../shared/TasksList/types';
 import { EventData } from './types';
-import {
-  ResizableBlocksDropItemData,
-  ResizableBlocksItemData,
-  ResizableBlocksTypes,
-} from './ResizableBlocks/types';
-import {
-  ResizableBlocksProps,
-  ResizableBlocksStore,
-} from './ResizableBlocks/store';
+import { ResizableBlocksDropItemData, ResizableBlocksItemData, ResizableBlocksTypes, } from './ResizableBlocks/types';
+import { ResizableBlocksProps, ResizableBlocksStore, } from './ResizableBlocks/store';
 import { EventColors, EventTypes } from './constants';
 import { RootStore } from '../../../../../stores/RootStore';
+import { AnimatedBlockParams } from "../../../../shared/AnimatedBlock";
 
 export type CalendarProps = {
   dropItem?: TaskData;
@@ -33,6 +24,7 @@ export type CalendarProps = {
     onFocusLeave?: (direction: NavigationDirections) => void;
     onFocusItem?: (id: string) => void;
   };
+  focusHighlightParams: AnimatedBlockParams;
 };
 
 export class CalendarStore {
@@ -57,6 +49,7 @@ export class CalendarStore {
   daysMinCountForWeek = 3;
   daysMaxCountForWeek = 7;
   dropItem: TaskData = null;
+  focusHighlightParams: AnimatedBlockParams;
 
   tasks: Record<string, TaskData> = {};
   times: string[] = Array.from({ length: 24 }).map((_, i) => `${i}:00`);
@@ -159,6 +152,10 @@ export class CalendarStore {
 
   removeEvent = (id: string) => {
     delete this.events[id];
+
+    if (!Object.keys(this.events).length) {
+      this.callbacks.onFocusLeave(NavigationDirections.LEFT);
+    }
   };
 
   focus = () => {
@@ -198,6 +195,7 @@ export class CalendarStore {
     this.isFullScreen = props.isFullScreen;
     this.callbacks = props.callbacks || {};
     this.tasks = props.tasks;
+    this.focusHighlightParams = props.focusHighlightParams;
     !this.isCollapsed && this.resizeBlocks.setDropItem(this.resizableBlockTask);
   };
 

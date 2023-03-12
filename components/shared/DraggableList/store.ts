@@ -52,7 +52,9 @@ export class DraggableListStore {
   lastFocusedItemId: string | null = null;
   savedFocusedItemIds: string[] = [];
   focusedItemIds: string[] = [];
+  baseFocusedItem: number = null;
   items: string[] = [];
+  isMouseSelection: boolean = false
 
   isDndActive: boolean = true;
   isForceHotkeysActive: boolean = true;
@@ -115,83 +117,26 @@ export class DraggableListStore {
     DELETE: ['del', 'backspace'],
   };
 
-  hotkeyHandlers = {
-    UP: (e) => {
-      e.preventDefault();
-      this.handleNavigation(NavigationDirections.UP);
-    },
-    DOWN: (e) => {
-      e.preventDefault();
-      this.handleNavigation(NavigationDirections.DOWN);
-    },
-    FORCE_DOWN: (e) => {
-      e.preventDefault();
-      const lastItem = this.getLastActiveItem();
-
-      if (!this.isAlreadySingleFocused(lastItem)) {
-        this.setFocusedItem(lastItem);
+  arrowSelect = (direction: 'up' | 'down') => {
+    const isUp = direction === 'up';
+    if (
+      isUp
+        ? this.currentSelectItemCursor >= 0
+        : this.currentSelectItemCursor <= 0
+    ) {
+      this.shiftSelect(direction)
+    } else {
+      if (this.currentSelectItemCursor > 0) {
+        this.currentSelectItemCursor--;
+        this.focusedItemIds = this.focusedItemIds.slice(1);
+        this.lastFocusedItemId = this.focusedItemIds[0];
+      } else {
+        this.currentSelectItemCursor++;
+        this.focusedItemIds = this.focusedItemIds.slice(0, -1);
+        this.lastFocusedItemId =
+          this.focusedItemIds[this.focusedItemIds.length - 1];
       }
-    },
-    FORCE_UP: (e) => {
-      e.preventDefault();
-      const firstItem = this.getFirstActiveItem();
-
-      if (!this.isAlreadySingleFocused(firstItem)) {
-        this.setFocusedItem(firstItem);
-      }
-    },
-    DELETE: () => {
-      if (this.focusedItemIds.length) {
-        const itemsForDelete = this.focusedItemIds.slice();
-
-        this.callbacks.onVerifyDelete?.(itemsForDelete, () => {
-          this.focusAfterItems(itemsForDelete);
-          this.deleteItems(itemsForDelete);
-        });
-      }
-    },
-    FORCE_DELETE: () => {
-      if (this.focusedItemIds.length) {
-        const itemsForDelete = this.focusedItemIds.slice();
-
-        this.focusAfterItems(itemsForDelete);
-        this.deleteItems(itemsForDelete);
-      }
-    },
-    MOVE_UP: (e) => {
-      e.preventDefault();
-
-      if (this.focusedItemIds.length) {
-        if (this.focusedItemIds.length === 1) {
-          this.runControlsMoveAction((lift) => lift.moveUp());
-        } else {
-          this.controlsMultiMoveAction('up');
-        }
-      }
-    },
-    MOVE_DOWN: (e) => {
-      e.preventDefault();
-
-      if (this.focusedItemIds.length) {
-        if (this.focusedItemIds.length === 1) {
-          this.runControlsMoveAction((lift) => lift.moveDown());
-        } else {
-          this.controlsMultiMoveAction('down');
-        }
-      }
-    },
-    SELECT_UP: () => this.shiftSelect('up'),
-    SELECT_DOWN: () => this.shiftSelect('down'),
-    SELECT_ALL: (e) => {
-      e.preventDefault();
-      this.selectAll();
-    },
-    ESC: () => {
-      if (!this.callbacks.onEscape?.()) {
-        this.resetFocusedItem();
-        this.callbacks.onFocusedItemsChange?.([]);
-      }
-    },
+    }
   };
 
   get hasFocusableItems() {
@@ -202,37 +147,49 @@ export class DraggableListStore {
     if (this.focusedItemIds.length) {
       const isUp = direction === 'up';
 
-      if (
-        isUp
-          ? this.currentSelectItemCursor >= 0
-          : this.currentSelectItemCursor <= 0
-      ) {
-        const focusedItemIndex = this.activeItems.indexOf(
-          this.focusedItemIds[isUp ? 0 : this.focusedItemIds.length - 1]
-        );
-        const nextFocusedItemIds = this.activeItems.slice(
-          focusedItemIndex + (isUp ? -count : 1),
-          focusedItemIndex + (isUp ? 0 : count + 1)
-        );
+      const focusedItemIndex = this.activeItems.indexOf(
+        this.focusedItemIds[isUp ? 0 : this.focusedItemIds.length - 1]
+      );
+      const nextFocusedItemIds = this.activeItems.slice(
+        focusedItemIndex + (isUp ? -count : 1),
+        focusedItemIndex + (isUp ? 0 : count + 1)
+      );
 
-        if (nextFocusedItemIds.length) {
-          this.currentSelectItemCursor += isUp ? 1 : -1;
-
-          this.addFocusedItems(nextFocusedItemIds);
-        }
-      } else {
-        if (this.currentSelectItemCursor > 0) {
-          this.currentSelectItemCursor -= count;
-          this.focusedItemIds = this.focusedItemIds.slice(count);
-          this.lastFocusedItemId = this.focusedItemIds[0];
-        } else {
-          this.currentSelectItemCursor += count;
-          this.focusedItemIds = this.focusedItemIds.slice(0, -count);
-          this.lastFocusedItemId =
-            this.focusedItemIds[this.focusedItemIds.length - 1];
-        }
+      if (nextFocusedItemIds.length) {
+        this.currentSelectItemCursor += isUp ? 1 : -1;
+        this.addFocusedItems(nextFocusedItemIds);
       }
     }
+  };
+
+  finishMouseSelect = (items, { shiftKey }) => {
+    this.isMouseSelection = false
+    if (!items.length && !this.focusedItemIds.length) {
+      return;
+    }
+
+    if (!shiftKey) {
+      this.resetFocusedItem();
+    }
+    this.focusedItemIds = items
+      .filter(item => !this.focusedItemIds.includes(item))
+      .concat(this.focusedItemIds.filter(item => !items.includes(item)));
+  }
+
+  starthMouseSelect = () => {
+    this.isMouseSelection = true
+  }
+
+  restoreSavedFocusedItems = () => {
+    this.resetFocusedItem();
+
+    if (this.savedFocusedItemIds.length) {
+      this.addFocusedItems(this.savedFocusedItemIds);
+    } else {
+      this.focusFirstItem();
+    }
+
+    this.resetSavedFocusedItems();
   };
 
   selectAll = () => {
@@ -526,15 +483,13 @@ export class DraggableListStore {
     this.savedFocusedItemIds = [...this.focusedItemIds];
   };
 
-  restoreSavedFocusedItems = () => {
-    this.resetFocusedItem();
-
-    if (this.savedFocusedItemIds.length) {
-      this.addFocusedItems(this.savedFocusedItemIds);
-      this.resetSavedFocusedItems();
-    } else {
+  setFocusedItems = (ids: string[]) => {
+    if (!ids.length) {
       this.focusFirstItem();
     }
+
+    this.addFocusedItems(ids);
+    this.resetSavedFocusedItems();
   };
 
   resetSavedFocusedItems = () => {
@@ -542,52 +497,130 @@ export class DraggableListStore {
   };
 
   setFocusedItem = (id: string, mode?: 'single' | 'many') => {
+    this.resetSavedFocusedItems();
+
     if (this.focusedItemIds.length === 1 && this.focusedItemIds[0] === id) {
       this.callbacks.onItemSecondClick?.(id);
     } else if (!mode) {
       this.resetFocusedItem();
       this.addFocusedItems([id]);
+      this.baseFocusedItem = this.items.indexOf(id)
+
     } else if (mode === 'single') {
+      if (!this.focusedItemIds.includes(id)) {
+        this.baseFocusedItem = this.items.indexOf(id)
+      }
+
       if (this.focusedItemIds.includes(id)) {
         this.focusedItemIds = this.focusedItemIds.filter(
           (ItemId) => ItemId !== id
         );
-
-        if (this.currentSelectItemCursor !== 0) {
-          if (this.currentSelectItemCursor > 0) {
-            this.currentSelectItemCursor--;
-          } else {
-            this.currentSelectItemCursor++;
-          }
-        }
       } else {
         this.addFocusedItems([id]);
-
-        if (this.currentSelectItemCursor !== 0) {
-          if (this.currentSelectItemCursor < 0) {
-            this.currentSelectItemCursor--;
-          } else {
-            this.currentSelectItemCursor++;
-          }
-        }
       }
     } else if (
       mode === 'many' &&
-      this.focusedItemIds.length &&
-      !this.focusedItemIds.includes(id)
+      this.focusedItemIds.length
     ) {
       const topFocusedItemIndex = this.items.indexOf(this.focusedItemIds[0]);
       const bottomFocusedItemIndex = this.items.indexOf(
         this.focusedItemIds[this.focusedItemIds.length - 1]
       );
       const index = this.items.indexOf(id);
+      const isSingleFocused = this.focusedItemIds.length === 1
+      const isUpReverse = this.baseFocusedItem === topFocusedItemIndex && index < bottomFocusedItemIndex && index < topFocusedItemIndex
+      const isDownReverse = this.baseFocusedItem === bottomFocusedItemIndex && index > bottomFocusedItemIndex && index > topFocusedItemIndex
+      this.focusedItemIds = [this.items[this.baseFocusedItem]]
 
-      if (index > bottomFocusedItemIndex) {
+      if (!isSingleFocused && isDownReverse) {
         this.shiftSelect('down', index - bottomFocusedItemIndex);
-      } else if (index < topFocusedItemIndex) {
+      } else if (!isSingleFocused && isUpReverse) {
         this.shiftSelect('up', topFocusedItemIndex - index);
+      } else if (index > this.baseFocusedItem) {
+        this.shiftSelect('down', index - this.baseFocusedItem);
+      } else if (index < this.baseFocusedItem) {
+        this.shiftSelect('up', this.baseFocusedItem - index);
       }
     }
+  };
+
+  hotkeyHandlers = {
+    UP: (e) => {
+      e.preventDefault();
+      this.handleNavigation(NavigationDirections.UP);
+    },
+    DOWN: (e) => {
+      e.preventDefault();
+      this.handleNavigation(NavigationDirections.DOWN);
+    },
+    FORCE_DOWN: (e) => {
+      e.preventDefault();
+      const lastItem = this.getLastActiveItem();
+
+      if (!this.isAlreadySingleFocused(lastItem)) {
+        this.setFocusedItem(lastItem);
+      }
+    },
+    FORCE_UP: (e) => {
+      e.preventDefault();
+      const firstItem = this.getFirstActiveItem();
+
+      if (!this.isAlreadySingleFocused(firstItem)) {
+        this.setFocusedItem(firstItem);
+      }
+    },
+    DELETE: () => {
+      if (this.focusedItemIds.length) {
+        const itemsForDelete = this.focusedItemIds.slice();
+
+        this.callbacks.onVerifyDelete?.(itemsForDelete, () => {
+          this.focusAfterItems(itemsForDelete);
+          this.deleteItems(itemsForDelete);
+        });
+      }
+    },
+    FORCE_DELETE: () => {
+      if (this.focusedItemIds.length) {
+        const itemsForDelete = this.focusedItemIds.slice();
+
+        this.focusAfterItems(itemsForDelete);
+        this.deleteItems(itemsForDelete);
+      }
+    },
+    MOVE_UP: (e) => {
+      e.preventDefault();
+
+      if (this.focusedItemIds.length) {
+        if (this.focusedItemIds.length === 1) {
+          this.runControlsMoveAction((lift) => lift.moveUp());
+        } else {
+          this.controlsMultiMoveAction('up');
+        }
+      }
+    },
+    MOVE_DOWN: (e) => {
+      e.preventDefault();
+
+      if (this.focusedItemIds.length) {
+        if (this.focusedItemIds.length === 1) {
+          this.runControlsMoveAction((lift) => lift.moveDown());
+        } else {
+          this.controlsMultiMoveAction('down');
+        }
+      }
+    },
+    SELECT_UP: () => this.arrowSelect('up'),
+    SELECT_DOWN: () => this.arrowSelect('down'),
+    SELECT_ALL: (e) => {
+      e.preventDefault();
+      this.selectAll();
+    },
+    ESC: () => {
+      if (!this.callbacks.onEscape?.()) {
+        this.resetFocusedItem();
+        this.callbacks.onFocusedItemsChange?.([]);
+      }
+    },
   };
 
   addFocusedItems = (itemIds: string[]) => {
