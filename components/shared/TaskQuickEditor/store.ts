@@ -22,7 +22,7 @@ export type TaskQuickEditorProps = {
       task: TaskData,
       withShift?: boolean,
       referenceId?: string
-    ) => void | Promise<void | TaskData[]>;
+    ) => void | TaskData[] | Promise<void | TaskData[]>;
     onForceSave?: (taskId: string, referenceId?: string) => void;
     onFocus?: () => void;
     onSuggestionsMenuOpen?: (isOpen: boolean) => void;

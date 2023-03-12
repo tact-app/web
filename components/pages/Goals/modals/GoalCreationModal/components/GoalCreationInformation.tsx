@@ -55,12 +55,10 @@ export const GoalCreationInformation = observer(
             sensors={store.listWithCreator.list.draggableList.sensors}
           >
             <TasksListWithCreator
-              defaultSave
               instance={store.listWithCreator}
               listId={store.goal.listId}
-              // isHotkeysEnabled={store.isHotkeysEnabled}
               tasksListCallbacks={store.tasksListCallbacks}
-              taskCreatorCallbacks={store.taskCreatorCallbacks}
+              delayedCreation
             />
           </DraggableListContext>
         </Box>

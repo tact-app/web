@@ -1,6 +1,5 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { RootStore } from "../../../stores/RootStore";
 import { EmojiStore } from "../../../stores/EmojiStore";
 
 export type EmojiSelectProps = {

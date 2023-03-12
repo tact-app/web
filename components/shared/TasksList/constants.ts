@@ -1,7 +1,6 @@
 export enum Lists {
   TODAY = 'today',
   WEEK = 'week',
-  NEW = 'new'
 }
 
 export const referenceToList: Record<string, Lists> = {

@@ -21,6 +21,7 @@ export type TasksListProps = {
   listId?: string;
   tasksReceiverName?: string;
   dnd?: boolean;
+  delayedCreation?: boolean;
   callbacks?: {
     onFocusLeave?: (direction: NavigationDirections) => boolean;
     onFocusChange?: (ids: string[]) => void;
@@ -48,6 +49,7 @@ export class TasksListStore {
   order: string[] = [];
   editingTaskId: null | string = null;
   openedTask: null | string = null;
+  delayedCreation: boolean = false;
 
   tasksReceiverName: string = '';
 
@@ -298,10 +300,12 @@ export class TasksListStore {
       this.items[id] = { ...cloneDeep(this.items[id]), goalId };
     });
 
-    this.root.api.tasks.assignGoal({
-      goalId,
-      taskIds: taskIds,
-    });
+    if (!this.delayedCreation) {
+      this.root.api.tasks.assignGoal({
+        goalId,
+        taskIds: taskIds,
+      });
+    }
   };
 
   handleToggleMenu = (isOpen: boolean) => {
@@ -388,12 +392,19 @@ export class TasksListStore {
       this.order.push(task.id);
     }
 
-    return this.root.api.tasks.create(this.listId, task, placement);
+    if (!this.delayedCreation) {
+      return this.root.api.tasks.create(this.listId, task, placement);
+    }
+
+    return [...Object.values(this.items), task];
   };
 
   deleteTasks = (ids: string[]) => {
     this.order = this.order.filter((id) => !ids.includes(id));
-    this.root.api.tasks.delete(ids);
+
+    if (!this.delayedCreation) {
+      this.root.api.tasks.delete(ids);
+    }
 
     ids.forEach((id) => {
       delete this.items[id];
@@ -415,7 +426,10 @@ export class TasksListStore {
     task.title = task.title.trim();
 
     this.items[task.id] = task;
-    await this.root.api.tasks.update({ id: task.id, fields: toJS(task) });
+
+    if (!this.delayedCreation) {
+      await this.root.api.tasks.update({ id: task.id, fields: toJS(task) });
+    }
 
     this.setEditingTask(null);
   };
@@ -426,12 +440,14 @@ export class TasksListStore {
     tasks: TaskData[],
     destination?: number
   ) => {
-    this.root.api.tasks.swap({
-      fromListId,
-      toListId,
-      taskIds: tasks.map(({ id }) => id),
-      destination,
-    });
+    if (!this.delayedCreation) {
+      this.root.api.tasks.swap({
+        fromListId,
+        toListId,
+        taskIds: tasks.map(({ id }) => id),
+        destination,
+      });
+    }
 
     tasks.forEach((task) => this.addTask(task, destination));
   };
@@ -480,11 +496,13 @@ export class TasksListStore {
   ) => {
     this.order = order;
 
-    this.root.api.tasks.order({
-      listId: this.listId,
-      taskIds: changedItemIds,
-      destination: destinationIndex,
-    });
+    if (!this.delayedCreation) {
+      this.root.api.tasks.order({
+        listId: this.listId,
+        taskIds: changedItemIds,
+        destination: destinationIndex,
+      });
+    }
   };
 
   setTaskStatus = (taskId: string, status: TaskStatus) => {
@@ -492,10 +510,12 @@ export class TasksListStore {
 
     task.status = status;
 
-    this.root.api.tasks.update({
-      id: task.id,
-      fields: { status },
-    });
+    if (!this.delayedCreation) {
+      this.root.api.tasks.update({
+        id: task.id,
+        fields: { status },
+      });
+    }
   };
 
   openWontDoModal = (ids: string[]) => {
@@ -508,10 +528,12 @@ export class TasksListStore {
     ids.forEach((id) => {
       this.items[id].wontDoReason = reason;
 
-      this.root.api.tasks.update({
-        id: ids[0],
-        fields: { wontDoReason: reason },
-      });
+      if (!this.delayedCreation) {
+        this.root.api.tasks.update({
+          id: ids[0],
+          fields: { wontDoReason: reason },
+        });
+      }
     });
   };
 
@@ -530,7 +552,7 @@ export class TasksListStore {
   };
 
   loadTasks = async () => {
-    if (this.listId === Lists.NEW) {
+    if (this.delayedCreation) {
       this.isLoading = false;
       return;
     }
@@ -567,6 +589,7 @@ export class TasksListStore {
     this.isReadOnly = props.isReadOnly ?? false;
     this.listId = props.listId;
     this.tasksReceiverName = props.tasksReceiverName;
+    this.delayedCreation = props.delayedCreation;
   };
 
   taskCallbacks: TaskProps['callbacks'] = {

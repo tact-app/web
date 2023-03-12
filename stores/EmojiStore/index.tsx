@@ -4,7 +4,7 @@ class EmojiStoreClass {
   isLoaded: boolean = false;
   isLoading: boolean = false;
   hasError: boolean = false;
-  emojiData: unknown;
+  emojiData: any;
 
   constructor() {
     makeObservable(this, {
@@ -26,9 +26,9 @@ class EmojiStoreClass {
         'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
       );
 
-      this.emojiData = response.json();
+      this.emojiData = await response.json();
       this.isLoaded = true;
-      runInAction(() => (this.isLoading = false));
+      this.isLoading = false;
 
       return this.emojiData;
     } catch (e) {

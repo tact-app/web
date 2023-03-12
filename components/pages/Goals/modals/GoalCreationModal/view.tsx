@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button, Text, HStack } from '@chakra-ui/react';
+import { Button, Text, HStack, Box } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from './store';
 import { BackArrowIcon } from '../../../../shared/Icons/BackArrowIcon';
 import {
@@ -12,6 +12,7 @@ import { GoalCreationDescription } from "./components/GoalCreationDescription";
 import { ResizableGroup } from "../../../../shared/ResizableGroup";
 import { ResizableGroupChild } from "../../../../shared/ResizableGroup/ResizableGroupChild";
 import { GoalCreationInformation } from "./components/GoalCreationInformation";
+import { Task } from "../../../../shared/Task";
 
 export const GoalCreationModalView = observer(function GoalCreationModal() {
   const store = useGoalCreationModalStore();
@@ -69,6 +70,14 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
           </ResizableGroupChild>
           <ResizableGroupChild index={1} config={store.resizableConfig[1]}>
             <GoalCreationInformation />
+          </ResizableGroupChild>
+          <ResizableGroupChild
+            index={2}
+            config={store.resizableConfig[2]}
+            borderLeft='1px'
+            borderColor='gray.200'
+          >
+            <Box h='100%'>{store.taskProps.task && <Task {...store.taskProps} />}</Box>
           </ResizableGroupChild>
         </ResizableGroup>
       </ModalContent>

@@ -5,14 +5,12 @@ import { GoalData, GoalIconVariants } from '../../types';
 import { SyntheticEvent } from 'react';
 import { JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
-import { init } from 'emoji-mart';
 import { DescriptionData } from '../../../../../types/description';
 import { ResizableGroupConfig } from "../../../../shared/ResizableGroup/store";
 import { TasksListWithCreatorStore } from "../../../../shared/TasksListWithCreator/store";
-import { Lists } from "../../../../shared/TasksList/constants";
 import { TasksListStore } from "../../../../shared/TasksList/store";
-import { TodayBlocks } from "../../../Today/store";
 import { TaskData } from "../../../../shared/TasksList/types";
+import { EmojiStore } from "../../../../../stores/EmojiStore";
 
 export type GoalCreationModalProps = {
   onClose: () => void;
@@ -85,14 +83,14 @@ export class GoalCreationModalStore {
   onSave: GoalCreationModalProps['onSave'];
 
   isOpen = true;
+  isTaskExpanded = false;
   isEmojiPickerOpen = false;
   isDescriptionLoading: boolean = true;
-
-  focusedBlock: GoalCreateBlocks;
+  draggingTask: TaskData | null = null;
 
   goal: GoalData = {
     id: uuidv4(),
-    listId: 'default',
+    listId: uuidv4(),
     title: '',
     startDate: '',
     targetDate: '',
@@ -107,33 +105,52 @@ export class GoalCreationModalStore {
     id: uuidv4(),
     content: undefined,
   };
-  taskList: TaskData[] = [];
 
-  emojiStore = new (class EmojiStore {
-    data: any = '';
-  })();
-
-  tasksListCallbacks: TasksListWithCreatorStore['tasksListCallbacks'] = {
-    onFocusLeave: () => null,
-    onOpenTask: () => null,
-    onCloseTask: () => null,
-  };
-
-  taskCreatorCallbacks: TasksListWithCreatorStore['taskCreatorCallbacks'] = {
-    onSave: (task) => {
-      this.taskList.push(task);
-    },
-  };
-  draggingTask: TaskData | null = null;
-  droppableIds = {
-    [Lists.TODAY]: TodayBlocks.TODAY_LIST,
-    [Lists.WEEK]: TodayBlocks.WEEK_LIST,
-    'week-button': TodayBlocks.WEEK_LIST,
-  };
+  get taskProps() {
+    return {
+      task: this.listWithCreator.list.openedTaskData,
+      hasNext: this.listWithCreator.list.hasNextTask,
+      hasPrevious: this.listWithCreator.list.hasPrevTask,
+      isEditorFocused: this.listWithCreator.list.isEditorFocused,
+      isExpanded: this.isTaskExpanded,
+      callbacks: {
+        ...this.listWithCreator.list.taskCallbacks,
+        onCollapse: () => {
+          this.isTaskExpanded = false;
+          this.resizableConfig[0].size = 2;
+          this.resizableConfig[1].width = 400;
+          this.resizableConfig[2].size = 2;
+        },
+        onExpand: this.handleExpandTask,
+      },
+    };
+  }
 
   get isReadyForSave() {
     return !!this.goal.title;
   }
+
+  handleCloseTask = () => {
+    this.resizableConfig[0].size = 3;
+    this.resizableConfig[2].size = 0;
+  };
+
+  handleOpenTask = () => {
+    this.resizableConfig[0].size = 2;
+    this.resizableConfig[2].size = 2;
+  };
+
+  tasksListCallbacks: TasksListWithCreatorStore['tasksListCallbacks'] = {
+    onOpenTask: this.handleOpenTask,
+    onCloseTask: this.handleCloseTask,
+  };
+
+  handleExpandTask = () => {
+    this.isTaskExpanded = true;
+    this.resizableConfig[0].size = 0;
+    this.resizableConfig[1].width = 0;
+    this.resizableConfig[2].size = 1;
+  };
 
   openEmojiPicker = () => {
     this.isEmojiPickerOpen = true;
@@ -167,6 +184,10 @@ export class GoalCreationModalStore {
     this.goal.targetDate = value;
   }
 
+  handleDescriptionChange = (value: JSONContent) => {
+    this.description.content = value;
+  };
+
   handleBack = () => {
     if (!this.isEmojiPickerOpen) {
       this.handleClose();
@@ -199,18 +220,6 @@ export class GoalCreationModalStore {
     }
   };
 
-  handleDescriptionChange = (value: JSONContent) => {
-    this.description.content = value;
-  };
-
-  get isTasksListHotkeysEnabled() {
-    return this.focusedBlock === GoalCreateBlocks.TASK_LIST;
-  }
-
-  get isFinishedTaskListHotkeysEnabled() {
-    return this.focusedBlock === GoalCreateBlocks.FINISHED_TASK_LIST;
-  }
-
   get sensors() {
     return [
       (api) => {
@@ -220,105 +229,42 @@ export class GoalCreationModalStore {
     ];
   }
 
-  getListByName = (name: TodayBlocks) => {
-    return name === TodayBlocks.TODAY_LIST
-      ? this.listWithCreator.list
-      : this.finishedList;
-  };
-
   handleDragStart = (result) => {
     this.listWithCreator.list.draggableList.startDragging();
     this.finishedList.draggableList.startDragging();
 
-    const taskId = result.draggableId;
-    const blockName = this.droppableIds[result.source.droppableId];
-    const list = this.getListByName(blockName);
-
-    this.draggingTask = list.items[taskId];
+    this.draggingTask = this.listWithCreator.list.items[result.draggableId];
   };
 
-  handleDragEnd = (result) => {
-    if (result?.destination) {
-      const destinationId = result.destination.droppableId;
-      const sourceId = result.source.droppableId;
-
-      const destinationBlock = this.droppableIds[destinationId];
-      const sourceBlock = this.droppableIds[sourceId];
-
-      const isDifferentList = destinationBlock !== sourceBlock;
-
-      if (!isDifferentList) {
-        if (destinationBlock === TodayBlocks.TODAY_LIST) {
-          this.listWithCreator.list.draggableList.endDragging(result);
-          this.finishedList.draggableList.endDragging();
-        } else if (destinationBlock === TodayBlocks.WEEK_LIST) {
-          this.finishedList.draggableList.endDragging(result);
-          this.listWithCreator.list.draggableList.endDragging();
-        } else {
-          this.listWithCreator.list.draggableList.endDragging();
-          this.finishedList.draggableList.endDragging();
-        }
-      } else {
-        if (destinationBlock === TodayBlocks.TODAY_LIST) {
-          const task = this.finishedList.detachTask(result.draggableId);
-
-          this.listWithCreator.list.receiveTasks(
-            this.finishedList.listId,
-            this.listWithCreator.list.listId,
-            [task],
-            result.destination.index
-          );
-        } else if (destinationBlock === TodayBlocks.WEEK_LIST) {
-          const task = this.listWithCreator.list.detachTask(
-            result.draggableId
-          );
-
-          this.finishedList.receiveTasks(
-            this.listWithCreator.list.listId,
-            this.finishedList.listId,
-            [task],
-            result.destination.index
-          );
-        }
-
-        this.listWithCreator.list.draggableList.endDragging();
-        this.finishedList.draggableList.endDragging();
-      }
-    } else {
-      this.listWithCreator.list.draggableList.endDragging();
-      this.finishedList.draggableList.endDragging();
-    }
+  handleDragEnd = () => {
+    this.listWithCreator.list.draggableList.endDragging();
+    this.finishedList.draggableList.endDragging();
 
     this.draggingTask = null;
   };
 
   init = async () => {
-    const data = await import('@emoji-mart/data');
+    await EmojiStore.loadIfNotLoaded();
 
-    runInAction(() => {
-      this.emojiStore.data = data.default;
+    if (!this.goal.icon.value && !this.goal.icon.color) {
+      const selectedCategories = ['people', 'activity', 'objects'];
+      const categories = EmojiStore.emojiData.categories.filter(({ id }) =>
+        selectedCategories.includes(id)
+      );
+      const emojiKeys = categories.reduce((acc, category) => {
+        return [...acc, ...category.emojis];
+      }, []);
 
-      if (!this.goal.icon.value && !this.goal.icon.color) {
-        const data = this.emojiStore.data;
-        const selectedCategories = ['people', 'activity', 'objects'];
-        const categories = data.categories.filter(({ id }) =>
-          selectedCategories.includes(id)
-        );
-        const emojiKeys = categories.reduce((acc, category) => {
-          return [...acc, ...category.emojis];
-        }, []);
+      const randomEmojiKey: any =
+        emojiKeys[Math.floor(Math.random() * emojiKeys.length)];
+      const randomEmoji = EmojiStore.emojiData.emojis[randomEmojiKey];
 
-        const randomEmojiKey: any =
-          emojiKeys[Math.floor(Math.random() * emojiKeys.length)];
-        const randomEmoji = data.emojis[randomEmojiKey];
-
-        if (randomEmoji) {
-          this.goal.icon.value = randomEmoji.skins[0].native;
-        }
-
-        this.goal.icon.color = colors[Math.floor(Math.random() * colors.length)];
+      if (randomEmoji) {
+        this.goal.icon.value = randomEmoji.skins[0].native;
       }
-    });
+
+      this.goal.icon.color = colors[Math.floor(Math.random() * colors.length)];
+    }
   };
 
   update = async (props: GoalCreationModalProps) => {
