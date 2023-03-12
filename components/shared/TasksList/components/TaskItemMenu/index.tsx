@@ -35,8 +35,8 @@ import {
   faXmark,
   faSolarSystem,
 } from '@fortawesome/pro-light-svg-icons';
-import { IconDefinition } from '@fortawesome/pro-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisVertical } from '@fortawesome/pro-solid-svg-icons';
+import { ActionMenu } from "../../../ActionMenu";
 
 const multiTaskItems = (store: TaskItemStore) => [
   {
@@ -47,6 +47,7 @@ const multiTaskItems = (store: TaskItemStore) => [
     icon: faBullseyePointer,
     hotkey: 'alt+g',
     command: '⌥G',
+    hidden: store.disableGoalChange,
   },
   null,
   {
@@ -82,6 +83,7 @@ const multiTaskItems = (store: TaskItemStore) => [
     icon: faCalendarCheck,
     hotkey: 'alt+m',
     command: '⌥M',
+    hidden: !store.parent.tasksReceiverName,
   },
   {
     onClick: () =>
@@ -118,6 +120,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     icon: faBullseyePointer,
     command: '⌥G',
     hotkey: 'alt+g',
+    hidden: store.disableGoalChange,
   },
   {
     onClick: () => {
@@ -127,6 +130,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     icon: faSolarSystem,
     hotkey: ['alt+u'],
     command: '⌥U',
+    hidden: store.disableSpaceChange,
   },
   null,
   {
@@ -158,6 +162,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     icon: faCalendarCheck,
     hotkey: 'alt+m',
     command: '⌥M',
+    hidden: !store.parent.tasksReceiverName,
   },
   {
     onClick: () => {
@@ -194,235 +199,48 @@ const singleTaskItems = (store: TaskItemStore) => [
   },
 ];
 
-const TaskItemMenuItem = forwardRef(
-  (
-    {
-      onClick,
-      command,
-      icon,
-      children,
-    }: PropsWithChildren<{
-      onClick: () => void;
-      command?: string;
-      icon: IconDefinition;
-    }>,
-    ref
-  ) => {
-    const store = useTaskItemStore();
-    const handleClick = useCallback(() => {
-      store.closeMenu();
-      onClick();
-    }, [store, onClick]);
-
-    return (
-      <Button
-        ref={ref}
-        onClick={handleClick}
-        display='flex'
-        justifyContent='space-between'
-        variant='unstyled'
-        borderRadius='none'
-        _hover={{ bg: 'gray.100' }}
-        _focus={{ outline: 'none', bg: 'gray.100', boxShadow: 'none' }}
-        w='100%'
-        pr={4}
-        pl={4}
-      >
-        <chakra.span fontWeight='normal'>
-          <chakra.span color='gray.400' mr={2}>
-            <FontAwesomeIcon icon={icon} fixedWidth />
-          </chakra.span>
-          {children}
-        </chakra.span>
-        <chakra.span color='gray.400' fontWeight='normal'>
-          {command}
-        </chakra.span>
-      </Button>
-    );
-  }
-);
-
-const TaskItemMenuItems = ({
-  items,
-  refs,
-}: {
-  refs: (index: number, el: HTMLButtonElement) => void;
-  items: {
-    onClick: () => void;
-    command?: string;
-    title: string;
-    icon: IconDefinition;
-  }[];
-}) => {
-  return (
-    <>
-      {items.map((item, index) =>
-        item === null ? (
-          <Divider key={index} />
-        ) : (
-          <TaskItemMenuItem
-            ref={(el) => refs(index, el)}
-            key={item.title}
-            onClick={item.onClick}
-            command={item.command}
-            icon={item.icon}
-          >
-            {item.title}
-          </TaskItemMenuItem>
-        )
-      )}
-    </>
-  );
-};
-
-const TaskItemMenuContent = observer(function TaskItemMenuContent({
-  isOpen,
-  stopAnimation,
-}: {
-  isOpen: boolean;
-  stopAnimation: () => void;
-}) {
-  const store = useTaskItemStore();
-
-  const items = store.isMultiSelected
-    ? multiTaskItems(store)
-    : singleTaskItems(store);
-
-  const { keyMap, hotkeyHandlers } = useMemo(() => {
-    const keyMap = {};
-    const hotkeyHandlers = {};
-
-    items.forEach((item, index) => {
-      if (item && item.hotkey) {
-        keyMap[index] = item.hotkey;
-        hotkeyHandlers[index] = () => {
-          store.closeMenu();
-          item.onClick();
-        };
-      }
-    });
-
-    return { keyMap, hotkeyHandlers };
-  }, [items, store]);
-
-  useListNavigation(store.menuNavigation, keyMap, hotkeyHandlers);
-
-  return (
-    <Portal>
-      <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
-        <PopoverContent
-          tabIndex={-1}
-          p={0}
-          shadow='lg'
-          overflow='hidden'
-          w='auto'
-          minW={72}
-          onFocus={store.menuNavigation.handleFocus}
-        >
-          <PopoverBody p={0}>
-            <TaskItemMenuItems
-              refs={store.menuNavigation.setRefs}
-              items={items}
-            />
-          </PopoverBody>
-        </PopoverContent>
-      </Fade>
-    </Portal>
-  );
-});
-
 export const TaskItemMenu = observer(function TaskItemMenu() {
   const store = useTaskItemStore();
-  const { isOpen, onClose, onOpen } = useDisclosure({
-    isOpen: store.isMenuOpen,
-  });
-  const [isAnimationInProcess, setIsAnimationInProcess] = useState(false);
-
-  const stopAnimation = useCallback(() => {
-    setIsAnimationInProcess(false);
-  }, [setIsAnimationInProcess]);
-
-  const close = useCallback(() => {
-    setIsAnimationInProcess(true);
-    onClose();
-    store.closeMenu();
-  }, [onClose, store]);
-
-  const open = useCallback(() => {
-    setIsAnimationInProcess(true);
-    store.handleFocus();
-    onOpen();
-    store.openMenu();
-  }, [onOpen, store]);
 
   return (
-    <Popover
-      isLazy
-      isOpen={isOpen || isAnimationInProcess}
-      strategy='fixed'
-      eventListeners={{
-        resize: true
-      }}
-      modifiers={[
-        {
-          name: 'preventOverflow',
-          options: {
-            tether: false,
-            altAxis: true,
-            padding: 8,
-            boundary: 'clippingParents',
-            rootBoundary: 'viewport'
-          }
-        }
-      ]}
-      placement='bottom-start'
-      onOpen={open}
-      onClose={close}
-    >
-      <PopoverTrigger>
-        <Button
-          size='xs'
-          h='auto'
-          minW={5}
-          w={5}
-          p={0}
-          variant='unstyled'
-          borderRadius='none'
-          _groupHover={{
-            visibility: 'visible',
-          }}
-          _before={{
-            content: '""',
-            h: '1px',
-            left: 0,
-            bg: 'transparent',
-            transitionProperty: 'background-color',
-            transitionDuration: 'normal',
-            position: 'absolute',
-            top: '-1px',
-            w: '100%',
-          }}
-          _hover={{
+    <ActionMenu
+      triggerIcon={faEllipsisVertical}
+      items={store.isMultiSelected ? multiTaskItems(store) : singleTaskItems(store)}
+      hidden={!store.isDragging}
+      triggerIconFontSize={18}
+      triggerButtonProps={() => ({
+        color: 'gray.500',
+
+        _groupHover: {
+          visibility: 'visible',
+        },
+        _before: {
+          content: '""',
+          h: '1px',
+          left: 0,
+          bg: 'transparent',
+          transitionProperty: 'background-color',
+          transitionDuration: 'normal',
+          position: 'absolute',
+          top: '-1px',
+          w: '100%',
+        },
+        _hover: {
+          bg: 'gray.100',
+
+          '&:before': {
             bg: 'gray.100',
-            '&:before': {
-              bg: 'gray.100',
-            },
-          }}
-          _focus={{
+          },
+        },
+        _focus: {
+          bg: 'gray.100',
+          boxShadow: 'none',
+
+          '&:before': {
             bg: 'gray.100',
-            boxShadow: 'none',
-            '&:before': {
-              bg: 'gray.100',
-            },
-          }}
-          visibility={store.isDragging ? 'visible' : 'hidden'}
-        >
-          <TaskItemMenuIcon />
-        </Button>
-      </PopoverTrigger>
-      {(isOpen || isAnimationInProcess) && (
-        <TaskItemMenuContent isOpen={isOpen} stopAnimation={stopAnimation} />
-      )}
-    </Popover>
+          },
+        },
+      })}
+    />
   );
 });

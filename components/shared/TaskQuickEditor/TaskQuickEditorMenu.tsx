@@ -22,9 +22,11 @@ export const TaskQuickEditorMenu = observer(function TaskQuickEditorMenu({
   openForMode?: Modes;
 }>) {
   const store = useTaskQuickEditorStore();
-  const isOpen = openForMode
-    ? store.suggestionsMenu.openForMode === openForMode
-    : store.suggestionsMenu.isOpen;
+  const isOpen = !store.disabledModes.includes(store.activeModeType) && (
+    openForMode
+      ? store.suggestionsMenu.openForMode === openForMode
+      : store.suggestionsMenu.isOpen
+  );
 
   useEffect(() => {
     if (isOpen && items.length !== store.suggestionsMenu.itemsCount) {

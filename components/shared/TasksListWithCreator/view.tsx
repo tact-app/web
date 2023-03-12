@@ -34,6 +34,8 @@ export const TasksListWithCreatorView = observer(
           {...props}
           instance={store.list}
           callbacks={store.tasksListCallbacks}
+          disableSpaceChange={props.disableSpaceChange}
+          disableGoalChange={props.disableGoalChange}
         />
       </>
     );

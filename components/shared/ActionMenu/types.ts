@@ -5,8 +5,9 @@ import { ButtonProps } from "@chakra-ui/react";
 export type ActionMenuItem = {
   onClick(): void;
   command?: string;
-  hotkey?: string;
+  hotkey?: string | string[];
   title: string;
+  hidden?: boolean;
   icon: IconDefinition;
 };
 

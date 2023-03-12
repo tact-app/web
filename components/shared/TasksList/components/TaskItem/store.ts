@@ -22,6 +22,8 @@ export type TaskItemProps = {
   isDragging?: boolean;
   isEditMode?: boolean;
   provided: any;
+  disableSpaceChange?: boolean;
+  disableGoalChange?: boolean;
 
   onToggleMenu?: (isOpen: boolean) => void;
   onFocus?: (taskId: string, multiselect?: 'single' | 'many') => void;
@@ -41,6 +43,8 @@ export class TaskItemStore {
   boxRef: HTMLDivElement | null = null;
 
   task: TaskData;
+  disableSpaceChange: boolean = false;
+  disableGoalChange: boolean = false;
 
   hasListeners: boolean = false;
   isAltPressed: boolean = false;
@@ -264,11 +268,15 @@ export class TaskItemStore {
     onFocus,
     onStatusChange,
     onWontDoWithComment,
+    disableSpaceChange,
+    disableGoalChange,
     onToggleMenu,
     isDragging,
     callbacks,
   }: TaskItemProps) => {
     this.task = task;
+    this.disableSpaceChange = disableSpaceChange;
+    this.disableGoalChange = disableGoalChange;
 
     this.onFocus = onFocus;
     this.onStatusChange = onStatusChange;

@@ -22,6 +22,8 @@ export type TasksListProps = {
   tasksReceiverName?: string;
   dnd?: boolean;
   delayedCreation?: boolean;
+  disableSpaceChange?: boolean;
+  disableGoalChange?: boolean;
   callbacks?: {
     onFocusLeave?: (direction: NavigationDirections) => boolean;
     onFocusChange?: (ids: string[]) => void;
@@ -50,6 +52,8 @@ export class TasksListStore {
   editingTaskId: null | string = null;
   openedTask: null | string = null;
   delayedCreation: boolean = false;
+  disableSpaceChange: boolean = false;
+  disableGoalChange: boolean = false;
 
   tasksReceiverName: string = '';
 
@@ -590,6 +594,8 @@ export class TasksListStore {
     this.listId = props.listId;
     this.tasksReceiverName = props.tasksReceiverName;
     this.delayedCreation = props.delayedCreation;
+    this.disableSpaceChange = props.disableSpaceChange;
+    this.disableGoalChange = props.disableGoalChange;
   };
 
   taskCallbacks: TaskProps['callbacks'] = {

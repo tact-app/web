@@ -14,7 +14,7 @@ export function ActionMenuItems({ items, refs }: Props) {
       {items.map((item, index) =>
         item === null ? (
           <Divider key={index} />
-        ) : (
+        ) : !item.hidden && (
           <ActionMenuItem
             ref={(el) => refs(index, el)}
             key={item.title}

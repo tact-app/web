@@ -161,6 +161,20 @@ export class TaskQuickEditorStore {
     return this.order.filter((mode) => this.filledModes.includes(mode));
   }
 
+  get disabledModes() {
+    const disabledModes = [];
+
+    if (this.disableGoalChange) {
+      disabledModes.push(Modes.GOAL);
+    }
+
+    if (this.disableSpaceChange) {
+      disabledModes.push(Modes.SPACE);
+    }
+
+    return disabledModes;
+  }
+
   getMatchMode = (symbol: string): Modes => {
     const matchMode = Object.entries(this.modes).find(
       ([key, mode]) => mode.startSymbol === symbol

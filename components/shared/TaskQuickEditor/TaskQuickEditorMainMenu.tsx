@@ -15,7 +15,6 @@ import React from 'react';
 export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
   const store = useTaskQuickEditorStore();
 
-  console.log(store.isMenuOpen)
   return (
     <chakra.div visibility={store.isInputFocused ? 'visible' : 'hidden'}>
       <Menu
