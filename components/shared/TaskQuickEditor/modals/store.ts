@@ -5,6 +5,7 @@ import { DescriptionData } from '../../../../types/description';
 import { SpaceCreationModal } from '../../../pages/Spaces/modals/SpaceCreationModal';
 import { SpaceData } from '../../../pages/Spaces/types';
 import { RootStore } from '../../../../stores/RootStore';
+import { TaskData } from "../../TasksList/types";
 
 
 export enum ModalsTypes {
@@ -25,8 +26,8 @@ export class TasksEditorModals {
     this.controller.open({
       type: ModalsTypes.ADD_GOAL,
       props: {
-        onSave: (goal: GoalData, description?: DescriptionData) => {
-          this.root.resources.goals.add(goal, description);
+        onSave: (goal: GoalData, description?: DescriptionData, tasks?: TaskData[]) => {
+          this.root.resources.goals.add(goal, description, tasks);
           this.controller.close();
           this.root.toggleModal(false);
           cb && cb();

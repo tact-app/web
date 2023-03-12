@@ -2,6 +2,7 @@ import { RootStore } from '../index';
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { GoalData } from '../../../components/pages/Goals/types';
 import { DescriptionData } from '../../../types/description';
+import { TaskData } from "../../../components/shared/TasksList/types";
 
 export class GoalsStore {
   constructor(public root: RootStore) {
@@ -35,6 +36,7 @@ export class GoalsStore {
   update = (
     goal: GoalData,
     description?: DescriptionData,
+    tasks?: TaskData[],
     isNewDescription?: boolean
   ) => {
     this.map[goal.id] = goal;
@@ -57,7 +59,15 @@ export class GoalsStore {
     }
   };
 
-  add = (goal: GoalData, description?: DescriptionData) => {
+  add = (goal: GoalData, description?: DescriptionData, tasks?: TaskData[]) => {
+    tasks.forEach((task) => {
+      this.root.api.tasks.create(
+        goal.id,
+        { ...task, goalId: goal.id, spaceId: goal.spaceId },
+        'bottom'
+      );
+    })
+
     this.map[goal.id] = goal;
     this.order.push(goal.id);
     this.root.api.goals.create(goal);

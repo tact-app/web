@@ -17,7 +17,7 @@ export type GoalCreationModalProps = {
   onSave: (
     goal: GoalData,
     description?: DescriptionData,
-    isNewDescription?: boolean
+    tasks?: TaskData[],
   ) => void;
   editMode?: boolean;
   goal?: GoalData;
@@ -88,9 +88,10 @@ export class GoalCreationModalStore {
   isDescriptionLoading: boolean = true;
   draggingTask: TaskData | null = null;
 
+  goalId: string = uuidv4();
   goal: GoalData = {
-    id: uuidv4(),
-    listId: uuidv4(),
+    id: this.goalId,
+    listId: this.goalId,
     title: '',
     startDate: '',
     targetDate: '',
@@ -217,7 +218,8 @@ export class GoalCreationModalStore {
         ...this.goal,
         descriptionId: this.description.id,
       };
-      this.onSave?.(goal, this.description);
+
+      this.onSave?.(goal, this.description, Object.values(this.listWithCreator.list.items));
 
       this.handleClose();
     }
@@ -273,6 +275,7 @@ export class GoalCreationModalStore {
   update = async (props: GoalCreationModalProps) => {
     this.onClose = props.onClose;
     this.onSave = props.onSave;
+    this.goalId = props.goal.id;
     this.goal = { ...this.goal, ...props.goal };
 
     if (this.goal.descriptionId) {

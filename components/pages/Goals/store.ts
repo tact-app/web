@@ -116,6 +116,7 @@ export class GoalsStore {
   updateGoal = (
     goal: GoalData | GoalDataExtended,
     description?: DescriptionData,
+    tasks?: TaskData[],
     isNewDescription?: boolean
   ) => {
     const preparedGoal = omit(
@@ -123,12 +124,12 @@ export class GoalsStore {
       ['doneTasks', 'wontDoTasks', 'toDoTasks', 'allTasks']
     ) as GoalData;
 
-    this.root.resources.goals.update(preparedGoal, description, isNewDescription);
+    this.root.resources.goals.update(preparedGoal, description, tasks, isNewDescription);
     this.modals.close();
   };
 
-  createGoal = (goal: GoalData, description?: DescriptionData) => {
-    this.root.resources.goals.add(goal, description);
+  createGoal = (goal: GoalData, description?: DescriptionData, tasks?: TaskData[]) => {
+    this.root.resources.goals.add(goal, description, tasks);
     this.modals.close();
   };
 

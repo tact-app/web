@@ -53,7 +53,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
   const actions = [
     { icon: faCircleCheck, title: 'Complete', onClick: () => null, },
     { icon: faCircleMinus, title: "Won't do", onClick: () => null, },
-    { icon: faPenToSquare, title: 'Edit', onClick: () => null, },
+    { icon: faPenToSquare, title: 'Edit', onClick: () => store.editGoal(goal.id), },
     { icon: faClone, title: 'Duplicate', onClick: () => null, },
     { icon: faBoxArchive, title: 'Archive', onClick: () => null, }
   ];
