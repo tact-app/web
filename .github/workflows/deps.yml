@@ -1,0 +1,26 @@
+name: dependabot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - uses: github/dependabot-action@v2
+
+  notify:
+    needs: [ check ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+          SLACK_ICON: https://github.com/github.png?size=64
+          SLACK_TITLE: '${{ github.repository }}: ${{ github.workflow }}'
+          SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
