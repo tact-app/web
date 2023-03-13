@@ -1,0 +1,10 @@
+job:
+  package-manager: npm_and_yarn
+  source:
+    provider: github
+    directory: /
+
+credentials:
+  - type: npm_registry
+    registry: https://npm.fontawesome.com
+    token: $FONTAWESOME_TOKEN
