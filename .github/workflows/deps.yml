@@ -16,9 +16,11 @@ jobs:
 
           curl -fsSL https://gist.githubusercontent.com/mattt/e09e1ecd76d5573e0517a7622009f06f/raw/ed1d54acd46bdeacac8519233b32f96b40b71cca/install.sh | bash
 
-          dependabot update -f .github/dependabot.weekend.yaml --dry-run ${{github.repository}}
+          dependabot update -f .github/dependabot.weekend.yml --dry-run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          FONTAWESOME_TOKEN: ${{ secrets.FONTAWESOME_TOKEN }}
           LOCAL_GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   notify:

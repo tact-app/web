@@ -1,10 +1,13 @@
 job:
   package-manager: npm_and_yarn
+  allowed-updates:
+    - update-type: all
   source:
     provider: github
+    repo: $GITHUB_REPOSITORY
     directory: /
 
-credentials:
-  - type: npm_registry
-    registry: https://npm.fontawesome.com
-    token: $FONTAWESOME_TOKEN
+#credentials:
+#  - type: npm_registry
+#    registry: https://npm.fontawesome.com
+#    token: $FONTAWESOME_TOKEN
