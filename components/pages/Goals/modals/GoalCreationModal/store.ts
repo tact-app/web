@@ -11,17 +11,9 @@ import { TasksListWithCreatorStore } from "../../../../shared/TasksListWithCreat
 import { TasksListStore } from "../../../../shared/TasksList/store";
 import { TaskData } from "../../../../shared/TasksList/types";
 import { EmojiStore } from "../../../../../stores/EmojiStore";
-
-export type GoalCreationModalProps = {
-  onClose: () => void;
-  onSave: (
-    goal: GoalData,
-    description?: DescriptionData,
-    tasks?: TaskData[],
-  ) => void;
-  editMode?: boolean;
-  goal?: GoalData;
-};
+import { ModalsController } from "../../../../../helpers/ModalsController";
+import { GoalCreationModalProps, GoalCreationModalsTypes } from "./types";
+import { GoalCreationCloseSubmitModal } from "./modals/GoalCreationCloseSubmitModal";
 
 export const colors = [
   'red.200',
@@ -34,11 +26,9 @@ export const colors = [
   'purple.200',
 ];
 
-enum GoalCreateBlocks {
-  GOAL_EDITOR = 'GOAL_EDITOR',
-  TASK_LIST = 'TASK_LIST',
-  FINISHED_TASK_LIST = 'FINISHED_TASK_LIST',
-}
+const GoalsModals = {
+  [GoalCreationModalsTypes.CLOSE_SUBMIT]: GoalCreationCloseSubmitModal,
+};
 
 export class GoalCreationModalStore {
   constructor(public root: RootStore) {
@@ -47,6 +37,8 @@ export class GoalCreationModalStore {
 
   listWithCreator = new TasksListWithCreatorStore(this.root);
   finishedList = new TasksListStore(this.root);
+
+  modals = new ModalsController(GoalsModals);
 
   keyMap = {
     CREATE: ['meta+enter', 'meta+s'],
@@ -87,6 +79,7 @@ export class GoalCreationModalStore {
   isEmojiPickerOpen = false;
   isDescriptionLoading: boolean = true;
   draggingTask: TaskData | null = null;
+  titleHasError: boolean = false;
 
   goal: GoalData = {
     id: uuidv4(),
@@ -130,7 +123,7 @@ export class GoalCreationModalStore {
   }
 
   get isReadyForSave() {
-    return !!this.goal.title;
+    return !!this.goal.title && !this.titleHasError;
   }
 
   handleCloseTask = () => {
@@ -172,7 +165,10 @@ export class GoalCreationModalStore {
   };
 
   handleTitleChange = (e: SyntheticEvent) => {
-    this.goal.title = (e.target as HTMLInputElement).value;
+    const value = (e.target as HTMLInputElement).value;
+
+    this.goal.title = value;
+    this.titleHasError = value && !/\w/.test(value);
   };
 
   handleSpaceChange = (value: string) => {
@@ -201,7 +197,15 @@ export class GoalCreationModalStore {
 
   handleClose = () => {
     if (!this.isEmojiPickerOpen) {
-      this.isOpen = false;
+      this.modals.open({
+        type: GoalCreationModalsTypes.CLOSE_SUBMIT,
+        props: {
+          onSubmit: () => {
+            this.isOpen = false;
+          },
+          onClose: this.modals.close,
+        },
+      });
     } else {
       this.closeEmojiPicker();
     }

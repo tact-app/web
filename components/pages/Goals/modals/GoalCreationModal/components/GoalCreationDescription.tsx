@@ -1,9 +1,10 @@
 import { observer } from 'mobx-react-lite';
-import { Box, Center, CircularProgress, Input, Flex } from '@chakra-ui/react';
+import { chakra, Box, Center, CircularProgress, Input, Flex, FormControl } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
 import { Editor } from '../../../../../shared/Editor';
 import React from "react";
 import { EmojiSelect } from "../../../../../shared/EmojiSelect";
+import { FormError } from "../../../../../shared/FormError";
 
 export const GoalCreationDescription = observer(
   function GoalCreationDescription() {
@@ -34,24 +35,31 @@ export const GoalCreationDescription = observer(
             onColorChange={store.handleColorSelect}
             onIconChange={store.handleEmojiSelect}
           />
-          <Input
-            size='lg'
-            value={store.goal.title}
-            autoFocus
-            placeholder='Goal Name'
-            _placeholder={{ color: 'gray.400' }}
-            onChange={store.handleTitleChange}
-            variant='flushed'
-            fontSize='md'
-            fontWeight='semibold'
-            flex={1}
-            ml={4}
-            height='2rem'
-            _focusVisible={{
-              borderColor: 'blue.400',
-              boxShadow: 'none',
-            }}
-          />
+          <chakra.div flex={1} ml={4}>
+            <FormControl isInvalid={store.titleHasError}>
+              <Input
+                size='lg'
+                value={store.goal.title}
+                autoFocus
+                placeholder='Goal Name'
+                _placeholder={{ color: 'gray.400' }}
+                onChange={store.handleTitleChange}
+                variant='flushed'
+                fontSize='md'
+                fontWeight='semibold'
+                height='2rem'
+                _focusVisible={{
+                  borderColor: 'blue.400',
+                  boxShadow: 'none',
+                  borderBottomWidth: 2,
+                }}
+                _invalid={{
+                  boxShadow: 'none',
+                }}
+              />
+              <FormError inControl>Incorrect name</FormError>
+            </FormControl>
+          </chakra.div>
         </Flex>
         <Box mt={8} width='100%' flex={1} position='relative'>
           {store.isDescriptionLoading ? (

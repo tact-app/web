@@ -13,6 +13,8 @@ import { ResizableGroup } from "../../../../shared/ResizableGroup";
 import { ResizableGroupChild } from "../../../../shared/ResizableGroup/ResizableGroupChild";
 import { GoalCreationInformation } from "./components/GoalCreationInformation";
 import { Task } from "../../../../shared/Task";
+import { ModalsSwitcher } from "../../../../../helpers/ModalsController";
+import { ButtonHotkey } from "../../../../shared/ButtonHotkey";
 
 export const GoalCreationModalView = observer(function GoalCreationModal() {
   const store = useGoalCreationModalStore();
@@ -41,15 +43,10 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
               <HStack justifyContent='space-between' width='100%' maxW='3xl' pt={4} pb={8} pl={10} pr={10}>
                 <Button
                   variant='ghost'
-                  size='xs'
+                  size='sm'
+                  pl={1.5}
+                  pr={1.5}
                   onClick={store.handleBack}
-                  p={0}
-                  _hover={{
-                    bg: 'none'
-                  }}
-                  _active={{
-                    bg: 'none'
-                  }}
                 >
                   <BackArrowIcon />
                   <Text fontSize='lg' lineHeight={3} color='gray.500' fontWeight='normal' ml={2}>
@@ -62,7 +59,8 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
                   isDisabled={!store.isReadyForSave}
                   onClick={store.handleSave}
                 >
-                  Save ⌘+Enter
+                  Save
+                  <ButtonHotkey hotkey='⌘+Enter' />
                 </Button>
               </HStack>
               <GoalCreationDescription />
@@ -81,6 +79,8 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
           </ResizableGroupChild>
         </ResizableGroup>
       </ModalContent>
+
+      <ModalsSwitcher controller={store.modals} />
     </Modal>
   );
 });
