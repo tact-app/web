@@ -28,7 +28,7 @@ export const ActionMenuContent = observer(function ActionMenuContent({ isOpen, s
     });
 
     return { keyMap, hotkeyHandlers };
-  }, [store.items, store]);
+  }, [store.items, store.closeMenu]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useListNavigation(store.menuNavigation, keyMap, hotkeyHandlers);
 

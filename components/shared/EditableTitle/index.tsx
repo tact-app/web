@@ -22,7 +22,6 @@ export function EditableTitle({
   onChange,
   onSave,
   onNavigate,
-  ...additionalProps
 }: Props) {
   let setCaretTimeout: NodeJS.Timeout;
 
@@ -31,7 +30,7 @@ export function EditableTitle({
   const [isEditMode, setIsEditMode] = useState(false);
   const [value, setValue] = useState(initialValue);
 
-  useEffect(() => () => clearTimeout(setCaretTimeout), []);
+  useEffect(() => () => clearTimeout(setCaretTimeout), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSave = () => {
     setIsEditMode(false);

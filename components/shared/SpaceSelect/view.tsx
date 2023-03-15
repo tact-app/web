@@ -8,7 +8,7 @@ import {
   chakra,
   ChakraProps, useOutsideClick,
 } from '@chakra-ui/react';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useSpaceSelectStore } from './store';
 import { SpacesSmallIcon } from "../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon";

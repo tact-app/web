@@ -8,7 +8,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/modal';
-import { chakra, Button } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { ButtonHotkey } from "../../../../../shared/ButtonHotkey";
 
 export type GoalCreationCloseSubmitModalProps = {
