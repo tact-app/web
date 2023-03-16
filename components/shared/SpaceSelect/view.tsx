@@ -6,16 +6,18 @@ import {
   PopoverTrigger,
   Portal,
   chakra,
-  ChakraProps, useOutsideClick,
+  ChakraProps,
+  useOutsideClick,
 } from '@chakra-ui/react';
 import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useSpaceSelectStore } from './store';
 import { SpacesSmallIcon } from "../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon";
-import { faCheck } from "@fortawesome/pro-regular-svg-icons";
+import { faCheck, faPlus } from "@fortawesome/pro-regular-svg-icons";
+import { faAngleRight } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { HeavyPlusIcon } from "../Icons/HeavyPlusIcon";
 import { ModalsSwitcher } from "../../../helpers/ModalsController";
+import { Tooltip } from '../Tooltip';
 
 export const SUGGESTIONS_MENU_ID = 'task-quick-editor-suggestions';
 
@@ -89,8 +91,17 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
         onClick={store.handleCreate}
       >
         <chakra.div display='flex' alignItems='center'>
-          <chakra.div w={7} h={7} rounded='full' display='flex' alignItems='center' justifyContent='center' bg='gray.75'>
-            <HeavyPlusIcon />
+          <chakra.div
+            w={7}
+            h={7}
+            rounded='full'
+            display='flex'
+            alignItems='center'
+            justifyContent='center'
+            bg='blue.400'
+            color='white'
+          >
+            <FontAwesomeIcon icon={faPlus} fontSize={18} />
           </chakra.div>
           <chakra.span ml={2} mr={2}>Create new space</chakra.span>
         </chakra.div>
@@ -99,51 +110,78 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
   };
 
   return (
-    <Button
-      ref={store.setButtonContainerRef}
-      p={.5}
-      h='auto'
-      bg={store.isMenuOpen ? store.selectedSpace.hoverColor : 'transparent'}
-      _focus={{ bg: store.selectedSpace.hoverColor }}
-      _focusVisible={{ boxShadow: 'none' }}
-      _hover={{ bg: store.selectedSpace.hoverColor }}
-      onClick={store.toggleMenu}
-      onKeyDown={store.handleButtonContainerKeyDown}
-    >
-      <Popover
-        placement='bottom-start'
-        isLazy
-        autoFocus={false}
-        closeOnEsc={false}
-        isOpen={store.isMenuOpen}
-      >
-        <PopoverTrigger>
-          <chakra.div display='flex' w='100%' h='100%' alignItems='center'>
-            <SpacesSmallIcon space={store.selectedSpace} size={6} borderRadius={4} bgOpacity='.100' />
-            <chakra.span ml={1} mr={1.5} fontWeight='normal' fontSize='sm' overflow='hidden' textOverflow='ellipsis'>
-              {store.selectedSpace.name}
-            </chakra.span>
-          </chakra.div>
-          </PopoverTrigger>
-        <Portal>
-          <PopoverContent
-            data-id={SUGGESTIONS_MENU_ID}
-            onClick={(e) => e.stopPropagation()}
-            p={0}
-            boxShadow='lg'
-            minW={32}
-            maxW={72}
-            width='auto'
-            overflow='hidden'
-            ref={ref}
+    <chakra.div display='flex' role='group'>
+      <Tooltip label='Change space'>
+        <Button
+          ref={store.setButtonContainerRef}
+          p={.5}
+          h='auto'
+          bg={store.isMenuOpen ? store.selectedSpace.hoverColor : 'transparent'}
+          _focus={{ bg: store.selectedSpace.hoverColor }}
+          _focusVisible={{ boxShadow: 'none' }}
+          _groupHover={{ bg: store.selectedSpace.hoverColor }}
+          onClick={store.toggleMenu}
+          onKeyDown={store.handleButtonContainerKeyDown}
+          role='group'
+        >
+          <Popover
+            placement='bottom-start'
+            isLazy
+            autoFocus={false}
+            closeOnEsc={false}
+            isOpen={store.isMenuOpen}
           >
-            <PopoverBody p={0} maxH={64} overflow='auto' ref={store.setMenuRef}>
-              {renderContent()}
-            </PopoverBody>
-          </PopoverContent>
-        </Portal>
-      </Popover>
-      <ModalsSwitcher controller={store.controller} />
-    </Button>
+            <PopoverTrigger>
+              <chakra.div display='flex' w='100%' h='100%' alignItems='center'>
+                <SpacesSmallIcon space={store.selectedSpace} size={6} borderRadius={4} bgOpacity='.100' />
+                <chakra.span ml={1} mr={1.5} fontWeight='normal' fontSize='sm' overflow='hidden' textOverflow='ellipsis'>
+                  {store.selectedSpace.name}
+                </chakra.span>
+              </chakra.div>
+            </PopoverTrigger>
+            <Portal>
+              <PopoverContent
+                data-id={SUGGESTIONS_MENU_ID}
+                onClick={(e) => e.stopPropagation()}
+                p={0}
+                boxShadow='lg'
+                minW={32}
+                maxW={72}
+                width='auto'
+                overflow='hidden'
+                ref={ref}
+              >
+                <PopoverBody p={0} maxH={64} overflow='auto' ref={store.setMenuRef}>
+                  {renderContent()}
+                </PopoverBody>
+              </PopoverContent>
+            </Portal>
+          </Popover>
+
+          <ModalsSwitcher controller={store.controller} />
+        </Button>
+      </Tooltip>
+
+      <Tooltip label='Go to space' hotkey='Press G and then S'>
+        <Button
+          colorScheme='gray'
+          variant='outline'
+          ml={2}
+          w={7}
+          h={7}
+          display='flex'
+          alignItems='center'
+          justifyContent='center'
+          p={0}
+          minW={0}
+          opacity={0}
+          color='gray.400'
+          _groupHover={{ opacity: 1 }}
+          onClick={store.goToSpace}
+        >
+          <FontAwesomeIcon icon={faAngleRight} fontSize={20} />
+        </Button>
+      </Tooltip>
+    </chakra.div>
   );
 });

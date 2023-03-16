@@ -17,7 +17,7 @@ export const DatePickerView = observer(
     return (
       <Flex alignItems='center' {...flexProps}>
         {mustShowIcon && (
-          <chakra.div tabIndex={-1} pr={store.isFocused ? '0.2rem' : 2}>
+          <chakra.div tabIndex={-1}>
             <FontAwesomeIcon
               tabIndex={-1}
               color={`var(--chakra-colors-${(store.isFocused ? 'blue' : 'gray') + '-500'})`}

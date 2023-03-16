@@ -1,4 +1,4 @@
-import { KeyboardEvent } from 'react';
+import { KeyboardEvent, SyntheticEvent } from 'react';
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from "../../../helpers/StoreProvider";
@@ -159,6 +159,11 @@ export class SpaceSelectStore {
 
   setMenuRef(el: HTMLDivElement) {
     this.menuRef = el;
+  }
+
+  goToSpace(e: SyntheticEvent) {
+    e.stopPropagation();
+    this.root.router.push(`/inbox/${this.selectedSpaceId}`);
   }
 }
 

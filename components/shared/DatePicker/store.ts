@@ -21,7 +21,7 @@ export class DatePickerStore {
   }
 
   get currentValue() {
-    return this.value ? new Date(this.value) : undefined
+    return this.value ? moment(this.value).toDate() : undefined
   }
 
   handleFocus = () => {
@@ -39,7 +39,7 @@ export class DatePickerStore {
   };
 
   handleChange = (date: Date) => {
-    this.callbacks?.onChange(date.toISOString());
+    this.callbacks?.onChange(date?.toISOString() ?? '');
     this.handleBlur();
   };
 

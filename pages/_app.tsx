@@ -183,14 +183,12 @@ const theme = extendTheme({
           width: 'auto',
 
           '.react-datepicker-ignore-onclickoutside': {
-            paddingLeft: 1,
             outline: 'none',
 
             _focus: {
               borderRadius: 4,
-              borderWidth: 2,
-              borderColor: 'blue.300',
-              borderStyle: 'solid',
+              borderWidth: 0,
+              bg: 'gray.75',
             }
           },
           '.react-datepicker__input-container': {
@@ -199,6 +197,8 @@ const theme = extendTheme({
           },
           '.react-datepicker__input-container input': {
             width: '100%',
+            p: 1,
+            ml: 1,
           }
         },
         '.react-datepicker': {
