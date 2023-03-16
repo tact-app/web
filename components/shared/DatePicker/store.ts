@@ -21,7 +21,11 @@ export class DatePickerStore {
   }
 
   get currentValue() {
-    return this.value ? moment(this.value).toDate() : undefined
+    return this.getDateFromString(this.value);
+  }
+
+  getDateFromString(value: string) {
+    return value ? moment(value).toDate() : undefined;
   }
 
   handleFocus = () => {

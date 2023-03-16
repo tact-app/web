@@ -11,6 +11,11 @@ export type DatePickerCallbacks = {
 export type DatePickerViewProps = DatePickerContainerProps & {
   showIconOnlyIfEmpty?: boolean;
   iconFontSize?: number;
+  selectsStart?: boolean;
+  selectsEnd?: boolean;
+  minDate?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export type DatePickerProps = DatePickerCallbacks & DatePickerViewProps & {

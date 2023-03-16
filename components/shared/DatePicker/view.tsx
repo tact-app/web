@@ -9,7 +9,16 @@ import { DATE_PICKER_DATE_FORMAT, useDatePickerStore } from "./store";
 import { DatePickerHeader } from "./components/DatePickerHeader";
 
 export const DatePickerView = observer(
-  function DatePickerView({ showIconOnlyIfEmpty, iconFontSize = 20, ...flexProps }: DatePickerViewProps) {
+  function DatePickerView({
+    showIconOnlyIfEmpty,
+    iconFontSize = 20,
+    selectsStart,
+    selectsEnd,
+    startDate,
+    endDate,
+    minDate,
+    ...flexProps
+  }: DatePickerViewProps) {
     const store = useDatePickerStore();
 
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.value && !store.isFocused);
@@ -41,6 +50,11 @@ export const DatePickerView = observer(
           onBlur={store.handleBlur}
           onClickOutside={store.handleClickOutside}
           ref={store.setRef}
+          selectsStart={selectsStart}
+          selectsEnd={selectsEnd}
+          startDate={store.getDateFromString(startDate)}
+          endDate={store.getDateFromString(endDate)}
+          minDate={store.getDateFromString(startDate ?? minDate)}
         />
       </Flex>
     );
