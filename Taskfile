@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 [ "${BASH_VERSINFO:-0}" -ge 4 ] || {
   echo "bash version 4 or higher is required" >&2
   exit 1
 }
 
-set -euo pipefail
+declare -A config
+config['dryrun']=false
+config['port']=3000 # TODO:debt customize it
 
 setup() {
   set_fontawesome_token false || (echo The token is required && return 1)
+  set_graphite_token false || true
   set_sentry_token false || true
   set_vercel_token false || true
   @env
 
   tools npm ci
-  vercel link
-
   build --from-scratch
 
   local copied=false
@@ -26,6 +29,7 @@ setup() {
 }
 
 set_fontawesome_token() { @store_token 'Font Awesome' fontawesome.token 36 "${1:-true}"; }
+set_graphite_token() { @store_token Graphite graphite.token 60 "${1:-true}"; }
 set_sentry_token() { @store_token Sentry sentry.token 64 "${1:-true}"; }
 set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
 @store_token() {
@@ -59,6 +63,7 @@ set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
 @env() {
   cat <<EOF >.env
 FONTAWESOME_TOKEN=$(git config fontawesome.token)
+GRAPHITE_TOKEN=$(git config graphite.token)
 SENTRY_TOKEN=$(git config sentry.token)
 VERCEL_TOKEN=$(git config vercel.token)
 EOF
@@ -71,6 +76,7 @@ EOF
 @vne() {
   source .env
   git config fontawesome.token ${FONTAWESOME_TOKEN}
+  git config graphite.token ${GRAPHITE_TOKEN}
   git config sentry.token ${SENTRY_TOKEN}
   git config vercel.token ${VERCEL_TOKEN}
 }
@@ -214,6 +220,23 @@ tools() {
   (cd tools && "${@}")
 }
 
+_gt=$(which gt || true)
+gt() {
+  [ -z "${_gt}" ] && echo Please setup env and activate it. && return 1
+
+  local token
+  token=$(git config graphite.token)
+
+  if [ ! -f ~/.graphite_user_config ]; then
+    $_gt auth --token "${token}"
+  elif [ "${token}" != "$(grep authToken ~/.graphite_user_config | awk '{print $2}' | tr -d '"')" ]; then
+    $_gt auth --token "${token}"
+  fi
+
+  local args=("${@}")
+  _ "${_gt}" "${args[@]}"
+}
+
 _sentry=$(which sentry-cli || true)
 sentry() {
   [ -z "${_sentry}" ] && echo Please setup env and activate it. && return 1
@@ -225,6 +248,10 @@ sentry() {
 _vercel=$(which vercel || true)
 vercel() {
   [ -z "${_vercel}" ] && echo Please setup env and activate it. && return 1
+
+  if [ ! -f .vercel/project.json ]; then
+    $_vercel link
+  fi
 
   local args=("${@}")
   if [ "${1:-}" == 'clean' ]; then
@@ -265,15 +292,26 @@ whoami() {
   echo "You are $(git config user.name) <$(git config user.email)>"
   echo "* Docker ------------------------------------------"
   docker version
+  echo "* Graphite ----------------------------------------"
+  gt --version
   echo "* Sentry ------------------------------------------"
   sentry --version
   echo "* Vercel ------------------------------------------"
   vercel whoami
 }
 
-declare -A config
-config['dryrun']=false
-config['port']=3000 # TODO:debt customize it
+@debug() { echo "${@}"; }
+@trace() { @debug "${@}" && "${@}"; }
+@error() { echo "${@}" >&2; }
+@fatal() { @error "${@}" && exit 1; }
+
+@usage() {
+  cat - <<EOF
+Usage: $0 <task> <args>
+Tasks:
+EOF
+  compgen -A function | grep -Ev '^(@|_)' | sort | cat -n
+}
 
 _() {
   if ${config['dryrun']}; then
@@ -283,16 +321,23 @@ _() {
   trap 'echo "${@}"' ERR
   "${@}"
 }
-@debug() { echo "${@}"; }
-@trace() { @debug "${@}" && "${@}"; }
-@error() { echo "${@}" >&2; }
-@fatal() { @error "${@}" && exit 1; }
-@usage() {
-  cat - <<EOF
-Usage: $0 <task> <args>
-Tasks:
-EOF
-  compgen -A function | grep -Ev '^(@|_)' | sort | cat -n
+
+-() {
+  if ${config['dryrun']}; then
+    echo "${*} || false"
+    return
+  fi
+  trap 'echo "${*} || false"' ERR
+  "${@}" || false
+}
+
++() {
+  if ${config['dryrun']}; then
+    echo "${*} || true"
+    return
+  fi
+  trap 'echo "${*} || true"' ERR
+  "${@}" || true
 }
 
 function @main() {
