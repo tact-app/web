@@ -9,7 +9,7 @@ import { useHotkeysHandler } from '../../../helpers/useHotkeysHandler';
 import { Center, Spinner } from '@chakra-ui/react';
 
 export const TasksListView = observer(function TasksListView(
-  { dnd = true }: TasksListProps
+  { dnd = true, wrapperProps }: TasksListProps
 ) {
   const store = useTasksListStore();
 
@@ -32,8 +32,9 @@ export const TasksListView = observer(function TasksListView(
             dnd
               ? {
                 pl: 5,
+                ...wrapperProps,
               }
-              : {}
+              : wrapperProps
           }
           items={store.order}
           checkItemActivity={store.checkTask}

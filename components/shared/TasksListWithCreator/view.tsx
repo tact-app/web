@@ -16,8 +16,6 @@ export const TasksListWithCreatorView = observer(
       enabled: store.isHotkeysEnabled,
     });
 
-    console.log('ISDND', props.dnd)
-
     return (
       <>
         <TaskCreator
@@ -35,6 +33,7 @@ export const TasksListWithCreatorView = observer(
         />
         <TasksList
           {...props}
+          wrapperProps={props.taskListWrapperProps}
           instance={store.list}
           callbacks={store.tasksListCallbacks}
           disableSpaceChange={props.disableSpaceChange}

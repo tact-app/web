@@ -9,6 +9,7 @@ import { TasksListProps, TasksListStore } from '../TasksList/store';
 import { NavigationDirections } from '../TasksList/types';
 import { Lists, referenceToList } from '../TasksList/constants';
 import { SpacesInboxItemData } from '../../pages/Spaces/types';
+import { BoxProps } from "@chakra-ui/react";
 
 export type TasksListWithCreatorProps = TasksListProps & {
   taskCreatorCallbacks?: TaskQuickEditorProps['callbacks'];
@@ -18,6 +19,7 @@ export type TasksListWithCreatorProps = TasksListProps & {
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
   disableReferenceChange?: boolean;
+  taskListWrapperProps?: BoxProps;
 };
 
 export class TasksListWithCreatorStore {

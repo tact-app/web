@@ -12,6 +12,7 @@ import { TasksModals } from './modals/store';
 import { subscriptions } from '../../../helpers/subscriptions';
 import { TaskProps } from '../Task/store';
 import { Lists } from './constants';
+import { BoxProps } from "@chakra-ui/react";
 
 export type TasksListProps = {
   checkTaskActivity?: (task: TaskData) => boolean;
@@ -24,6 +25,7 @@ export type TasksListProps = {
   delayedCreation?: boolean;
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
+  wrapperProps?: BoxProps;
   callbacks?: {
     onFocusLeave?: (direction: NavigationDirections) => boolean;
     onFocusChange?: (ids: string[]) => void;

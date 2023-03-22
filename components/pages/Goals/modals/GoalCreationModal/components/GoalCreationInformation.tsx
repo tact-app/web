@@ -64,7 +64,7 @@ export const GoalCreationInformation = observer(
             </Table>
           </chakra.div>
         </Box>
-        <Box p={1} pt={4} w='100%'>
+        <Box p={1} pt={4} w='100%' overflow='hidden' flex='1 0 0'>
           <Text fontWeight='semibold' mb={2} pl={5}>Task list</Text>
           <DraggableListContext
             onDragStart={store.listWithCreator.list.draggableList.startDragging}
@@ -80,6 +80,10 @@ export const GoalCreationInformation = observer(
               disableSpaceChange
               disableGoalChange
               disableReferenceChange
+              taskListWrapperProps={{
+                maxH: 'calc(100% - var(--chakra-space-28))',
+                overflow: 'auto'
+              }}
             />
           </DraggableListContext>
         </Box>
