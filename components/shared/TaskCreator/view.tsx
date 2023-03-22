@@ -104,17 +104,19 @@ export const TaskCreatorView = observer(function TaskCreator(
                   }}
                 />
                 {!store.disableSpaceChange && <TaskQuickEditorSpace />}
-                {store.disableGoalChange && <TaskQuickEditorGoal />}
+                {!store.disableGoalChange && <TaskQuickEditorGoal />}
                 <TaskQuickEditorPriority />
                 <TaskQuickEditorMainMenu />
               </HStack>
             </Fade>
           </InputRightAddon>
-          <Box position='absolute' right={0} top='33px'>
-            <Fade in={store.isInputFocused} unmountOnExit>
-              <TaskQuickEditorReference />
-            </Fade>
-          </Box>
+          {!store.disableReferenceChange && (
+            <Box position='absolute' right={0} top='33px'>
+              <Fade in={store.isInputFocused} unmountOnExit>
+                <TaskQuickEditorReference />
+              </Fade>
+            </Box>
+          )}
         </InputGroup>
       </InputWrapper>
       <Box opacity={store.isInputFocused ? 1 : 0}>
@@ -122,10 +124,10 @@ export const TaskCreatorView = observer(function TaskCreator(
           <Text color='gray.400' fontSize='xs' fontWeight='normal' overflow='hidden' maxH='24px'>
             Type
             <HotkeyHint>#</HotkeyHint> for tags,
-            <HotkeyHint>!</HotkeyHint> for priority,
-            <HotkeyHint>*</HotkeyHint> for goals,
-            <HotkeyHint>^</HotkeyHint> for spaces,
-            <HotkeyHint>@</HotkeyHint> for reference
+            <HotkeyHint>!</HotkeyHint> for priority
+            {!store.disableGoalChange && <><HotkeyHint>*</HotkeyHint> for goals,</>}
+            {!store.disableSpaceChange && <><HotkeyHint>^</HotkeyHint> for spaces,</>}
+            {!store.disableReferenceChange && <><HotkeyHint>@</HotkeyHint> for reference</>}
           </Text>
         </HStack>
       </Box>

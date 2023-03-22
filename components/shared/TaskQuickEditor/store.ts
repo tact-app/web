@@ -37,6 +37,7 @@ export type TaskQuickEditorProps = {
   isCreator?: boolean;
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
+  disableReferenceChange?: boolean;
 };
 
 export enum Modes {
@@ -87,6 +88,7 @@ export class TaskQuickEditorStore {
   inputData: SpacesInboxItemData | null = null;
   disableSpaceChange: boolean = false;
   disableGoalChange: boolean = false;
+  disableReferenceChange: boolean = false;
 
   enableReferences: boolean = true;
   isMenuOpen: boolean = false;
@@ -165,6 +167,10 @@ export class TaskQuickEditorStore {
 
     if (this.disableSpaceChange) {
       disabledModes.push(Modes.SPACE);
+    }
+
+    if (this.disableReferenceChange) {
+      disabledModes.push(Modes.REFERENCE);
     }
 
     return disabledModes;
@@ -671,6 +677,7 @@ export class TaskQuickEditorStore {
     enableReferences,
     disableSpaceChange,
     disableGoalChange,
+    disableReferenceChange,
     input,
     isCreator,
   }: TaskQuickEditorProps) => {
@@ -682,6 +689,7 @@ export class TaskQuickEditorStore {
     this.isCreator = isCreator;
     this.disableSpaceChange = disableSpaceChange;
     this.disableGoalChange = disableGoalChange;
+    this.disableReferenceChange = disableReferenceChange;
 
     const defaultSpaceId = task?.spaceId || input?.spaceId;
 

@@ -17,6 +17,7 @@ export type TasksListWithCreatorProps = TasksListProps & {
   input?: SpacesInboxItemData;
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
+  disableReferenceChange?: boolean;
 };
 
 export class TasksListWithCreatorStore {

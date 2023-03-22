@@ -109,6 +109,7 @@ export class GoalCreationModalStore {
       delayedCreation: true,
       disableSpaceChange: true,
       disableGoalChange: true,
+      disableReferenceChange: true,
       callbacks: {
         ...this.listWithCreator.list.taskCallbacks,
         onCollapse: () => {

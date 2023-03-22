@@ -64,8 +64,8 @@ export const GoalCreationInformation = observer(
             </Table>
           </chakra.div>
         </Box>
-        <Box p={6} pt={4}>
-          <Text fontWeight='semibold' mb={2}>Task list</Text>
+        <Box p={1} pt={4} w='100%'>
+          <Text fontWeight='semibold' mb={2} pl={5}>Task list</Text>
           <DraggableListContext
             onDragStart={store.listWithCreator.list.draggableList.startDragging}
             onDragEnd={store.listWithCreator.list.draggableList.endDragging}
@@ -75,9 +75,11 @@ export const GoalCreationInformation = observer(
               instance={store.listWithCreator}
               listId={store.goal.id}
               tasksListCallbacks={store.tasksListCallbacks}
+              dnd
               delayedCreation
               disableSpaceChange
               disableGoalChange
+              disableReferenceChange
             />
           </DraggableListContext>
         </Box>
