@@ -189,17 +189,23 @@ const theme = extendTheme({
               borderRadius: 4,
               borderWidth: 0,
               bg: 'gray.75',
+            },
+            '&.datepicker-focused': {
+              borderRadius: 4,
+              borderWidth: 0,
+              bg: 'gray.75',
             }
           },
           '.react-datepicker__input-container': {
             maxWidth: '100px',
             width: 'auto',
+
+            '& input': {
+              width: '100%',
+              p: 1,
+              ml: 1,
+            }
           },
-          '.react-datepicker__input-container input': {
-            width: '100%',
-            p: 1,
-            ml: 1,
-          }
         },
         '.react-datepicker': {
           fontFamily: 'var(--chakra-fonts-body)',
@@ -232,48 +238,240 @@ const theme = extendTheme({
             pb: 6,
           },
           '.react-datepicker__day': {
-            width: 8,
-            height: 8,
-            margin: 1,
+            padding: 0,
+            margin: 0,
+            width: 'auto',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: '50%',
-            fontWeight: 'medium',
-            border: 0,
             outline: 'none',
+            position: 'relative',
 
             _hover: {
-              bg: 'gray.100',
-            }
+              bg: 'transparent',
+            },
+
+            '.day': {
+              width: 8,
+              height: 8,
+              margin: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              fontWeight: 'medium',
+              border: 0,
+              color: 'gray.700',
+              zIndex: 2,
+
+              _hover: {
+                bg: 'gray.100',
+              }
+            },
+            '.day-backdrop': {
+              width: '100%',
+              height: 8,
+              position: 'absolute',
+              background: 'transparent',
+              zIndex: 0,
+            },
           },
           '.react-datepicker__day--today': {
-            bg: 'purple.300',
-            color: 'white',
+            bg: 'transparent',
 
             _hover: {
-              bg: 'purple.400',
+              bg: 'transparent',
+            },
+
+            '.day': {
+              bg: 'purple.300',
+              color: 'white',
+
+              _hover: {
+                bg: 'purple.400',
+              }
             }
           },
-          '.react-datepicker__day--selected': {
-            bg: 'blue.300',
-            color: 'white',
+          '.react-datepicker__day--disabled': {
+            '.day': {
+              color: 'gray.400',
 
-            _hover: {
-              bg: 'blue.400',
-            }
+              _hover: {
+                bg: 'transparent'
+              }
+            },
           },
           '.react-datepicker__day--outside-month': {
+            '.day': {
+              color: 'gray.500',
+            },
+            '&.react-datepicker__day--disabled': {
+              '.day': {
+                color: 'gray.400',
+              }
+            },
+          },
+          '.react-datepicker__day--outside-month.react-datepicker__day--today, .react-datepicker__day--disabled.react-datepicker__day--today': {
+            '.day': {
+              color: 'white',
+
+              _hover: {
+                bg: 'purple.400',
+              }
+            }
+          },
+          '.react-datepicker__day--in-range': {
+            bg: 'transparent',
+
+            '.day': {
+              color: 'gray.500',
+            }
+          },
+          [
+            '.react-datepicker__day--selecting-range-start, ' +
+            '.react-datepicker__day--selecting-range-end, ' +
+            '.react-datepicker__day--selected, ' +
+            '.react-datepicker__day--in-selecting-range.react-datepicker__day--selecting-range-end, ' +
+            '.react-datepicker__day--in-selecting-range.react-datepicker__day--selecting-range-start '
+          ]: {
+            bg: 'transparent',
+
+            _hover: {
+              bg: 'transparent'
+            },
+
+            '.day': {
+              bg: 'blue.300',
+              color: 'white',
+
+              _hover: {
+                bg: 'blue.400',
+              },
+            },
+          },
+          '.react-datepicker__day--selecting-range-start.react-datepicker__day--selecting-range-end': {
+            '.day-backdrop': {
+              bg: 'transparent',
+            },
+          },
+          '.react-datepicker__day--selecting-range-start, .react-datepicker__day--in-selecting-range.react-datepicker__day--selecting-range-start': {
+            '.day': {
+              borderRadius: '50%',
+            },
+
+            '.day-backdrop': {
+              left: 4,
+            },
+          },
+          '.react-datepicker__day--selecting-range-end, .react-datepicker__day--in-selecting-range.react-datepicker__day--selecting-range-end': {
+            '.day': {
+              borderRadius: '50%',
+            },
+
+            '.day-backdrop': {
+              left: -4,
+            },
+          },
+          '.react-datepicker__day--in-selecting-range': {
+            bg: 'transparent',
+
+            '.day': {
+              bg: 'blue.75',
+              color: 'gray.700',
+              position: 'relative',
+              borderRadius: 0,
+            },
+            '.day-backdrop': {
+              background: 'blue.75',
+            },
+          },
+          '.react-datepicker__day--in-selecting-range.react-datepicker__day--selecting-range-end': {
+            bg: 'transparent',
+
+            _hover: {
+              bg: 'transparent'
+            },
+
+            '.day': {
+              bg: 'blue.300',
+              color: 'white',
+
+              _hover: {
+                bg: 'blue.400',
+              },
+            }
+          },
+          '.react-datepicker__day--outside-month day': {
             color: 'gray.400'
           },
           '.react-datepicker__day--keyboard-selected': {
-            bg: 'gray.100',
+            bg: 'transparent',
+
+            '.day': {
+              bg: 'gray.100',
+            }
           },
           '.react-datepicker__day--keyboard-selected.react-datepicker__day--selected': {
-            bg: 'blue.400',
+            bg: 'transparent',
+
+            '.day': {
+              bg: 'blue.400',
+            },
           },
           '.react-datepicker__day--keyboard-selected.react-datepicker__day--today': {
-            bg: 'purple.400',
+            bg: 'transparent',
+
+            '.day': {
+              bg: 'purple.400',
+            },
+          },
+          '.react-datepicker__day--keyboard-selected.react-datepicker__day--in-selecting-range:not(.react-datepicker__day--selecting-range-end)': {
+            bg: 'transparent',
+
+            '.day': {
+              bg: 'blue.75',
+              color: 'gray.700',
+            },
+            '.day-backdrop': {
+              background: 'blue.75',
+            },
+          },
+          '.react-datepicker__day--in-range:not(.react-datepicker__day--in-selecting-range)': {
+            bg: 'transparent',
+
+            '.day': {
+              color: 'gray.500',
+              bg: 'transparent',
+            },
+            '.day-backdrop': {
+              bg: 'transparent',
+            }
+          },
+          '.react-datepicker__week': {
+            '.react-datepicker__day--in-range:first-of-type, .react-datepicker__day--in-selecting-range:first-of-type': {
+              '.day-backdrop': {
+                left: 4,
+              },
+              '.day': {
+                borderRadius: '50%',
+              }
+            },
+            '.react-datepicker__day--in-range:last-of-type, .react-datepicker__day--in-selecting-range:last-of-type': {
+              '.day-backdrop': {
+                left: -4,
+              },
+              '.day': {
+                borderRadius: '50%',
+              }
+            },
+            '.react-datepicker__day--in-selecting-range:first-of-type.react-datepicker__day--selecting-range-end': {
+              '.day-backdrop': {
+                bg: 'transparent'
+              },
+              '.day': {
+                borderRadius: '50%',
+              }
+            },
           }
         },
         '.react-datepicker-popper': {

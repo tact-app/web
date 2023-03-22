@@ -21,7 +21,7 @@ export const DatePickerView = observer(
   }: DatePickerViewProps) {
     const store = useDatePickerStore();
 
-    const mustShowIcon = !showIconOnlyIfEmpty || (!store.value && !store.isFocused);
+    const mustShowIcon = !showIconOnlyIfEmpty || (!store.currentValue && !store.isFocused);
 
     return (
       <Flex alignItems='center' {...flexProps}>
@@ -45,7 +45,7 @@ export const DatePickerView = observer(
           selected={store.currentValue}
           onChange={store.handleChange}
           portalId="date-picker-portal"
-          placeholderText={!store.value && store.isFocused ? 'DD.MM.YYYY' : ''}
+          placeholderText={!store.currentValue && store.isFocused ? 'DD.MM.YYYY' : ''}
           onFocus={store.handleFocus}
           onBlur={store.handleBlur}
           onClickOutside={store.handleClickOutside}
@@ -54,7 +54,14 @@ export const DatePickerView = observer(
           selectsEnd={selectsEnd}
           startDate={store.getDateFromString(startDate)}
           endDate={store.getDateFromString(endDate)}
-          minDate={store.getDateFromString(startDate ?? minDate)}
+          minDate={store.getDateFromString(minDate)}
+          className={store.isFocused ? 'datepicker-focused' : ''}
+          renderDayContents={(dayOfMonth) => (
+            <>
+              <span className='day-backdrop' />
+              <div className='day'>{dayOfMonth}</div>
+            </>
+          )}
         />
       </Flex>
     );

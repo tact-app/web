@@ -3,7 +3,7 @@ import { FlexProps } from "@chakra-ui/react";
 export type DatePickerContainerProps = Omit<FlexProps, 'onChange' | 'onFocus' | 'onBlur'>;
 
 export type DatePickerCallbacks = {
-  onChange(value: string): void;
+  onChanged(value: string): void;
   onFocus?(): void;
   onBlur?(): void;
 };

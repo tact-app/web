@@ -111,7 +111,9 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
               iconFontSize={14}
               showIconOnlyIfEmpty
               value={goal.startDate}
-              onChange={handleChangeStartDate}
+              startDate={goal.startDate}
+              endDate={goal.targetDate}
+              onChanged={handleChangeStartDate}
             />
           </chakra.div>
         </Flex>
@@ -125,7 +127,10 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
               iconFontSize={14}
               showIconOnlyIfEmpty
               value={goal.targetDate}
-              onChange={handleChangeTargetDate}
+              startDate={goal.startDate}
+              endDate={goal.targetDate}
+              minDate={goal.startDate}
+              onChanged={handleChangeTargetDate}
             />
           </chakra.div>
         </Flex>

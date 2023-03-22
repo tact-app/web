@@ -43,7 +43,7 @@ export class DatePickerStore {
   };
 
   handleChange = (date: Date) => {
-    this.callbacks?.onChange(date?.toISOString() ?? '');
+    this.callbacks?.onChanged(date?.toISOString() ?? '');
     this.handleBlur();
   };
 
@@ -72,10 +72,10 @@ export class DatePickerStore {
     this.datePickerRef = ref;
   }
 
-  update = ({ value, onBlur, onFocus, onChange }: DatePickerProps) => {
+  update = ({ value, onBlur, onFocus, onChanged }: DatePickerProps) => {
     this.value = value;
     this.callbacks = {
-      onChange,
+      onChanged,
       onFocus,
       onBlur
     };
