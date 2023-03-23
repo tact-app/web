@@ -82,7 +82,10 @@ EOF
 }
 
 refresh() {
-  git fetch --all --prune # TODO:bug `--tags --prune-tags` replaces tags from forks
+  for remote in $(git remote | grep -v origin); do
+    git fetch --prune --tags "${remote}"
+  done
+  git fetch --prune --tags --prune-tags origin
 
   local deps tools
   deps=$(md5sum package-lock.json | awk '{print $1}')
