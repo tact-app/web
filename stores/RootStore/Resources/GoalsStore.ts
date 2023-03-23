@@ -59,10 +59,10 @@ export class GoalsStore {
     }
   };
 
-  add = (goal: GoalData, description?: DescriptionData, tasks?: TaskData[]) => {
+  add = async (goal: GoalData, description?: DescriptionData, tasks?: TaskData[]) => {
     this.map[goal.id] = goal;
     this.order.push(goal.id);
-    this.root.api.goals.create(goal);
+    await this.root.api.goals.create(goal);
 
     tasks.forEach((task) => {
       this.root.api.tasks.create(

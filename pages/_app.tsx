@@ -206,6 +206,12 @@ const theme = extendTheme({
               ml: 1,
             }
           },
+
+          '&.only-icon': {
+            '.react-datepicker__input-container input': {
+              ml: 0,
+            },
+          }
         },
         '.react-datepicker': {
           fontFamily: 'var(--chakra-fonts-body)',

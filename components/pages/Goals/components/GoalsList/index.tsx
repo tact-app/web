@@ -16,7 +16,8 @@ export const GoalsList = observer(function GoalsList() {
   const store = useGoalsStore();
 
   useHotkeysHandler(store.keymap, store.hotkeysHandlers, {
-    enabled: !store.modals.isOpen
+    enabled: !store.modals.isOpen,
+    keyup: true,
   });
 
   return (

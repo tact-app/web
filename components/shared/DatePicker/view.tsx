@@ -26,10 +26,13 @@ export const DatePickerView = observer(
     return (
       <Flex alignItems='center' {...flexProps}>
         {mustShowIcon && (
-          <chakra.div tabIndex={-1}>
+          <chakra.div
+            tabIndex={-1}
+            color={store.isFocused ? 'blue.500' : 'gray.500'}
+            _hover={{ color: 'blue.400' }}
+          >
             <FontAwesomeIcon
               tabIndex={-1}
-              color={`var(--chakra-colors-${(store.isFocused ? 'blue' : 'gray') + '-500'})`}
               fontSize={iconFontSize}
               icon={faCalendarCirclePlus}
               style={{ outlineWidth: 0 }}
@@ -39,6 +42,7 @@ export const DatePickerView = observer(
           </chakra.div>
         )}
         <ReactDatePicker
+          wrapperClassName={showIconOnlyIfEmpty && 'only-icon'}
           renderCustomHeader={DatePickerHeader}
           formatWeekDay={store.getWeekDayFormatByDate}
           dateFormat={DATE_PICKER_DATE_FORMAT}

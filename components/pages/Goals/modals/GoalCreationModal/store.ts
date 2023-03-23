@@ -223,7 +223,7 @@ export class GoalCreationModalStore {
         descriptionId: this.description.id,
       };
 
-      this.onSave?.(goal, this.description, Object.values(this.listWithCreator.list.items));
+      this.onSave?.(goal, this.description, Object.values(toJS(this.listWithCreator.list.items)));
 
       this.handleClose();
     }
