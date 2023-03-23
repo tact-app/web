@@ -9,7 +9,7 @@ set -euo pipefail
 
 declare -A config
 config['dryrun']=false
-config['port']=3000 # TODO:debt customize it
+config['port']=3000
 
 setup() {
   set_fontawesome_token false || (echo The token is required && return 1)
@@ -192,14 +192,14 @@ start() {
     [ "${2:-}" == '--from-scratch' ] && build docker "${@:2}"
     docker run \
       --rm -it \
-      -p 127.0.0.1:3000:3000 \
+      -p 127.0.0.1:"${config['port']}":3000 \
       tact-app/web:local
     return
   fi
 
   # local way
   [ "${1:-}" == '--from-scratch' ] && build "${@}"
-  @node 'npm run start' -p 127.0.0.1:3000:3000
+  @node 'npm run start' -p 127.0.0.1:"${config['port']}":3000
 }
 
 npm() { @node "npm ${*}"; }
@@ -307,13 +307,17 @@ whoami() {
 @trace() { @debug "${@}" && "${@}"; }
 @error() { echo "${@}" >&2; }
 @fatal() { @error "${@}" && exit 1; }
-
 @usage() {
   cat - <<EOF
 Usage: $0 <task> <args>
 Tasks:
 EOF
   compgen -A function | grep -Ev '^(@|_)' | sort | cat -n
+}
+
+@() {
+  ${config['dryrun']} && echo "${@}"
+  "${@}"
 }
 
 _() {
@@ -344,10 +348,19 @@ _() {
 }
 
 function @main() {
-  if [[ "${1:-}" =~ ^--dry-run|-d$ ]]; then
-    config['dryrun']=true
-    shift
-  fi
+  for arg in "${@}"; do
+    case "${arg}" in
+    -d | --dry-run)
+      config['dryrun']=true
+      shift
+      ;;
+    -p | --port)
+      config['port']="${2}"
+      shift 2
+      ;;
+    *) break ;;
+    esac
+  done
   "${@:-@usage}"
 }
 
