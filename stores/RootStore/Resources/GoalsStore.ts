@@ -60,6 +60,10 @@ export class GoalsStore {
   };
 
   add = (goal: GoalData, description?: DescriptionData, tasks?: TaskData[]) => {
+    this.map[goal.id] = goal;
+    this.order.push(goal.id);
+    this.root.api.goals.create(goal);
+
     tasks.forEach((task) => {
       this.root.api.tasks.create(
         goal.id,
@@ -67,10 +71,6 @@ export class GoalsStore {
         'bottom'
       );
     })
-
-    this.map[goal.id] = goal;
-    this.order.push(goal.id);
-    this.root.api.goals.create(goal);
 
     if (description) {
       this.descriptions[description.id] = description;

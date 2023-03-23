@@ -53,6 +53,7 @@ export const GoalCreationDescription = observer(
                   boxShadow: 'none',
                   borderBottomWidth: 2,
                 }}
+                onKeyDown={(e) => e.stopPropagation()}
                 _invalid={{
                   boxShadow: 'none',
                 }}

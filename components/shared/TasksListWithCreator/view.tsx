@@ -30,6 +30,7 @@ export const TasksListWithCreatorView = observer(
           disableSpaceChange={props.disableSpaceChange}
           disableGoalChange={props.disableGoalChange}
           disableReferenceChange={props.disableReferenceChange}
+          displayHelpAsTooltip={props.displayCreatorHelpAsTooltip}
         />
         <TasksList
           {...props}

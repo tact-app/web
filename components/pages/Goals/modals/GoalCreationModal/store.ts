@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { GoalData, GoalIconVariants } from '../../types';
@@ -219,7 +219,7 @@ export class GoalCreationModalStore {
   handleSave = () => {
     if (this.isReadyForSave) {
       const goal = {
-        ...this.goal,
+        ...toJS(this.goal),
         descriptionId: this.description.id,
       };
 

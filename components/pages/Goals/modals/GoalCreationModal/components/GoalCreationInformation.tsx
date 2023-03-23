@@ -80,6 +80,7 @@ export const GoalCreationInformation = observer(
               disableSpaceChange
               disableGoalChange
               disableReferenceChange
+              displayCreatorHelpAsTooltip
               taskListWrapperProps={{
                 maxH: 'calc(100% - var(--chakra-space-28))',
                 overflow: 'auto'
