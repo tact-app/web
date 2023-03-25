@@ -69,7 +69,11 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
     <Box
       borderWidth={1}
       borderRadius={8}
-      borderColor={goal.state ? GOAL_STATE_PARAMS[goal.state].color : 'gray.200'}
+      borderColor={
+        goal.customFields.state
+          ? GOAL_STATE_PARAMS[goal.customFields.state].color
+          : 'gray.200'
+      }
       p={4}
       w={80}
       mr={6}
@@ -88,14 +92,14 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
         <chakra.div ml={2}>
           <EditableTitle value={goal.title} />
           <Flex mt={1} fontSize='xs' color='gray.500'>
-            <chakra.span>All task: {goal.allTasks.length}</chakra.span>
+            <chakra.span>All task: {goal.customFields.allTasks.length}</chakra.span>
             <chakra.span ml={2}>
               <FontAwesomeIcon icon={faCircleCheckSolid} color='var(--chakra-colors-blue-400' />{' '}
-              {goal.doneTasks.length}
+              {goal.customFields.doneTasks.length}
             </chakra.span>
             <chakra.span ml={2}>
               <FontAwesomeIcon icon={faCircleMinusSolid} color='var(--chakra-colors-gray-400' />{' '}
-              {goal.wontDoTasks.length}
+              {goal.customFields.wontDoTasks.length}
             </chakra.span>
           </Flex>
         </chakra.div>
@@ -158,11 +162,11 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
         triggerIconFontSize={18}
       />
 
-      {goal.state && (
+      {goal.customFields.state && (
         <Tooltip
           label={
             <chakra.span display='flex' fontSize='xs' fontWeight='normal' textAlign='center'>
-              {GOAL_STATE_PARAMS[goal.state].tooltipTitle}
+              {GOAL_STATE_PARAMS[goal.customFields.state].tooltipTitle}
             </chakra.span>
           }
           placement='top'
@@ -176,14 +180,14 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
             position='absolute'
             top={-3}
             left={-3}
-            color={GOAL_STATE_PARAMS[goal.state].color}
+            color={GOAL_STATE_PARAMS[goal.customFields.state].color}
             boxShadow='0px 2px 3px rgba(99, 99, 99, 0.09)'
             borderRadius='full'
             display='flex'
             alignItems='center'
             justifyContent='center'
           >
-            <FontAwesomeIcon fontSize={14} icon={GOAL_STATE_PARAMS[goal.state].icon} />
+            <FontAwesomeIcon fontSize={14} icon={GOAL_STATE_PARAMS[goal.customFields.state].icon} />
           </chakra.div>
         </Tooltip>
       )}

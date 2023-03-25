@@ -7,7 +7,6 @@ import { GoalConfigurationModal } from './modals/GoalConfigurationModal';
 import { GoalData, GoalDataExtended, GoalState } from './types';
 import { DescriptionData } from '../../../types/description';
 import { TaskData, TaskStatus } from "../../shared/TasksList/types";
-import { omit } from 'lodash';
 
 export enum GoalsModalsTypes {
   CREATE_GOAL,
@@ -64,17 +63,19 @@ export class GoalsStore {
         ...(acc[goal.spaceId] ?? []),
         {
           ...goal,
-          doneTasks: this.taskListByGoal[id]?.[TaskStatus.DONE] ?? [],
-          wontDoTasks: this.taskListByGoal[id]?.[TaskStatus.WONT_DO] ?? [],
-          toDoTasks: this.taskListByGoal[id]?.[TaskStatus.TODO] ?? [],
-          allTasks: this.taskListByGoal[id]?.all ?? [],
-          state: index === 1
-            ? GoalState.IS_COMING
-            : index === 2
-              ? GoalState.TIME_TO_ACHIEVE
-              : index === 3
-                ? GoalState.END_DATE_ALREADY_PASSED
-                : undefined
+          customFields: {
+            doneTasks: this.taskListByGoal[id]?.[TaskStatus.DONE] ?? [],
+            wontDoTasks: this.taskListByGoal[id]?.[TaskStatus.WONT_DO] ?? [],
+            toDoTasks: this.taskListByGoal[id]?.[TaskStatus.TODO] ?? [],
+            allTasks: this.taskListByGoal[id]?.all ?? [],
+            state: index === 1
+              ? GoalState.IS_COMING
+              : index === 2
+                ? GoalState.TIME_TO_ACHIEVE
+                : index === 3
+                  ? GoalState.END_DATE_ALREADY_PASSED
+                  : undefined
+          },
         },
       ],
     }), {} as Record<string, GoalDataExtended[]>)
@@ -114,17 +115,12 @@ export class GoalsStore {
   };
 
   updateGoal = (
-    goal: GoalData | GoalDataExtended,
+    { customFields, ...goal }: GoalDataExtended,
     description?: DescriptionData,
     tasks?: TaskData[],
     isNewDescription?: boolean
   ) => {
-    const preparedGoal = omit(
-      goal,
-      ['doneTasks', 'wontDoTasks', 'toDoTasks', 'allTasks']
-    ) as GoalData;
-
-    this.root.resources.goals.update(preparedGoal, description, tasks, isNewDescription);
+    this.root.resources.goals.update(goal, description, tasks, isNewDescription);
     this.modals.close();
   };
 

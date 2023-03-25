@@ -10,19 +10,18 @@ export class GoalsStore {
   }
 
   map: Record<string, GoalData> = {};
-  order: string[] = [];
   descriptions: Record<string, DescriptionData> = {};
 
   get list() {
-    return this.order.map((id) => this.map[id]);
+    return Object.values(this.map);
   }
 
   get haveGoals() {
-    return Boolean(this.order.length);
+    return Boolean(this.list.length);
   }
 
   get count() {
-    return this.order.length;
+    return this.list.length;
   }
 
   getById(id: string) {
@@ -61,7 +60,6 @@ export class GoalsStore {
 
   add = async (goal: GoalData, description?: DescriptionData, tasks?: TaskData[]) => {
     this.map[goal.id] = goal;
-    this.order.push(goal.id);
     await this.root.api.goals.create(goal);
 
     tasks.forEach((task) => {
@@ -82,11 +80,10 @@ export class GoalsStore {
   };
 
   init = async () => {
-    const { goals, order } = await this.root.api.goals.list('default');
+    const { goals } = await this.root.api.goals.list('default');
 
     runInAction(() => {
       this.map = goals;
-      this.order = order;
     });
   };
 }

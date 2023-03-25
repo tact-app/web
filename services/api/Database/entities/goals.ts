@@ -6,25 +6,13 @@ const data = {
   get: {
     '/api/goals': async (db: DB, { id }: { id: string }) => {
       const goals = await db.getAll('goals');
-      const goalList = await db.get('goalLists', id);
-
-      if (!goalList) {
-        await db.add('goalLists', { id, goalIds: [] });
-
-        return {
-          goals: [],
-          order: [],
-        };
-      }
 
       return {
         goals: goals
-          .filter(({ listId }) => listId === id)
-          .reduce((acc, task) => {
-            acc[task.id] = task;
+          .reduce((acc, goal) => {
+            acc[goal.id] = goal;
             return acc;
           }, {}),
-        order: goalList.goalIds,
       };
     },
     '/api/goals/description': async (db: DB, data: { id: string }) => {
@@ -43,45 +31,13 @@ const data = {
       }
     },
     '/api/goals/create': async (db: DB, data: GoalData) => {
-      await db.add('goals', data);
-      const goalLists = await db.get('goalLists', data.listId);
-
-      if (goalLists) {
-        goalLists.goalIds.push(data.id);
-
-        await db.put('goalLists', goalLists);
-      }
+      return db.add('goals', data);
     },
     '/api/goals/delete': async (
       db: DB,
-      { ids, listId }: { ids: string[]; listId: string }
+      { ids }: { ids: string[] }
     ) => {
       await Promise.all(ids.map((id) => db.delete('goals', id)));
-
-      const existedList = await db.get('goalLists', listId);
-
-      if (existedList) {
-        existedList.goalIds = existedList.goalIds.filter(
-          (id) => !ids.includes(id)
-        );
-
-        await db.put('goalLists', existedList);
-      }
-    },
-    '/api/goals/order': async (
-      db: DB,
-      data: { listId: string; goalIds: string[]; destination: number }
-    ) => {
-      const existedList = await db.get('goalLists', data.listId);
-
-      if (existedList) {
-        existedList.goalIds = existedList.goalIds.filter(
-          (id) => !data.goalIds.includes(id)
-        );
-        existedList.goalIds.splice(data.destination, 0, ...data.goalIds);
-
-        await db.put('goalLists', existedList);
-      }
     },
   },
   put: {

@@ -83,7 +83,6 @@ export class GoalCreationModalStore {
 
   goal: GoalData = {
     id: uuidv4(),
-    listId: uuidv4(),
     title: '',
     startDate: '',
     targetDate: '',

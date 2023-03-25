@@ -10,14 +10,16 @@ import {
   PopoverTrigger,
   Text,
 } from '@chakra-ui/react';
-import { EMOJI_SELECT_COLORS, EmojiSelectProps, useEmojiSelectStore } from "./store";
-import { EmojiStore } from "../../../stores/EmojiStore";
+import { EMOJI_SELECT_COLORS, useEmojiSelectStore } from './store';
+import { EmojiStore } from '../../../stores/EmojiStore';
+import { EmojiSelectViewProps } from './types';
 
 export const EmojiSelectComponent = observer(
   function EmojiSelectComponent({
     size = 8,
-    iconFontSize = 'xl'
-  }: Pick<EmojiSelectProps, 'iconFontSize' | 'size'>) {
+    iconFontSize = 'xl',
+    borderRadius = 'full',
+  }: EmojiSelectViewProps) {
     const store = useEmojiSelectStore();
 
     return (
@@ -32,7 +34,8 @@ export const EmojiSelectComponent = observer(
           <Button
             variant='filled'
             bg={store.color}
-            borderRadius='full'
+            color={store.color.split('.')?.[0] + '.500'}
+            borderRadius={borderRadius}
             p={0}
             w={size}
             h={size}
@@ -41,7 +44,7 @@ export const EmojiSelectComponent = observer(
             justifyContent='center'
             alignItems='center'
           >
-            <Text fontSize={iconFontSize}>{store.icon}</Text>
+            <Text fontSize={iconFontSize}>{store.triggerContent}</Text>
           </Button>
         </PopoverTrigger>
         <PopoverContent w='auto'>

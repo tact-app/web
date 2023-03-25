@@ -1,15 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { EmojiStore } from "../../../stores/EmojiStore";
-
-export type EmojiSelectProps = {
-  icon: string;
-  color: string;
-  size?: number;
-  iconFontSize?: string;
-  onColorChange?(color: string): void;
-  onIconChange?(icon: string): void;
-};
+import { EmojiSelectCallbacks, EmojiSelectProps } from "./types";
 
 export const EMOJI_SELECT_COLORS = [
   'red.200',
@@ -25,13 +17,17 @@ export const EMOJI_SELECT_COLORS = [
 export class EmojiSelectStore {
   icon: string;
   color: string;
-  onColorChange: EmojiSelectProps['onColorChange'];
-  onIconChange: EmojiSelectProps['onIconChange'];
+  title: string;
+  callbacks: EmojiSelectCallbacks;
 
   isEmojiPickerOpen = false;
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  get triggerContent() {
+    return this.icon || this.title?.[0];
   }
 
   openEmojiPicker = () => {
@@ -43,22 +39,26 @@ export class EmojiSelectStore {
   };
 
   handleEmojiSelect = (emoji: { native: string }) => {
-    this.onIconChange(emoji.native);
+    this.callbacks?.onIconChange(emoji.native);
   };
 
   handleColorSelect = (color: string) => {
-    this.onColorChange(color);
+    this.callbacks?.onColorChange(color);
   };
 
   init = async () => {
     await EmojiStore.loadIfNotLoaded();
   }
 
-  update = ({ icon, color, onColorChange, onIconChange }: EmojiSelectProps) => {
+  update = ({ icon, color, title, onColorChange, onIconChange }: EmojiSelectProps) => {
     this.icon = icon;
     this.color = color;
-    this.onIconChange = onIconChange;
-    this.onColorChange = onColorChange;
+    this.title = title;
+
+    this.callbacks = {
+      onColorChange,
+      onIconChange,
+    };
   };
 }
 
