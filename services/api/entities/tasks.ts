@@ -17,10 +17,18 @@ const getTasksApi = (apiService: ApiService) => ({
       task,
       placement,
     }),
+  createBulk: (listId: string, tasks: TaskData[], order?: string[]) =>
+    apiService.post<void>(`/api/tasks/create/bulk`, {
+      listId,
+      tasks,
+      order,
+    }),
   delete: (ids: string[], listId?: string) =>
     apiService.delete(`/api/tasks/delete`, { ids, listId }),
   order: (data: { listId: string; taskIds: string[]; destination: number }) =>
     apiService.put<TaskData[]>(`/api/tasks/order`, data),
+  orderReset: (data: { listId: string; order: string[]; }) =>
+    apiService.put<TaskData[]>(`/api/tasks/order/reset`, data),
   swap: (data: {
     fromListId: string;
     toListId: string;

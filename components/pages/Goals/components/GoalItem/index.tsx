@@ -59,10 +59,14 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
   ];
 
   const handleChangeStartDate = (date: string) => {
-    store.updateGoal({ ...goal, startDate: date });
+    store.updateGoal({
+      goal: { ...goal, startDate: date }
+    });
   };
   const handleChangeTargetDate = (date: string) => {
-    store.updateGoal({ ...goal, targetDate: date });
+    store.updateGoal({
+      goal: { ...goal, targetDate: date }
+    });
   };
 
   return (

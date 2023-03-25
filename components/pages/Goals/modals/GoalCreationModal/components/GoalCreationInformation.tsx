@@ -75,6 +75,7 @@ export const GoalCreationInformation = observer(
               instance={store.listWithCreator}
               listId={store.goal.id}
               tasksListCallbacks={store.tasksListCallbacks}
+              forcedLoadTasks={store.isUpdating}
               dnd
               delayedCreation
               disableSpaceChange

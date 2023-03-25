@@ -26,8 +26,8 @@ export class TasksEditorModals {
     this.controller.open({
       type: ModalsTypes.ADD_GOAL,
       props: {
-        onSave: (goal: GoalData, description?: DescriptionData, tasks?: TaskData[]) => {
-          this.root.resources.goals.add(goal, description, tasks);
+        onSave: async (data) => {
+          await this.root.resources.goals.add(data);
           this.controller.close();
           this.root.toggleModal(false);
           cb && cb();

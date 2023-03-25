@@ -40,7 +40,7 @@ export const GoalsList = observer(function GoalsList() {
             />
             <EditableTitle
               widthByTitle
-              sharedProps={{ color: 'gray.700', ml: 2 }}
+              sharedProps={{ color: 'gray.700', ml: 2, fontWeight: 400 }}
               value={space.name}
             />
           </Flex>
@@ -81,28 +81,18 @@ export const GoalsList = observer(function GoalsList() {
 
   return (
     <Box pl={32} pr={32}>
-      <Flex
-        justifyContent={haveGoals ? 'space-between' : 'center'}
-        alignItems='center'
-      >
-        <Heading size='lg' mt={2.5} mb={8} pt={4}>
-          Goals
-        </Heading>
-        {haveGoals && (
-          <GoalCreateNewButton>
-            <FontAwesomeIcon icon={faPlus} fontSize={18} />
-            <chakra.span ml={3}>New goal</chakra.span>
-          </GoalCreateNewButton>
-        )}
+      <Heading size='md' fontSize="2xl" mt={0} mb={0} pt={4} pb={10} textAlign={haveGoals ? 'left' : 'center'}>
+        Goals
+      </Heading>
+      <Flex flexDirection='column' mb={2}>
+        {haveGoals ? renderGoalsBySpaces(Object.entries(store.extendedGoals)) : renderEmptyListMessage()}
       </Flex>
-      <Box>
-        {haveGoals
-          ? (
-            <Flex flexDirection='column' mb={2}>
-              {renderGoalsBySpaces(Object.entries(store.extendedGoals))}
-            </Flex>
-          ) : renderEmptyListMessage()}
-      </Box>
+
+      {haveGoals && (
+        <GoalCreateNewButton borderRadius='full' w={12} h={12} position='absolute' bottom={6} right={6} mb={0}>
+          <FontAwesomeIcon icon={faPlus} fontSize={18} />
+        </GoalCreateNewButton>
+      )}
     </Box>
   );
 });

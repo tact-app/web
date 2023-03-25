@@ -69,8 +69,8 @@ export class TasksModals {
           this.controller.close();
           cb && cb();
         },
-        onSave: (goal: GoalData, description?: DescriptionData) => {
-          this.parent.root.resources.goals.add(goal, description);
+        onSave: async (data) => {
+          await this.parent.root.resources.goals.add(data);
           this.controller.close();
           cb && cb();
         },

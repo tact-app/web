@@ -25,6 +25,7 @@ export type TasksListProps = {
   delayedCreation?: boolean;
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
+  forcedLoadTasks?: boolean;
   wrapperProps?: BoxProps;
   callbacks?: {
     onFocusLeave?: (direction: NavigationDirections) => boolean;
@@ -56,6 +57,7 @@ export class TasksListStore {
   delayedCreation: boolean = false;
   disableSpaceChange: boolean = false;
   disableGoalChange: boolean = false;
+  forcedLoadTasks: boolean = false;
 
   tasksReceiverName: string = '';
 
@@ -567,7 +569,7 @@ export class TasksListStore {
   };
 
   loadTasks = async () => {
-    if (this.delayedCreation) {
+    if (this.delayedCreation && !this.forcedLoadTasks) {
       this.isLoading = false;
       return;
     }
@@ -607,6 +609,7 @@ export class TasksListStore {
     this.delayedCreation = props.delayedCreation;
     this.disableSpaceChange = props.disableSpaceChange;
     this.disableGoalChange = props.disableGoalChange;
+    this.forcedLoadTasks = props.forcedLoadTasks;
   };
 
   taskCallbacks: TaskProps['callbacks'] = {

@@ -4,11 +4,12 @@ import { TaskData } from "../../../../shared/TasksList/types";
 
 export type GoalCreationModalProps = {
   onClose: () => void;
-  onSave: (
+  onSave: (data: {
     goal: GoalData,
     description?: DescriptionData,
     tasks?: TaskData[],
-  ) => void;
+    order?: string[],
+  }) => void;
   editMode?: boolean;
   goal?: GoalData;
 };

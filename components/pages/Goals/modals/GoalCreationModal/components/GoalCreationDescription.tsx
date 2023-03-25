@@ -36,7 +36,7 @@ export const GoalCreationDescription = observer(
             onIconChange={store.handleEmojiSelect}
           />
           <chakra.div flex={1} ml={4}>
-            <FormControl isInvalid={store.titleHasError}>
+            <FormControl isInvalid={Boolean(store.error)}>
               <Input
                 size='lg'
                 value={store.goal.title}
@@ -58,7 +58,7 @@ export const GoalCreationDescription = observer(
                   boxShadow: 'none',
                 }}
               />
-              <FormError inControl>Incorrect name</FormError>
+              <FormError inControl>{store.error}</FormError>
             </FormControl>
           </chakra.div>
         </Flex>

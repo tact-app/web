@@ -3,19 +3,16 @@ import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { ModalsController } from '../../../helpers/ModalsController';
 import { GoalCreationModal } from './modals/GoalCreationModal';
-import { GoalConfigurationModal } from './modals/GoalConfigurationModal';
 import { GoalData, GoalDataExtended, GoalState } from './types';
 import { DescriptionData } from '../../../types/description';
 import { TaskData, TaskStatus } from "../../shared/TasksList/types";
 
 export enum GoalsModalsTypes {
-  CREATE_GOAL,
-  CONFIGURE_GOAL,
+  CREATE_OR_UPDATE_GOAL,
 }
 
 const GoalsModals = {
-  [GoalsModalsTypes.CREATE_GOAL]: GoalCreationModal,
-  [GoalsModalsTypes.CONFIGURE_GOAL]: GoalConfigurationModal,
+  [GoalsModalsTypes.CREATE_OR_UPDATE_GOAL]: GoalCreationModal,
 };
 
 export class GoalsStore {
@@ -36,7 +33,7 @@ export class GoalsStore {
   };
 
   get taskListByGoal() {
-    if (!this.taskList?.length) {
+    if (!this.taskList || !this.taskList.length) {
       return {};
     }
 
@@ -45,14 +42,14 @@ export class GoalsStore {
         return acc;
       }
 
-      return {
+      return ({
         ...acc,
         [task.goalId]: {
           ...acc[task.goalId],
-          [task.status]: [...acc[task.goalId][task.status], task],
-          all: [...acc[task.goalId].all, task],
+          [task.status]: [...(acc[task.goalId]?.[task.status] ?? []), task],
+          all: [...(acc[task.goalId]?.all ?? []), task],
         },
-      };
+      });
     }, {} as Record<string, Record<TaskStatus | 'all', TaskData[]>>)
   }
 
@@ -83,18 +80,9 @@ export class GoalsStore {
 
   modals = new ModalsController(GoalsModals);
 
-  openNewGoalConfigurationModal = () =>
-    this.modals.open({
-      type: GoalsModalsTypes.CONFIGURE_GOAL,
-      props: {
-        goalId: null,
-        onClose: this.modals.close,
-      },
-    });
-
   startGoalCreation = () => {
     this.modals.open({
-      type: GoalsModalsTypes.CREATE_GOAL,
+      type: GoalsModalsTypes.CREATE_OR_UPDATE_GOAL,
       props: {
         onSave: this.createGoal,
         onClose: this.modals.close,
@@ -104,7 +92,7 @@ export class GoalsStore {
 
   editGoal = (goalId: string) => {
     this.modals.open({
-      type: GoalsModalsTypes.CREATE_GOAL,
+      type: GoalsModalsTypes.CREATE_OR_UPDATE_GOAL,
       props: {
         onSave: this.updateGoal,
         onClose: this.modals.close,
@@ -114,23 +102,44 @@ export class GoalsStore {
     });
   };
 
-  updateGoal = (
-    { customFields, ...goal }: GoalDataExtended,
+  updateGoal = async ({
+    goal: { customFields, ...goal },
+    description,
+    tasks,
+    order
+  }: {
+    goal: GoalDataExtended,
     description?: DescriptionData,
     tasks?: TaskData[],
-    isNewDescription?: boolean
-  ) => {
-    this.root.resources.goals.update(goal, description, tasks, isNewDescription);
+    order?: string[],
+  }) => {
+    await this.root.resources.goals.update({ goal, description, tasks, order });
+    await this.loadTaskList();
     this.modals.close();
   };
 
-  createGoal = (goal: GoalData, description?: DescriptionData, tasks?: TaskData[]) => {
-    this.root.resources.goals.add(goal, description, tasks);
+  createGoal = async ({
+    goal,
+    description,
+    tasks,
+    order
+  }: {
+    goal: GoalData,
+    description?: DescriptionData,
+    tasks?: TaskData[],
+    order?: string[]
+  }) => {
+    await this.root.resources.goals.add({ goal, description, tasks, order });
+    await this.loadTaskList();
     this.modals.close();
   };
+
+  loadTaskList = async () => {
+    this.taskList = await this.root.api.tasks.all();
+  }
 
   init = async () => {
-    this.taskList = await this.root.api.tasks.all();
+    await this.loadTaskList();
   };
 
   update = () => null;

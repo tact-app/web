@@ -75,11 +75,12 @@ export class GoalCreationModalStore {
   onSave: GoalCreationModalProps['onSave'];
 
   isOpen = true;
+  isUpdating: boolean = false;
   isTaskExpanded = false;
   isEmojiPickerOpen = false;
   isDescriptionLoading: boolean = true;
   draggingTask: TaskData | null = null;
-  titleHasError: boolean = false;
+  error: string = '';
 
   goal: GoalData = {
     id: uuidv4(),
@@ -122,10 +123,6 @@ export class GoalCreationModalStore {
     };
   }
 
-  get isReadyForSave() {
-    return !!this.goal.title && !this.titleHasError;
-  }
-
   handleCloseTask = () => {
     this.resizableConfig[0].size = 3;
     this.resizableConfig[2].size = 0;
@@ -165,10 +162,7 @@ export class GoalCreationModalStore {
   };
 
   handleTitleChange = (e: SyntheticEvent) => {
-    const value = (e.target as HTMLInputElement).value;
-
-    this.goal.title = value;
-    this.titleHasError = value && !/\w/.test(value);
+    this.goal.title = (e.target as HTMLInputElement).value;
   };
 
   handleSpaceChange = (value: string) => {
@@ -216,16 +210,24 @@ export class GoalCreationModalStore {
   };
 
   handleSave = () => {
-    if (this.isReadyForSave) {
-      const goal = {
-        ...this.goal,
-        descriptionId: this.description.id,
-      };
-
-      this.onSave?.(goal, this.description, Object.values(toJS(this.listWithCreator.list.items)));
-
-      this.handleClose();
+    if (!this.goal.title) {
+      this.error = 'Please fill in the title of goal';
+      return;
     }
+
+    const goal = {
+      ...this.goal,
+      descriptionId: this.description.id,
+    };
+
+    this.onSave?.({
+      goal,
+      description: this.description,
+      tasks: Object.values(toJS(this.listWithCreator.list.items)),
+      order: this.listWithCreator.list.order
+    });
+
+    this.isOpen = false;
   };
 
   get sensors() {
@@ -279,6 +281,10 @@ export class GoalCreationModalStore {
     this.onClose = props.onClose;
     this.onSave = props.onSave;
     this.goal = { ...this.goal, ...props.goal };
+
+    if (props.goal?.id) {
+      this.isUpdating = true;
+    }
 
     if (this.goal.descriptionId) {
       this.isDescriptionLoading = true;
