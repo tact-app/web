@@ -1,6 +1,6 @@
-> # 🖥️ The Tact web application
+> # 🖥️ Tact.app
 >
-> The web version of the service for desktops.
+> Web version of the service for desktops.
 
 ## Quick Start
 
@@ -9,11 +9,13 @@ Requirements:
 - [Docker Desktop][Docker].
 - Access tokens for
   - [Font Awesome][]
-  - [Sentry][]
-  - [Vercel][]
+  - [Graphite][] (optional)
+  - [Sentry][] (optional)
+  - [Vercel][] (optional)
 
 [Docker]:         https://www.docker.com/products/docker-desktop/
 [Font Awesome]:   https://fontawesome.com/
+[Graphite]:       https://graphite.dev/
 [Sentry]:         https://sentry.io/welcome/
 [Vercel]:         https://vercel.com/
 
@@ -31,6 +33,7 @@ You can update tokens by the following commands
 
 ```bash
 $ run set_fontawesome_token
+$ run set_graphite_token
 $ run set_sentry_token
 $ run set_vercel_token
 ```
@@ -94,6 +97,15 @@ $ run tools npm ci
 $ run whoami
 ```
 
+### Graphite CLI
+**Useful:** [docs][Graphite CLI], [src](https://github.com/withgraphite/graphite-cli)
+
+```bash
+$ activate
+
+$ run gt --help
+```
+
 ### Sentry CLI
 **Useful:** [docs][Sentry CLI], [src](https://github.com/getsentry/sentry-cli)
 
@@ -118,6 +130,7 @@ You can avoid using the token parameter when working with these commands,
 it's substituted automatically under the hood.
 
 [Docker CLI]:       https://docs.docker.com/engine/reference/commandline/cli/
+[Graphite CLI]:     https://graphite.dev/docs/graphite-cli
 [Sentry CLI]:       https://docs.sentry.io/product/cli/
 [Vercel CLI]:       https://vercel.com/docs/cli
 

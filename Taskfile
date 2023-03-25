@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 [ "${BASH_VERSINFO:-0}" -ge 4 ] || {
   echo "bash version 4 or higher is required" >&2
   exit 1
 }
 
-set -euo pipefail
+declare -A config
+config['dryrun']=false
+config['port']=3000
 
 setup() {
   set_fontawesome_token false || (echo The token is required && return 1)
+  set_graphite_token false || true
   set_sentry_token false || true
   set_vercel_token false || true
   @env
 
   tools npm ci
-  vercel link
-
   build --from-scratch
 
   local copied=false
@@ -26,6 +29,7 @@ setup() {
 }
 
 set_fontawesome_token() { @store_token 'Font Awesome' fontawesome.token 36 "${1:-true}"; }
+set_graphite_token() { @store_token Graphite graphite.token 60 "${1:-true}"; }
 set_sentry_token() { @store_token Sentry sentry.token 64 "${1:-true}"; }
 set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
 @store_token() {
@@ -59,6 +63,7 @@ set_vercel_token() { @store_token Vercel vercel.token 24 "${1:-true}"; }
 @env() {
   cat <<EOF >.env
 FONTAWESOME_TOKEN=$(git config fontawesome.token)
+GRAPHITE_TOKEN=$(git config graphite.token)
 SENTRY_TOKEN=$(git config sentry.token)
 VERCEL_TOKEN=$(git config vercel.token)
 EOF
@@ -71,12 +76,16 @@ EOF
 @vne() {
   source .env
   git config fontawesome.token ${FONTAWESOME_TOKEN}
+  git config graphite.token ${GRAPHITE_TOKEN}
   git config sentry.token ${SENTRY_TOKEN}
   git config vercel.token ${VERCEL_TOKEN}
 }
 
 refresh() {
-  git fetch --all --prune # TODO:bug `--tags --prune-tags` replaces tags from forks
+  for remote in $(git remote | grep -v origin); do
+    git fetch --prune --tags "${remote}"
+  done
+  git fetch --prune --tags --prune-tags origin
 
   local deps tools
   deps=$(md5sum package-lock.json | awk '{print $1}')
@@ -183,14 +192,14 @@ start() {
     [ "${2:-}" == '--from-scratch' ] && build docker "${@:2}"
     docker run \
       --rm -it \
-      -p 127.0.0.1:3000:3000 \
+      -p 127.0.0.1:"${config['port']}":3000 \
       tact-app/web:local
     return
   fi
 
   # local way
   [ "${1:-}" == '--from-scratch' ] && build "${@}"
-  @node 'npm run start' -p 127.0.0.1:3000:3000
+  @node 'npm run start' -p 127.0.0.1:"${config['port']}":3000
 }
 
 npm() { @node "npm ${*}"; }
@@ -214,6 +223,23 @@ tools() {
   (cd tools && "${@}")
 }
 
+_gt=$(which gt || true)
+gt() {
+  [ -z "${_gt}" ] && echo Please setup env and activate it. && return 1
+
+  local token
+  token=$(git config graphite.token)
+
+  if [ ! -f ~/.graphite_user_config ]; then
+    $_gt auth --token "${token}"
+  elif [ "${token}" != "$(grep authToken ~/.graphite_user_config | awk '{print $2}' | tr -d '"')" ]; then
+    $_gt auth --token "${token}"
+  fi
+
+  local args=("${@}")
+  _ "${_gt}" "${args[@]}"
+}
+
 _sentry=$(which sentry-cli || true)
 sentry() {
   [ -z "${_sentry}" ] && echo Please setup env and activate it. && return 1
@@ -225,6 +251,10 @@ sentry() {
 _vercel=$(which vercel || true)
 vercel() {
   [ -z "${_vercel}" ] && echo Please setup env and activate it. && return 1
+
+  if [ ! -f .vercel/project.json ]; then
+    $_vercel link
+  fi
 
   local args=("${@}")
   if [ "${1:-}" == 'clean' ]; then
@@ -265,24 +295,14 @@ whoami() {
   echo "You are $(git config user.name) <$(git config user.email)>"
   echo "* Docker ------------------------------------------"
   docker version
+  echo "* Graphite ----------------------------------------"
+  gt --version
   echo "* Sentry ------------------------------------------"
   sentry --version
   echo "* Vercel ------------------------------------------"
   vercel whoami
 }
 
-declare -A config
-config['dryrun']=false
-config['port']=3000 # TODO:debt customize it
-
-_() {
-  if ${config['dryrun']}; then
-    echo "${@}"
-    return
-  fi
-  trap 'echo "${@}"' ERR
-  "${@}"
-}
 @debug() { echo "${@}"; }
 @trace() { @debug "${@}" && "${@}"; }
 @error() { echo "${@}" >&2; }
@@ -295,11 +315,52 @@ EOF
   compgen -A function | grep -Ev '^(@|_)' | sort | cat -n
 }
 
-function @main() {
-  if [[ "${1:-}" =~ ^--dry-run|-d$ ]]; then
-    config['dryrun']=true
-    shift
+@() {
+  ${config['dryrun']} && echo "${@}"
+  "${@}"
+}
+
+_() {
+  if ${config['dryrun']}; then
+    echo "${@}"
+    return
   fi
+  trap 'echo "${@}"' ERR
+  "${@}"
+}
+
+-() {
+  if ${config['dryrun']}; then
+    echo "${*} || false"
+    return
+  fi
+  trap 'echo "${*} || false"' ERR
+  "${@}" || false
+}
+
++() {
+  if ${config['dryrun']}; then
+    echo "${*} || true"
+    return
+  fi
+  trap 'echo "${*} || true"' ERR
+  "${@}" || true
+}
+
+function @main() {
+  for arg in "${@}"; do
+    case "${arg}" in
+    -d | --dry-run)
+      config['dryrun']=true
+      shift
+      ;;
+    -p | --port)
+      config['port']="${2}"
+      shift 2
+      ;;
+    *) break ;;
+    esac
+  done
   "${@:-@usage}"
 }
 
