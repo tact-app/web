@@ -218,7 +218,7 @@ export class GoalCreationModalStore {
   handleSave = () => {
     if (this.isReadyForSave) {
       const goal = {
-        ...toJS(this.goal),
+        ...this.goal,
         descriptionId: this.description.id,
       };
 

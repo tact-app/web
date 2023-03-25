@@ -1,6 +1,7 @@
 import { DB } from '../index';
 import { GoalData } from '../../../../components/pages/Goals/types';
 import { DescriptionData } from '../../../../types/description';
+import { cloneDeep } from 'lodash';
 
 const data = {
   get: {
@@ -31,7 +32,7 @@ const data = {
       }
     },
     '/api/goals/create': async (db: DB, data: GoalData) => {
-      return db.add('goals', data);
+      return db.add('goals', cloneDeep(data));
     },
     '/api/goals/delete': async (
       db: DB,
@@ -48,7 +49,7 @@ const data = {
       const existedGoal = await db.get('goals', data.id);
 
       if (existedGoal) {
-        Object.entries(data.fields).forEach(([key, value]) => {
+        Object.entries(cloneDeep(data.fields)).forEach(([key, value]) => {
           existedGoal[key] = value;
         });
 
