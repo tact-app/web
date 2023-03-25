@@ -16,6 +16,7 @@ export type DatePickerViewProps = DatePickerContainerProps & {
   minDate?: string;
   startDate?: string;
   endDate?: string;
+  showTooltip?: boolean;
 }
 
 export type DatePickerProps = DatePickerCallbacks & DatePickerViewProps & {

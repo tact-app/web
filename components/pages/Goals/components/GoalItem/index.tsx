@@ -114,6 +114,8 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
               fontSize='xs'
               iconFontSize={14}
               showIconOnlyIfEmpty
+              showTooltip
+              selectsStart
               value={goal.startDate}
               startDate={goal.startDate}
               endDate={goal.targetDate}
@@ -130,6 +132,8 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
               fontSize='xs'
               iconFontSize={14}
               showIconOnlyIfEmpty
+              showTooltip
+              selectsEnd
               value={goal.targetDate}
               startDate={goal.startDate}
               endDate={goal.targetDate}

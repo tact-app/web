@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DatePickerViewProps } from "./types";
 import { DATE_PICKER_DATE_FORMAT, useDatePickerStore } from "./store";
 import { DatePickerHeader } from "./components/DatePickerHeader";
+import { Tooltip } from '../Tooltip';
+import cn from 'classnames';
 
 export const DatePickerView = observer(
   function DatePickerView({
@@ -17,32 +19,40 @@ export const DatePickerView = observer(
     startDate,
     endDate,
     minDate,
+    showTooltip,
     ...flexProps
   }: DatePickerViewProps) {
     const store = useDatePickerStore();
 
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.currentValue && !store.isFocused);
 
+    console.log(showIconOnlyIfEmpty && !store.isFocused)
     return (
       <Flex alignItems='center' {...flexProps}>
         {mustShowIcon && (
-          <chakra.div
-            tabIndex={-1}
-            color={store.isFocused ? 'blue.500' : 'gray.500'}
-            _hover={{ color: 'blue.400' }}
+          <Tooltip
+            label='Add date'
+            isDisabled={!showTooltip}
+            placement='top'
           >
-            <FontAwesomeIcon
+            <chakra.div
               tabIndex={-1}
-              fontSize={iconFontSize}
-              icon={faCalendarCirclePlus}
-              style={{ outlineWidth: 0 }}
-              cursor='pointer'
-              onClick={store.handleIconClick}
-            />
-          </chakra.div>
+              color={store.isFocused ? 'blue.500' : 'gray.500'}
+              _hover={{ color: 'blue.400' }}
+            >
+              <FontAwesomeIcon
+                tabIndex={-1}
+                fontSize={iconFontSize}
+                icon={faCalendarCirclePlus}
+                style={{ outlineWidth: 0 }}
+                cursor='pointer'
+                onClick={store.handleIconClick}
+              />
+            </chakra.div>
+          </Tooltip>
         )}
         <ReactDatePicker
-          wrapperClassName={showIconOnlyIfEmpty && 'only-icon'}
+          wrapperClassName={cn({ 'only-icon': showIconOnlyIfEmpty, 'disabled': showIconOnlyIfEmpty && mustShowIcon })}
           renderCustomHeader={DatePickerHeader}
           formatWeekDay={store.getWeekDayFormatByDate}
           dateFormat={DATE_PICKER_DATE_FORMAT}

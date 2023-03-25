@@ -30,6 +30,15 @@ export class EmojiSelectStore {
     return this.icon || this.title?.[0];
   }
 
+  get mainColor() {
+    const [color, modifier] = this.color.split('.');
+
+    return {
+      color,
+      modifier: Number(modifier ?? 0),
+    };
+  }
+
   openEmojiPicker = () => {
     this.isEmojiPickerOpen = true;
   };
@@ -39,11 +48,11 @@ export class EmojiSelectStore {
   };
 
   handleEmojiSelect = (emoji: { native: string }) => {
-    this.callbacks?.onIconChange(emoji.native);
+    this.callbacks?.onIconChange?.(emoji.native);
   };
 
   handleColorSelect = (color: string) => {
-    this.callbacks?.onColorChange(color);
+    this.callbacks?.onColorChange?.(color);
   };
 
   init = async () => {

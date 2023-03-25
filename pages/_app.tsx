@@ -210,6 +210,18 @@ const theme = extendTheme({
           '&.only-icon': {
             '.react-datepicker__input-container input': {
               ml: 0,
+              pt: 1,
+              pb: 1,
+              pl: 0,
+              pr: 0,
+            },
+            '.datepicker-focused.react-datepicker-ignore-onclickoutside': {
+              p: 1,
+            }
+          },
+          '&.disabled': {
+            '.react-datepicker__input-container input': {
+              w: 0
             },
           }
         },

@@ -22,6 +22,12 @@ export const EmojiSelectComponent = observer(
   }: EmojiSelectViewProps) {
     const store = useEmojiSelectStore();
 
+    const focusedTriggerBoxShadow = `inset 0px 0px 0px 2px var(--chakra-colors-${
+      store.mainColor.color
+    }-${
+      store.mainColor.modifier + 100
+    })`;
+
     return (
       <Popover
         isOpen={store.isEmojiPickerOpen}
@@ -34,8 +40,9 @@ export const EmojiSelectComponent = observer(
           <Button
             variant='filled'
             bg={store.color}
-            color={store.color.split('.')?.[0] + '.500'}
+            color={store.mainColor.color + '.500'}
             borderRadius={borderRadius}
+            boxShadow={store.isEmojiPickerOpen && focusedTriggerBoxShadow}
             p={0}
             w={size}
             h={size}
@@ -43,6 +50,7 @@ export const EmojiSelectComponent = observer(
             display='flex'
             justifyContent='center'
             alignItems='center'
+            _focus={{ boxShadow: focusedTriggerBoxShadow }}
           >
             <Text fontSize={iconFontSize}>{store.triggerContent}</Text>
           </Button>
@@ -57,7 +65,7 @@ export const EmojiSelectComponent = observer(
                     key={color}
                     borderColor={
                       color === store.color
-                        ? color.replace(/\d+/, '400')
+                        ? `${store.mainColor.color}.400`
                         : 'transparent'
                     }
                     borderWidth={4}
