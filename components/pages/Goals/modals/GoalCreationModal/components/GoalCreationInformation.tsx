@@ -83,8 +83,9 @@ export const GoalCreationInformation = observer(
               disableReferenceChange
               displayCreatorHelpAsTooltip
               taskListWrapperProps={{
-                maxH: 'calc(100% - var(--chakra-space-28))',
-                overflow: 'auto'
+                maxH: 'calc(100% - var(--chakra-space-20))',
+                overflowY: 'auto',
+                overflowX: 'hidden',
               }}
             />
           </DraggableListContext>
