@@ -1,15 +1,9 @@
 import { GoalData } from "../../types";
-import { DescriptionData } from "../../../../../types/description";
-import { TaskData } from "../../../../shared/TasksList/types";
+import { UpdateOrCreateGoalParams } from "../../../../../stores/RootStore/Resources/GoalsStore";
 
 export type GoalCreationModalProps = {
   onClose: () => void;
-  onSave: (data: {
-    goal: GoalData,
-    description?: DescriptionData,
-    tasks?: TaskData[],
-    order?: string[],
-  }) => Promise<void>;
+  onSave: (data: UpdateOrCreateGoalParams) => Promise<void>;
   editMode?: boolean;
   goal?: GoalData;
 };

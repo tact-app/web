@@ -1,9 +1,19 @@
 import { RootStore } from '../index';
-import { makeAutoObservable, runInAction, toJS } from 'mobx';
+import { makeAutoObservable, toJS } from 'mobx';
 import { GoalData } from '../../../components/pages/Goals/types';
 import { DescriptionData } from '../../../types/description';
 import { TaskData } from "../../../components/shared/TasksList/types";
 import { cloneDeep } from 'lodash';
+
+export type UpdateOrCreateGoalParams<T = GoalData> = {
+  goal: T,
+  description?: DescriptionData,
+  tasksData?: {
+    tasks?: TaskData[],
+    order?: string[],
+    descriptions?: DescriptionData[],
+  }
+};
 
 export class GoalsStore {
   constructor(public root: RootStore) {
@@ -36,24 +46,18 @@ export class GoalsStore {
   update = async ({
     goal,
     description,
-    tasks,
-    order
-  }: {
-    goal: GoalData,
-    description?: DescriptionData,
-    tasks?: TaskData[],
-    order?: string[],
-  }) => {
+    tasksData,
+  }: UpdateOrCreateGoalParams) => {
     this.map[goal.id] = goal;
     await this.root.api.goals.update({ id: goal.id, fields: goal });
 
-    if (tasks?.length) {
+    if (tasksData?.tasks?.length) {
       const taskList = await this.root.api.tasks.list(goal.id);
 
-      const tasksIds = tasks?.map((task) => task.id);
+      const tasksIds = tasksData.tasks.map((task) => task.id);
 
       const tasksToDelete = taskList.order.filter((task) => !tasksIds.includes(task));
-      const { tasksToUpdate, tasksToCreate } = tasks.reduce((acc, task) => {
+      const { tasksToUpdate, tasksToCreate } = tasksData.tasks.reduce((acc, task) => {
         if (taskList.tasks[task.id]) {
           acc.tasksToUpdate.push(task);
         } else {
@@ -70,67 +74,72 @@ export class GoalsStore {
       })));
       await this.root.api.tasks.createBulk(goal.id, tasksToCreate);
 
-      if (order?.length) {
+      if (tasksData.descriptions?.length) {
+        await Promise.all(
+          tasksData.descriptions.map((description) =>
+            this.updateDescription(description)
+          )
+        );
+      }
+
+      if (tasksData.order?.length) {
         await this.root.api.tasks.orderReset({
           listId: goal.id,
-          order: cloneDeep(order),
+          order: cloneDeep(tasksData.order),
         });
       }
     }
 
     if (description) {
-      const isNewDescription = !(description.id in this.descriptions);
-
-      if (isNewDescription) {
-        await this.root.api.descriptions.add({
-          content: toJS(description.content),
-          id: description.id,
-        });
-      } else {
-        await this.root.api.descriptions.update({
-          fields: { content: toJS(description.content) },
-          id: description.id,
-        });
-      }
-
-      this.descriptions[description.id] = description;
+      await this.updateDescription(description);
     }
   };
 
   add = async ({
     goal,
     description,
-    tasks,
-    order,
-  }: {
-    goal: GoalData,
-    description?: DescriptionData,
-    tasks?: TaskData[],
-    order?: string[]
-  }) => {
+    tasksData,
+  }: UpdateOrCreateGoalParams) => {
     this.map[goal.id] = goal;
     await this.root.api.goals.create(goal);
 
-    if (tasks?.length) {
+    if (tasksData?.tasks?.length) {
       await this.root.api.tasks.createBulk(
         goal.id,
-        tasks.map((task) => ({
+        tasksData.tasks.map((task) => ({
           ...task,
           goalId: goal.id,
           spaceId: goal.spaceId
         })),
-        cloneDeep(order),
+        cloneDeep(tasksData.order),
+      );
+      await Promise.all(
+        tasksData?.descriptions?.map((description) =>
+          this.updateDescription(description)
+        )
       );
     }
 
     if (description) {
+      await this.updateDescription(description);
+    }
+  };
+
+  updateDescription = async (description: DescriptionData) => {
+    if (!(description.id in this.descriptions)) {
       await this.root.api.descriptions.add({
         content: toJS(description.content),
         id: description.id,
       });
-      this.descriptions[description.id] = description;
+    } else {
+      await this.root.api.descriptions.update({
+        fields: { content: toJS(description.content) },
+        id: description.id,
+      });
     }
-  };
+
+    this.descriptions[description.id] = description;
+  }
 
   init = async () => {
     this.map = await this.root.api.goals.list();

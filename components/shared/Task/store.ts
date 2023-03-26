@@ -31,6 +31,7 @@ export type TaskProps = {
     onTaskChange?: (task: TaskData) => Promise<void>;
     onTagCreate?: (tag: TaskTag) => Promise<void>;
     onFocus?: () => void;
+    onDescriptionChange?: (description: DescriptionData) => void;
   };
   isExpanded?: boolean;
   hasPrevious?: boolean;
@@ -95,6 +96,7 @@ class TaskStore {
 
   handleDescriptionChange = (content: JSONContent) => {
     this.descriptionContent.set(content);
+    this.callbacks.onDescriptionChange?.({ id: this.descriptionId, content });
   };
 
   setDescription = (description?: DescriptionData) => {

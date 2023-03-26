@@ -60,18 +60,18 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
   ];
 
   const handleChangeStartDate = async (date: string) => {
-    await store.updateGoal({
-      goal: { ...goal, startDate: date }
+    return store.updateGoal({
+      goal: {
+        ...goal,
+        startDate: date,
+        targetDate: DatePickerHelpers.isStartDateAfterEndDate(date, goal.targetDate)
+          ? ''
+          : goal.targetDate
+      }
     });
-
-    if (DatePickerHelpers.isStartDateAfterEndDate(date, goal.targetDate)) {
-      await store.updateGoal({
-        goal: { ...goal, targetDate: '' }
-      });
-    }
   };
   const handleChangeTargetDate = (date: string) => {
-    store.updateGoal({
+    return store.updateGoal({
       goal: { ...goal, targetDate: date }
     });
   };

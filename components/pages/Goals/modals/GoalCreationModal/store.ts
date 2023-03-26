@@ -83,6 +83,7 @@ export class GoalCreationModalStore {
   isGoalCreatingOrUpdating: boolean = false;
   draggingTask: TaskData | null = null;
   error: string = '';
+  tasksDescriptions: Record<string, DescriptionData> = {};
 
   goal: GoalData = {
     id: uuidv4(),
@@ -121,6 +122,10 @@ export class GoalCreationModalStore {
           this.resizableConfig[2].size = 2;
         },
         onExpand: this.handleExpandTask,
+        onDescriptionChange: (description: DescriptionData) => {
+          this.listWithCreator.list.taskCallbacks.onDescriptionChange?.(description);
+          this.tasksDescriptions[description.id] = description;
+        }
       },
     };
   }
@@ -236,8 +241,11 @@ export class GoalCreationModalStore {
       await this.onSave?.({
         goal,
         description: this.description,
-        tasks: Object.values(toJS(this.listWithCreator.list.items)),
-        order: this.listWithCreator.list.order
+        tasksData: {
+          tasks: Object.values(toJS(this.listWithCreator.list.items)),
+          order: this.listWithCreator.list.order,
+          descriptions: Object.values(this.tasksDescriptions),
+        }
       });
 
       this.isOpen = false;

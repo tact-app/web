@@ -3,9 +3,9 @@ import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { ModalsController } from '../../../helpers/ModalsController';
 import { GoalCreationModal } from './modals/GoalCreationModal';
-import { GoalData, GoalDataExtended, GoalState } from './types';
-import { DescriptionData } from '../../../types/description';
+import { GoalDataExtended, GoalState } from './types';
 import { TaskData, TaskStatus } from "../../shared/TasksList/types";
+import { UpdateOrCreateGoalParams } from "../../../stores/RootStore/Resources/GoalsStore";
 
 export enum GoalsModalsTypes {
   CREATE_OR_UPDATE_GOAL,
@@ -104,32 +104,18 @@ export class GoalsStore {
 
   updateGoal = async ({
     goal: { customFields, ...goal },
-    description,
-    tasks,
-    order
-  }: {
-    goal: GoalDataExtended,
-    description?: DescriptionData,
-    tasks?: TaskData[],
-    order?: string[],
-  }) => {
-    await this.root.resources.goals.update({ goal, description, tasks, order });
+    ...otherParams
+  }: UpdateOrCreateGoalParams<GoalDataExtended>) => {
+    await this.root.resources.goals.update({ goal, ...otherParams, });
     await this.loadTaskList();
     this.modals.close();
   };
 
   createGoal = async ({
-    goal,
-    description,
-    tasks,
-    order
-  }: {
-    goal: GoalData,
-    description?: DescriptionData,
-    tasks?: TaskData[],
-    order?: string[]
-  }) => {
-    await this.root.resources.goals.add({ goal, description, tasks, order });
+    goal: { customFields, ...goal },
+    ...otherParams
+  }: UpdateOrCreateGoalParams<GoalDataExtended>) => {
+    await this.root.resources.goals.add({ goal, ...otherParams });
     await this.loadTaskList();
     this.modals.close();
   };
