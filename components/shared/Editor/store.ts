@@ -124,7 +124,7 @@ class EditorStore {
 
               return false;
             },
-            'Cmd-x': ({ editor }) => editor.chain().focus().toggleStrike().run(),
+            'Cmd-Shift-x': ({ editor }) => editor.chain().focus().toggleStrike().run(),
             'Cmd-h': ({ editor }) => editor.chain().focus().toggleHighlight().run(),
             'Cmd-l': () => {
               openLinkInfo();
