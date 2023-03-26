@@ -2,6 +2,7 @@ export type EmojiSelectViewProps = {
   size?: number;
   iconFontSize?: string;
   borderRadius?: string | number;
+  canRemoveEmoji?: boolean;
 };
 
 export type EmojiSelectCallbacks = {

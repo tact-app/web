@@ -12,6 +12,7 @@ export const EmojiSelect = observer(function EmojiSelect(
         size={props.size}
         iconFontSize={props.iconFontSize}
         borderRadius={props.borderRadius}
+        canRemoveEmoji={props.canRemoveEmoji}
       />
     </EmojiSelectStoreProvider>
   );

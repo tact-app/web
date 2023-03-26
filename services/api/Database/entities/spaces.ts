@@ -1,7 +1,7 @@
 import { DB } from '../index';
 import { SpaceData } from '../../../../components/pages/Spaces/types';
-import { colors } from '../../../../components/pages/Spaces/constants';
 import { v4 as uuidv4 } from 'uuid';
+import { EMOJI_SELECT_COLORS } from '../../../../components/shared/EmojiSelect/constants';
 
 const data = {
   get: {
@@ -14,7 +14,7 @@ const data = {
           name: 'Personal',
           icon: '',
           type: 'personal',
-          color: colors[Math.floor(Math.random() * colors.length)],
+          color: EMOJI_SELECT_COLORS[Math.floor(Math.random() * EMOJI_SELECT_COLORS.length)],
           children: [],
         };
 

@@ -10,9 +10,9 @@ import {
   Container,
   Textarea,
   IconButton,
+  chakra,
 } from '@chakra-ui/react';
 import { useSpaceCreationModalStore } from './store';
-import { SpaceCreationEmojiSelect } from './components/SpaceCreationEmojiSelect';
 import { DeleteSpaceModal } from './components/DeleteSpaceModal';
 import { SpaceСongratulationsModal } from '../SpaceСongratulationsModal'
 import {
@@ -27,6 +27,7 @@ import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { TextAreaLengthCounter } from '../../../../shared/TextAreaLengthCounter'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAlignLeft, faTrashCan } from '@fortawesome/pro-light-svg-icons';
+import { EmojiSelect } from "../../../../shared/EmojiSelect";
 
 const keyMap = {
   CREATE: ['meta+enter', 'meta+s'],
@@ -72,7 +73,19 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
                 spacing={0}
                 marginBottom={4}
               >
-                <SpaceCreationEmojiSelect />
+                <chakra.div mr={2}>
+                  <EmojiSelect
+                    icon={store.icon}
+                    color={store.color}
+                    title={store.name}
+                    size={8}
+                    iconFontSize='lg'
+                    borderRadius={4}
+                    onColorChange={store.handleColorSelect}
+                    onIconChange={store.handleEmojiSelect}
+                    canRemoveEmoji
+                  />
+                </chakra.div>
                 <Box flex={1}>
                   <Input
                     size='lg'

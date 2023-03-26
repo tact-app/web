@@ -7,6 +7,7 @@ import { SpaceCreationModal } from "../../pages/Spaces/modals/SpaceCreationModal
 import { ModalsTypes } from "../TasksList/modals/store";
 import { SpaceData } from "../../pages/Spaces/types";
 import { NavigationDirections } from "../../../types/navigation";
+import { setModifierToColor } from "../../../helpers/baseHelpers";
 
 export type SpaceSelectProps = {
   onChange(spaceId: string): void;
@@ -45,7 +46,7 @@ export class SpaceSelectStore {
 
     return {
       ...space,
-      hoverColor: space.color + '.75'
+      hoverColor: setModifierToColor(space.color, 75)
     };
   }
 

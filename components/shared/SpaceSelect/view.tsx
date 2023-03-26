@@ -43,7 +43,7 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
         onClick={() => store.handleSuggestionSelect(space.id)}
       >
         <chakra.div display='flex' alignItems='center'>
-          <SpacesSmallIcon space={space} size={7} borderRadius={4} bgOpacity='.100' />
+          <SpacesSmallIcon space={space} size={7} borderRadius={4} bgOpacity='100' />
           <chakra.span color={isSelected ? 'blue.400' : 'gray.700'} ml={2} mr={2} overflow='hidden' textOverflow='ellipsis'>
             {space.name}
           </chakra.span>
@@ -140,7 +140,7 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
           >
             <PopoverTrigger>
               <chakra.div display='flex' w='100%' h='100%' alignItems='center'>
-                <SpacesSmallIcon space={store.selectedSpace} size={6} borderRadius={4} bgOpacity='.100' />
+                <SpacesSmallIcon space={store.selectedSpace} size={6} borderRadius={4} bgOpacity='100' />
                 <chakra.span ml={1} mr={1.5} fontWeight='normal' fontSize='sm' overflow='hidden' textOverflow='ellipsis'>
                   {store.selectedSpace.name}
                 </chakra.span>

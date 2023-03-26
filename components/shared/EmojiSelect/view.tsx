@@ -10,15 +10,18 @@ import {
   PopoverTrigger,
   Text,
 } from '@chakra-ui/react';
-import { EMOJI_SELECT_COLORS, useEmojiSelectStore } from './store';
+import { useEmojiSelectStore } from './store';
 import { EmojiStore } from '../../../stores/EmojiStore';
 import { EmojiSelectViewProps } from './types';
+import { EMOJI_SELECT_COLORS } from './constants';
+import React from "react";
 
 export const EmojiSelectComponent = observer(
   function EmojiSelectComponent({
     size = 8,
     iconFontSize = 'xl',
     borderRadius = 'full',
+    canRemoveEmoji,
   }: EmojiSelectViewProps) {
     const store = useEmojiSelectStore();
 
@@ -78,12 +81,27 @@ export const EmojiSelectComponent = observer(
                 ))}
               </HStack>
             </Box>
-            <Picker
-              autoFocus
-              theme='light'
-              data={EmojiStore.emojiData}
-              onEmojiSelect={store.handleEmojiSelect}
-            />
+            <Box position='relative'>
+              <Picker
+                autoFocus
+                theme='light'
+                data={EmojiStore.emojiData}
+                onEmojiSelect={store.handleEmojiSelect}
+              />
+              {canRemoveEmoji && store.icon && (
+                <Button
+                  right='16px'
+                  bottom='20px'
+                  position='absolute'
+                  size='xs'
+                  colorScheme='gray'
+                  onClick={store.handleEmojiRemove}
+                  zIndex='2'
+                >
+                  Remove
+                </Button>
+              )}
+            </Box>
           </PopoverBody>
         </PopoverContent>
       </Popover>

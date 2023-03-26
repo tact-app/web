@@ -111,6 +111,10 @@ export class GoalsStore {
     this.modals.close();
   };
 
+  updateGoalOnly = (goal: GoalDataExtended) => {
+    return this.updateGoal({ goal })
+  };
+
   createGoal = async ({
     goal: { customFields, ...goal },
     ...otherParams

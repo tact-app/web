@@ -60,21 +60,27 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
   ];
 
   const handleChangeStartDate = async (date: string) => {
-    return store.updateGoal({
-      goal: {
-        ...goal,
-        startDate: date,
-        targetDate: DatePickerHelpers.isStartDateAfterEndDate(date, goal.targetDate)
-          ? ''
-          : goal.targetDate
-      }
+    return store.updateGoalOnly({
+      ...goal,
+      startDate: date,
+      targetDate: DatePickerHelpers.isStartDateAfterEndDate(date, goal.targetDate)
+        ? ''
+        : goal.targetDate
     });
   };
   const handleChangeTargetDate = (date: string) => {
-    return store.updateGoal({
-      goal: { ...goal, targetDate: date }
-    });
+    return store.updateGoalOnly({ ...goal, targetDate: date });
   };
+  const handleChangeTitle = (title: string) => {
+    return store.updateGoalOnly({ ...goal, title });
+  };
+  const handleChangeIcon = (icon: string) => {
+    return store.updateGoalOnly({ ...goal, icon: { ...goal.icon, value: icon } });
+  };
+  const handleColorChange = (color: string) => {
+    return store.updateGoalOnly({ ...goal, icon: { ...goal.icon, color } });
+  };
+
 
   return (
     <Box
@@ -99,9 +105,12 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
           color={goal.icon.color}
           size={12}
           iconFontSize='3xl'
+          onIconChange={handleChangeIcon}
+          onColorChange={handleColorChange}
+          canRemoveEmoji
         />
         <chakra.div ml={2} w='calc(100% - var(--chakra-space-20))'>
-          <EditableTitle value={goal.title} />
+          <EditableTitle value={goal.title} onSave={handleChangeTitle} />
           <Flex mt={1} fontSize='xs' color='gray.500'>
             <chakra.span>All task: {goal.customFields.allTasks.length}</chakra.span>
             <chakra.span ml={2}>
