@@ -106,6 +106,7 @@ export function EditableTitle({
         ml={Number(inputProps?.ml || sharedProps?.ml || 0) - 1}
         pl={1}
         width={widthByTitle ? `${value.length * 10}px` : '100%'}
+        maxWidth='100%'
         minWidth='80px'
       />
     ) : (
@@ -113,6 +114,10 @@ export function EditableTitle({
         fontSize='md'
         lineHeight='6'
         fontWeight='semibold'
+        w='100%'
+        textOverflow='ellipsis'
+        overflow='hidden'
+        whiteSpace='nowrap'
         onClick={handleEditModeToggle}
         {...titleProps}
         {...sharedProps}

@@ -20,6 +20,7 @@ export const DatePickerView = observer(
     endDate,
     minDate,
     showTooltip,
+    tooltipPlacement = 'top',
     ...flexProps
   }: DatePickerViewProps) {
     const store = useDatePickerStore();
@@ -32,7 +33,7 @@ export const DatePickerView = observer(
           <Tooltip
             label='Add date'
             isDisabled={!showTooltip}
-            placement='top'
+            placement={tooltipPlacement}
           >
             <chakra.div
               tabIndex={-1}

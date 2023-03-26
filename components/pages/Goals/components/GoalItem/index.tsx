@@ -24,6 +24,7 @@ import { GoalDataExtended, GoalState } from "../../types";
 import { EmojiSelect } from "../../../../shared/EmojiSelect";
 import { ActionMenu } from "../../../../shared/ActionMenu";
 import { EditableTitle } from "../../../../shared/EditableTitle";
+import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
 
 type Props = {
   goal: GoalDataExtended
@@ -58,10 +59,16 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
     { icon: faBoxArchive, title: 'Archive', onClick: () => null, }
   ];
 
-  const handleChangeStartDate = (date: string) => {
-    store.updateGoal({
+  const handleChangeStartDate = async (date: string) => {
+    await store.updateGoal({
       goal: { ...goal, startDate: date }
     });
+
+    if (DatePickerHelpers.isStartDateAfterEndDate(date, goal.targetDate)) {
+      await store.updateGoal({
+        goal: { ...goal, targetDate: '' }
+      });
+    }
   };
   const handleChangeTargetDate = (date: string) => {
     store.updateGoal({
@@ -93,7 +100,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
           size={12}
           iconFontSize='3xl'
         />
-        <chakra.div ml={2}>
+        <chakra.div ml={2} w='calc(100% - var(--chakra-space-20))'>
           <EditableTitle value={goal.title} />
           <Flex mt={1} fontSize='xs' color='gray.500'>
             <chakra.span>All task: {goal.customFields.allTasks.length}</chakra.span>

@@ -30,6 +30,7 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
       onEsc={store.handleBack}
       blockScrollOnMount={false}
       size='full'
+      isCentered
     >
       <ModalContent>
         <ResizableGroup>

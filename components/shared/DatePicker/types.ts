@@ -1,4 +1,4 @@
-import { FlexProps } from "@chakra-ui/react";
+import { FlexProps, TooltipProps } from "@chakra-ui/react";
 
 export type DatePickerContainerProps = Omit<FlexProps, 'onChange' | 'onFocus' | 'onBlur'>;
 
@@ -17,6 +17,7 @@ export type DatePickerViewProps = DatePickerContainerProps & {
   startDate?: string;
   endDate?: string;
   showTooltip?: boolean;
+  tooltipPlacement?: TooltipProps['placement'];
 }
 
 export type DatePickerProps = DatePickerCallbacks & DatePickerViewProps & {

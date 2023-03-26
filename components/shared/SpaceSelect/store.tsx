@@ -11,16 +11,18 @@ import { NavigationDirections } from "../../../types/navigation";
 export type SpaceSelectProps = {
   onChange(spaceId: string): void;
   onNavigate?(direction: NavigationDirections): void;
+  onNavigateToSpace?(spaceId: string): void;
   selectedId?: string | null;
 }
 
 export class SpaceSelectStore {
-  callbacks: Pick<SpaceSelectProps, 'onChange' | 'onNavigate'>;
+  callbacks: Pick<SpaceSelectProps, 'onChange' | 'onNavigate' | 'onNavigateToSpace'>;
 
   buttonContainerRef: HTMLButtonElement | null = null;
   menuRef: HTMLDivElement | null = null;
   scrollTimeout: NodeJS.Timeout;
   isMenuOpen = false;
+  isCreateModalOpened = false;
   selectedSpaceId: string | null = null;
   hoveredIndex: number = 0;
 
@@ -36,13 +38,6 @@ export class SpaceSelectStore {
     return this.root.resources.spaces.list.filter((space) => space.type !== 'all');
   }
 
-  get spacesExtended() {
-    return this.spaces.map((space) => ({
-      ...space,
-      isSelected: space.id === this.selectedSpaceId,
-    }));
-  }
-
   get selectedSpace() {
     const space = this.root.resources.spaces.list.find(
       (space) => space.id === this.selectedSpaceId
@@ -54,8 +49,8 @@ export class SpaceSelectStore {
     };
   }
 
-  update({ onChange, onNavigate, selectedId }: SpaceSelectProps) {
-    this.callbacks = { onChange, onNavigate };
+  update({ onChange, onNavigate, onNavigateToSpace, selectedId }: SpaceSelectProps) {
+    this.callbacks = { onChange, onNavigate, onNavigateToSpace };
     this.selectedSpaceId = selectedId;
 
     if (!this.selectedSpaceId) {
@@ -126,6 +121,7 @@ export class SpaceSelectStore {
 
   handleCreate() {
     this.toggleMenu();
+    this.isCreateModalOpened = true;
 
     this.controller.open({
       type: ModalsTypes.SPACE_CREATION,
@@ -136,9 +132,11 @@ export class SpaceSelectStore {
             this.controller.close();
             this.selectedSpaceId = space.id;
             this.callbacks.onChange(space.id);
+            this.isCreateModalOpened = false;
           },
           onClose: () => {
             this.controller.close();
+            this.isCreateModalOpened = false;
           },
         },
       },
@@ -163,7 +161,12 @@ export class SpaceSelectStore {
 
   goToSpace(e: SyntheticEvent) {
     e.stopPropagation();
-    this.root.router.push(`/inbox/${this.selectedSpaceId}`);
+
+    if (this.callbacks.onNavigateToSpace) {
+      this.callbacks.onNavigateToSpace(this.selectedSpaceId);
+    } else {
+      this.root.router.push(`/inbox/${this.selectedSpaceId}`);
+    }
   }
 }
 

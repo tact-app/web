@@ -38,11 +38,13 @@ export const GoalsList = observer(function GoalsList() {
               iconFontSize='lg'
               borderRadius={4}
             />
-            <EditableTitle
-              widthByTitle
-              sharedProps={{ color: 'gray.700', ml: 2, fontWeight: 400 }}
-              value={space.name}
-            />
+            <chakra.div ml='2' w='calc(100% - var(--chakra-space-10))'>
+              <EditableTitle
+                widthByTitle
+                sharedProps={{ color: 'gray.700', fontWeight: 400, w: '100%' }}
+                value={space.name}
+              />
+            </chakra.div>
           </Flex>
           <chakra.div>{goals.map((goal) => <GoalItem key={goal.id} goal={goal} />)}</chakra.div>
         </chakra.div>
@@ -81,7 +83,15 @@ export const GoalsList = observer(function GoalsList() {
 
   return (
     <Box pl={32} pr={32}>
-      <Heading size='md' fontSize="2xl" mt={0} mb={0} pt={4} pb={10} textAlign={haveGoals ? 'left' : 'center'}>
+      <Heading
+        size='md'
+        fontSize="2xl"
+        mt={0}
+        mb={0}
+        pt={4}
+        pb={10}
+        textAlign={haveGoals ? 'left' : 'center'}
+      >
         Goals
       </Heading>
       <Flex flexDirection='column' mb={2}>
@@ -89,7 +99,17 @@ export const GoalsList = observer(function GoalsList() {
       </Flex>
 
       {haveGoals && (
-        <GoalCreateNewButton borderRadius='full' w={12} h={12} position='absolute' bottom={6} right={6} mb={0}>
+        <GoalCreateNewButton
+          withHotkey
+          withTooltip
+          borderRadius='full'
+          w={12}
+          h={12}
+          position='absolute'
+          bottom={6}
+          right={6}
+          mb={0}
+        >
           <FontAwesomeIcon icon={faPlus} fontSize={18} />
         </GoalCreateNewButton>
       )}

@@ -78,8 +78,8 @@ export class GoalsStore {
       }
     }
 
-    if (description && description.content) {
-      const isNewDescription = Boolean(this.descriptions[description.id]);
+    if (description) {
+      const isNewDescription = !this.descriptions[description.id];
 
       if (isNewDescription) {
         await this.root.api.descriptions.add({

@@ -35,12 +35,18 @@ export const GoalCreationInformation = observer(
               <Tbody>
                 {renderInformationItem(
                   'Space',
-                  <SpaceSelect selectedId={store.goal.spaceId} onChange={store.handleSpaceChange} />
+                  <SpaceSelect
+                    selectedId={store.goal.spaceId}
+                    onChange={store.handleSpaceChange}
+                    onNavigateToSpace={store.handleNavigateToSpace}
+                  />
                 )}
                 {renderInformationItem(
                   'Start date',
                   <DatePicker
                     selectsStart
+                    showTooltip
+                    tooltipPlacement='bottom'
                     value={store.goal.startDate}
                     startDate={store.goal.startDate}
                     endDate={store.goal.targetDate}
@@ -52,6 +58,8 @@ export const GoalCreationInformation = observer(
                   'Target date',
                   <DatePicker
                     selectsEnd
+                    showTooltip
+                    tooltipPlacement='bottom'
                     startDate={store.goal.startDate}
                     endDate={store.goal.targetDate}
                     minDate={store.goal.startDate}

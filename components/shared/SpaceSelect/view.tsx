@@ -18,6 +18,7 @@ import { faAngleRight } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ModalsSwitcher } from "../../../helpers/ModalsController";
 import { Tooltip } from '../Tooltip';
+import { SpaceData } from "../../pages/Spaces/types";
 
 export const SUGGESTIONS_MENU_ID = 'task-quick-editor-suggestions';
 
@@ -31,8 +32,38 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
     handler: store.handleClickOutside,
   });
 
+  const renderSpace = (space: SpaceData, index: number, itemContainerProps: ChakraProps) => {
+    const isSelected = space.id === store.selectedSpaceId;
+
+    return (
+      <chakra.div
+        {...itemContainerProps}
+        key={space.id}
+        bg={index === store.hoveredIndex ? 'gray.100' : ''}
+        onClick={() => store.handleSuggestionSelect(space.id)}
+      >
+        <chakra.div display='flex' alignItems='center'>
+          <SpacesSmallIcon space={space} size={7} borderRadius={4} bgOpacity='.100' />
+          <chakra.span color={isSelected ? 'blue.400' : 'gray.700'} ml={2} mr={2} overflow='hidden' textOverflow='ellipsis'>
+            {space.name}
+          </chakra.span>
+        </chakra.div>
+
+        {isSelected && (
+          <chakra.span position='absolute' color='blue.400' top='50%' transform='translate(0, -50%)' right={2.5}>
+            <FontAwesomeIcon
+              fontSize={14}
+              icon={faCheck}
+              fixedWidth
+            />
+          </chakra.span>
+        )}
+      </chakra.div>
+    )
+  }
+
   const renderContent = () => {
-    if (!store.spacesExtended.length) {
+    if (!store.spaces.length) {
       return (
         <chakra.span
           display='flex'
@@ -60,31 +91,7 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
     };
 
     return [
-      ...store.spacesExtended.map((space, index) => (
-        <chakra.div
-          {...itemContainerProps}
-          key={space.id}
-          bg={index === store.hoveredIndex ? 'gray.100' : ''}
-          onClick={() => store.handleSuggestionSelect(space.id)}
-        >
-          <chakra.div display='flex' alignItems='center'>
-            <SpacesSmallIcon space={space} size={7} borderRadius={4} bgOpacity='.100' />
-            <chakra.span color={space.isSelected ? 'blue.400' : 'gray.700'} ml={2} mr={2} overflow='hidden' textOverflow='ellipsis'>
-              {space.name}
-            </chakra.span>
-          </chakra.div>
-
-          {space.isSelected && (
-            <chakra.span position='absolute' color='blue.400' top='50%' transform='translate(0, -50%)' right={2.5}>
-              <FontAwesomeIcon
-                fontSize={14}
-                icon={faCheck}
-                fixedWidth
-              />
-            </chakra.span>
-          )}
-        </chakra.div>
-      )),
+      ...store.spaces.map((space, index) => renderSpace(space, index, itemContainerProps)),
       <chakra.div
         {...itemContainerProps}
         key='create-space'
@@ -111,7 +118,7 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
 
   return (
     <chakra.div display='flex' role='group'>
-      <Tooltip label='Change space'>
+      <Tooltip label='Change space' isDisabled={store.isMenuOpen || store.isCreateModalOpened}>
         <Button
           ref={store.setButtonContainerRef}
           p={.5}

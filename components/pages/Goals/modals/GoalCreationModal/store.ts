@@ -14,6 +14,7 @@ import { EmojiStore } from "../../../../../stores/EmojiStore";
 import { ModalsController } from "../../../../../helpers/ModalsController";
 import { GoalCreationModalProps, GoalCreationModalsTypes } from "./types";
 import { GoalCreationCloseSubmitModal } from "./modals/GoalCreationCloseSubmitModal";
+import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
 
 export const colors = [
   'red.200',
@@ -171,6 +172,10 @@ export class GoalCreationModalStore {
 
   handleStartDateChange = (value: string) => {
     this.goal.startDate = value;
+
+    if (DatePickerHelpers.isStartDateAfterEndDate(value, this.goal.targetDate)) {
+      this.goal.targetDate = '';
+    }
   }
 
   handleTargetDateChange = (value: string) => {
@@ -181,6 +186,10 @@ export class GoalCreationModalStore {
     this.description.content = value;
   };
 
+  handleNavigateToSpace = (spaceId: string) => {
+    this.handleClose(() => this.root.router.push(`/inbox/${spaceId}`));
+  };
+
   handleBack = () => {
     if (!this.isEmojiPickerOpen) {
       this.handleClose();
@@ -189,13 +198,14 @@ export class GoalCreationModalStore {
     }
   };
 
-  handleClose = () => {
+  handleClose = (submitCb?: () => void) => {
     if (!this.isEmojiPickerOpen) {
       this.modals.open({
         type: GoalCreationModalsTypes.CLOSE_SUBMIT,
         props: {
           onSubmit: () => {
             this.isOpen = false;
+            submitCb?.();
           },
           onClose: this.modals.close,
         },
