@@ -9,12 +9,13 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
+  useOutsideClick,
 } from '@chakra-ui/react';
 import { useEmojiSelectStore } from './store';
 import { EmojiStore } from '../../../stores/EmojiStore';
 import { EmojiSelectViewProps } from './types';
 import { EMOJI_SELECT_COLORS } from './constants';
-import React from "react";
+import React, { useRef } from "react";
 
 export const EmojiSelectComponent = observer(
   function EmojiSelectComponent({
@@ -24,6 +25,13 @@ export const EmojiSelectComponent = observer(
     canRemoveEmoji,
   }: EmojiSelectViewProps) {
     const store = useEmojiSelectStore();
+
+    const ref = useRef();
+
+    useOutsideClick({
+      ref,
+      handler: store.closeEmojiPicker,
+    });
 
     const focusedTriggerBoxShadow = `inset 0px 0px 0px 2px var(--chakra-colors-${
       store.mainColor.color
@@ -58,7 +66,7 @@ export const EmojiSelectComponent = observer(
             <Text fontSize={iconFontSize}>{store.triggerContent}</Text>
           </Button>
         </PopoverTrigger>
-        <PopoverContent w='auto'>
+        <PopoverContent w='auto' ref={ref}>
           <PopoverBody p={0}>
             <Box display='flex' justifyContent='center'>
               <HStack p={2}>

@@ -107,7 +107,6 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
           iconFontSize='3xl'
           onIconChange={handleChangeIcon}
           onColorChange={handleColorChange}
-          canRemoveEmoji
         />
         <chakra.div ml={2} w='calc(100% - var(--chakra-space-20))'>
           <EditableTitle value={goal.title} onSave={handleChangeTitle} />
