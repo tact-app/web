@@ -32,7 +32,7 @@ export const DatePickerView = observer(
         {mustShowIcon && (
           <Tooltip
             label='Add date'
-            isDisabled={!showTooltip}
+            isDisabled={!showTooltip || store.isFocused}
             placement={tooltipPlacement}
           >
             <chakra.div
@@ -44,7 +44,7 @@ export const DatePickerView = observer(
                 tabIndex={-1}
                 fontSize={iconFontSize}
                 icon={faCalendarCirclePlus}
-                style={{ outlineWidth: 0 }}
+                style={{ outline: 'none' }}
                 cursor='pointer'
                 onClick={store.handleIconClick}
               />

@@ -338,6 +338,11 @@ const theme = extendTheme({
               }
             }
           },
+          '.react-datepicker__day--in-selecting-range.react-datepicker__day--today, .react-datepicker__day--in-range.react-datepicker__day--today': {
+            '.day': {
+              color: 'gray.700',
+            }
+          },
           '.react-datepicker__day--in-range': {
             bg: 'transparent',
 
