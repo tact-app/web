@@ -79,7 +79,7 @@ export class GoalsStore {
     }
 
     if (description) {
-      const isNewDescription = !this.descriptions[description.id];
+      const isNewDescription = !(description.id in this.descriptions);
 
       if (isNewDescription) {
         await this.root.api.descriptions.add({
@@ -124,19 +124,16 @@ export class GoalsStore {
     }
 
     if (description) {
-      this.descriptions[description.id] = description;
       await this.root.api.descriptions.add({
         content: toJS(description.content),
         id: description.id,
       });
+      this.descriptions[description.id] = description;
     }
   };
 
   init = async () => {
-    const { goals } = await this.root.api.goals.list('default');
-
-    runInAction(() => {
-      this.map = goals;
-    });
+    this.map = await this.root.api.goals.list();
+    this.descriptions = await this.root.api.descriptions.list();
   };
 }

@@ -2,11 +2,8 @@ import { ApiService } from '../ApiService';
 import { GoalData } from '../../../components/pages/Goals/types';
 
 const getGoalsApi = (apiService: ApiService) => ({
-  list: (id: string) =>
-    apiService.get<{ goals: Record<string, GoalData>; }>(
-      `/api/goals`,
-      { id }
-    ),
+  list: () =>
+    apiService.get<Record<string, GoalData>>(`/api/goals`),
   create: (goal: GoalData) =>
     apiService.post<GoalData[]>(`/api/goals/create`, goal),
   delete: (ids: string[]) =>

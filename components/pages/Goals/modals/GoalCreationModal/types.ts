@@ -9,7 +9,7 @@ export type GoalCreationModalProps = {
     description?: DescriptionData,
     tasks?: TaskData[],
     order?: string[],
-  }) => void;
+  }) => Promise<void>;
   editMode?: boolean;
   goal?: GoalData;
 };

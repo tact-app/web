@@ -58,6 +58,7 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
                   colorScheme='blue'
                   size='sm'
                   onClick={store.handleSave}
+                  disabled={store.isGoalCreatingOrUpdating}
                 >
                   Save
                   <ButtonHotkey hotkey='⌘+Enter' />

@@ -5,16 +5,13 @@ import { cloneDeep } from 'lodash';
 
 const data = {
   get: {
-    '/api/goals': async (db: DB, { id }: { id: string }) => {
+    '/api/goals': async (db: DB) => {
       const goals = await db.getAll('goals');
 
-      return {
-        goals: goals
-          .reduce((acc, goal) => {
-            acc[goal.id] = goal;
-            return acc;
-          }, {}),
-      };
+      return goals.reduce((acc, goal) => ({
+        ...acc,
+        [goal.id]: goal,
+      }), {});
     },
     '/api/goals/description': async (db: DB, data: { id: string }) => {
       return await db.get('descriptions', data.id);

@@ -6,6 +6,14 @@ const data = {
     '/api/description': async (db: DB, data: { id: string }) => {
       return await db.get('descriptions', data.id);
     },
+    '/api/description/all': async (db: DB) => {
+      const descriptions = await db.getAll('descriptions');
+
+      return descriptions.reduce((acc, description) => ({
+        ...acc,
+        [description.id]: description,
+      }), {});
+    },
   },
   post: {
     '/api/description': async (db: DB, data: DescriptionData) => {

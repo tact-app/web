@@ -80,6 +80,7 @@ export class GoalCreationModalStore {
   isTaskExpanded = false;
   isEmojiPickerOpen = false;
   isDescriptionLoading: boolean = true;
+  isGoalCreatingOrUpdating: boolean = false;
   draggingTask: TaskData | null = null;
   error: string = '';
 
@@ -219,7 +220,7 @@ export class GoalCreationModalStore {
     this.onClose?.();
   };
 
-  handleSave = () => {
+  handleSave = async () => {
     if (!this.goal.title) {
       this.error = 'Please fill in the title of goal';
       return;
@@ -230,14 +231,20 @@ export class GoalCreationModalStore {
       descriptionId: this.description.id,
     };
 
-    this.onSave?.({
-      goal,
-      description: this.description,
-      tasks: Object.values(toJS(this.listWithCreator.list.items)),
-      order: this.listWithCreator.list.order
-    });
+    try {
+      this.isGoalCreatingOrUpdating = true;
+      await this.onSave?.({
+        goal,
+        description: this.description,
+        tasks: Object.values(toJS(this.listWithCreator.list.items)),
+        order: this.listWithCreator.list.order
+      });
 
-    this.isOpen = false;
+      this.isOpen = false;
+      this.isGoalCreatingOrUpdating = false;
+    } catch (e) {
+      this.isGoalCreatingOrUpdating = false;
+    }
   };
 
   get sensors() {
