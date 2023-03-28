@@ -7,7 +7,6 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { useGoalsStore } from "../../store";
 import { toJS } from "mobx";
-import { setModifierToColor } from "../../../../../helpers/baseHelpers";
 
 type Props = {
   spaceId: string;

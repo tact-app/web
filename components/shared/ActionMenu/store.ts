@@ -31,8 +31,9 @@ export class ActionMenuStore {
     this.callbacks?.onToggleMenu?.(false);
   };
 
-  update({ items, onNavigate, onToggleMenu }: ActionMenuProps) {
+  update({ items, onNavigate, onToggleMenu, isMenuOpen }: ActionMenuProps) {
     this.items = items;
+    this.isMenuOpen = isMenuOpen;
     this.callbacks = {
       onNavigate,
       onToggleMenu,

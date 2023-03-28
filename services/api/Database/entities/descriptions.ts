@@ -36,6 +36,14 @@ const data = {
       }
     },
   },
+  delete: {
+    '/api/description': async (
+      db: DB,
+      { ids }: { ids: string[] }
+    ) => {
+      await Promise.all(ids.map((id) => db.delete('descriptions', id)));
+    },
+  }
 };
 
 export default data;

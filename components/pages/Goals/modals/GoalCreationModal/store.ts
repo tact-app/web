@@ -15,6 +15,7 @@ import { ModalsController } from "../../../../../helpers/ModalsController";
 import { GoalCreationModalProps, GoalCreationModalsTypes } from "./types";
 import { GoalCreationCloseSubmitModal } from "./modals/GoalCreationCloseSubmitModal";
 import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
+import { cloneDeep, isEqual } from "lodash";
 
 export const colors = [
   'red.200',
@@ -83,7 +84,6 @@ export class GoalCreationModalStore {
   isGoalCreatingOrUpdating: boolean = false;
   draggingTask: TaskData | null = null;
   error: string = '';
-  tasksDescriptions: Record<string, DescriptionData> = {};
 
   goal: GoalData = {
     id: uuidv4(),
@@ -97,10 +97,13 @@ export class GoalCreationModalStore {
       value: '',
     },
   };
+  initialGoal: GoalData = cloneDeep(this.goal);
   description: DescriptionData = {
     id: uuidv4(),
     content: undefined,
   };
+  initialDescription: DescriptionData = cloneDeep(this.description);
+  tasksDescriptions: Record<string, DescriptionData> = {};
 
   get taskProps() {
     return {
@@ -122,12 +125,26 @@ export class GoalCreationModalStore {
           this.resizableConfig[2].size = 2;
         },
         onExpand: this.handleExpandTask,
-        onDescriptionChange: (description: DescriptionData) => {
-          this.listWithCreator.list.taskCallbacks.onDescriptionChange?.(description);
-          this.tasksDescriptions[description.id] = description;
+        onDescriptionChange: (description: DescriptionData, isNotInitial: boolean) => {
+          this.listWithCreator.list.taskCallbacks.onDescriptionChange?.(description, isNotInitial);
+
+          if (isNotInitial) {
+            this.tasksDescriptions[description.id] = description;
+          } else {
+            delete this.tasksDescriptions[description.id];
+          }
         }
       },
     };
+  }
+
+  get isGoalParamsChanged() {
+    return Boolean(
+      !isEqual(this.goal, this.initialGoal) ||
+      !isEqual(this.description, this.initialDescription) ||
+      !isEqual(this.listWithCreator.list.items, this.listWithCreator.list.initialItems) ||
+      Object.keys(this.tasksDescriptions).length
+    );
   }
 
   handleCloseTask = () => {
@@ -206,16 +223,21 @@ export class GoalCreationModalStore {
 
   handleClose = (submitCb?: () => void) => {
     if (!this.isEmojiPickerOpen) {
-      this.modals.open({
-        type: GoalCreationModalsTypes.CLOSE_SUBMIT,
-        props: {
-          onSubmit: () => {
-            this.isOpen = false;
-            submitCb?.();
+      if (this.isGoalParamsChanged) {
+        this.modals.open({
+          type: GoalCreationModalsTypes.CLOSE_SUBMIT,
+          props: {
+            onSubmit: () => {
+              this.isOpen = false;
+              submitCb?.();
+            },
+            onClose: this.modals.close,
           },
-          onClose: this.modals.close,
-        },
-      });
+        });
+      } else {
+        this.isOpen = false;
+        submitCb?.();
+      }
     } else {
       this.closeEmojiPicker();
     }
@@ -226,14 +248,22 @@ export class GoalCreationModalStore {
   };
 
   handleSave = async () => {
-    if (!this.goal.title) {
+    const title = this.goal.title.trim();
+
+    if (!title) {
       this.error = 'Please fill in the title of goal';
+      return;
+    }
+
+    if (!this.isGoalParamsChanged) {
+      this.isOpen = false;
       return;
     }
 
     const goal = {
       ...this.goal,
       descriptionId: this.description.id,
+      title,
     };
 
     try {
@@ -299,13 +329,19 @@ export class GoalCreationModalStore {
       }
 
       this.goal.icon.color = colors[Math.floor(Math.random() * colors.length)];
+
+      this.initialGoal = cloneDeep(this.goal);
     }
   };
 
   update = async (props: GoalCreationModalProps) => {
     this.onClose = props.onClose;
     this.onSave = props.onSave;
-    this.goal = { ...this.goal, ...props.goal };
+    const goal = { ...this.goal, ...props.goal };
+
+    this.goal = goal;
+    this.initialGoal = cloneDeep(goal);
+
 
     if (props.goal?.id) {
       this.isUpdating = true;
@@ -320,6 +356,7 @@ export class GoalCreationModalStore {
 
       runInAction(() => {
         this.description = description;
+        this.initialDescription = cloneDeep(description);
         this.isDescriptionLoading = false;
       });
     }

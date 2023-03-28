@@ -1,16 +1,7 @@
 import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import {
-  InputGroup,
-  HStack,
-  InputRightAddon,
-  useOutsideClick,
-  Box,
-  Text,
-  chakra,
-  Fade,
-} from '@chakra-ui/react';
-import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
+import { Box, chakra, Fade, HStack, InputGroup, InputRightAddon, Text, useOutsideClick, } from '@chakra-ui/react';
+import { Modes, useTaskQuickEditorStore } from '../TaskQuickEditor/store';
 import { InputWrapper, InputWrapperProps } from '../InputWrapper';
 import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
@@ -54,7 +45,7 @@ export const TaskCreatorView = observer(function TaskCreator(
   const ref = useRef(null);
 
   useOutsideClick({
-    enabled: store.isInputFocused && !store.root.isModalOpen && !store.suggestionsMenu.isOpen,
+    enabled: store.isInputFocused && !store.root.isModalOpen,
     ref: ref,
     handler: store.handleClickOutside,
   });
@@ -80,7 +71,12 @@ export const TaskCreatorView = observer(function TaskCreator(
   return (
     <Box position='relative'>
       <Tooltip
-        isOpen={props.displayHelpAsTooltip && store.isInputFocused}
+        isOpen={
+          props.displayHelpAsTooltip &&
+          store.isInputFocused &&
+          !store.isMenuOpen &&
+          (store.suggestionsMenu.openForMode === Modes.DEFAULT)
+        }
         isDisabled={!props.displayHelpAsTooltip}
         label={help}
         placement='bottom-start'

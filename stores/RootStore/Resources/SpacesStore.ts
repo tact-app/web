@@ -61,7 +61,7 @@ export class SpacesStore {
     return false;
   };
 
-  delete = (spaceId: string) => {
+  delete = async (spaceId: string) => {
     const index = this.list.findIndex(({ id }) => id === spaceId);
 
     if (index > -1) {
@@ -71,7 +71,25 @@ export class SpacesStore {
         this.list.shift();
       }
 
-      this.root.api.spaces.delete(spaceId);
+      await this.root.api.spaces.delete(spaceId);
+
+      const { goalsToDelete, descriptionsToDelete } = this.root.resources.goals.list
+        .reduce((acc, goal) => {
+          if (goal.spaceId == spaceId) {
+            acc.goalsToDelete.push(goal.id);
+
+            if (goal.descriptionId) {
+              acc.descriptionsToDelete.push(goal.descriptionId);
+            }
+          }
+
+          return acc;
+        }, { goalsToDelete: [], descriptionsToDelete: [] });
+      await Promise.all([
+        this.root.api.goals.delete(goalsToDelete),
+        this.root.api.descriptions.delete(descriptionsToDelete)
+      ]);
+
       return true;
     }
 

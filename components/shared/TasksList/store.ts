@@ -51,6 +51,7 @@ export class TasksListStore {
 
   listId: string = Lists.TODAY;
   items: Record<string, TaskData> = {};
+  initialItems: Record<string, TaskData> = {};
   order: string[] = [];
   editingTaskId: null | string = null;
   openedTask: null | string = null;
@@ -580,6 +581,7 @@ export class TasksListStore {
 
     runInAction(() => {
       this.items = tasks;
+      this.initialItems = cloneDeep(tasks);
       this.order = order;
       this.isLoading = false;
     });

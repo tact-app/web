@@ -9,6 +9,8 @@ const getDescriptionsApi = (apiService: ApiService) => ({
     apiService.get<Record<string, DescriptionData>>(`/api/description/all`),
   update: (data: { id: string; fields: Partial<DescriptionData> }) =>
     apiService.put<DescriptionData>(`/api/description`, data),
+  delete: (ids: string[]) =>
+    apiService.delete<void>(`/api/description`, { ids }),
 });
 
 export default getDescriptionsApi;

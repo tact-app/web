@@ -1,3 +1,7 @@
-export function setModifierToColor(color: string, modifier: string | number) {
-  return color.split('.')[0] + `.${modifier}`;
+export function setModifierToColor(
+  color: string,
+  modifier: string | number,
+  separator: string = '.'
+) {
+  return color.split('.')[0] + `${separator}${modifier}`;
 }

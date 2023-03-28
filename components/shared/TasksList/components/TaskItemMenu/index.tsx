@@ -186,11 +186,14 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
 
   return (
     <ActionMenu
+      isMenuOpen={store.isMenuOpen}
       triggerIcon={faEllipsisVertical}
       items={store.isMultiSelected ? multiTaskItems(store) : singleTaskItems(store)}
       hidden={!store.isDragging}
       triggerIconFontSize={18}
       onToggleMenu={(isOpen) => {
+        store.isMenuOpen = isOpen;
+
         if (isOpen) {
           store.handleFocus();
           store.quickEdit.suggestionsMenu.close();

@@ -69,6 +69,7 @@ export const DatePickerView = observer(
           startDate={store.getDateFromString(startDate)}
           endDate={store.getDateFromString(endDate)}
           minDate={store.getDateFromString(minDate)}
+          onKeyDown={(e) => e.stopPropagation()}
           className={store.isFocused ? 'datepicker-focused' : ''}
           renderDayContents={(dayOfMonth) => (
             <>

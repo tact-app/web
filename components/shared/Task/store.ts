@@ -18,6 +18,7 @@ import { Editor, JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
 import { subscriptions } from '../../../helpers/subscriptions';
 import { AnimatedBlockParams } from "../AnimatedBlock";
+import { cloneDeep, isEqual } from "lodash";
 
 export type TaskProps = {
   callbacks: {
@@ -31,7 +32,7 @@ export type TaskProps = {
     onTaskChange?: (task: TaskData) => Promise<void>;
     onTagCreate?: (tag: TaskTag) => Promise<void>;
     onFocus?: () => void;
-    onDescriptionChange?: (description: DescriptionData) => void;
+    onDescriptionChange?: (description: DescriptionData, isNotInitial: boolean) => void;
   };
   isExpanded?: boolean;
   hasPrevious?: boolean;
@@ -79,6 +80,7 @@ class TaskStore {
   disableGoalChange: boolean = false;
   descriptionContent: DescriptionStore = new DescriptionStore();
   modesOrder = [Modes.SPACE, Modes.PRIORITY, Modes.GOAL, Modes.TAG];
+  initialDescription: DescriptionData;
 
   animateParams?: AnimatedBlockParams;
 
@@ -96,7 +98,9 @@ class TaskStore {
 
   handleDescriptionChange = (content: JSONContent) => {
     this.descriptionContent.set(content);
-    this.callbacks.onDescriptionChange?.({ id: this.descriptionId, content });
+
+    const descriptionData = { id: this.descriptionId, content };
+    this.callbacks.onDescriptionChange?.(descriptionData, !isEqual(this.initialDescription, descriptionData));
   };
 
   setDescription = (description?: DescriptionData) => {
@@ -204,6 +208,7 @@ class TaskStore {
 
     this.saveDescription();
     this.setDescription(description);
+    this.initialDescription = cloneDeep(description);
 
     runInAction(() => (this.isDescriptionLoading = false));
   };

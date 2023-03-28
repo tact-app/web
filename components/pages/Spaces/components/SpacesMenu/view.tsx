@@ -17,6 +17,7 @@ import { SpacesMenuAdd } from './SpacesMenuAdd';
 import { SpacesSmallIcon } from '../SpacesIcons/SpacesSmallIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/pro-regular-svg-icons';
+import { setModifierToColor } from "../../../../../helpers/baseHelpers";
 
 export const SpacesMenuView = observer(function SpacesMenuView(
   props: SpacesMenuProps
@@ -83,14 +84,14 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                 bg={
                   store.currentSpaceId === id &&
                   (store.selectedPath.length === 0 || !store.isExpanded
-                    ? color + '.100'
+                    ? setModifierToColor(color, 100)
                     : store.focusedPath.length === 0
-                    ? color + '.75'
+                    ? setModifierToColor(color, 75)
                     : 'transparent')
                 }
                 p={1}
                 _hover={{
-                  bg: color + '.75',
+                  bg: setModifierToColor(color, 75),
                 }}
               >
                 <Box display='flex' alignItems='center' minWidth={10}>
@@ -100,7 +101,7 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                     whiteSpace='nowrap'
                     fontSize='md'
                     fontWeight='medium'
-                    color={color + '.500'}
+                    color={setModifierToColor(color, 500)}
                     overflow='hidden'
                     textOverflow='ellipsis'
                   >
@@ -117,12 +118,12 @@ export const SpacesMenuView = observer(function SpacesMenuView(
                     aria-label='space-settings'
                     borderRadius='lg'
                     _hover={{
-                      bg: color + '.100',
+                      bg: setModifierToColor(color, 100),
                     }}
                   >
                     <FontAwesomeIcon
                       icon={faGear}
-                      color={`var(--chakra-colors-${color + '-500'})`}
+                      color={`var(--chakra-colors-${setModifierToColor(color, 500, '-')})`}
                     />
                   </chakra.div>
                 )}

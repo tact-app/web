@@ -12,6 +12,7 @@ export type ActionMenuItem = {
 };
 
 export type ActionMenuViewProps = {
+  isMenuOpen?: boolean;
   hidden?: boolean;
   triggerIconFontSize?: number;
   triggerIcon?: IconDefinition;
