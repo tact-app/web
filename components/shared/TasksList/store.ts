@@ -443,11 +443,10 @@ export class TasksListStore {
   updateTask = async (task: TaskData) => {
     task.title = task.title.trim();
 
-    this.items[task.id] = task;
-
-    if (!this.delayedCreation) {
-      await this.root.api.tasks.update({ id: task.id, fields: toJS(task) });
-    }
+    await Promise.all([
+      Promise.resolve().then(() => this.items[task.id] = task),
+      this.delayedCreation ? null : this.root.api.tasks.update({ id: task.id, fields: toJS(task) }),
+    ]);
 
     this.setEditingTask(null);
   };
