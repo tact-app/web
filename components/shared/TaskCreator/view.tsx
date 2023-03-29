@@ -75,7 +75,8 @@ export const TaskCreatorView = observer(function TaskCreator(
           props.displayHelpAsTooltip &&
           store.isInputFocused &&
           !store.isMenuOpen &&
-          (store.suggestionsMenu.openForMode === Modes.DEFAULT)
+          (store.suggestionsMenu.openForMode === Modes.DEFAULT) &&
+          (store.isCurrentModeDisabled || !store.activeMode?.suggestions.length)
         }
         isDisabled={!props.displayHelpAsTooltip}
         label={help}

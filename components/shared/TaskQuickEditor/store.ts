@@ -176,6 +176,10 @@ export class TaskQuickEditorStore {
     return disabledModes;
   }
 
+  get isCurrentModeDisabled () {
+    return this.disabledModes.includes(this.activeModeType)
+  }
+
   getMatchMode = (symbol: string): Modes => {
     const matchMode = Object.entries(this.modes).find(
       ([key, mode]) => mode.startSymbol === symbol
