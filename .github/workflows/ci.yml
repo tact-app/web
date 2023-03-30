@@ -33,10 +33,10 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ./node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
-        id: cache
+          key: core-${{ hashFiles('package-lock.json') }}
+          id: core
       - run: npm ci --ignore-scripts --include=dev
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.core.outputs.cache-hit != 'true'
         env: { FONTAWESOME_TOKEN: '${{ secrets.FONTAWESOME_TOKEN }}' }
       - run: npm run build
 

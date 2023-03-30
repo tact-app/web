@@ -151,6 +151,18 @@ You can drop Vercel's cache by running:
 $ run vercel --force
 ```
 
+### [Font Awesome][] has failed builds after version update
+
+Check `fontawesome-common-types`, it must be exactly one.
+
+```bash
+$ npm list | grep fortawesome
+# if not, do the following
+$ npm update
+```
+
+See, the [issue](https://github.com/FortAwesome/react-fontawesome/issues/366#issuecomment-1317268246).
+
 ## License
 
 GNU Affero General Public License v3.0 or later.
