@@ -3,7 +3,7 @@ import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from "../../../helpers/StoreProvider";
 import { DatePickerCallbacks, DatePickerProps } from "./types";
 import ReactDatePicker from "react-datepicker";
-import moment from "moment/moment";
+import moment from "moment";
 import { SyntheticEvent } from "react";
 
 export const DATE_PICKER_DATE_FORMAT = 'dd.MM.yyyy';
