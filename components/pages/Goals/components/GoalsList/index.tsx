@@ -23,7 +23,7 @@ export const GoalsList = observer(function GoalsList() {
     <Box pl={32} pr={32}>
       <Heading
         size='md'
-        fontSize="2xl"
+        fontSize='2xl'
         mt={0}
         mb={0}
         pt={4}
