@@ -78,7 +78,9 @@ export function EditableTitle({
     clearTimeout(setCaretTimeout);
   };
 
-  const handleEditModeToggle = () => {
+  const handleEditModeToggle = (e: SyntheticEvent) => {
+    e.stopPropagation();
+
     setIsEditMode(true);
 
     setCaretTimeout = setTimeout(() => {

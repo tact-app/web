@@ -500,7 +500,7 @@ const theme = extendTheme({
         '.react-datepicker-popper': {
           zIndex: 'var(--chakra-zIndices-popover)',
         },
-        'div[data-popper-placement="bottom-start"] div[data-popper-arrow="true"]': {
+        'div[data-popper-placement="bottom-start"] div[data-popper-arrow="true"], div[data-popper-placement="top-start"] div[data-popper-arrow="true"]': {
           transform: 'translate3d(18px, 0px, 0px) !important',
         },
       },

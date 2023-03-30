@@ -28,7 +28,7 @@ export const DatePickerView = observer(
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.currentValue && !store.isFocused);
 
     return (
-      <Flex alignItems='center' {...flexProps}>
+      <Flex alignItems='center' {...flexProps} onClick={store.handleIconClick}>
         {mustShowIcon && (
           <Tooltip
             label='Add date'
@@ -46,7 +46,6 @@ export const DatePickerView = observer(
                 icon={faCalendarCirclePlus}
                 style={{ outline: 'none' }}
                 cursor='pointer'
-                onClick={store.handleIconClick}
               />
             </chakra.div>
           </Tooltip>

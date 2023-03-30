@@ -1,4 +1,4 @@
 {
   "presets": ["next/babel"],
-  "plugins": [["@babel/plugin-proposal-class-properties", { "loose": false }]]
+  "plugins": ["inline-react-svg", ["@babel/plugin-proposal-class-properties", { "loose": false }]]
 }

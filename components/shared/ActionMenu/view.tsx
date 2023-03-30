@@ -77,6 +77,7 @@ export const ActionMenuView = observer(
             variant='unstyled'
             borderRadius='none'
             visibility={hidden ? 'hidden' : 'visible'}
+            onClick={(e) => e.stopPropagation()}
             {...triggerButtonProps(isOpen)}
           >
             <FontAwesomeIcon icon={triggerIcon} fontSize={triggerIconFontSize} fixedWidth />

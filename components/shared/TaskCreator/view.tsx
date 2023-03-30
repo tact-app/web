@@ -80,7 +80,7 @@ export const TaskCreatorView = observer(function TaskCreator(
         }
         isDisabled={!props.displayHelpAsTooltip}
         label={help}
-        placement='bottom-start'
+        placement='top-start'
       >
         <InputWrapper
           variant={!store.isInputFocused ? 'primary' : 'focused'}

@@ -62,11 +62,12 @@ export const EmojiSelectComponent = observer(
             justifyContent='center'
             alignItems='center'
             _focus={{ boxShadow: focusedTriggerBoxShadow }}
+            onClick={(e) => e.stopPropagation()}
           >
             <Text fontSize={iconFontSize}>{store.triggerContent}</Text>
           </Button>
         </PopoverTrigger>
-        <PopoverContent w='auto' ref={ref}>
+        <PopoverContent w='auto' ref={ref} onClick={(e) => e.stopPropagation()}>
           <PopoverBody p={0}>
             <Box display='flex' justifyContent='center'>
               <HStack p={2}>

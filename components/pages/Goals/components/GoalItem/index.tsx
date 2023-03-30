@@ -51,10 +51,12 @@ const GOAL_STATE_PARAMS = {
 export const GoalItem = observer(function GoalItem({ goal }: Props) {
   const store = useGoalsStore();
 
+  const handleEditGoal = () => store.editGoal(goal.id);
+
   const actions = [
     { icon: faCircleCheck, title: 'Complete', onClick: () => null, },
     { icon: faCircleMinus, title: "Won't do", onClick: () => null, },
-    { icon: faPenToSquare, title: 'Edit', onClick: () => store.editGoal(goal.id), },
+    { icon: faPenToSquare, title: 'Edit', onClick: handleEditGoal, },
     { icon: faClone, title: 'Duplicate', onClick: () => null, },
     { icon: faBoxArchive, title: 'Archive', onClick: () => null, }
   ];
@@ -97,7 +99,9 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       mb={6}
       float='left'
       position='relative'
+      cursor='pointer'
       height={124}
+      onClick={handleEditGoal}
     >
       <Flex>
         <EmojiSelect

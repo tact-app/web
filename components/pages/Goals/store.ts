@@ -94,7 +94,10 @@ export class GoalsStore {
     this.modals.open({
       type: GoalsModalsTypes.CREATE_OR_UPDATE_GOAL,
       props: {
-        onSave: this.updateGoal,
+        onSave: async (params: UpdateOrCreateGoalParams<GoalDataExtended>) => {
+          await this.updateGoal(params);
+          this.modals.close();
+        },
         onClose: this.modals.close,
         editMode: true,
         goal: this.root.resources.goals.map[goalId],
@@ -108,7 +111,6 @@ export class GoalsStore {
   }: UpdateOrCreateGoalParams<GoalDataExtended>) => {
     await this.root.resources.goals.update({ goal, ...otherParams, });
     await this.loadTaskList();
-    this.modals.close();
   };
 
   updateGoalOnly = (goal: GoalDataExtended) => {

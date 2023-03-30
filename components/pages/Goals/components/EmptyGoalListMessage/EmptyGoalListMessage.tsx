@@ -1,6 +1,5 @@
-import { Flex, Text } from "@chakra-ui/react";
-import ImageComponent from "../../../../shared/Image";
-import mascotGoals from "../../../../../assets/images/mascot-goals.png";
+import { Flex, Text } from '@chakra-ui/react';
+import { MascotGoals } from '../../../../images/MascotGoals';
 import { GoalCreateNewButton } from "../GoalCreateNewButton";
 import React from "react";
 
@@ -14,7 +13,7 @@ export function EmptyGoalListMessage() {
       margin='auto'
       pt={10}
     >
-      <ImageComponent src={mascotGoals} width={336} />
+      <MascotGoals width={336} />
       <Text
         fontSize='sm'
         fontWeight='normal'
