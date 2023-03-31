@@ -1,4 +1,4 @@
-name: continuous integration
+name: Continuous integration
 
 on:
   workflow_dispatch:
@@ -21,44 +21,68 @@ on:
     tags: [ '!*' ]
 
 jobs:
-  integrate:
+  build:
+    name: Building
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout the repository
+        uses: actions/checkout@v3
         with: { fetch-depth: 0 }
-      - uses: actions/setup-node@v3
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v3
         with: { node-version: 16, cache: npm }
 
-      - uses: actions/cache@v3
-        with:
-          path: ./node_modules
-          key: core-${{ hashFiles('package-lock.json') }}
-          id: core
-      - run: npm ci --ignore-scripts --include=dev
-        if: steps.core.outputs.cache-hit != 'true'
+      # - name: Cache application dependencies
+      #   id: core
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ./node_modules
+      #     key: core-${{ hashFiles('package-lock.json') }}
+      - name: Install application dependencies if needed
+        run: npm ci --ignore-scripts --include=dev
+        # if: steps.core.outputs.cache-hit != 'true'
         env: { FONTAWESOME_TOKEN: '${{ secrets.FONTAWESOME_TOKEN }}' }
-      - run: npm run build
+      - name: Build the application
+        run: npm run build
 
-      - uses: actions/cache@v3
-        with:
-          path: ./tools/node_modules
-          key: tools-${{ hashFiles('tools/package-lock.json') }}
-          id: tools
-      - run: ./Taskfile tools npm ci
-        if: steps.tools.outputs.cache-hit != 'true'
-      - run: 'source bin/activate && [ "$(./Taskfile @deps check)" == "No depcheck issue" ]'
-
-  notify:
+  validate:
+    name: Validating
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (failure() || success())
-    needs: [ integrate ]
 
     steps:
-      - uses: rtCamp/action-slack-notify@v2
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v3
+        with: { node-version: 16, cache: npm, cache-dependency-path: tools/package-lock.json }
+
+      # https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-data
+      # - name: Cache tooling dependencies
+      #   id: tools
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ./tools/node_modules
+      #     key: tools-${{ hashFiles('tools/package-lock.json') }}
+      - name: Install tooling dependencies if needed
+        run: ./Taskfile tools npm ci
+        # if: steps.tools.outputs.cache-hit != 'true'
+      - name: Check application dependencies
+        run: 'source bin/activate && [ "$(./Taskfile @deps check)" == "No depcheck issue" ]'
+
+  notify:
+    name: Notifying
+    needs: [ build, validate ]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' && (failure() || success())
+
+    steps:
+      - name: Send Slack notification
+        uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
           SLACK_ICON: https://github.com/github.png?size=64
-          SLACK_TITLE: '♻️ ${{ github.repository }}: ${{ github.workflow }}'
+          SLACK_TITLE: '⚙️ ${{ github.repository }}: ${{ github.workflow }}'
           SLACK_USERNAME: GitHub Actions
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
