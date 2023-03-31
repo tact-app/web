@@ -1,9 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { GoalCreationModalView } from './view';
-import {
-  GoalCreationModalProps,
-  GoalCreationModalStoreProvider,
-} from './store';
+import { GoalCreationModalStoreProvider } from './store';
+import { GoalCreationModalProps } from './types';
 
 export const GoalCreationModal = observer(function GoalCreationModal(
   props: GoalCreationModalProps

@@ -162,6 +162,46 @@ export class TodayStore {
   get isWeekListHotkeysEnabled() {
     return this.focusedBlock === TodayBlocks.WEEK_LIST;
   }
+  taskCreatorCallbacks: TasksListWithCreatorProps['taskCreatorCallbacks'] = {
+    onSave: (task, withShift, referenceId) => {
+      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
+        return this.todayListWithCreator.list.createTask(task, withShift);
+      } else if (referenceToList[referenceId] === Lists.WEEK) {
+        return this.weekList.createTask(task, referenceId === 'tomorrow');
+      }
+    },
+    onForceSave: (taskId: string, referenceId: string) => {
+      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
+        this.todayListWithCreator.list.openTask(taskId);
+        this.todayListWithCreator.list.draggableList.setFocusedItem(taskId);
+      } else if (referenceToList[referenceId] === Lists.WEEK) {
+        this.weekList.openTask(taskId);
+        this.weekList.draggableList.setFocusedItem(taskId);
+      }
+    },
+    onFocus: () => {
+      this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+    }
+  };
+
+  get currentList() {
+    return this.focusedBlock === TodayBlocks.TODAY_LIST
+      ? this.todayListWithCreator.list
+      : this.weekList;
+  }
+
+  get lastFocusedList() {
+    return this.lastFocusedBlock === TodayBlocks.TODAY_LIST
+      ? this.todayListWithCreator.list
+      : this.weekList;
+  }
+
+  get allTasks() {
+    return {
+      ...this.todayListWithCreator.list.items,
+      ...this.weekList.items,
+    };
+  }
 
   get taskProps() {
     const store =
@@ -206,25 +246,6 @@ export class TodayStore {
     };
   }
 
-  get currentList() {
-    return this.focusedBlock === TodayBlocks.TODAY_LIST
-      ? this.todayListWithCreator.list
-      : this.weekList;
-  }
-
-  get lastFocusedList() {
-    return this.lastFocusedBlock === TodayBlocks.TODAY_LIST
-      ? this.todayListWithCreator.list
-      : this.weekList;
-  }
-
-  get allTasks() {
-    return {
-      ...this.todayListWithCreator.list.items,
-      ...this.weekList.items,
-    };
-  }
-
   get isMouseSelectionEnabled(){
     return this.todayListWithCreator.list.isMouseSelectionEnabled &&
     this.weekList.isMouseSelectionEnabled
@@ -233,22 +254,6 @@ export class TodayStore {
   onStartSelection = () => {
     this.todayListWithCreator.list.draggableList.starthMouseSelect();
     this.weekList.draggableList.starthMouseSelect();
-  }
-
-  onFinishSelection = (items, event) => {
-    const selectedIds = items.reduce((acc, cur) => {
-      const listId = cur.getAttribute('listId') as 'week' | 'today'
-
-      acc[listId].push(cur.getAttribute('data-rbd-draggable-id'))
-
-      return acc
-    }, {
-      week: [],
-      today: []
-    })
-
-    this.todayListWithCreator.list.draggableList.finishMouseSelect(selectedIds.today, event);
-    this.weekList.draggableList.finishMouseSelect(selectedIds.week, event);
   }
 
   closeTask = () => {
@@ -298,6 +303,22 @@ export class TodayStore {
     }
   };
 
+  onFinishSelection = (items, event) => {
+    const selectedIds = items.reduce((acc, cur) => {
+      const listId = cur.getAttribute('listId') as 'week' | 'today'
+
+      acc[listId].push(cur.getAttribute('data-rbd-draggable-id'))
+
+      return acc
+    }, {
+      week: [],
+      today: []
+    })
+
+    this.todayListWithCreator.list.draggableList.finishMouseSelect(selectedIds.today, event);
+    this.weekList.draggableList.finishMouseSelect(selectedIds.week, event);
+  }
+
   toggleFocusMode = (silent?: boolean) => {
     const isOpen = !this.isFocusModeActive;
     this.isFocusModeActive = !this.isFocusModeActive;
@@ -341,6 +362,10 @@ export class TodayStore {
     this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
   };
 
+  handleCalendarFocusLeave = () => {
+    this.focusTasksList();
+  };
+
   focusCalendar = () => {
     if (this.isCalendarExpanded && Object.keys(this.calendar.events).length) {
       this.prepareListsForLeave();
@@ -352,10 +377,6 @@ export class TodayStore {
     } else {
       return false;
     }
-  };
-
-  handleCalendarFocusLeave = () => {
-    this.focusTasksList();
   };
 
   handleCalendarFocusItem = () => {
@@ -399,14 +420,6 @@ export class TodayStore {
 
     this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
   };
-
-  getTasksToFocus = (savedFocusedTasks: string[]) => {
-    const allTasks = this.allTasks;
-
-    return savedFocusedTasks.filter(
-      (id) => this.focusModeConfiguration.goals.includes(allTasks[id].goalId)
-    );
-  }
   prepareListsForLeave = () => {
     const list = this.currentList;
 
@@ -416,12 +429,13 @@ export class TodayStore {
     this.lastFocusedBlock = this.focusedBlock;
   };
 
-  handleFocusConfigurationFocus = () => {
-    this.prepareListsForLeave();
+  getTasksToFocus = (savedFocusedTasks: string[]) => {
+    const allTasks = this.allTasks;
 
-    this.focusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
-    this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
-  };
+    return savedFocusedTasks.filter(
+      (id) => this.focusModeConfiguration.goals.includes(allTasks[id].goalId)
+    );
+  }
 
   handleExpandTask = () => {
     this.isTaskExpanded = true;
@@ -431,11 +445,11 @@ export class TodayStore {
     this.resizableConfig[0].width = 0;
   };
 
-  handleCollapseTask = () => {
-    this.isTaskExpanded = false;
-    this.resetLayout();
+  handleFocusConfigurationFocus = () => {
+    this.prepareListsForLeave();
 
-    this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
+    this.focusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
+    this.currentFocusedBlock = TodayBlocks.FOCUS_CONFIGURATION;
   };
 
   expandCalendar = () => {
@@ -447,15 +461,11 @@ export class TodayStore {
     this.resizableConfig[3].minWidth = 530;
   };
 
-  collapseCalendar = ( ) => {
-    this.isCalendarFullScreen = false;
-    this.isCalendarExpanded = false;
+  handleCollapseTask = () => {
+    this.isTaskExpanded = false;
+    this.resetLayout();
 
-    this.resizableConfig[1].size = 2;
-    this.resizableConfig[2].size = this.openedTask ? 1 : 0;
-    this.resizableConfig[3].size = 0;
-    this.resizableConfig[3].width = 57;
-    this.resizableConfig[3].minWidth = undefined;
+    this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
   };
 
   handleListMinWidth = () => {
@@ -502,6 +512,17 @@ export class TodayStore {
     }
   };
 
+  collapseCalendar = ( ) => {
+    this.isCalendarFullScreen = false;
+    this.isCalendarExpanded = false;
+
+    this.resizableConfig[1].size = 2;
+    this.resizableConfig[2].size = this.openedTask ? 1 : 0;
+    this.resizableConfig[3].size = 0;
+    this.resizableConfig[3].width = 57;
+    this.resizableConfig[3].minWidth = undefined;
+  };
+
   handleOpenTask = () => {
     this.isTaskOpened = true;
     this.resizableConfig[2].size = 1;
@@ -509,28 +530,6 @@ export class TodayStore {
     if (this.isCalendarExpanded) {
       this.collapseCalendar();
       this.shouldOpenCalendar = true;
-    }
-  };
-
-  taskCreatorCallbacks: TasksListWithCreatorProps['taskCreatorCallbacks'] = {
-    onSave: (task, withShift, referenceId) => {
-      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
-        return this.todayListWithCreator.list.createTask(task, withShift);
-      } else if (referenceToList[referenceId] === Lists.WEEK) {
-        return this.weekList.createTask(task, referenceId === 'tomorrow');
-      }
-    },
-    onForceSave: (taskId: string, referenceId: string) => {
-      if (!referenceId || referenceToList[referenceId] === Lists.TODAY) {
-        this.todayListWithCreator.list.openTask(taskId);
-        this.todayListWithCreator.list.draggableList.setFocusedItem(taskId);
-      } else if (referenceToList[referenceId] === Lists.WEEK) {
-        this.weekList.openTask(taskId);
-        this.weekList.draggableList.setFocusedItem(taskId);
-      }
-    },
-    onFocus: () => {
-      this.currentFocusedBlock = TodayBlocks.TODAY_LIST;
     }
   };
 

@@ -56,6 +56,9 @@ const data = {
         order: tasksList.taskIds,
       };
     },
+    '/api/tasks/all': (db: DB) => {
+      return db.getAll('tasks');
+    },
   },
   post: {
     '/api/tasks/create': async (
@@ -78,6 +81,15 @@ const data = {
         return list;
       });
     },
+    '/api/tasks/create/bulk': (
+      db: DB,
+      data: { listId: string; tasks: TaskData[]; order: string[] }
+    ) => {
+      return Promise.all([
+        ...data.tasks.map((task) => db.add('tasks', task)),
+        data.order ? db.add('taskLists', { id: data.listId, taskIds: data.order }) : null
+      ])
+    },
     '/api/tasks/map': async (db: DB, data: { taskIds: string[] }) => {
       const allTasks = await db.getAll('tasks');
       const tasks = allTasks.filter(({ id }) => data.taskIds.includes(id));
@@ -97,7 +109,7 @@ const data = {
         const tasks = await Promise.all(ids.map((id) => db.get('tasks', id)));
 
         const inputs: Record<string, string[]> = tasks
-          .filter(({ input }) => input)
+          .filter((task) => task?.input)
           .reduce((acc, task) => {
             if (!acc[task.input.id]) {
               acc[task.input.id] = [];
@@ -145,6 +157,13 @@ const data = {
     },
   },
   put: {
+    '/api/tasks/order/reset': async (
+      db: DB,
+      data: { listId: string; order: string[] }
+    ) => {
+      await db.delete('taskLists', data.listId);
+      return db.add('taskLists', { id: data.listId, taskIds: data.order });
+    },
     '/api/tasks/order': async (
       db: DB,
       data: { listId: string; taskIds: string[]; destination: number }

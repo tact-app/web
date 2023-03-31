@@ -28,6 +28,8 @@ export const TaskListItem = observer(function TaskListItem({
         onToggleMenu={store.handleToggleMenu}
         callbacks={store.taskListItemCallbacks}
         provided={provided}
+        disableGoalChange={store.disableGoalChange}
+        disableSpaceChange={store.disableSpaceChange}
       />
     )
   );

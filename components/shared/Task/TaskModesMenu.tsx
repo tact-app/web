@@ -11,7 +11,9 @@ export const TaskModesMenu = observer(function TaskModesMenu() {
 
   return store.quickEditor.isFilled ? (
     <HStack mb={4} spacing={6} h={10}>
-      <TaskQuickEditorSpace withTitle iconSize={6} w='auto' h={8} />
+      {!store.disableSpaceChange && (
+        <TaskQuickEditorSpace withTitle iconSize={6} w='auto' h={8} />
+      )}
       <TaskQuickEditorPriority
         withTitle
         showEmpty
@@ -22,14 +24,16 @@ export const TaskModesMenu = observer(function TaskModesMenu() {
         pl={0.5}
         pr={1}
       />
-      <TaskQuickEditorGoal
-        withTitle
-        showEmpty
-        w='auto'
-        h='auto'
-        iconFontSize='lg'
-        iconSize={8}
-      />
+      {!store.disableGoalChange && (
+        <TaskQuickEditorGoal
+          withTitle
+          showEmpty
+          w='auto'
+          h='auto'
+          iconFontSize='lg'
+          iconSize={8}
+        />
+      )}
     </HStack>
   ) : null;
 });

@@ -22,7 +22,7 @@ export type TaskQuickEditorProps = {
       task: TaskData,
       withShift?: boolean,
       referenceId?: string
-    ) => Promise<void | TaskData[]>;
+    ) => void | TaskData[] | Promise<void | TaskData[]>;
     onForceSave?: (taskId: string, referenceId?: string) => void;
     onFocus?: () => void;
     onSuggestionsMenuOpen?: (isOpen: boolean) => void;
@@ -35,6 +35,9 @@ export type TaskQuickEditorProps = {
   task?: TaskData;
   enableReferences?: boolean;
   isCreator?: boolean;
+  disableSpaceChange?: boolean;
+  disableGoalChange?: boolean;
+  disableReferenceChange?: boolean;
 };
 
 export enum Modes {
@@ -75,6 +78,27 @@ export class TaskQuickEditorStore {
   order = [Modes.TAG, Modes.SPACE, Modes.PRIORITY, Modes.GOAL];
   callbacks: TaskQuickEditorProps['callbacks'];
 
+  isCreator: boolean = false;
+
+  modeStartPos = 0;
+  modeEndPos = 0;
+  maxDefaultModeTextLength = 50;
+  activeModeType: Modes = Modes.DEFAULT;
+  focusedMode: Modes | null = null;
+  inputData: SpacesInboxItemData | null = null;
+  disableSpaceChange: boolean = false;
+  disableGoalChange: boolean = false;
+  disableReferenceChange: boolean = false;
+
+  enableReferences: boolean = true;
+  isMenuOpen: boolean = false;
+  keepFocus: boolean = false;
+
+  task: TaskQuickEditorProps['task'] = null;
+  value: string = '';
+  isInputFocused: boolean = false;
+  isMenuFocused: boolean = false;
+
   setFocus = (focusInput?: boolean) => {
     this.isInputFocused = true;
 
@@ -94,23 +118,6 @@ export class TaskQuickEditorStore {
       }, 100);
     }
   };
-
-  modeStartPos = 0;
-  modeEndPos = 0;
-  maxDefaultModeTextLength = 50;
-  activeModeType: Modes = Modes.DEFAULT;
-  focusedMode: Modes | null = null;
-  inputData: SpacesInboxItemData | null = null;
-
-  enableReferences: boolean = true;
-  isMenuOpen: boolean = false;
-  keepFocus: boolean = false;
-
-  task: TaskQuickEditorProps['task'] = null;
-  value: string = '';
-  isInputFocused: boolean = false;
-  isMenuFocused: boolean = false;
-  isCreator: boolean = false;
   input: HTMLInputElement | null = null;
 
   savedCaretPosition: number = this.task ? this.task.title.length : 0;
@@ -149,6 +156,28 @@ export class TaskQuickEditorStore {
 
   get orderedFilledModes() {
     return this.order.filter((mode) => this.filledModes.includes(mode));
+  }
+
+  get disabledModes() {
+    const disabledModes = [];
+
+    if (this.disableGoalChange) {
+      disabledModes.push(Modes.GOAL);
+    }
+
+    if (this.disableSpaceChange) {
+      disabledModes.push(Modes.SPACE);
+    }
+
+    if (this.disableReferenceChange) {
+      disabledModes.push(Modes.REFERENCE);
+    }
+
+    return disabledModes;
+  }
+
+  get isCurrentModeDisabled () {
+    return this.disabledModes.includes(this.activeModeType)
   }
 
   getMatchMode = (symbol: string): Modes => {
@@ -225,46 +254,43 @@ export class TaskQuickEditorStore {
     this.input = input;
   };
 
-  modes = {
-    [Modes.PRIORITY]: new PriorityModeStore(this.root, {
-      onExit: () => this.exitMode(),
-      onChangeSuggestionIndex: (index: number) =>
-        this.suggestionsMenu.setIndex(index),
-    }),
-    [Modes.TAG]: new TagModeStore(this.root, {
-      onExit: () => this.exitMode(),
-      onLeave: () => this.handleLeaveAndRestoreTask(),
-      onChange: (autoSave?: boolean) => {
-        if (autoSave) {
-          this.leave();
-        }
-      },
-      onFocusLeave: (direction?: NavigationDirections) => {
-        if (!direction) {
-          this.suggestionsMenu.closeForMode();
+  saveTask = (withShift?: boolean, force?: boolean) => {
+    this.value = this.value.trim();
+
+    if (this.callbacks.onSave && this.value) {
+      const task: TaskData = {
+        ...(toJS(this.task) || {}),
+        title: this.value,
+        input: toJS(this.task?.input || this.inputData),
+        id: this.task ? this.task.id : uuidv4(),
+        tags: this.modes.tag.tags.map(({ id }) => id),
+        status: this.task ? this.task.status : TaskStatus.TODO,
+        priority: this.modes.priority.priority,
+        spaceId: this.modes.space.selectedSpaceId || undefined,
+        goalId: this.modes.goal.selectedGoalId || undefined,
+      };
+
+      const reference = this.modes[Modes.REFERENCE].selectedReferenceId;
+
+      this.callbacks.onSave(task, withShift, reference);
+
+      if (this.keepFocus) {
+        if (force) {
+          this.removeFocus();
+        } else {
+          this.isInputFocused = true;
         }
 
-        if (direction === NavigationDirections.LEFT) {
-          this.focusPrevFilledMode();
-        } else if (direction === NavigationDirections.RIGHT) {
-          this.focusNextFilledMode();
-        } else if (direction === NavigationDirections.DOWN) {
-          this.callbacks.onNavigate?.(direction);
-        } else if (direction === NavigationDirections.UP) {
-          this.setFocus(true);
-        }
-      },
-    }),
-    [Modes.SPACE]: new SpaceModeStore(this.root, {
-      onExit: () => this.exitMode(),
-      onCreate: this.modals.openSpaceCreationModal
-    }),
-    [Modes.GOAL]: new GoalModeStore(this.root, {
-      onExit: () => this.exitMode(),
-    }),
-    [Modes.REFERENCE]: new ReferenceModeStore(this.root, {
-      onExit: () => this.exitMode(),
-    }),
+        this.value = '';
+        this.resetModes();
+      } else if (this.isInputFocused) {
+        this.removeFocus();
+      }
+
+      if (force) {
+        this.callbacks.onForceSave?.(task.id, reference);
+      }
+    }
   };
 
   removeFocus = () => {
@@ -368,41 +394,16 @@ export class TaskQuickEditorStore {
     return false;
   };
 
-  saveTask = (withShift?: boolean, force?: boolean) => {
-    this.value = this.value.trim();
+  handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'e' && e.metaKey) {
+      return;
+    } else {
+      e.stopPropagation();
 
-    if (this.callbacks.onSave && this.value) {
-      const task: TaskData = {
-        ...(toJS(this.task) || {}),
-        title: this.value,
-        input: toJS(this.task?.input || this.inputData),
-        id: this.task ? this.task.id : uuidv4(),
-        tags: this.modes.tag.tags.map(({ id }) => id),
-        status: this.task ? this.task.status : TaskStatus.TODO,
-        priority: this.modes.priority.priority,
-        spaceId: this.modes.space.selectedSpaceId || undefined,
-        goalId: this.modes.goal.selectedGoalId || undefined,
-      };
-
-      const reference = this.modes[Modes.REFERENCE].selectedReferenceId;
-
-      this.callbacks.onSave(task, withShift, reference);
-
-      if (this.keepFocus) {
-        if (force) {
-          this.removeFocus();
-        } else {
-          this.isInputFocused = true;
-        }
-
-        this.value = '';
-        this.resetModes();
-      } else if (this.isInputFocused) {
-        this.removeFocus();
-      }
-
-      if (force) {
-        this.callbacks.onForceSave?.(task.id, reference);
+      if (this.isModeActive) {
+        this.handleKeyDownWithActiveMode(e);
+      } else {
+        this.handleKeyDownInStdMode(e);
       }
     }
   };
@@ -469,44 +470,6 @@ export class TaskQuickEditorStore {
 
   handleModeFocus = (mode: Modes) => () => {
     this.focusedMode = mode;
-  };
-
-  handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'e' && e.metaKey) {
-      return;
-    } else {
-      e.stopPropagation();
-
-      if (this.isModeActive) {
-        this.handleKeyDownWithActiveMode(e);
-      } else {
-        this.handleKeyDownInStdMode(e);
-      }
-    }
-  };
-
-  handleSuggestionMenuNavigation = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey)) {
-      e.stopPropagation();
-      e.preventDefault();
-      this.suggestionsMenu.prev();
-
-      return true;
-    } else if (e.key === 'ArrowDown' || e.key === 'Tab') {
-      e.stopPropagation();
-      e.preventDefault();
-      this.suggestionsMenu.next();
-
-      return true;
-    } else if (e.key === 'Enter') {
-      e.stopPropagation();
-      e.preventDefault();
-      this.suggestionsMenu.commit();
-
-      return true;
-    }
-
-    return false;
   };
 
   handleKeyDownModeButton =
@@ -585,6 +548,37 @@ export class TaskQuickEditorStore {
       return this.handleSuggestionMenuNavigation(e);
     };
 
+  handleSuggestionMenuNavigation = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey)) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.suggestionsMenu.prev();
+
+      return true;
+    } else if (e.key === 'ArrowDown' || e.key === 'Tab') {
+      e.stopPropagation();
+      e.preventDefault();
+      this.suggestionsMenu.next();
+
+      return true;
+    } else if (e.key === 'Enter') {
+      e.stopPropagation();
+      e.preventDefault();
+      this.suggestionsMenu.commit();
+
+      return true;
+    }
+
+    return false;
+  };
+
+  handleLeaveAndRestoreTask = () => {
+    if (this.callbacks.onNavigate?.(NavigationDirections.INVARIANT)) {
+      this.leave(true);
+      this.restoreTask();
+    }
+  }
+
   handleKeyDownWithActiveMode = (e: KeyboardEvent<HTMLInputElement>) => {
     if (this.handleSuggestionMenuNavigation(e)) {
       return true;
@@ -607,12 +601,47 @@ export class TaskQuickEditorStore {
     return false;
   };
 
-  handleLeaveAndRestoreTask = () => {
-    if (this.callbacks.onNavigate?.(NavigationDirections.INVARIANT)) {
-      this.leave(true);
-      this.restoreTask();
-    }
-  }
+  modes = {
+    [Modes.PRIORITY]: new PriorityModeStore(this.root, {
+      onExit: () => this.exitMode(),
+      onChangeSuggestionIndex: (index: number) =>
+        this.suggestionsMenu.setIndex(index),
+    }),
+    [Modes.TAG]: new TagModeStore(this.root, {
+      onExit: () => this.exitMode(),
+      onLeave: () => this.handleLeaveAndRestoreTask(),
+      onChange: (autoSave?: boolean) => {
+        if (autoSave) {
+          this.leave();
+        }
+      },
+      onFocusLeave: (direction?: NavigationDirections) => {
+        if (!direction) {
+          this.suggestionsMenu.closeForMode();
+        }
+
+        if (direction === NavigationDirections.LEFT) {
+          this.focusPrevFilledMode();
+        } else if (direction === NavigationDirections.RIGHT) {
+          this.focusNextFilledMode();
+        } else if (direction === NavigationDirections.DOWN) {
+          this.callbacks.onNavigate?.(direction);
+        } else if (direction === NavigationDirections.UP) {
+          this.setFocus(true);
+        }
+      },
+    }),
+    [Modes.SPACE]: new SpaceModeStore(this.root, {
+      onExit: () => this.exitMode(),
+      onCreate: this.modals.openSpaceCreationModal
+    }),
+    [Modes.GOAL]: new GoalModeStore(this.root, {
+      onExit: () => this.exitMode(),
+    }),
+    [Modes.REFERENCE]: new ReferenceModeStore(this.root, {
+      onExit: () => this.exitMode(),
+    }),
+  };
 
   handleKeyDownMainMenu = (e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Tab') {
@@ -650,6 +679,9 @@ export class TaskQuickEditorStore {
     order,
     keepFocus,
     enableReferences,
+    disableSpaceChange,
+    disableGoalChange,
+    disableReferenceChange,
     input,
     isCreator,
   }: TaskQuickEditorProps) => {
@@ -659,6 +691,9 @@ export class TaskQuickEditorStore {
     this.enableReferences = enableReferences;
     this.inputData = input;
     this.isCreator = isCreator;
+    this.disableSpaceChange = disableSpaceChange;
+    this.disableGoalChange = disableGoalChange;
+    this.disableReferenceChange = disableReferenceChange;
 
     const defaultSpaceId = task?.spaceId || input?.spaceId;
 

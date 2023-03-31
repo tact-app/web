@@ -36,7 +36,7 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
           <DotsIcon />
         </MenuButton>
         <Portal>
-          <MenuList p={0} shadow='lg'>
+          <MenuList p={0} shadow='lg' zIndex='modal'>
             <MenuItem
                 fontSize='sm'
                 lineHeight='5'
@@ -55,24 +55,28 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
             >
               Set priority
             </MenuItem>
-            <MenuItem
+            {!store.disableGoalChange && (
+              <MenuItem
                 fontSize='sm'
                 lineHeight='5'
                 fontWeight='normal'
                 command='*'
                 onClick={() => store.activateMode(Modes.GOAL)}
-            >
-              Add goal
-            </MenuItem>
-            <MenuItem
+              >
+                Add goal
+              </MenuItem>
+            )}
+            {!store.disableSpaceChange && (
+              <MenuItem
                 fontSize='sm'
                 lineHeight='5'
                 fontWeight='normal'
                 command='^'
                 onClick={() => store.activateMode(Modes.SPACE)}
-            >
-              Link to space
-            </MenuItem>
+              >
+                Link to space
+              </MenuItem>
+            )}
           </MenuList>
         </Portal>
       </Menu>

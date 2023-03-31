@@ -69,10 +69,9 @@ export async function initDb() {
       } catch (e) {}
 
       try {
-        const goalsStore = db.createObjectStore('goals', {
+        db.createObjectStore('goals', {
           keyPath: 'id',
         });
-        goalsStore.createIndex('by-list-id', 'listId');
       } catch (e) {}
 
       try {

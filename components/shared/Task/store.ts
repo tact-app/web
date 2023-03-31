@@ -18,6 +18,7 @@ import { Editor, JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
 import { subscriptions } from '../../../helpers/subscriptions';
 import { AnimatedBlockParams } from "../AnimatedBlock";
+import { cloneDeep, isEqual } from "lodash";
 
 export type TaskProps = {
   callbacks: {
@@ -31,11 +32,15 @@ export type TaskProps = {
     onTaskChange?: (task: TaskData) => Promise<void>;
     onTagCreate?: (tag: TaskTag) => Promise<void>;
     onFocus?: () => void;
+    onDescriptionChange?: (description: DescriptionData, isNotInitial: boolean) => void;
   };
   isExpanded?: boolean;
   hasPrevious?: boolean;
   hasNext?: boolean;
   isEditorFocused?: boolean;
+  delayedCreation?: boolean;
+  disableSpaceChange?: boolean;
+  disableGoalChange?: boolean;
   task: TaskData;
   animateParams?: AnimatedBlockParams;
 };
@@ -70,8 +75,12 @@ class TaskStore {
   data: TaskData | null = null;
   isDescriptionLoading: boolean = true;
   descriptionId: string = '';
+  delayedCreation: boolean = false;
+  disableSpaceChange: boolean = false;
+  disableGoalChange: boolean = false;
   descriptionContent: DescriptionStore = new DescriptionStore();
   modesOrder = [Modes.SPACE, Modes.PRIORITY, Modes.GOAL, Modes.TAG];
+  initialDescription: DescriptionData;
 
   animateParams?: AnimatedBlockParams;
 
@@ -89,6 +98,9 @@ class TaskStore {
 
   handleDescriptionChange = (content: JSONContent) => {
     this.descriptionContent.set(content);
+
+    const descriptionData = { id: this.descriptionId, content };
+    this.callbacks.onDescriptionChange?.(descriptionData, !isEqual(this.initialDescription, descriptionData));
   };
 
   setDescription = (description?: DescriptionData) => {
@@ -102,10 +114,12 @@ class TaskStore {
       this.descriptionContent.set(undefined);
       this.editor?.commands.setContent([]);
 
-      this.root.api.descriptions.add({
-        id: this.descriptionId,
-        content: this.descriptionContent.get(),
-      });
+      if (!this.delayedCreation) {
+        this.root.api.descriptions.add({
+          id: this.descriptionId,
+          content: this.descriptionContent.get(),
+        });
+      }
 
       this.callbacks.onTaskChange?.(this.data);
     }
@@ -125,7 +139,7 @@ class TaskStore {
   };
 
   saveDescription = () => {
-    if (this.descriptionContent.get() && this.descriptionId) {
+    if (this.descriptionContent.get() && this.descriptionId && !this.delayedCreation) {
       this.root.api.descriptions.update({
         id: this.descriptionId,
         fields: {
@@ -194,6 +208,7 @@ class TaskStore {
 
     this.saveDescription();
     this.setDescription(description);
+    this.initialDescription = cloneDeep(description);
 
     runInAction(() => (this.isDescriptionLoading = false));
   };
@@ -258,6 +273,9 @@ class TaskStore {
     this.callbacks = props.callbacks;
     this.isEditorFocused = props.isEditorFocused;
     this.animateParams = props.animateParams;
+    this.delayedCreation = props.delayedCreation;
+    this.disableSpaceChange = props.disableSpaceChange;
+    this.disableGoalChange = props.disableGoalChange;
   };
 }
 

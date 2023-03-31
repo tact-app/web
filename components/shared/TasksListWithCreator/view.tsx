@@ -27,11 +27,18 @@ export const TasksListWithCreatorView = observer(
             ml: props.dnd ? 5 : 0,
             mr: props.dnd ? 5 : 0,
           }}
+          disableSpaceChange={props.disableSpaceChange}
+          disableGoalChange={props.disableGoalChange}
+          disableReferenceChange={props.disableReferenceChange}
+          displayHelpAsTooltip={props.displayCreatorHelpAsTooltip}
         />
         <TasksList
           {...props}
+          wrapperProps={props.taskListWrapperProps}
           instance={store.list}
           callbacks={store.tasksListCallbacks}
+          disableSpaceChange={props.disableSpaceChange}
+          disableGoalChange={props.disableGoalChange}
         />
       </>
     );

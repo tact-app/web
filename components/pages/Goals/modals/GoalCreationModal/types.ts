@@ -1,4 +1,13 @@
-export enum GoalCreationModalSteps {
-  SELECT_TEMPLATE = 'SELECT_TEMPLATE',
-  FILL_DESCRIPTION = 'FILL_DESCRIPTION',
+import { GoalData } from "../../types";
+import { UpdateOrCreateGoalParams } from "../../../../../stores/RootStore/Resources/GoalsStore";
+
+export type GoalCreationModalProps = {
+  onClose: () => void;
+  onSave: (data: UpdateOrCreateGoalParams) => Promise<void>;
+  editMode?: boolean;
+  goal?: GoalData;
+};
+
+export enum GoalCreationModalsTypes {
+  CLOSE_SUBMIT,
 }

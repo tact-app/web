@@ -1,25 +1,21 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
-import { GoalCreationModalSteps } from './types';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { GoalData, GoalIconVariants, GoalTemplateData } from '../../types';
-import { GoalCreationModalStepsOrder } from './constants';
+import { GoalData, GoalIconVariants } from '../../types';
 import { SyntheticEvent } from 'react';
 import { JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
-import { init } from 'emoji-mart';
 import { DescriptionData } from '../../../../../types/description';
-
-export type GoalCreationModalProps = {
-  onClose: () => void;
-  onSave: (
-    goal: GoalData,
-    description?: DescriptionData,
-    isNewDescription?: boolean
-  ) => void;
-  editMode?: boolean;
-  goal?: GoalData;
-};
+import { ResizableGroupConfig } from "../../../../shared/ResizableGroup/store";
+import { TasksListWithCreatorStore } from "../../../../shared/TasksListWithCreator/store";
+import { TasksListStore } from "../../../../shared/TasksList/store";
+import { TaskData } from "../../../../shared/TasksList/types";
+import { EmojiStore } from "../../../../../stores/EmojiStore";
+import { ModalsController } from "../../../../../helpers/ModalsController";
+import { GoalCreationModalProps, GoalCreationModalsTypes } from "./types";
+import { GoalCreationCloseSubmitModal } from "./modals/GoalCreationCloseSubmitModal";
+import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
+import { cloneDeep, isEqual } from "lodash";
 
 export const colors = [
   'red.200',
@@ -32,20 +28,19 @@ export const colors = [
   'purple.200',
 ];
 
+const GoalsModals = {
+  [GoalCreationModalsTypes.CLOSE_SUBMIT]: GoalCreationCloseSubmitModal,
+};
+
 export class GoalCreationModalStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
-
-    init({
-      data: async () => {
-        const response = await fetch(
-          'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-        );
-
-        return response.json();
-      },
-    });
   }
+
+  listWithCreator = new TasksListWithCreatorStore(this.root);
+  finishedList = new TasksListStore(this.root);
+
+  modals = new ModalsController(GoalsModals);
 
   keyMap = {
     CREATE: ['meta+enter', 'meta+s'],
@@ -65,28 +60,114 @@ export class GoalCreationModalStore {
     },
   };
 
+  resizableConfig: ResizableGroupConfig[] = [
+    {
+      size: 3,
+    },
+    {
+      size: 0,
+      width: 400
+    },
+    {
+      size: 0,
+    },
+  ];
+
   onClose: GoalCreationModalProps['onClose'];
   onSave: GoalCreationModalProps['onSave'];
 
   isOpen = true;
+  isUpdating: boolean = false;
+  isTaskExpanded = false;
   isEmojiPickerOpen = false;
   isDescriptionLoading: boolean = true;
-  isEditMode: boolean = false;
-  existedGoal: GoalData | null = null;
-  icon: string = '';
-  color = colors[0];
-  title: string = '';
-  description?: DescriptionData = undefined;
-  currentTemplate: null | GoalTemplateData = null;
-  templates: GoalTemplateData[] = [];
-  step: GoalCreationModalSteps = GoalCreationModalSteps.SELECT_TEMPLATE;
-  emojiStore = new (class EmojiStore {
-    data: any = '';
-  })();
+  isGoalCreatingOrUpdating: boolean = false;
+  draggingTask: TaskData | null = null;
+  error: string = '';
 
-  get isReadyForSave() {
-    return !!this.title;
+  goal: GoalData = {
+    id: uuidv4(),
+    title: '',
+    startDate: '',
+    targetDate: '',
+    spaceId: '',
+    icon: {
+      type: GoalIconVariants.EMOJI,
+      color: '',
+      value: '',
+    },
+  };
+  initialGoal: GoalData = cloneDeep(this.goal);
+  description: DescriptionData = {
+    id: uuidv4(),
+    content: undefined,
+  };
+  initialDescription: DescriptionData = cloneDeep(this.description);
+  tasksDescriptions: Record<string, DescriptionData> = {};
+
+  get taskProps() {
+    return {
+      task: this.listWithCreator.list.openedTaskData,
+      hasNext: this.listWithCreator.list.hasNextTask,
+      hasPrevious: this.listWithCreator.list.hasPrevTask,
+      isEditorFocused: this.listWithCreator.list.isEditorFocused,
+      isExpanded: this.isTaskExpanded,
+      delayedCreation: true,
+      disableSpaceChange: true,
+      disableGoalChange: true,
+      disableReferenceChange: true,
+      callbacks: {
+        ...this.listWithCreator.list.taskCallbacks,
+        onCollapse: () => {
+          this.isTaskExpanded = false;
+          this.resizableConfig[0].size = 2;
+          this.resizableConfig[1].width = 400;
+          this.resizableConfig[2].size = 2;
+        },
+        onExpand: this.handleExpandTask,
+        onDescriptionChange: (description: DescriptionData, isNotInitial: boolean) => {
+          this.listWithCreator.list.taskCallbacks.onDescriptionChange?.(description, isNotInitial);
+
+          if (isNotInitial) {
+            this.tasksDescriptions[description.id] = description;
+          } else {
+            delete this.tasksDescriptions[description.id];
+          }
+        }
+      },
+    };
   }
+
+  get isGoalParamsChanged() {
+    return Boolean(
+      !isEqual(this.goal, this.initialGoal) ||
+      !isEqual(this.description, this.initialDescription) ||
+      !isEqual(this.listWithCreator.list.items, this.listWithCreator.list.initialItems) ||
+      Object.keys(this.tasksDescriptions).length
+    );
+  }
+
+  handleCloseTask = () => {
+    this.resizableConfig[0].size = 3;
+    this.resizableConfig[2].size = 0;
+  };
+
+  handleOpenTask = () => {
+    this.resizableConfig[0].size = 2;
+    this.resizableConfig[2].size = 2;
+  };
+
+  tasksListCallbacks: TasksListWithCreatorStore['tasksListCallbacks'] = {
+    onOpenTask: this.handleOpenTask,
+    onCloseTask: this.handleCloseTask,
+  };
+
+  handleExpandTask = () => {
+    this.isTaskExpanded = true;
+    this.resizableConfig[0].size = 0;
+    this.resizableConfig[1].width = 0;
+    this.resizableConfig[2].size = 1;
+  };
 
   openEmojiPicker = () => {
     this.isEmojiPickerOpen = true;
@@ -96,35 +177,67 @@ export class GoalCreationModalStore {
     this.isEmojiPickerOpen = false;
   };
 
-  handleEmojiSelect = (emoji: { native: string }) => {
-    this.icon = emoji.native;
+  handleEmojiSelect = (emoji: string) => {
+    this.goal.icon.value = emoji;
   };
 
   handleColorSelect = (color: string) => {
-    this.color = color;
+    this.goal.icon.color = color;
   };
 
   handleTitleChange = (e: SyntheticEvent) => {
-    this.title = (e.target as HTMLInputElement).value;
+    this.goal.title = (e.target as HTMLInputElement).value;
+  };
+
+  handleSpaceChange = (value: string) => {
+    this.goal.spaceId = value;
+  }
+
+  handleStartDateChange = (value: string) => {
+    this.goal.startDate = value;
+
+    if (DatePickerHelpers.isStartDateAfterEndDate(value, this.goal.targetDate)) {
+      this.goal.targetDate = '';
+    }
+  }
+
+  handleTargetDateChange = (value: string) => {
+    this.goal.targetDate = value;
+  }
+
+  handleDescriptionChange = (value: JSONContent) => {
+    this.description.content = value;
+  };
+
+  handleNavigateToSpace = (spaceId: string) => {
+    this.handleClose(() => this.root.router.push(`/inbox/${spaceId}`));
   };
 
   handleBack = () => {
-    const currentStepIndex = GoalCreationModalStepsOrder.indexOf(this.step);
-
     if (!this.isEmojiPickerOpen) {
-      if (currentStepIndex > 0 && !this.isEditMode) {
-        this.step = GoalCreationModalStepsOrder[currentStepIndex - 1];
-      } else {
-        this.handleClose();
-      }
+      this.handleClose();
     } else {
       this.closeEmojiPicker();
     }
   };
 
-  handleClose = () => {
+  handleClose = (submitCb?: () => void) => {
     if (!this.isEmojiPickerOpen) {
-      this.isOpen = false;
+      if (this.isGoalParamsChanged) {
+        this.modals.open({
+          type: GoalCreationModalsTypes.CLOSE_SUBMIT,
+          props: {
+            onSubmit: () => {
+              this.isOpen = false;
+              submitCb?.();
+            },
+            onClose: this.modals.close,
+          },
+        });
+      } else {
+        this.isOpen = false;
+        submitCb?.();
+      }
     } else {
       this.closeEmojiPicker();
     }
@@ -134,105 +247,118 @@ export class GoalCreationModalStore {
     this.onClose?.();
   };
 
-  handleSave = () => {
-    if (this.isReadyForSave) {
-      const isDescriptionCreated = Boolean(
-        (!this.existedGoal || !this.existedGoal.descriptionId) &&
-          this.description
-      );
+  handleSave = async () => {
+    const title = this.goal.title.trim();
 
-      this.onSave?.(
-        {
-          id: this.existedGoal ? this.existedGoal.id : uuidv4(),
-          listId: 'default',
-          title: this.title,
-          descriptionId: this.description ? this.description.id : undefined,
-          icon: {
-            type: GoalIconVariants.EMOJI,
-            color: this.color,
-            value: this.icon,
-          },
-        },
-        this.description,
-        isDescriptionCreated
-      );
+    if (!title) {
+      this.error = 'Please fill in the title of goal';
+      return;
+    }
 
-      this.handleClose();
+    if (!this.isGoalParamsChanged) {
+      this.isOpen = false;
+      return;
+    }
+
+    const goal = {
+      ...this.goal,
+      descriptionId: this.description.id,
+      title,
+    };
+
+    try {
+      this.isGoalCreatingOrUpdating = true;
+      await this.onSave?.({
+        goal,
+        description: this.description,
+        tasksData: {
+          tasks: Object.values(toJS(this.listWithCreator.list.items)),
+          order: this.listWithCreator.list.order,
+          descriptions: Object.values(this.tasksDescriptions),
+        }
+      });
+
+      this.isOpen = false;
+      this.isGoalCreatingOrUpdating = false;
+    } catch (e) {
+      this.isGoalCreatingOrUpdating = false;
     }
   };
 
-  handleDescriptionChange = (value: JSONContent) => {
-    if (!this.description) {
-      this.description = {
-        id: uuidv4(),
-        content: value,
-      };
-    }
+  get sensors() {
+    return [
+      (api) => {
+        this.listWithCreator.list.draggableList.setDnDApi(api);
+        this.finishedList.draggableList.setDnDApi(api);
+      },
+    ];
+  }
 
-    this.description.content = value;
+  handleDragStart = (result) => {
+    this.listWithCreator.list.draggableList.startDragging();
+    this.finishedList.draggableList.startDragging();
+
+    this.draggingTask = this.listWithCreator.list.items[result.draggableId];
   };
 
-  selectTemplate = (template: GoalTemplateData | null) => {
-    this.currentTemplate = template;
-    this.step = GoalCreationModalSteps.FILL_DESCRIPTION;
+  handleDragEnd = () => {
+    this.listWithCreator.list.draggableList.endDragging();
+    this.finishedList.draggableList.endDragging();
+
+    this.draggingTask = null;
   };
 
   init = async () => {
-    const data = await import('@emoji-mart/data');
+    await EmojiStore.loadIfNotLoaded();
 
-    runInAction(() => {
-      this.emojiStore.data = data.default;
+    if (!this.goal.icon.value && !this.goal.icon.color) {
+      const selectedCategories = ['people', 'activity', 'objects'];
+      const categories = EmojiStore.emojiData.categories.filter(({ id }) =>
+        selectedCategories.includes(id)
+      );
+      const emojiKeys = categories.reduce((acc, category) => {
+        return [...acc, ...category.emojis];
+      }, []);
 
-      if (!this.existedGoal) {
-        const data = this.emojiStore.data;
-        const selectedCategories = ['people', 'activity', 'objects'];
-        const categories = data.categories.filter(({ id }) =>
-          selectedCategories.includes(id)
-        );
-        const emojiKeys = categories.reduce((acc, category) => {
-          return [...acc, ...category.emojis];
-        }, []);
+      const randomEmojiKey: any =
+        emojiKeys[Math.floor(Math.random() * emojiKeys.length)];
+      const randomEmoji = EmojiStore.emojiData.emojis[randomEmojiKey];
 
-        const randomEmojiKey: any =
-          emojiKeys[Math.floor(Math.random() * emojiKeys.length)];
-        const randomEmoji = data.emojis[randomEmojiKey];
-
-        if (randomEmoji) {
-          this.icon = randomEmoji.skins[0].native;
-        }
-
-        this.color = colors[Math.floor(Math.random() * colors.length)];
+      if (randomEmoji) {
+        this.goal.icon.value = randomEmoji.skins[0].native;
       }
-    });
+
+      this.goal.icon.color = colors[Math.floor(Math.random() * colors.length)];
+
+      this.initialGoal = cloneDeep(this.goal);
+    }
   };
 
   update = async (props: GoalCreationModalProps) => {
     this.onClose = props.onClose;
     this.onSave = props.onSave;
-    this.existedGoal = props.goal;
-    this.isEditMode = props.editMode;
+    const goal = { ...this.goal, ...props.goal };
 
-    if (this.isEditMode) {
-      this.step = GoalCreationModalSteps.FILL_DESCRIPTION;
+    this.goal = goal;
+    this.initialGoal = cloneDeep(goal);
+
+
+    if (props.goal?.id) {
+      this.isUpdating = true;
     }
 
-    if (this.existedGoal) {
-      this.icon = this.existedGoal.icon.value;
-      this.color = this.existedGoal.icon.color;
-      this.title = this.existedGoal.title;
+    if (this.goal.descriptionId) {
+      this.isDescriptionLoading = true;
+      const description =
+        (await this.root.api.descriptions.get(
+          this.goal.descriptionId
+        )) || undefined;
 
-      if (this.existedGoal.descriptionId) {
-        this.isDescriptionLoading = true;
-        const description =
-          (await this.root.api.descriptions.get(
-            this.existedGoal.descriptionId
-          )) || undefined;
-
-        runInAction(() => {
-          this.description = description;
-          this.isDescriptionLoading = false;
-        });
-      }
+      runInAction(() => {
+        this.description = description;
+        this.initialDescription = cloneDeep(description);
+        this.isDescriptionLoading = false;
+      });
     }
 
     runInAction(() => {

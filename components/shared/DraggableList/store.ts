@@ -117,89 +117,6 @@ export class DraggableListStore {
     DELETE: ['del', 'backspace'],
   };
 
-  hotkeyHandlers = {
-    UP: (e) => {
-      e.preventDefault();
-      this.handleNavigation(NavigationDirections.UP);
-    },
-    DOWN: (e) => {
-      e.preventDefault();
-      this.handleNavigation(NavigationDirections.DOWN);
-    },
-    FORCE_DOWN: (e) => {
-      e.preventDefault();
-      const lastItem = this.getLastActiveItem();
-
-      if (!this.isAlreadySingleFocused(lastItem)) {
-        this.setFocusedItem(lastItem);
-      }
-    },
-    FORCE_UP: (e) => {
-      e.preventDefault();
-      const firstItem = this.getFirstActiveItem();
-
-      if (!this.isAlreadySingleFocused(firstItem)) {
-        this.setFocusedItem(firstItem);
-      }
-    },
-    DELETE: () => {
-      if (this.focusedItemIds.length) {
-        const itemsForDelete = this.focusedItemIds.slice();
-
-        this.callbacks.onVerifyDelete?.(itemsForDelete, () => {
-          this.focusAfterItems(itemsForDelete);
-          this.deleteItems(itemsForDelete);
-        });
-      }
-    },
-    FORCE_DELETE: () => {
-      if (this.focusedItemIds.length) {
-        const itemsForDelete = this.focusedItemIds.slice();
-
-        this.focusAfterItems(itemsForDelete);
-        this.deleteItems(itemsForDelete);
-      }
-    },
-    MOVE_UP: (e) => {
-      e.preventDefault();
-
-      if (this.focusedItemIds.length) {
-        if (this.focusedItemIds.length === 1) {
-          this.runControlsMoveAction((lift) => lift.moveUp());
-        } else {
-          this.controlsMultiMoveAction('up');
-        }
-      }
-    },
-    MOVE_DOWN: (e) => {
-      e.preventDefault();
-
-      if (this.focusedItemIds.length) {
-        if (this.focusedItemIds.length === 1) {
-          this.runControlsMoveAction((lift) => lift.moveDown());
-        } else {
-          this.controlsMultiMoveAction('down');
-        }
-      }
-    },
-    SELECT_UP: () => this.arrowSelect('up'),
-    SELECT_DOWN: () => this.arrowSelect('down'),
-    SELECT_ALL: (e) => {
-      e.preventDefault();
-      this.selectAll();
-    },
-    ESC: () => {
-      if (!this.callbacks.onEscape?.()) {
-        this.resetFocusedItem();
-        this.callbacks.onFocusedItemsChange?.([]);
-      }
-    },
-  };
-
-  get hasFocusableItems() {
-    return this.activeItems.length > 0;
-  }
-
   arrowSelect = (direction: 'up' | 'down') => {
     const isUp = direction === 'up';
     if (
@@ -221,6 +138,10 @@ export class DraggableListStore {
       }
     }
   };
+
+  get hasFocusableItems() {
+    return this.activeItems.length > 0;
+  }
 
   shiftSelect = (direction: 'up' | 'down', count: number = 1) => {
     if (this.focusedItemIds.length) {
@@ -258,6 +179,18 @@ export class DraggableListStore {
   starthMouseSelect = () => {
     this.isMouseSelection = true
   }
+
+  restoreSavedFocusedItems = () => {
+    this.resetFocusedItem();
+
+    if (this.savedFocusedItemIds.length) {
+      this.addFocusedItems(this.savedFocusedItemIds);
+    } else {
+      this.focusFirstItem();
+    }
+
+    this.resetSavedFocusedItems();
+  };
 
   selectAll = () => {
     this.resetFocusedItem();
@@ -550,22 +483,6 @@ export class DraggableListStore {
     this.savedFocusedItemIds = [...this.focusedItemIds];
   };
 
-  restoreSavedFocusedItems = () => {
-    this.resetFocusedItem();
-
-    if (this.savedFocusedItemIds.length) {
-      this.addFocusedItems(this.savedFocusedItemIds);
-    } else {
-      this.focusFirstItem();
-    }
-
-    this.resetSavedFocusedItems();
-  };
-
-  resetSavedFocusedItems = () => {
-    this.savedFocusedItemIds = [];
-  };
-
   setFocusedItems = (ids: string[]) => {
     if (!ids.length) {
       this.focusFirstItem();
@@ -573,6 +490,10 @@ export class DraggableListStore {
 
     this.addFocusedItems(ids);
     this.resetSavedFocusedItems();
+  };
+
+  resetSavedFocusedItems = () => {
+    this.savedFocusedItemIds = [];
   };
 
   setFocusedItem = (id: string, mode?: 'single' | 'many') => {
@@ -621,6 +542,85 @@ export class DraggableListStore {
         this.shiftSelect('up', this.baseFocusedItem - index);
       }
     }
+  };
+
+  hotkeyHandlers = {
+    UP: (e) => {
+      e.preventDefault();
+      this.handleNavigation(NavigationDirections.UP);
+    },
+    DOWN: (e) => {
+      e.preventDefault();
+      this.handleNavigation(NavigationDirections.DOWN);
+    },
+    FORCE_DOWN: (e) => {
+      e.preventDefault();
+      const lastItem = this.getLastActiveItem();
+
+      if (!this.isAlreadySingleFocused(lastItem)) {
+        this.setFocusedItem(lastItem);
+      }
+    },
+    FORCE_UP: (e) => {
+      e.preventDefault();
+      const firstItem = this.getFirstActiveItem();
+
+      if (!this.isAlreadySingleFocused(firstItem)) {
+        this.setFocusedItem(firstItem);
+      }
+    },
+    DELETE: () => {
+      if (this.focusedItemIds.length) {
+        const itemsForDelete = this.focusedItemIds.slice();
+
+        this.callbacks.onVerifyDelete?.(itemsForDelete, () => {
+          this.focusAfterItems(itemsForDelete);
+          this.deleteItems(itemsForDelete);
+        });
+      }
+    },
+    FORCE_DELETE: () => {
+      if (this.focusedItemIds.length) {
+        const itemsForDelete = this.focusedItemIds.slice();
+
+        this.focusAfterItems(itemsForDelete);
+        this.deleteItems(itemsForDelete);
+      }
+    },
+    MOVE_UP: (e) => {
+      e.preventDefault();
+
+      if (this.focusedItemIds.length) {
+        if (this.focusedItemIds.length === 1) {
+          this.runControlsMoveAction((lift) => lift.moveUp());
+        } else {
+          this.controlsMultiMoveAction('up');
+        }
+      }
+    },
+    MOVE_DOWN: (e) => {
+      e.preventDefault();
+
+      if (this.focusedItemIds.length) {
+        if (this.focusedItemIds.length === 1) {
+          this.runControlsMoveAction((lift) => lift.moveDown());
+        } else {
+          this.controlsMultiMoveAction('down');
+        }
+      }
+    },
+    SELECT_UP: () => this.arrowSelect('up'),
+    SELECT_DOWN: () => this.arrowSelect('down'),
+    SELECT_ALL: (e) => {
+      e.preventDefault();
+      this.selectAll();
+    },
+    ESC: () => {
+      if (!this.callbacks.onEscape?.()) {
+        this.resetFocusedItem();
+        this.callbacks.onFocusedItemsChange?.([]);
+      }
+    },
   };
 
   addFocusedItems = (itemIds: string[]) => {

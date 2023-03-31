@@ -1,16 +1,7 @@
 import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import {
-  InputGroup,
-  HStack,
-  InputRightAddon,
-  useOutsideClick,
-  Box,
-  Text,
-  chakra,
-  Fade,
-} from '@chakra-ui/react';
-import { useTaskQuickEditorStore } from '../TaskQuickEditor/store';
+import { Box, chakra, Fade, HStack, InputGroup, InputRightAddon, Text, useOutsideClick, } from '@chakra-ui/react';
+import { Modes, useTaskQuickEditorStore } from '../TaskQuickEditor/store';
 import { InputWrapper, InputWrapperProps } from '../InputWrapper';
 import { TaskQuickEditorInput } from '../TaskQuickEditor/TaskQuickEditorInput';
 import { TaskQuickEditorTags } from '../TaskQuickEditor/TaskQuickEditorTags';
@@ -19,10 +10,13 @@ import { TaskQuickEditorMainMenu } from '../TaskQuickEditor/TaskQuickEditorMainM
 import { TaskQuickEditorSpace } from '../TaskQuickEditor/TaskQuickEditorSpace';
 import { TaskQuickEditorGoal } from '../TaskQuickEditor/TaskQuickEditorGoal';
 import { TaskQuickEditorReference } from '../TaskQuickEditor/TaskQuickEditorReference';
+import { Tooltip } from "../Tooltip";
 
 export type TaskCreatorProps = {
   wrapperProps: InputWrapperProps;
   isHotkeysEnabled?: boolean;
+  canChangeSpace?: boolean;
+  displayHelpAsTooltip?: boolean;
 };
 
 const TASK_CREATOR_VIEW_TAG_LIST_MIN_WIDTH = 72;
@@ -51,7 +45,7 @@ export const TaskCreatorView = observer(function TaskCreator(
   const ref = useRef(null);
 
   useOutsideClick({
-    enabled: store.isInputFocused && !store.root.isModalOpen && !store.suggestionsMenu.isOpen,
+    enabled: store.isInputFocused && !store.root.isModalOpen,
     ref: ref,
     handler: store.handleClickOutside,
   });
@@ -61,73 +55,93 @@ export const TaskCreatorView = observer(function TaskCreator(
       ? TASK_CREATOR_VIEW_TAG_LIST_MIN_WIDTH
       : tagsWidth;
 
+  const help = (
+    <HStack {...(props.displayHelpAsTooltip ? {} : { mt: 1, mb: 2, ml: 5, mr: 5 })}>
+      <Text color='gray.400' fontSize='xs' fontWeight='normal' overflow='hidden' maxH='24px'>
+        Type
+        <HotkeyHint>#</HotkeyHint> for tags,
+        <HotkeyHint>!</HotkeyHint> for priority
+        {!store.disableGoalChange && <><HotkeyHint>*</HotkeyHint> for goals,</>}
+        {!store.disableSpaceChange && <><HotkeyHint>^</HotkeyHint> for spaces,</>}
+        {!store.disableReferenceChange && <><HotkeyHint>@</HotkeyHint> for reference</>}
+      </Text>
+    </HStack>
+  );
+
   return (
     <Box position='relative'>
-      <InputWrapper
-        variant={!store.isInputFocused ? 'primary' : 'focused'}
-        size='md'
-        alignItems='center'
-        display='flex'
-        minH={10}
-        w='auto'
-        mb={2}
-        {...props.wrapperProps}
+      <Tooltip
+        isOpen={
+          props.displayHelpAsTooltip &&
+          store.isInputFocused &&
+          !store.isMenuOpen &&
+          (store.suggestionsMenu.openForMode === Modes.DEFAULT) &&
+          (store.isCurrentModeDisabled || !store.activeMode?.suggestions.length)
+        }
+        isDisabled={!props.displayHelpAsTooltip}
+        label={help}
+        placement='top-start'
       >
-        <InputGroup size='md' ref={ref} variant='unstyled' alignItems='center'>
-          <TaskQuickEditorInput
-            placeholder='+Add task'
-            flex={1}
-            pt={1}
-            pb={1}
-          />
-          <InputRightAddon
-            maxW='50%'
-            minWidth={0}
-            justifyContent='end'
-            position='relative'
-          >
-            <Fade in={store.isInputFocused} unmountOnExit>
-              <HStack w='100%'>
-                <TaskQuickEditorTags
-                  collapsable
-                  boxProps={{
-                    minWidth: 0,
-                    maxWidth: `${maxTagsWidth}px`,
-                    p: 1,
-                    css: {
-                      scrollbarWidth: 'none',
-                      '&::-webkit-scrollbar': {
-                        display: 'none',
+        <InputWrapper
+          variant={!store.isInputFocused ? 'primary' : 'focused'}
+          size='md'
+          alignItems='center'
+          display='flex'
+          minH={10}
+          w='auto'
+          mb={2}
+          {...props.wrapperProps}
+        >
+          <InputGroup size='md' ref={ref} variant='unstyled' alignItems='center'>
+            <TaskQuickEditorInput
+              placeholder='+Add task'
+              flex={1}
+              pt={1}
+              pb={1}
+            />
+            <InputRightAddon
+              maxW='50%'
+              minWidth={0}
+              justifyContent='end'
+              position='relative'
+            >
+              <Fade in={store.isInputFocused} unmountOnExit>
+                <HStack w='100%'>
+                  <TaskQuickEditorTags
+                    collapsable
+                    boxProps={{
+                      minWidth: 0,
+                      maxWidth: `${maxTagsWidth}px`,
+                      p: 1,
+                      css: {
+                        scrollbarWidth: 'none',
+                        '&::-webkit-scrollbar': {
+                          display: 'none',
+                        },
                       },
-                    },
-                  }}
-                />
-                <TaskQuickEditorSpace />
-                <TaskQuickEditorGoal />
-                <TaskQuickEditorPriority />
-                <TaskQuickEditorMainMenu />
-              </HStack>
-            </Fade>
-          </InputRightAddon>
-          <Box position='absolute' right={0} top='33px'>
-            <Fade in={store.isInputFocused} unmountOnExit>
-              <TaskQuickEditorReference />
-            </Fade>
-          </Box>
-        </InputGroup>
-      </InputWrapper>
-      <Box opacity={store.isInputFocused ? 1 : 0}>
-        <HStack mt={1} mb={2} ml={5} mr={5}>
-          <Text color='gray.400' fontSize='xs' fontWeight='normal' overflow='hidden' maxH='24px'>
-            Type
-            <HotkeyHint>#</HotkeyHint> for tags,
-            <HotkeyHint>!</HotkeyHint> for priority,
-            <HotkeyHint>*</HotkeyHint> for goals,
-            <HotkeyHint>^</HotkeyHint> for spaces,
-            <HotkeyHint>@</HotkeyHint> for reference
-          </Text>
-        </HStack>
-      </Box>
+                    }}
+                  />
+                  {!store.disableSpaceChange && <TaskQuickEditorSpace />}
+                  {!store.disableGoalChange && <TaskQuickEditorGoal />}
+                  <TaskQuickEditorPriority />
+                  <TaskQuickEditorMainMenu />
+                </HStack>
+              </Fade>
+            </InputRightAddon>
+            {!store.disableReferenceChange && (
+              <Box position='absolute' right={0} top='33px'>
+                <Fade in={store.isInputFocused} unmountOnExit>
+                  <TaskQuickEditorReference />
+                </Fade>
+              </Box>
+            )}
+          </InputGroup>
+        </InputWrapper>
+      </Tooltip>
+
+      {!props.displayHelpAsTooltip && (
+        <Box opacity={store.isInputFocused ? 1 : 0}>{help}</Box>
+      )}
     </Box>
   );
 });

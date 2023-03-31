@@ -4,7 +4,7 @@ import { getProvider } from '../../../../../helpers/StoreProvider';
 import { SpaceData } from '../../types';
 import { SyntheticEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { colors } from '../../constants';
+import { EMOJI_SELECT_COLORS } from "../../../../shared/EmojiSelect/constants";
 
 export type SpaceCreationModalProps = {
   callbacks: {
@@ -49,7 +49,7 @@ export class SpaceCreationModalStore {
   existedSpace: SpaceData | null = null;
   newSpace: SpaceData | null = null;
   icon: string = '';
-  color = colors[Math.floor(Math.random() * colors.length)];
+  color = EMOJI_SELECT_COLORS[Math.floor(Math.random() * EMOJI_SELECT_COLORS.length)];
   name: string = '';
   description: string = '';
   isDeleteConfirmationOpen: boolean = false;
@@ -81,8 +81,8 @@ export class SpaceCreationModalStore {
     this.icon = ''
   }
 
-  handleEmojiSelect = (emoji: { native: string }) => {
-    this.icon = emoji.native;
+  handleEmojiSelect = (emoji: string) => {
+    this.icon = emoji;
   };
 
   handleNameChange = (e: SyntheticEvent) => {

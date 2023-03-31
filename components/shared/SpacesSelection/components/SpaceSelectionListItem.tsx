@@ -79,7 +79,7 @@ export const SpaceSelectionListItem = observer(
               justifyContent='space-between'
             >
               <chakra.span display='flex' alignItems='center'>
-                <SpacesSmallIcon space={space} size={6} borderRadius={4} bgOpacity='.100' />
+                <SpacesSmallIcon space={space} size={6} borderRadius={4} bgOpacity='100' />
                 <chakra.span ml={3} mr={3} overflow='hidden' textOverflow='ellipsis'>
                   {name}
                 </chakra.span>

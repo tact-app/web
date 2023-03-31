@@ -1,18 +1,20 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button, Text, Box, Center, Heading } from '@chakra-ui/react';
+import { Button, Text, HStack, Box } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from './store';
 import { BackArrowIcon } from '../../../../shared/Icons/BackArrowIcon';
-import { GoalCreationStepsSwitcher } from './components/GoalCreationStepsSwitcher';
-import { GoalCreationModalSteps } from './types';
-import { GoalCreationEmojiSelect } from './components/GoalCreationEmojiSelect';
 import {
   Modal,
-  ModalBody,
   ModalContent,
-  ModalHeader,
 } from '@chakra-ui/modal';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import { GoalCreationDescription } from "./components/GoalCreationDescription";
+import { ResizableGroup } from "../../../../shared/ResizableGroup";
+import { ResizableGroupChild } from "../../../../shared/ResizableGroup/ResizableGroupChild";
+import { GoalCreationInformation } from "./components/GoalCreationInformation";
+import { Task } from "../../../../shared/Task";
+import { ModalsSwitcher } from "../../../../../helpers/ModalsController";
+import { ButtonHotkey } from "../../../../shared/ButtonHotkey";
 
 export const GoalCreationModalView = observer(function GoalCreationModal() {
   const store = useGoalCreationModalStore();
@@ -28,58 +30,58 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
       onEsc={store.handleBack}
       blockScrollOnMount={false}
       size='full'
+      isCentered
     >
       <ModalContent>
-        <ModalHeader
-          position='relative'
-          display='flex'
-          alignItems='center'
-          flexDirection='row'
-        >
-          <Button
-            variant='ghost'
-            size='xs'
-            onClick={store.handleBack}
-            position='absolute'
+        <ResizableGroup>
+          <ResizableGroupChild
+            index={0}
+            config={store.resizableConfig[0]}
+            borderRight='1px'
+            borderColor='gray.200'
           >
-            <BackArrowIcon />
-            <Text fontSize='lg' color='gray.400' fontWeight='normal'>
-              Back
-            </Text>
-          </Button>
-          <Center flex={1} minH={12}>
-            {store.step === GoalCreationModalSteps.FILL_DESCRIPTION ? (
-              <GoalCreationEmojiSelect />
-            ) : null}
-            <Heading variant='h1' fontSize='2rem'>
-              Goal setting
-            </Heading>
-          </Center>
-          {store.step === GoalCreationModalSteps.FILL_DESCRIPTION ? (
-            <Box
-              display='flex'
-              alignItems='center'
-              position='absolute'
-              right={6}
-            >
-              <Text fontSize='xs' fontWeight='normal' mr={4} color='gray.400'>
-                Press ⌘ S{' '}
-              </Text>
-              <Button
-                colorScheme='blue'
-                size='sm'
-                isDisabled={!store.isReadyForSave}
-                onClick={store.handleSave}
-              >
-                Save
-              </Button>
-            </Box>
-          ) : null}
-        </ModalHeader>
-        <ModalBody p={0} overflow='auto' position='relative'>
-          <GoalCreationStepsSwitcher />
-        </ModalBody>
+            <HStack flexDirection='column' width='100%' height='100%'>
+              <HStack justifyContent='space-between' width='100%' maxW='3xl' pt={4} pb={8} pl={10} pr={10}>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  pl={1.5}
+                  pr={1.5}
+                  onClick={store.handleBack}
+                >
+                  <BackArrowIcon />
+                  <Text fontSize='lg' lineHeight={3} color='gray.500' fontWeight='normal' ml={2}>
+                    Back
+                  </Text>
+                </Button>
+                <Button
+                  colorScheme='blue'
+                  size='sm'
+                  onClick={store.handleSave}
+                  disabled={store.isGoalCreatingOrUpdating}
+                >
+                  Save
+                  <ButtonHotkey hotkey='⌘+Enter' />
+                </Button>
+              </HStack>
+              <GoalCreationDescription />
+            </HStack>
+          </ResizableGroupChild>
+          <ResizableGroupChild index={1} config={store.resizableConfig[1]}>
+            <GoalCreationInformation />
+          </ResizableGroupChild>
+          <ResizableGroupChild
+            index={2}
+            config={store.resizableConfig[2]}
+            borderLeft='1px'
+            borderColor='gray.200'
+          >
+            <Box h='100%'>{store.taskProps.task && <Task {...store.taskProps} />}</Box>
+          </ResizableGroupChild>
+        </ResizableGroup>
       </ModalContent>
+
+      <ModalsSwitcher controller={store.modals} />
     </Modal>
   );
 });
