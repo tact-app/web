@@ -3,8 +3,6 @@ import { TaskDeleteModal } from './TaskDeleteModal';
 import { TaskGoalAssignModal } from './TaskGoalAssignModal';
 import { GoalCreationModal } from '../../../pages/Goals/modals/GoalCreationModal';
 import { TasksListStore } from '../store';
-import { GoalData } from '../../../pages/Goals/types';
-import { DescriptionData } from '../../../../types/description';
 import { TaskWontDoModal } from './TaskWontDoModal';
 import { TaskSpaceChangeModal } from './TaskSpaceChangeModal';
 import { TaskData } from '../types';
