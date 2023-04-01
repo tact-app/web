@@ -11,6 +11,7 @@ on:
           - Continuous integration
           - Continuous delivery (Vercel)
           - Continuous delivery (Docker)
+          - Issue invalidation
           - Workflow invalidation
         default: Workflow invalidation
         required: true
