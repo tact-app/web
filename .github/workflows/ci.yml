@@ -31,63 +31,37 @@ jobs:
         with: { fetch-depth: 0 }
       - name: Set up Node.js environment
         uses: actions/setup-node@v3
-        with: { node-version: 16, cache: npm }
+        with: { node-version: 16 }
 
-      # - name: Cache application dependencies
-      #   id: core
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ./node_modules
-      #     key: core-${{ hashFiles('package-lock.json') }}
-      - name: Install application dependencies if needed
-        run: npm ci --ignore-scripts --include=dev
-        # if: steps.core.outputs.cache-hit != 'true'
-        env: { FONTAWESOME_TOKEN: '${{ secrets.FONTAWESOME_TOKEN }}' }
-      - name: Build the application
-        run: npm run build
-
-  validate:
-    name: Validating
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v3
-        with: { fetch-depth: 0 }
-
-      - name: Set up Node.js environment
+      - name: Cache application dependencies
         id: app
-        uses: actions/setup-node@v3
-        with: { node-version: 16, cache: npm }
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: app-${{ hashFiles('package-lock.json') }}
       - name: Install application dependencies if needed
         run: npm ci --ignore-scripts --include=dev
-        env: { FONTAWESOME_TOKEN: '${{ secrets.FONTAWESOME_TOKEN }}' }
         if: steps.app.outputs.cache-hit != 'true'
+        env: { FONTAWESOME_TOKEN: '${{ secrets.FONTAWESOME_TOKEN }}' }
 
-      - name: Set up Node.js environment
+      - name: Cache tooling dependencies
         id: tools
-        uses: actions/setup-node@v3
-        with: { node-version: 16, cache: npm, cache-dependency-path: tools/package-lock.json }
+        uses: actions/cache@v3
+        with:
+          path: ./tools/node_modules
+          key: tools-${{ hashFiles('tools/package-lock.json') }}
       - name: Install tooling dependencies if needed
         run: ./Taskfile tools npm ci
         if: steps.tools.outputs.cache-hit != 'true'
 
-      # https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-data
-      # - name: Cache tooling dependencies
-      #   id: tools
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ./tools/node_modules
-      #     key: tools-${{ hashFiles('tools/package-lock.json') }}
-      # - name: Install tooling dependencies if needed
-      #   run: ./Taskfile tools npm ci
-        # if: steps.tools.outputs.cache-hit != 'true'
       - name: Check application dependencies
         run: 'source bin/activate && [ "$(./Taskfile @deps check)" == "No depcheck issue" ]'
+      - name: Build the application
+        run: npm run build
 
   notify:
     name: Notifying
-    needs: [ build, validate ]
+    needs: [ build ]
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' && (failure() || success())
 
