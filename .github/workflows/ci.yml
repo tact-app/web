@@ -54,9 +54,18 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v3
         with: { fetch-depth: 0 }
+
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v3
+        with: { node-version: 16, cache: npm }
+      - name: Install application dependencies if needed
+        run: npm ci --ignore-scripts --include=dev
+
       - name: Set up Node.js environment
         uses: actions/setup-node@v3
         with: { node-version: 16, cache: npm, cache-dependency-path: tools/package-lock.json }
+      - name: Install tooling dependencies if needed
+        run: ./Taskfile tools npm ci
 
       # https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-data
       # - name: Cache tooling dependencies
@@ -65,8 +74,8 @@ jobs:
       #   with:
       #     path: ./tools/node_modules
       #     key: tools-${{ hashFiles('tools/package-lock.json') }}
-      - name: Install tooling dependencies if needed
-        run: ./Taskfile tools npm ci
+      # - name: Install tooling dependencies if needed
+      #   run: ./Taskfile tools npm ci
         # if: steps.tools.outputs.cache-hit != 'true'
       - name: Check application dependencies
         run: 'source bin/activate && [ "$(./Taskfile @deps check)" == "No depcheck issue" ]'
