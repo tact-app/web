@@ -1,11 +1,8 @@
 import { ModalsController } from '../../../../helpers/ModalsController';
 import { GoalCreationModal } from '../../../pages/Goals/modals/GoalCreationModal';
-import { GoalData } from '../../../pages/Goals/types';
-import { DescriptionData } from '../../../../types/description';
 import { SpaceCreationModal } from '../../../pages/Spaces/modals/SpaceCreationModal';
 import { SpaceData } from '../../../pages/Spaces/types';
 import { RootStore } from '../../../../stores/RootStore';
-import { TaskData } from "../../TasksList/types";
 
 
 export enum ModalsTypes {
