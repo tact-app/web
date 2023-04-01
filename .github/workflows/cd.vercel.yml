@@ -1,4 +1,4 @@
-name: continuous delivery (vercel)
+name: Continuous delivery (Vercel)
 
 on:
   workflow_dispatch:

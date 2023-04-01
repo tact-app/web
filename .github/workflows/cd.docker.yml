@@ -1,4 +1,4 @@
-name: continuous delivery (docker)
+name: Continuous delivery (Docker)
 
 on:
   workflow_dispatch:

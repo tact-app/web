@@ -1,0 +1,55 @@
+name: Workflow invalidation
+
+on:
+  workflow_dispatch:
+    inputs:
+      pattern:
+        description: The name of workflow to clean.
+        type: choice
+        options:
+          - Cache invalidation
+          - Continuous integration
+          - Continuous delivery (Vercel)
+          - Continuous delivery (Docker)
+          # - Dependabot at weekends
+          # - Documentation delivery
+          # - Tools validation
+          - Workflow invalidation
+        default: Workflow invalidation
+        required: true
+      dry_run:
+        description: Only log actions, do not perform any delete operations.
+        type: boolean
+        required: false
+
+jobs:
+  delete:
+    name: Deleting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          delete_workflow_pattern: ${{ github.event.inputs.pattern }}
+          dry_run: ${{ fromJSON('["", "true"]')[github.event.inputs.dry_run == 'true'] }}
+          retain_days: 0
+          keep_minimum_runs: 0
+
+  notify:
+    name: Notifying
+    needs: [ delete ]
+    runs-on: ubuntu-latest
+    if: failure() || success()
+
+    steps:
+      - name: Send Slack notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+          SLACK_ICON: https://github.com/github.png?size=64
+          SLACK_TITLE: '🗑️ ${{ github.repository }}: ${{ github.workflow }}'
+          SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
