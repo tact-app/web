@@ -13,6 +13,7 @@ import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
 import {
   GOALS_STATUSES_COLORS,
   GOALS_STATUSES_COMMANDS,
+  GOALS_STATUSES_HOTKEYS,
   GOALS_STATUSES_ICONS,
   GOALS_STATUSES_TITLES
 } from "../constants";
@@ -110,6 +111,7 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
           key: status,
           onClick: () => store.handleUpdateStatus(status),
           command: GOALS_STATUSES_COMMANDS[status],
+          hotkey: GOALS_STATUSES_HOTKEYS[status],
           iconColor: GOALS_STATUSES_COLORS[status],
         }))}
         menuMinWidth={44}
