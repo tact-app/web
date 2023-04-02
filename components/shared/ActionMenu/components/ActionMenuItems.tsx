@@ -17,10 +17,11 @@ export function ActionMenuItems({ items, refs }: Props) {
         ) : !item.hidden && (
           <ActionMenuItem
             ref={(el) => refs(index, el)}
-            key={item.title}
+            key={item.key || (typeof item.title === 'string' ? item.title : index)}
             onClick={item.onClick}
             command={item.command}
             icon={item.icon}
+            iconColor={item.iconColor}
           >
             {item.title}
           </ActionMenuItem>

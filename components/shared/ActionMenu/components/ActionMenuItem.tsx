@@ -7,6 +7,8 @@ import { useActionMenuStore } from "../store";
 type Props = PropsWithChildren<{
   command?: string;
   icon: IconDefinition;
+  iconFontSize?: number;
+  iconColor?: string;
   onClick(): void;
 }>;
 
@@ -16,6 +18,8 @@ export const ActionMenuItem = forwardRef(
       onClick,
       command,
       icon,
+      iconFontSize,
+      iconColor = 'gray.400',
       children,
     }: Props,
     ref
@@ -42,8 +46,8 @@ export const ActionMenuItem = forwardRef(
         pl={4}
       >
         <chakra.span fontWeight='normal'>
-          <chakra.span color='gray.400' mr={2}>
-            <FontAwesomeIcon icon={icon} fixedWidth />
+          <chakra.span color={iconColor} mr={2}>
+            <FontAwesomeIcon icon={icon} fontSize={iconFontSize} fixedWidth />
           </chakra.span>
           {children}
         </chakra.span>

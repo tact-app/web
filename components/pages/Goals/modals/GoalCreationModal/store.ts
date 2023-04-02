@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { GoalData, GoalIconVariants } from '../../types';
+import { GoalData, GoalIconVariants, GoalStatus } from '../../types';
 import { SyntheticEvent } from 'react';
 import { JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
@@ -91,6 +91,7 @@ export class GoalCreationModalStore {
     startDate: '',
     targetDate: '',
     spaceId: '',
+    status: GoalStatus.TODO,
     icon: {
       type: GoalIconVariants.EMOJI,
       color: '',

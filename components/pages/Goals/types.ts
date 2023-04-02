@@ -25,8 +25,14 @@ export type GoalData = {
   spaceId: string;
   descriptionId?: string;
   icon?: GoalIconData;
+  status: GoalStatus;
 };
 
+export enum GoalStatus {
+  WONT_DO = 'wont-do',
+  TODO = 'todo',
+  DONE = 'done',
+}
 
 export enum GoalState {
   IS_COMING = 'is-coming',
