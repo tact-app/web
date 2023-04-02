@@ -43,7 +43,7 @@
     "@tiptap/extension-task-list": "^2.0.1",
     "@tiptap/extension-underline": "^2.0.1",
     "@tiptap/react": "^2.0.1",
-    "@tiptap/starter-kit": "^2.0.0",
+    "@tiptap/starter-kit": "^2.0.1",
     "@tiptap/suggestion": "^2.0.1",
     "allotment": "^1.18.1",
     "classnames": "^2.3.2",
