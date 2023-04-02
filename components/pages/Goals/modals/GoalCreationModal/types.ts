@@ -10,4 +10,5 @@ export type GoalCreationModalProps = {
 
 export enum GoalCreationModalsTypes {
   CLOSE_SUBMIT,
+  WONT_DO_SUBMIT
 }

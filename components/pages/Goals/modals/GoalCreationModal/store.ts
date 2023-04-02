@@ -16,6 +16,7 @@ import { GoalCreationModalProps, GoalCreationModalsTypes } from "./types";
 import { GoalCreationCloseSubmitModal } from "./modals/GoalCreationCloseSubmitModal";
 import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
 import { cloneDeep, isEqual } from "lodash";
+import { GoalWontDoSubmitModal } from "./modals/GoalWontDoSubmitModal";
 
 export const colors = [
   'red.200',
@@ -30,6 +31,7 @@ export const colors = [
 
 const GoalsModals = {
   [GoalCreationModalsTypes.CLOSE_SUBMIT]: GoalCreationCloseSubmitModal,
+  [GoalCreationModalsTypes.WONT_DO_SUBMIT]: GoalWontDoSubmitModal,
 };
 
 export class GoalCreationModalStore {
@@ -288,7 +290,20 @@ export class GoalCreationModalStore {
 
   handleUpdateStatus = (status: GoalStatus) => {
     if (this.goal.status !== status) {
-      return this.handleUpdate({ status });
+      if (status === GoalStatus.WONT_DO) {
+        this.modals.open({
+          type: GoalCreationModalsTypes.WONT_DO_SUBMIT,
+          props: {
+            onSubmit: async () => {
+              await this.handleUpdate({ status });
+              this.modals.close();
+            },
+            onClose: this.modals.close,
+          },
+        });
+      } else {
+        this.handleUpdate({ status });
+      }
     }
   };
   handleUpdate = async (data: Partial<GoalData>) => {

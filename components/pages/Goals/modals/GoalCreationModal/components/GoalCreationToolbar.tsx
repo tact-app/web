@@ -7,17 +7,8 @@ import { faBoxArchive, faComment, faSquareInfo, faXmark, } from "@fortawesome/pr
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BackArrowIcon } from '../../../../../shared/Icons/BackArrowIcon';
 import { NextPrevItemController } from "../../../../../shared/NextPrevItemController/NextPrevItemController";
-import { ActionMenu } from "../../../../../shared/ActionMenu";
-import { GoalStatus } from "../../../types";
 import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
-import {
-  GOALS_STATUSES_COLORS,
-  GOALS_STATUSES_COMMANDS,
-  GOALS_STATUSES_HOTKEYS,
-  GOALS_STATUSES_ICONS,
-  GOALS_STATUSES_TITLES
-} from "../constants";
-import { Tooltip } from "../../../../../shared/Tooltip";
+import { GoalCreationStatusSelect } from "./GoalCreationStatusSelect";
 
 export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
   const store = useGoalCreationModalStore();
@@ -100,51 +91,7 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
       />
     </Flex>,
     <Flex key='right-content'>
-      <ActionMenu
-        items={[GoalStatus.TODO, GoalStatus.DONE, GoalStatus.WONT_DO].map((status) => ({
-          icon: GOALS_STATUSES_ICONS[status],
-          title: (
-            <chakra.span color={store.goal.status === status ? 'blue.400' : 'initial'}>
-              {GOALS_STATUSES_TITLES[status]}
-            </chakra.span>
-          ),
-          key: status,
-          onClick: () => store.handleUpdateStatus(status),
-          command: GOALS_STATUSES_COMMANDS[status],
-          hotkey: GOALS_STATUSES_HOTKEYS[status],
-          iconColor: GOALS_STATUSES_COLORS[status],
-        }))}
-        menuMinWidth={44}
-        customTrigger={(isOpen) => (
-          <div>
-            <Tooltip label='Change status' hotkey='S' isDisabled={isOpen}>
-              <Button
-                variant='ghost'
-                size='xs'
-                color={GOALS_STATUSES_COLORS[store.goal.status]}
-                pl={1}
-                pr={2}
-                h={7}
-                bg={isOpen ? 'gray.75' : 'initial'}
-              >
-                <FontAwesomeIcon
-                  fontSize={14}
-                  icon={GOALS_STATUSES_ICONS[store.goal.status]}
-                  fixedWidth
-                />
-                <chakra.span
-                  color='gray.500'
-                  fontSize='sm'
-                  fontWeight='normal'
-                  ml={1}
-                >
-                  {GOALS_STATUSES_TITLES[store.goal.status]}
-                </chakra.span>
-              </Button>
-            </Tooltip>
-          </div>
-        )}
-      />
+      <GoalCreationStatusSelect />
       {renderButton({
         icon: faComment,
         ariaLabel: 'Comment',
