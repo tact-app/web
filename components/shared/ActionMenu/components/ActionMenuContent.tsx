@@ -53,6 +53,7 @@ export const ActionMenuContent = observer(function ActionMenuContent({
             <ActionMenuItems
               refs={store.menuNavigation.setRefs}
               items={store.items}
+              onClose={store.closeMenu}
             />
           </PopoverBody>
         </PopoverContent>

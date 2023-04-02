@@ -3,58 +3,23 @@ import { observer } from 'mobx-react-lite';
 import { Button, chakra, Flex, HStack, Text } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
 import { ButtonHotkey } from "../../../../../shared/ButtonHotkey";
-import {
-  faBoxArchive,
-  faComment,
-  faSquareInfo,
-  faXmark,
-} from "@fortawesome/pro-light-svg-icons";
+import { faBoxArchive, faComment, faSquareInfo, faXmark, } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BackArrowIcon } from '../../../../../shared/Icons/BackArrowIcon';
 import { NextPrevItemController } from "../../../../../shared/NextPrevItemController/NextPrevItemController";
 import { ActionMenu } from "../../../../../shared/ActionMenu";
 import { GoalStatus } from "../../../types";
 import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
-import { GOALS_STATUSES_TITLES, GOALS_STATUSES_ICONS } from "../constants";
+import {
+  GOALS_STATUSES_COLORS,
+  GOALS_STATUSES_COMMANDS,
+  GOALS_STATUSES_ICONS,
+  GOALS_STATUSES_TITLES
+} from "../constants";
 import { Tooltip } from "../../../../../shared/Tooltip";
 
 export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
   const store = useGoalCreationModalStore();
-
-  const renderActionTitle = (status: GoalStatus) => {
-    return (
-      <chakra.span color={store.goal.status === status ? 'blue.400' : 'initial'}>
-        {GOALS_STATUSES_TITLES[status]}
-      </chakra.span>
-    )
-  };
-
-  const actions = [
-    {
-      icon: GOALS_STATUSES_ICONS[GoalStatus.TODO],
-      title: renderActionTitle(GoalStatus.TODO),
-      key: GoalStatus.TODO,
-      onClick: () => null,
-      command: '⌥T',
-      iconColor: 'gray.500',
-    },
-    {
-      icon: GOALS_STATUSES_ICONS[GoalStatus.DONE],
-      title: renderActionTitle(GoalStatus.DONE),
-      key: GoalStatus.DONE,
-      onClick: () => null,
-      command: '⌥D',
-      iconColor: 'blue.400',
-    },
-    {
-      icon: GOALS_STATUSES_ICONS[GoalStatus.WONT_DO],
-      title: renderActionTitle(GoalStatus.WONT_DO),
-      key: GoalStatus.WONT_DO,
-      onClick: () => null,
-      command: '⌥W',
-      iconColor: 'gray.500',
-    },
-  ];
 
   const renderContentForCreate = () => [
     <Button
@@ -135,7 +100,18 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
     </Flex>,
     <Flex key='right-content'>
       <ActionMenu
-        items={actions}
+        items={[GoalStatus.TODO, GoalStatus.DONE, GoalStatus.WONT_DO].map((status) => ({
+          icon: GOALS_STATUSES_ICONS[status],
+          title: (
+            <chakra.span color={store.goal.status === status ? 'blue.400' : 'initial'}>
+              {GOALS_STATUSES_TITLES[status]}
+            </chakra.span>
+          ),
+          key: status,
+          onClick: () => store.handleUpdateStatus(status),
+          command: GOALS_STATUSES_COMMANDS[status],
+          iconColor: GOALS_STATUSES_COLORS[status],
+        }))}
         menuMinWidth={44}
         customTrigger={(isOpen) => (
           <div>
@@ -143,7 +119,7 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
               <Button
                 variant='ghost'
                 size='xs'
-                color='gray.500'
+                color={GOALS_STATUSES_COLORS[store.goal.status]}
                 pl={1}
                 pr={2}
                 h={7}
@@ -155,6 +131,7 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
                   fixedWidth
                 />
                 <chakra.span
+                  color='gray.500'
                   fontSize='sm'
                   fontWeight='normal'
                   ml={1}

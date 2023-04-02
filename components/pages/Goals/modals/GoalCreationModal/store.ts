@@ -286,6 +286,18 @@ export class GoalCreationModalStore {
     }
   };
 
+  handleUpdateStatus = (status: GoalStatus) => {
+    if (this.goal.status !== status) {
+      return this.handleUpdate({ status });
+    }
+  };
+  handleUpdate = async (data: Partial<GoalData>) => {
+    const updatedGoal = { ...this.goal, ...data, };
+
+    await this.root.resources.goals.update({ goal: updatedGoal });
+    this.goal = updatedGoal;
+  };
+
   get sensors() {
     return [
       (api) => {

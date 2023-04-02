@@ -33,7 +33,7 @@ export class ActionMenuStore {
 
   update({ items, onNavigate, onToggleMenu, isMenuOpen }: ActionMenuProps) {
     this.items = items;
-    this.isMenuOpen = isMenuOpen;
+    this.isMenuOpen = Boolean(isMenuOpen);
     this.callbacks = {
       onNavigate,
       onToggleMenu,
