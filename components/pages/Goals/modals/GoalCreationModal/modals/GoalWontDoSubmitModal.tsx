@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, ChangeEvent } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Modal,
@@ -8,20 +8,52 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/modal';
-import { Button, chakra, Checkbox, ListItem, List } from "@chakra-ui/react";
+import { Button, Textarea } from "@chakra-ui/react";
+import { CheckboxGroup } from '../../../../../shared/CheckboxGroup'
 import { ButtonHotkey } from "../../../../../shared/ButtonHotkey";
 import { useHotkeysHandler } from "../../../../../../helpers/useHotkeysHandler";
+import { ListNavigation } from "../../../../../../helpers/ListNavigation";
 
-export type GoalCreationCloseSubmitModalProps = {
+type GoalCreationCloseSubmitModalProps = {
   onClose(): void;
   onSubmit(): void;
 };
 
+const WONT_DO_SUBMIT_OTHER_REASON = 'Other';
+const WONT_DO_SUBMIT_REASONS = [
+  'Deadline passed',
+  'Irrelevant task',
+  'Complex task',
+  'Not now',
+  WONT_DO_SUBMIT_OTHER_REASON,
+];
+
+const GOAL_WONT_DO_SUBMIT_MODAL_NAVIGATION = new ListNavigation();
+
 export const GoalWontDoSubmitModal = observer(
   function GoalWontDoSubmitModal({ onClose, onSubmit }: GoalCreationCloseSubmitModalProps) {
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+    const [reason, setReason] = useState<string>('');
+    const [otherReason, setOtherReason] = useState<string>('');
+
     const initialRef = useRef(null);
 
-    useHotkeysHandler({ STAY: ['meta+enter'] }, { STAY: onClose });
+    const handleSubmit = () => {
+      setIsSubmitted(true);
+
+      if (reason && (reason !== WONT_DO_SUBMIT_OTHER_REASON || otherReason)) {
+        onSubmit();
+      }
+    };
+    const handleOtherReasonChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+      e.stopPropagation();
+      setOtherReason(e.target.value)
+    };
+    const setTextareaRef = (ref: HTMLTextAreaElement) => {
+      GOAL_WONT_DO_SUBMIT_MODAL_NAVIGATION.setRefs(WONT_DO_SUBMIT_REASONS.length, ref)
+    };
+
+    useHotkeysHandler({ SAVE: ['meta+enter'] }, { SAVE: handleSubmit });
 
     return (
       <Modal
@@ -36,53 +68,29 @@ export const GoalWontDoSubmitModal = observer(
         <ModalContent>
           <ModalHeader>Why you won&lsquo;t do this goal?</ModalHeader>
           <ModalBody pt={4} pb={6}>
-            <List>
-              <ListItem
-                h={10}
-                display='flex'
-                alignItems='center'
-                borderBottom='1px'
-                borderColor='gray.100'
-              >
-                <Checkbox
-                  // isChecked={!!store.checkedGoals[id]}
-                  // onChange={() => store.handleGoalCheck(index)}
-                  size='xl'
-                  position='relative'
-                  fontWeight='semibold'
-                  fontSize='lg'
-                  width='100%'
-                  icon={<></>}
-                  css={{
-                    '.chakra-checkbox__label': {
-                      width: 'calc(100% - 2rem)',
-                    }
-                  }}
-                >
-                  <chakra.span
-                    position='absolute'
-                    left={0}
-                    w={6}
-                    top={0}
-                    bottom={0}
-                    display='flex'
-                    alignItems='center'
-                    justifyContent='center'
-                    // color={store.checkedGoals[id] ? 'white' : 'gray.400'}
-                  >
-                    1
-                  </chakra.span>
-                  <chakra.span
-                    display='flex'
-                    alignItems='center'
-                    fontSize='sm'
-                    fontWeight='normal'
-                  >
-                    Test
-                  </chakra.span>
-                </Checkbox>
-              </ListItem>
-            </List>
+            <CheckboxGroup
+              items={WONT_DO_SUBMIT_REASONS.map((item) => ({ value: item, label: item }))}
+              value={reason}
+              onChange={setReason}
+              required
+              isSubmitted={isSubmitted}
+              customListNavigation={GOAL_WONT_DO_SUBMIT_MODAL_NAVIGATION}
+            />
+            {reason === WONT_DO_SUBMIT_OTHER_REASON && (
+              <Textarea
+                ref={setTextareaRef}
+                maxLength={200}
+                size='lg'
+                resize='none'
+                value={otherReason}
+                placeholder='Write your reason'
+                onChange={handleOtherReasonChange}
+                borderColor='gray.200'
+                _placeholder={{
+                  color: 'gray.400'
+                }}
+              />
+            )}
           </ModalBody>
 
           <ModalFooter display='flex' justifyContent='flex-end' pt={0}>
@@ -90,7 +98,7 @@ export const GoalWontDoSubmitModal = observer(
               Cancel
               <ButtonHotkey hotkey='Esc' />
             </Button>
-            <Button colorScheme='blue' size='sm' onClick={onSubmit} ref={initialRef}>
+            <Button colorScheme='blue' size='sm' onClick={handleSubmit} ref={initialRef}>
               Save
               <ButtonHotkey hotkey='⌘+Enter' />
             </Button>

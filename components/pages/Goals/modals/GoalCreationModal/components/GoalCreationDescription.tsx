@@ -80,7 +80,7 @@ export const GoalCreationDescription = observer(
                   pr: 10,
                 }}
                 onUpdate={store.handleDescriptionChange}
-                onSave={store.handleSave}
+                // onSave={store.handleSave}
               />
             </Box>
           )}
