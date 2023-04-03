@@ -12,6 +12,7 @@ on:
           - Continuous delivery (Vercel)
           - Continuous delivery (Docker)
           - Dependabot at weekends
+          - Documentation delivery
           - Issue invalidation
           - Workflow invalidation
         default: Workflow invalidation
