@@ -1,4 +1,4 @@
-import React, { useRef, useState, ChangeEvent } from 'react';
+import React, { useRef, useState, ChangeEvent, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Modal,
@@ -8,11 +8,12 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/modal';
-import { Button, Textarea } from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 import { CheckboxGroup } from '../../../../../shared/CheckboxGroup'
 import { ButtonHotkey } from "../../../../../shared/ButtonHotkey";
 import { useHotkeysHandler } from "../../../../../../helpers/useHotkeysHandler";
 import { ListNavigation } from "../../../../../../helpers/ListNavigation";
+import { Textarea } from '../../../../../shared/Textarea';
 
 type GoalCreationCloseSubmitModalProps = {
   onClose(): void;
@@ -37,6 +38,7 @@ export const GoalWontDoSubmitModal = observer(
     const [otherReason, setOtherReason] = useState<string>('');
 
     const initialRef = useRef(null);
+    const textareaRef = useRef(null);
 
     const handleSubmit = () => {
       setIsSubmitted(true);
@@ -50,7 +52,17 @@ export const GoalWontDoSubmitModal = observer(
       setOtherReason(e.target.value)
     };
     const setTextareaRef = (ref: HTMLTextAreaElement) => {
-      GOAL_WONT_DO_SUBMIT_MODAL_NAVIGATION.setRefs(WONT_DO_SUBMIT_REASONS.length, ref)
+      GOAL_WONT_DO_SUBMIT_MODAL_NAVIGATION.setRefs(WONT_DO_SUBMIT_REASONS.length, ref);
+      textareaRef.current = ref;
+    };
+    const handleTextareaKeyDown = (e: KeyboardEvent) => {
+      e.stopPropagation();
+
+      if (!textareaRef.current.selectionStart && e.key === 'ArrowUp') {
+        GOAL_WONT_DO_SUBMIT_MODAL_NAVIGATION.refs[WONT_DO_SUBMIT_REASONS.length - 1].focus();
+      } else if (e.key === 'ArrowDown' && (!textareaRef.current.selectionStart || textareaRef.current.selectionStart === otherReason.length)) {
+        GOAL_WONT_DO_SUBMIT_MODAL_NAVIGATION.refs[0].focus();
+      }
     };
 
     useHotkeysHandler({ SAVE: ['meta+enter'] }, { SAVE: handleSubmit });
@@ -79,16 +91,11 @@ export const GoalWontDoSubmitModal = observer(
             {reason === WONT_DO_SUBMIT_OTHER_REASON && (
               <Textarea
                 ref={setTextareaRef}
-                maxLength={200}
-                size='lg'
-                resize='none'
-                value={otherReason}
-                placeholder='Write your reason'
                 onChange={handleOtherReasonChange}
-                borderColor='gray.200'
-                _placeholder={{
-                  color: 'gray.400'
-                }}
+                onKeyDown={handleTextareaKeyDown}
+                value={otherReason}
+                maxLength={200}
+                placeholder='Write your reason'
               />
             )}
           </ModalBody>
