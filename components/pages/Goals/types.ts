@@ -26,6 +26,7 @@ export type GoalData = {
   descriptionId?: string;
   icon?: GoalIconData;
   status: GoalStatus;
+  wontDoReason?: string;
 };
 
 export enum GoalStatus {

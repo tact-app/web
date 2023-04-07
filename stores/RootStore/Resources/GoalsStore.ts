@@ -1,6 +1,6 @@
 import { RootStore } from '../index';
 import { makeAutoObservable, toJS } from 'mobx';
-import { GoalData } from '../../../components/pages/Goals/types';
+import { GoalData, GoalStatus } from '../../../components/pages/Goals/types';
 import { DescriptionData } from '../../../types/description';
 import { TaskData } from "../../../components/shared/TasksList/types";
 import { cloneDeep } from 'lodash';
@@ -44,10 +44,12 @@ export class GoalsStore {
   };
 
   update = async ({
-    goal,
+    goal: goalToUpdate,
     description,
     tasksData,
   }: UpdateOrCreateGoalParams) => {
+    const goal = goalToUpdate.status === GoalStatus.WONT_DO ? goalToUpdate : { ...goalToUpdate, wontDoReason: '' };
+
     this.map[goal.id] = goal;
     await this.root.api.goals.update({ id: goal.id, fields: goal });
 

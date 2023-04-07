@@ -8,7 +8,7 @@ import { ErrorTypes, Validator } from "../../../../../helpers/Validator";
 
 export type GoalWontDoSubmitModalProps = {
   onClose(): void;
-  onSubmit(): void;
+  onSubmit(reason: string): void;
 };
 
 export class GoalWontDoSubmitModalStore {
@@ -48,7 +48,7 @@ export class GoalWontDoSubmitModalStore {
     this.validator.updateIsSubmitted(true);
 
     if (this.validator.areAllFieldsValid) {
-      this.callbacks?.onSubmit();
+      this.callbacks?.onSubmit(this.otherReason || this.reason);
     }
   };
 

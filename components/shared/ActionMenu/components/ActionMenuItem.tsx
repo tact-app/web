@@ -1,5 +1,5 @@
 import { Button, chakra, forwardRef } from "@chakra-ui/react";
-import React, { PropsWithChildren, useCallback } from "react";
+import React, { PropsWithChildren, useCallback, SyntheticEvent } from "react";
 import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useActionMenuStore } from "../store";
@@ -26,7 +26,9 @@ export const ActionMenuItem = forwardRef(
   ) => {
     const store = useActionMenuStore();
 
-    const handleClick = useCallback(() => {
+    const handleClick = useCallback((e: SyntheticEvent) => {
+      e.stopPropagation();
+
       store.closeMenu();
       onClick();
     }, [store, onClick]);

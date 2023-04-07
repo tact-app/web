@@ -3,16 +3,19 @@ import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { ModalsController } from '../../../helpers/ModalsController';
 import { GoalCreationModal } from './modals/GoalCreationModal';
-import { GoalDataExtended, GoalState } from './types';
+import { GoalDataExtended, GoalState, GoalStatus } from './types';
 import { TaskData, TaskStatus } from "../../shared/TasksList/types";
 import { UpdateOrCreateGoalParams } from "../../../stores/RootStore/Resources/GoalsStore";
+import { GoalWontDoSubmitModal } from "./modals/GoalWontDoSubmitModal";
 
 export enum GoalsModalsTypes {
   CREATE_OR_UPDATE_GOAL,
+  WONT_DO_SUBMIT
 }
 
 const GoalsModals = {
   [GoalsModalsTypes.CREATE_OR_UPDATE_GOAL]: GoalCreationModal,
+  [GoalsModalsTypes.WONT_DO_SUBMIT]: GoalWontDoSubmitModal,
 };
 
 export class GoalsStore {
@@ -85,6 +88,19 @@ export class GoalsStore {
       type: GoalsModalsTypes.CREATE_OR_UPDATE_GOAL,
       props: {
         onSave: this.createGoal,
+        onClose: this.modals.close,
+      },
+    });
+  };
+
+  wontDoSubmitModalOpen = (goal: GoalDataExtended) => {
+    this.modals.open({
+      type: GoalsModalsTypes.WONT_DO_SUBMIT,
+      props: {
+        onSubmit: async (wontDoReason) => {
+          await this.updateGoalOnly({ ...goal, wontDoReason, status: GoalStatus.WONT_DO });
+          this.modals.close();
+        },
         onClose: this.modals.close,
       },
     });

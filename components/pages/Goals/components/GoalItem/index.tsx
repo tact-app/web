@@ -1,26 +1,24 @@
 import { observer } from 'mobx-react-lite';
-import { chakra, Box, Text, Flex, Tooltip } from '@chakra-ui/react';
+import { Box, chakra, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useGoalsStore } from '../../store';
 import { DatePicker } from "../../../../shared/DatePicker";
 import {
+  faAlarmClock,
+  faBoxArchive,
+  faCalendarCircleExclamation,
+  faCalendarClock,
   faCircleCheck,
   faCircleMinus,
-  faBoxArchive,
   faClone,
-  faPenToSquare,
-} from "@fortawesome/pro-regular-svg-icons";
-import {
-  faAlarmClock,
-  faCalendarClock,
-  faCalendarCircleExclamation,
-} from "@fortawesome/pro-light-svg-icons"
+  faSquareArrowUpRight,
+} from "@fortawesome/pro-light-svg-icons";
 import {
   faCircleCheck as faCircleCheckSolid,
   faCircleMinus as faCircleMinusSolid
 } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { GoalDataExtended, GoalState } from "../../types";
+import { GoalDataExtended, GoalState, GoalStatus } from "../../types";
 import { EmojiSelect } from "../../../../shared/EmojiSelect";
 import { ActionMenu } from "../../../../shared/ActionMenu";
 import { EditableTitle } from "../../../../shared/EditableTitle";
@@ -51,14 +49,29 @@ const GOAL_STATE_PARAMS = {
 export const GoalItem = observer(function GoalItem({ goal }: Props) {
   const store = useGoalsStore();
 
-  const handleEditGoal = () => store.editGoal(goal.id);
+  const handleOpenGoal = () => store.editGoal(goal.id);
 
   const actions = [
-    { icon: faCircleCheck, title: 'Complete', onClick: () => null, },
-    { icon: faCircleMinus, title: "Won't do", onClick: () => null, },
-    { icon: faPenToSquare, title: 'Edit', onClick: handleEditGoal, },
-    { icon: faClone, title: 'Duplicate', onClick: () => null, },
-    { icon: faBoxArchive, title: 'Archive', onClick: () => null, }
+    { icon: faSquareArrowUpRight, title: 'Open', command: '↵/⌥O', onClick: handleOpenGoal },
+    {
+      icon: faCircleCheck,
+      title: 'Done',
+      command: '⌥D',
+      hidden: goal.status === GoalStatus.DONE,
+      onClick: () => store.updateGoalOnly({
+        ...goal,
+        status: GoalStatus.DONE
+      }),
+    },
+    {
+      icon: faCircleMinus,
+      title: "Won't do",
+      command: '⌥W',
+      hidden: goal.status === GoalStatus.WONT_DO,
+      onClick: () => store.wontDoSubmitModalOpen(goal),
+    },
+    { icon: faClone, title: 'Clone', command: '⌥C', onClick: () => null, },
+    { icon: faBoxArchive, title: 'Archive', command: '⌥A', onClick: () => null, }
   ];
 
   const handleChangeStartDate = async (date: string) => {
@@ -101,7 +114,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       position='relative'
       cursor='pointer'
       height={124}
-      onClick={handleEditGoal}
+      onClick={handleOpenGoal}
     >
       <Flex>
         <EmojiSelect
@@ -169,6 +182,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
 
       <ActionMenu
         items={actions}
+        menuMinWidth={200}
         triggerButtonProps={(isOpen) => ({
           color: isOpen ? 'blue.400' : 'gray.500',
           position: 'absolute',

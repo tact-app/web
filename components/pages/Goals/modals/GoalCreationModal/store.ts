@@ -294,8 +294,8 @@ export class GoalCreationModalStore {
         this.modals.open({
           type: GoalCreationModalsTypes.WONT_DO_SUBMIT,
           props: {
-            onSubmit: async () => {
-              await this.handleUpdate({ status });
+            onSubmit: async (wontDoReason) => {
+              await this.handleUpdate({ status, wontDoReason });
               this.modals.close();
             },
             onClose: this.modals.close,
