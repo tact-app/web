@@ -1,4 +1,4 @@
-import { chakra, Checkbox, FormControl, List, ListItem, Text, Textarea } from "@chakra-ui/react";
+import { chakra, Checkbox, FormControl, List, ListItem, Text } from "@chakra-ui/react";
 import { FormError } from "../FormError";
 import React from "react";
 import { observer } from "mobx-react-lite";
@@ -64,12 +64,12 @@ export const CheckboxGroupView = observer(
     };
 
     return (
-      <FormControl isInvalid={store.isInvalid}>
+      <FormControl isInvalid={Boolean(store.error)}>
         <Text fontWeight='bold' fontSize='semibold' mb={4}>
           Chose reason
         </Text>
         <List>{store.items.map(renderItem)}</List>
-        <FormError inControl>{store.errorToDisplay}</FormError>
+        <FormError inControl>{store.error}</FormError>
       </FormControl>
     );
   }

@@ -13,7 +13,6 @@ export type CheckboxGroupCallbacks = {
 export type CheckboxGroupProps = CheckboxGroupCallbacks & {
   items: CheckboxGroupItem[];
   value?: CheckboxGroupItem['value'];
-  required?: boolean;
-  isSubmitted?: boolean;
+  error?: string;
   customListNavigation?: ListNavigation;
 };

@@ -4,7 +4,6 @@ import { SpaceCreationModal } from '../../../pages/Spaces/modals/SpaceCreationMo
 import { SpaceData } from '../../../pages/Spaces/types';
 import { RootStore } from '../../../../stores/RootStore';
 
-
 export enum ModalsTypes {
   ADD_GOAL,
   ADD_SPACE,

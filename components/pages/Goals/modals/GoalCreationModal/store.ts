@@ -16,7 +16,7 @@ import { GoalCreationModalProps, GoalCreationModalsTypes } from "./types";
 import { GoalCreationCloseSubmitModal } from "./modals/GoalCreationCloseSubmitModal";
 import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
 import { cloneDeep, isEqual } from "lodash";
-import { GoalWontDoSubmitModal } from "./modals/GoalWontDoSubmitModal";
+import { GoalWontDoSubmitModal } from "../GoalWontDoSubmitModal";
 
 export const colors = [
   'red.200',
