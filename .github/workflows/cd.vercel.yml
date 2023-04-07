@@ -2,23 +2,29 @@ name: Continuous delivery (Vercel)
 
 on:
   workflow_dispatch:
+    inputs:
+      reason:
+        type: string
+        default: manual healthcheck
+        required: true
 
   push:
     branches: [ main ]
     paths:
-      - .github/workflows/cd.vercel.yml
-      - .vercelignore
-      - .babelrc
-      - .eslintrc.json
-      - .npmrc
-      - .prettierrc
-      - package*.json
+      - '.github/workflows/cd.vercel.yml'
+      - '.vercelignore'
+      - '.babelrc'
+      - '.eslintrc.json'
+      - '.npmrc'
+      - '.prettierrc'
+      - 'package*.json'
       - '**.jsx?'
       - '**.tsx?'
     tags: [ '!*' ]
 
 jobs:
   deploy:
+    name: Deploying
     runs-on: ubuntu-latest
     if: github.actor != 'kamilsk'
 
@@ -27,26 +33,43 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout the repository
+        uses: actions/checkout@v3
         with: { fetch-depth: 0 }
-      - uses: actions/setup-node@v3
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v3
         with: { node-version: 16, cache: npm }
 
-      - run: npm install --global vercel@latest
-      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull for a specific environment
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build the project
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy the project
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
 
   notify:
+    name: Notifying
+    needs: [ deploy ]
     runs-on: ubuntu-latest
     if: failure() || success()
-    needs: [ deploy ]
 
     steps:
-      - uses: rtCamp/action-slack-notify@v2
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - name: Define notification message
+        id: message
+        uses: ./.github/actions/notify
+
+      - name: Send Slack notification
+        uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+          SLACK_FOOTER: made with ❤️ for everyone, OctoLab
           SLACK_ICON: https://github.com/github.png?size=64
-          SLACK_TITLE: '⚓️️ ${{ github.repository }}: ${{ github.workflow }}'
+          SLACK_MESSAGE: ${{ steps.message.outputs.txt }}
+          SLACK_TITLE: '🚀 ${{ github.repository }}: ${{ github.workflow }}'
           SLACK_USERNAME: GitHub Actions
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
