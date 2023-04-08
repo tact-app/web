@@ -26,6 +26,7 @@ export class GoalsStore {
     makeAutoObservable(this);
   }
 
+  currentDay = moment();
   keymap = {
     CREATE_GOAL: ['n'],
   };
@@ -73,16 +74,15 @@ export class GoalsStore {
           },
         },
       ],
-    }), {} as Record<string, GoalDataExtended[]>)
+    }), {} as Record<string, GoalDataExtended[]>);
   }
 
   getStateByDate = (startDate: string, targetDate: string) => {
-    const current = moment();
     const start = moment(startDate);
     const target = moment(targetDate);
 
-    const beforeStartDiff = start.diff(current, 'days');
-    const beforeTargetDiff = target.diff(current, 'days');
+    const beforeStartDiff = start.diff(this.currentDay, 'days');
+    const beforeTargetDiff = target.diff(this.currentDay, 'days');
 
     if (startDate && beforeStartDiff <= 14 && beforeStartDiff > 0) {
       return GoalState.IS_COMING;

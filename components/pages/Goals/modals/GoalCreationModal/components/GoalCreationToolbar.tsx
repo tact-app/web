@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button, chakra, Flex, HStack, Text } from '@chakra-ui/react';
+import {
+  Button,
+  chakra,
+  Flex,
+  HStack,
+  Text
+} from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
 import { ButtonHotkey } from "../../../../../shared/ButtonHotkey";
 import { faBoxArchive, faComment, faSquareInfo, faXmark, } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BackArrowIcon } from '../../../../../shared/Icons/BackArrowIcon';
 import { NextPrevItemController } from "../../../../../shared/NextPrevItemController/NextPrevItemController";
-import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
 import { GoalCreationStatusSelect } from "./GoalCreationStatusSelect";
-import { Tooltip } from "../../../../../shared/Tooltip";
+import { GoalCreationToolbarButton } from "./GoalCreationToolbarButton";
+import { GoalCreationToolbarPopover } from "./GoalCreationToolbarPopover";
 
 export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
   const store = useGoalCreationModalStore();
+
+  const [isCommentPopoverOpen, setIsCommentPopoverOpen] = useState(false);
+  const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState(false);
 
   const renderContentForCreate = () => [
     <Button
@@ -40,63 +48,15 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
     </Button>
   ];
 
-  const renderButton = ({
-    onClick,
-    icon,
-    withMargin,
-    iconFontSize = 20,
-    tooltipLabel,
-    tooltipHotkey,
-    disableTooltip,
-  }: {
-    onClick?(): void,
-    icon: IconDefinition;
-    withMargin?: boolean ;
-    iconFontSize?: number;
-    tooltipLabel?: string;
-    tooltipHotkey?: string;
-    disableTooltip?: boolean;
-  }) => {
-    const content = (
-      <Button
-        variant='ghost'
-        size='xs'
-        color='gray.500'
-        pl={0.5}
-        pr={0.5}
-        h={7}
-        ml={withMargin ? 0.5 : 0}
-        aria-label={tooltipLabel}
-        onClick={onClick}
-      >
-        <FontAwesomeIcon
-          fontSize={iconFontSize}
-          icon={icon}
-          fixedWidth
-        />
-      </Button>
-    );
-
-    if (disableTooltip) {
-      return content;
-    }
-
-    return (
-      <Tooltip label={tooltipLabel} hotkey={tooltipHotkey}>
-        {content}
-      </Tooltip>
-    );
-  }
-
   const renderContentForUpdate = () => [
     <Flex key='left-content' alignItems='center'>
-      {renderButton({
-        onClick: store.handleBack,
-        icon: faXmark,
-        tooltipLabel: 'Close',
-        disableTooltip: true,
-        iconFontSize: 22,
-      })}
+      <GoalCreationToolbarButton
+        disableTooltip
+        iconFontSize={22}
+        tooltipLabel='Close'
+        icon={faXmark}
+        onClick={store.handleBack}
+      />
       <chakra.div w={0.5} h={4} bg='gray.200' borderRadius={4} mr={1} ml={1} />
       <NextPrevItemController
         hasPreviousItem={store.currentGoalIndex > 0}
@@ -110,25 +70,45 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
     </Flex>,
     <Flex key='right-content'>
       <GoalCreationStatusSelect />
-      {renderButton({
-        icon: faComment,
-        withMargin: true,
-        tooltipLabel: 'Comment',
-        tooltipHotkey: '⌥C',
-      })}
-      {renderButton({
-        icon: faSquareInfo,
-        withMargin: true,
-        tooltipLabel: 'Info',
-        tooltipHotkey: '⌥I',
-      })}
-      {renderButton({
-        icon: faBoxArchive,
-        withMargin: true,
-        tooltipLabel: store.goal.isArchived ? 'Unarchive' : 'Archive',
-        tooltipHotkey: '⌥A',
-        onClick: () => store.handleUpdate({ isArchived: !store.goal.isArchived })
-      })}
+      <GoalCreationToolbarPopover
+        isOpen={isCommentPopoverOpen}
+        onClose={() => setIsCommentPopoverOpen(false)}
+        onOpen={() => setIsCommentPopoverOpen(true)}
+        trigger={
+          <GoalCreationToolbarButton
+            tooltipHotkey='⌥C'
+            tooltipLabel='Comment'
+            icon={faComment}
+            withMargin
+          />
+        }
+        content={
+          <>TEST</>
+        }
+      />
+      <GoalCreationToolbarPopover
+        isOpen={isInfoPopoverOpen}
+        onClose={() => setIsInfoPopoverOpen(false)}
+        onOpen={() => setIsInfoPopoverOpen(true)}
+        trigger={
+          <GoalCreationToolbarButton
+            tooltipHotkey='⌥I'
+            tooltipLabel='Info'
+            icon={faSquareInfo}
+            withMargin
+          />
+        }
+        content={
+          <>TEST</>
+        }
+      />
+      <GoalCreationToolbarButton
+        tooltipHotkey='⌥A'
+        tooltipLabel={store.goal.isArchived ? 'Unarchive' : 'Archive'}
+        icon={faBoxArchive}
+        withMargin
+        onClick={() => store.handleUpdate({ isArchived: !store.goal.isArchived })}
+      />
     </Flex>
   ];
 
