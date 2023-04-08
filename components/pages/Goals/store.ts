@@ -5,7 +5,7 @@ import { ModalsController } from '../../../helpers/ModalsController';
 import { GoalCreationModal } from './modals/GoalCreationModal';
 import { GoalDataExtended, GoalState, GoalStatus } from './types';
 import { TaskData, TaskStatus } from "../../shared/TasksList/types";
-import { UpdateOrCreateGoalParams } from "../../../stores/RootStore/Resources/GoalsStore";
+import { CreateGoalParams } from "../../../stores/RootStore/Resources/GoalsStore";
 import { GoalWontDoSubmitModal } from "./modals/GoalWontDoSubmitModal";
 
 export enum GoalsModalsTypes {
@@ -95,14 +95,14 @@ export class GoalsStore {
 
   wontDoSubmitModalOpen = (goal: GoalDataExtended) => {
     if (goal.status === GoalStatus.WONT_DO) {
-      return this.updateGoalOnly({ ...goal, status: GoalStatus.TODO });
+      return this.updateGoal({ ...goal, status: GoalStatus.TODO });
     }
 
     this.modals.open({
       type: GoalsModalsTypes.WONT_DO_SUBMIT,
       props: {
         onSubmit: async (wontDoReason) => {
-          await this.updateGoalOnly({ ...goal, wontDoReason, status: GoalStatus.WONT_DO });
+          await this.updateGoal({ ...goal, wontDoReason, status: GoalStatus.WONT_DO });
           this.modals.close();
         },
         onClose: this.modals.close,
@@ -118,9 +118,14 @@ export class GoalsStore {
     this.modals.open({
       type: GoalsModalsTypes.CREATE_OR_UPDATE_GOAL,
       props: {
-        onSave: async (params: UpdateOrCreateGoalParams<GoalDataExtended>) => {
-          await this.updateGoal(params);
-          this.modals.close();
+        onSave: async (params: Partial<CreateGoalParams<GoalDataExtended>>) => {
+          if (params.description) {
+            await this.root.resources.goals.updateDescription(params.description);
+          }
+
+          if (params.goal) {
+            await this.updateGoal(params.goal);
+          }
         },
         onClose: this.modals.close,
         goals: Object.values(this.extendedGoals).flat(),
@@ -129,22 +134,15 @@ export class GoalsStore {
     });
   };
 
-  updateGoal = async ({
-    goal: { customFields, ...goal },
-    ...otherParams
-  }: UpdateOrCreateGoalParams<GoalDataExtended>) => {
-    await this.root.resources.goals.update({ goal, ...otherParams, });
+  updateGoal = async ({ customFields, ...goal }: GoalDataExtended) => {
+    await this.root.resources.goals.update(goal);
     await this.loadTaskList();
-  };
-
-  updateGoalOnly = async (goal: GoalDataExtended) => {
-    return this.updateGoal({ goal })
   };
 
   createGoal = async ({
     goal: { customFields, ...goal },
     ...otherParams
-  }: UpdateOrCreateGoalParams<GoalDataExtended>) => {
+  }: CreateGoalParams<GoalDataExtended>) => {
     await this.root.resources.goals.add({ goal, ...otherParams });
     await this.loadTaskList();
     this.modals.close();

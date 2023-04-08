@@ -43,6 +43,7 @@ export const GoalCreationDescription = observer(
                 placeholder='Goal Name'
                 _placeholder={{ color: 'gray.400' }}
                 onChange={store.handleTitleChange}
+                onBlur={store.handleGoalParamBlur}
                 variant='flushed'
                 fontSize='md'
                 fontWeight='semibold'
@@ -81,7 +82,7 @@ export const GoalCreationDescription = observer(
                   pr: 10,
                 }}
                 onUpdate={store.handleDescriptionChange}
-                // onSave={store.handleSave}
+                onBlur={store.handleGoalParamBlur}
               />
             </Box>
           )}

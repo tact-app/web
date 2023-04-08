@@ -1,9 +1,9 @@
 import { GoalData } from "../../types";
-import { UpdateOrCreateGoalParams } from "../../../../../stores/RootStore/Resources/GoalsStore";
+import { CreateGoalParams } from "../../../../../stores/RootStore/Resources/GoalsStore";
 
 export type GoalCreationModalProps = {
   onClose: () => void;
-  onSave: (data: UpdateOrCreateGoalParams) => Promise<void>;
+  onSave: (data: Partial<CreateGoalParams>) => Promise<void>;
   goalId?: string;
   goals?: GoalData[];
 };

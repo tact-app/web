@@ -65,7 +65,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       icon: faCircleCheck,
       title: isDone ? 'Unmark as done' : 'Done',
       command: '⌥D',
-      onClick: () => store.updateGoalOnly({
+      onClick: () => store.updateGoal({
         ...goal,
         status: isDone ? GoalStatus.TODO : GoalStatus.DONE,
       }),
@@ -86,7 +86,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       icon: faBoxArchive,
       title: goal.isArchived ? 'Unarchive' : 'Archive',
       command: '⌥A',
-      onClick: () => store.updateGoalOnly({
+      onClick: () => store.updateGoal({
         ...goal,
         isArchived: !goal.isArchived
       }),
@@ -94,7 +94,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
   ];
 
   const handleChangeStartDate = async (date: string) => {
-    return store.updateGoalOnly({
+    return store.updateGoal({
       ...goal,
       startDate: date,
       targetDate: DatePickerHelpers.isStartDateAfterEndDate(date, goal.targetDate)
@@ -103,16 +103,16 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
     });
   };
   const handleChangeTargetDate = (date: string) => {
-    return store.updateGoalOnly({ ...goal, targetDate: date });
+    return store.updateGoal({ ...goal, targetDate: date });
   };
   const handleChangeTitle = (title: string) => {
-    return store.updateGoalOnly({ ...goal, title });
+    return store.updateGoal({ ...goal, title });
   };
   const handleChangeIcon = (icon: string) => {
-    return store.updateGoalOnly({ ...goal, icon: { ...goal.icon, value: icon } });
+    return store.updateGoal({ ...goal, icon: { ...goal.icon, value: icon } });
   };
   const handleColorChange = (color: string) => {
-    return store.updateGoalOnly({ ...goal, icon: { ...goal.icon, color } });
+    return store.updateGoal({ ...goal, icon: { ...goal.icon, color } });
   };
 
 

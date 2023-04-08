@@ -26,7 +26,7 @@ export type EditorProps = {
 
   editorRef?: (editor: Editor) => void;
   onFocus?: () => void;
-  onBlur?: () => void;
+  onBlur?: (event: FocusEvent) => void;
   onSave?: () => void;
   onLeave?: (direction: NavigationDirections) => void;
   onUpdate?: (content: JSONContent) => void;
@@ -146,11 +146,7 @@ class EditorStore {
   };
 
   handleBlur = ({ event }: { event: FocusEvent }) => {
-    if (event.relatedTarget) {
-      return;
-    }
-
-    this.onBlur?.();
+    this.onBlur?.(event);
   };
 
   handleFocus = () => {

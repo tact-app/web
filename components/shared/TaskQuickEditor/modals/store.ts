@@ -3,6 +3,7 @@ import { GoalCreationModal } from '../../../pages/Goals/modals/GoalCreationModal
 import { SpaceCreationModal } from '../../../pages/Spaces/modals/SpaceCreationModal';
 import { SpaceData } from '../../../pages/Spaces/types';
 import { RootStore } from '../../../../stores/RootStore';
+import { CreateGoalParams } from "../../../../stores/RootStore/Resources/GoalsStore";
 
 export enum ModalsTypes {
   ADD_GOAL,
@@ -22,7 +23,7 @@ export class TasksEditorModals {
     this.controller.open({
       type: ModalsTypes.ADD_GOAL,
       props: {
-        onSave: async (data) => {
+        onSave: async (data: CreateGoalParams) => {
           await this.root.resources.goals.add(data);
           this.controller.close();
           this.root.toggleModal(false);

@@ -188,10 +188,14 @@ export class GoalCreationModalStore {
 
   handleEmojiSelect = (emoji: string) => {
     this.goal.icon.value = emoji;
+
+    this.handleUpdate({ icon: { ...this.goal.icon, value: emoji } });
   };
 
   handleColorSelect = (color: string) => {
     this.goal.icon.color = color;
+
+    this.handleUpdate({ icon: { ...this.goal.icon, color } });
   };
 
   handleTitleChange = (e: SyntheticEvent) => {
@@ -200,6 +204,8 @@ export class GoalCreationModalStore {
 
   handleSpaceChange = (value: string) => {
     this.goal.spaceId = value;
+
+    this.handleUpdate({ spaceId: value });
   }
 
   handleStartDateChange = (value: string) => {
@@ -217,6 +223,8 @@ export class GoalCreationModalStore {
   handleDescriptionChange = (value: JSONContent) => {
     this.description.content = value;
   };
+
+  handleGoalParamBlur = () => this.handleUpdate();
 
   handleNavigateToSpace = (spaceId: string) => {
     this.handleClose(() => this.root.router.push(`/inbox/${spaceId}`));
@@ -239,7 +247,6 @@ export class GoalCreationModalStore {
   };
 
   handleSetGoal = async (index: number) => {
-    console.log(this.goals, index, this.goals[index])
     const goal = cloneDeep(this.goals[index]);
 
     this.goal = goal;
@@ -331,11 +338,17 @@ export class GoalCreationModalStore {
     }
   };
 
-  handleUpdate = async (data: Partial<GoalData>) => {
+  handleUpdate = async (data?: Partial<GoalData>) => {
+    if (!this.isUpdating) {
+      return;
+    }
+
     const updatedGoal = { ...this.goal, ...data, };
 
-    await this.root.resources.goals.update({ goal: updatedGoal });
+    await this.onSave({ goal: updatedGoal });
+
     this.goal = updatedGoal;
+    this.goals[this.currentGoalIndex] = updatedGoal;
   };
 
   get sensors() {
@@ -412,7 +425,6 @@ export class GoalCreationModalStore {
 
     const goalIndex = goals.findIndex((goal) => goal.id === goalId);
     const goal = { ...this.goal, ...goals[goalIndex] };
-    console.log(goals, goalIndex)
 
     this.currentGoalIndex = goalIndex;
     this.goal = goal;

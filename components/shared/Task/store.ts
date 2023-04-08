@@ -131,7 +131,11 @@ class TaskStore {
     clearTimeout(this.descriptionBlurTimeout);
   };
 
-  handleDescriptionBlur = () => {
+  handleDescriptionBlur = (event?: FocusEvent) => {
+    if (!event || !event.relatedTarget) {
+      this.isEditorFocused = false;
+    }
+
     this.descriptionBlurTimeout = setTimeout(
       this.saveAndExit,
       200
@@ -151,7 +155,6 @@ class TaskStore {
 
   saveAndExit = () => {
     this.saveDescription();
-    this.isEditorFocused = false;
 
     if (!this.quickEditor.isInputFocused) {
       this.callbacks.onBlur?.();
