@@ -31,7 +31,7 @@ export const NextPrevItemController = observer(
     onPrevItem,
     onNextItem,
   }: Props) {
-    const getNextIcon = () => {
+    const getPrevIcon = () => {
       switch (iconStyle) {
         case 'light':
           return faAngleUpLight;
@@ -40,7 +40,7 @@ export const NextPrevItemController = observer(
           return faAngleUpSolid;
       }
     };
-    const getPrevIcon = () => {
+    const getNextIcon = () => {
       switch (iconStyle) {
         case 'light':
           return faAngleDownLight;
@@ -52,33 +52,33 @@ export const NextPrevItemController = observer(
 
     return (
       <Flex color={color}>
-        {Boolean(onNextItem) && (
-          <IconButton
-            aria-label='Next'
-            size='xs'
-            isDisabled={!hasNextItem}
-            variant='ghost'
-            onClick={onNextItem}
-          >
-            <FontAwesomeIcon
-              fontSize={iconFontSize}
-              icon={getNextIcon()}
-              fixedWidth
-            />
-          </IconButton>
-        )}
         {Boolean(onPrevItem) && (
           <IconButton
             aria-label='Prev'
             size='xs'
             isDisabled={!hasPreviousItem}
             variant='ghost'
-            mr={0.5}
             onClick={onPrevItem}
           >
             <FontAwesomeIcon
               fontSize={iconFontSize}
               icon={getPrevIcon()}
+              fixedWidth
+            />
+          </IconButton>
+        )}
+        {Boolean(onNextItem) && (
+          <IconButton
+            aria-label='Next'
+            size='xs'
+            isDisabled={!hasNextItem}
+            variant='ghost'
+            mr={0.5}
+            onClick={onNextItem}
+          >
+            <FontAwesomeIcon
+              fontSize={iconFontSize}
+              icon={getNextIcon()}
               fixedWidth
             />
           </IconButton>

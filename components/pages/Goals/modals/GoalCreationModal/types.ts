@@ -4,8 +4,8 @@ import { UpdateOrCreateGoalParams } from "../../../../../stores/RootStore/Resour
 export type GoalCreationModalProps = {
   onClose: () => void;
   onSave: (data: UpdateOrCreateGoalParams) => Promise<void>;
-  editMode?: boolean;
-  goal?: GoalData;
+  goalId?: string;
+  goals?: GoalData[];
 };
 
 export enum GoalCreationModalsTypes {

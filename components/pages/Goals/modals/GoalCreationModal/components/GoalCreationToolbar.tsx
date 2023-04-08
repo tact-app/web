@@ -99,10 +99,10 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
       })}
       <chakra.div w={0.5} h={4} bg='gray.200' borderRadius={4} mr={1} ml={1} />
       <NextPrevItemController
-        hasPreviousItem={true}
-        hasNextItem={true}
-        onNextItem={() => null}
-        onPrevItem={() => null}
+        hasPreviousItem={store.currentGoalIndex > 0}
+        hasNextItem={store.currentGoalIndex < store.goals.length - 1}
+        onNextItem={store.handleNextGoal}
+        onPrevItem={store.handlePrevGoal}
         color='gray.500'
         iconFontSize={20}
         iconStyle='light'

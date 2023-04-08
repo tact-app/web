@@ -51,23 +51,29 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
 
   const handleOpenGoal = () => store.editGoal(goal.id);
 
+  const isDone = goal.status === GoalStatus.DONE;
+  const isWontDo = goal.status === GoalStatus.WONT_DO;
+
   const actions = [
-    { icon: faSquareArrowUpRight, title: 'Open', command: '↵/⌥O', onClick: handleOpenGoal },
+    {
+      icon: faSquareArrowUpRight,
+      title: 'Open',
+      command: '↵/⌥O',
+      onClick: handleOpenGoal
+    },
     {
       icon: faCircleCheck,
-      title: 'Done',
+      title: isDone ? 'Unmark as done' : 'Done',
       command: '⌥D',
-      hidden: goal.status === GoalStatus.DONE,
       onClick: () => store.updateGoalOnly({
         ...goal,
-        status: GoalStatus.DONE
+        status: isDone ? GoalStatus.TODO : GoalStatus.DONE,
       }),
     },
     {
       icon: faCircleMinus,
-      title: "Won't do",
+      title: isWontDo ? "Unmark as won't do" : "Won't do",
       command: '⌥W',
-      hidden: goal.status === GoalStatus.WONT_DO,
       onClick: () => store.wontDoSubmitModalOpen(goal),
     },
     {
@@ -76,7 +82,15 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       command: '⌥C',
       onClick: () => store.cloneGoal(goal),
     },
-    { icon: faBoxArchive, title: 'Archive', command: '⌥A', onClick: () => null, }
+    {
+      icon: faBoxArchive,
+      title: goal.isArchived ? 'Unarchive' : 'Archive',
+      command: '⌥A',
+      onClick: () => store.updateGoalOnly({
+        ...goal,
+        isArchived: !goal.isArchived
+      }),
+    }
   ];
 
   const handleChangeStartDate = async (date: string) => {
@@ -188,7 +202,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
 
       <ActionMenu
         items={actions}
-        menuMinWidth={200}
+        menuMinWidth={250}
         triggerButtonProps={(isOpen) => ({
           color: isOpen ? 'blue.400' : 'gray.500',
           position: 'absolute',

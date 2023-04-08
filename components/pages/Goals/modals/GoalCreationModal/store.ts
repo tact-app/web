@@ -85,6 +85,8 @@ export class GoalCreationModalStore {
   isDescriptionLoading: boolean = true;
   isGoalCreatingOrUpdating: boolean = false;
   draggingTask: TaskData | null = null;
+  goals: GoalData[] = [];
+  currentGoalIndex: number = 0;
   error: string = '';
 
   goal: GoalData = {
@@ -151,7 +153,7 @@ export class GoalCreationModalStore {
   }
 
   get isGoalFinished() {
-    return this.goal.status !== GoalStatus.TODO;
+    return this.goal.status !== GoalStatus.TODO || this.goal.isArchived;
   }
 
   handleCloseTask = () => {
@@ -226,6 +228,24 @@ export class GoalCreationModalStore {
     } else {
       this.closeEmojiPicker();
     }
+  };
+
+  handleNextGoal = () => {
+    this.handleSetGoal(this.currentGoalIndex + 1);
+  };
+
+  handlePrevGoal = () => {
+    this.handleSetGoal(this.currentGoalIndex - 1);
+  };
+
+  handleSetGoal = async (index: number) => {
+    console.log(this.goals, index, this.goals[index])
+    const goal = cloneDeep(this.goals[index]);
+
+    this.goal = goal;
+    this.currentGoalIndex = index;
+
+    await this.loadDescription(goal);
   };
 
   handleClose = (submitCb?: () => void) => {
@@ -341,6 +361,24 @@ export class GoalCreationModalStore {
     this.draggingTask = null;
   };
 
+  loadDescription = async (goal: GoalData) => {
+    if (goal.descriptionId) {
+      this.isDescriptionLoading = true;
+      const description =
+        (await this.root.api.descriptions.get(goal.descriptionId)) || undefined;
+
+      runInAction(() => {
+        this.description = description;
+        this.initialDescription = cloneDeep(description);
+        this.isDescriptionLoading = false;
+      });
+    }
+
+    runInAction(() => {
+      this.isDescriptionLoading = false;
+    });
+  }
+
   init = async () => {
     await EmojiStore.loadIfNotLoaded();
 
@@ -367,36 +405,25 @@ export class GoalCreationModalStore {
     }
   };
 
-  update = async (props: GoalCreationModalProps) => {
-    this.onClose = props.onClose;
-    this.onSave = props.onSave;
-    const goal = { ...this.goal, ...props.goal };
+  update = async ({ onClose, onSave, goals = [], goalId }: GoalCreationModalProps) => {
+    this.onClose = onClose;
+    this.onSave = onSave;
+    this.goals = goals;
 
+    const goalIndex = goals.findIndex((goal) => goal.id === goalId);
+    const goal = { ...this.goal, ...goals[goalIndex] };
+    console.log(goals, goalIndex)
+
+    this.currentGoalIndex = goalIndex;
     this.goal = goal;
     this.initialGoal = cloneDeep(goal);
 
 
-    if (props.goal?.id) {
+    if (goalId) {
       this.isUpdating = true;
     }
 
-    if (this.goal.descriptionId) {
-      this.isDescriptionLoading = true;
-      const description =
-        (await this.root.api.descriptions.get(
-          this.goal.descriptionId
-        )) || undefined;
-
-      runInAction(() => {
-        this.description = description;
-        this.initialDescription = cloneDeep(description);
-        this.isDescriptionLoading = false;
-      });
-    }
-
-    runInAction(() => {
-      this.isDescriptionLoading = false;
-    });
+    await this.loadDescription(goal);
   };
 }
 

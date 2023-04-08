@@ -7,7 +7,6 @@ import { GoalDataExtended, GoalState, GoalStatus } from './types';
 import { TaskData, TaskStatus } from "../../shared/TasksList/types";
 import { UpdateOrCreateGoalParams } from "../../../stores/RootStore/Resources/GoalsStore";
 import { GoalWontDoSubmitModal } from "./modals/GoalWontDoSubmitModal";
-import { v4 as uuidv4 } from 'uuid';
 
 export enum GoalsModalsTypes {
   CREATE_OR_UPDATE_GOAL,
@@ -95,6 +94,10 @@ export class GoalsStore {
   };
 
   wontDoSubmitModalOpen = (goal: GoalDataExtended) => {
+    if (goal.status === GoalStatus.WONT_DO) {
+      return this.updateGoalOnly({ ...goal, status: GoalStatus.TODO });
+    }
+
     this.modals.open({
       type: GoalsModalsTypes.WONT_DO_SUBMIT,
       props: {
@@ -120,8 +123,8 @@ export class GoalsStore {
           this.modals.close();
         },
         onClose: this.modals.close,
-        editMode: true,
-        goal: this.root.resources.goals.map[goalId],
+        goals: Object.values(this.extendedGoals).flat(),
+        goalId,
       },
     });
   };
