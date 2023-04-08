@@ -49,49 +49,6 @@ export class GoalsStore {
 
     this.map[goal.id] = goal;
     await this.root.api.goals.update({ id: goal.id, fields: goal });
-    //
-    // if (tasksData?.tasks?.length) {
-    //   const taskList = await this.root.api.tasks.list(goal.id);
-    //
-    //   const tasksIds = tasksData.tasks.map((task) => task.id);
-    //
-    //   const tasksToDelete = taskList.order.filter((task) => !tasksIds.includes(task));
-    //   const { tasksToUpdate, tasksToCreate } = tasksData.tasks.reduce((acc, task) => {
-    //     if (taskList.tasks[task.id]) {
-    //       acc.tasksToUpdate.push(task);
-    //     } else {
-    //       acc.tasksToCreate.push({ ...task, goalId: goal.id, spaceId: goal.spaceId });
-    //     }
-    //
-    //     return acc;
-    //   }, { tasksToUpdate: [] as TaskData[], tasksToCreate: [] as TaskData[] });
-    //
-    //   await this.root.api.tasks.delete(tasksToDelete);
-    //   await Promise.all(tasksToUpdate.map((task) => this.root.api.tasks.update({
-    //     id: task.id,
-    //     fields: task,
-    //   })));
-    //   await this.root.api.tasks.createBulk(goal.id, tasksToCreate);
-    //
-    //   if (tasksData.descriptions?.length) {
-    //     await Promise.all(
-    //       tasksData.descriptions.map((description) =>
-    //         this.updateDescription(description)
-    //       )
-    //     );
-    //   }
-    //
-    //   if (tasksData.order?.length) {
-    //     await this.root.api.tasks.orderReset({
-    //       listId: goal.id,
-    //       order: cloneDeep(tasksData.order),
-    //     });
-    //   }
-    // }
-    //
-    // if (description) {
-    //   await this.updateDescription(description);
-    // }
   };
 
   add = async ({

@@ -7,6 +7,7 @@ import { GoalDataExtended, GoalState, GoalStatus } from './types';
 import { TaskData, TaskStatus } from "../../shared/TasksList/types";
 import { CreateGoalParams } from "../../../stores/RootStore/Resources/GoalsStore";
 import { GoalWontDoSubmitModal } from "./modals/GoalWontDoSubmitModal";
+import moment from "moment";
 
 export enum GoalsModalsTypes {
   CREATE_OR_UPDATE_GOAL,
@@ -68,18 +69,29 @@ export class GoalsStore {
             wontDoTasks: this.taskListByGoal[id]?.[TaskStatus.WONT_DO] ?? [],
             toDoTasks: this.taskListByGoal[id]?.[TaskStatus.TODO] ?? [],
             allTasks: this.taskListByGoal[id]?.all ?? [],
-            state: index === 1
-              ? GoalState.IS_COMING
-              : index === 2
-                ? GoalState.TIME_TO_ACHIEVE
-                : index === 3
-                  ? GoalState.END_DATE_ALREADY_PASSED
-                  : undefined
+            state: this.getStateByDate(goal.startDate, goal.targetDate),
           },
         },
       ],
     }), {} as Record<string, GoalDataExtended[]>)
   }
+
+  getStateByDate = (startDate: string, targetDate: string) => {
+    const current = moment();
+    const start = moment(startDate);
+    const target = moment(targetDate);
+
+    const beforeStartDiff = start.diff(current, 'days');
+    const beforeTargetDiff = target.diff(current, 'days');
+
+    if (startDate && beforeStartDiff <= 14 && beforeStartDiff > 0) {
+      return GoalState.IS_COMING;
+    } else if (targetDate && beforeStartDiff <= 0 && beforeTargetDiff <= 14 && beforeTargetDiff >= 0) {
+      return GoalState.TIME_TO_ACHIEVE;
+    } else if (targetDate && beforeTargetDiff < 0) {
+      return GoalState.END_DATE_ALREADY_PASSED;
+    }
+  };
 
   modals = new ModalsController(GoalsModals);
 

@@ -137,7 +137,7 @@ export class GoalCreationModalStore {
     return Boolean(
       !isEqual(this.goal, this.initialGoal) ||
       !isEqual(this.description, this.initialDescription) ||
-      !isEqual(this.listWithCreator.list.items, this.listWithCreator.list.initialItems) ||
+      Object.keys(this.listWithCreator.list.items).length ||
       Object.keys(this.tasksDescriptions).length
     );
   }
@@ -394,8 +394,7 @@ export class GoalCreationModalStore {
         return [...acc, ...category.emojis];
       }, []);
 
-      const randomEmojiKey: any =
-        emojiKeys[Math.floor(Math.random() * emojiKeys.length)];
+      const randomEmojiKey = emojiKeys[Math.floor(Math.random() * emojiKeys.length)];
       const randomEmoji = EmojiStore.emojiData.emojis[randomEmojiKey];
 
       if (randomEmoji) {
