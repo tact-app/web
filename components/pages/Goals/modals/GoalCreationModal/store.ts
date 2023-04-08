@@ -17,17 +17,7 @@ import { GoalCreationCloseSubmitModal } from "./modals/GoalCreationCloseSubmitMo
 import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
 import { cloneDeep, isEqual } from "lodash";
 import { GoalWontDoSubmitModal } from "../GoalWontDoSubmitModal";
-
-export const colors = [
-  'red.200',
-  'orange.100',
-  'orange.200',
-  'yellow.200',
-  'green.200',
-  'blue.200',
-  'teal.200',
-  'purple.200',
-];
+import { EMOJI_SELECT_COLORS } from "../../../../shared/EmojiSelect/constants";
 
 const GoalsModals = {
   [GoalCreationModalsTypes.CLOSE_SUBMIT]: GoalCreationCloseSubmitModal,
@@ -117,7 +107,7 @@ export class GoalCreationModalStore {
       hasPrevious: this.listWithCreator.list.hasPrevTask,
       isEditorFocused: this.listWithCreator.list.isEditorFocused,
       isExpanded: this.isTaskExpanded,
-      delayedCreation: true,
+      delayedCreation: !this.isUpdating,
       disableSpaceChange: true,
       disableGoalChange: true,
       disableReferenceChange: true,
@@ -257,7 +247,7 @@ export class GoalCreationModalStore {
 
   handleClose = (submitCb?: () => void) => {
     if (!this.isEmojiPickerOpen) {
-      if (this.isGoalParamsChanged) {
+      if (!this.isUpdating && this.isGoalParamsChanged) {
         this.modals.open({
           type: GoalCreationModalsTypes.CLOSE_SUBMIT,
           props: {
@@ -412,7 +402,7 @@ export class GoalCreationModalStore {
         this.goal.icon.value = randomEmoji.skins[0].native;
       }
 
-      this.goal.icon.color = colors[Math.floor(Math.random() * colors.length)];
+      this.goal.icon.color = EMOJI_SELECT_COLORS[Math.floor(Math.random() * EMOJI_SELECT_COLORS.length)];
 
       this.initialGoal = cloneDeep(this.goal);
     }
@@ -421,7 +411,7 @@ export class GoalCreationModalStore {
   update = async ({ onClose, onSave, goals = [], goalId }: GoalCreationModalProps) => {
     this.onClose = onClose;
     this.onSave = onSave;
-    this.goals = goals;
+    this.goals = cloneDeep(goals);
 
     const goalIndex = goals.findIndex((goal) => goal.id === goalId);
     const goal = { ...this.goal, ...goals[goalIndex] };
@@ -429,7 +419,6 @@ export class GoalCreationModalStore {
     this.currentGoalIndex = goalIndex;
     this.goal = goal;
     this.initialGoal = cloneDeep(goal);
-
 
     if (goalId) {
       this.isUpdating = true;

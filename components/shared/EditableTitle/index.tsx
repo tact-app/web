@@ -30,6 +30,10 @@ export function EditableTitle({
   const [isEditMode, setIsEditMode] = useState(false);
   const [value, setValue] = useState(initialValue);
 
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
   useEffect(() => () => clearTimeout(setCaretTimeout), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSave = () => {

@@ -127,7 +127,10 @@ export class GoalsStore {
             await this.updateGoal(params.goal);
           }
         },
-        onClose: this.modals.close,
+        onClose: () => {
+          this.modals.close();
+          this.loadTaskList();
+        },
         goals: Object.values(this.extendedGoals).flat(),
         goalId,
       },

@@ -38,6 +38,8 @@ export type TaskQuickEditorProps = {
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
   disableReferenceChange?: boolean;
+  defaultSpaceId?: string;
+  defaultGoalId?: string;
 };
 
 export enum Modes {
@@ -684,6 +686,8 @@ export class TaskQuickEditorStore {
     disableReferenceChange,
     input,
     isCreator,
+    defaultSpaceId: externalDefaultSpaceId,
+    defaultGoalId,
   }: TaskQuickEditorProps) => {
     this.callbacks = callbacks || {};
     this.keepFocus = keepFocus;
@@ -697,6 +701,10 @@ export class TaskQuickEditorStore {
 
     const defaultSpaceId = task?.spaceId || input?.spaceId;
 
+    if (defaultGoalId) {
+      this.modes.goal.selectedGoalId = defaultGoalId;
+    }
+
     if (task) {
       if (
         (this.task === null && task) ||
@@ -708,6 +716,8 @@ export class TaskQuickEditorStore {
       this.reset();
       this.task = task;
       this.restoreTask();
+    } else if (externalDefaultSpaceId) {
+      this.modes.space.selectedSpaceId = defaultSpaceId;
     } else if (this.root.resources.spaces.count) {
       if (defaultSpaceId) {
         this.modes.space.selectedSpaceId = defaultSpaceId;

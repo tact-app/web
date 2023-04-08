@@ -21,6 +21,8 @@ export type TasksListWithCreatorProps = TasksListProps & {
   disableReferenceChange?: boolean;
   taskListWrapperProps?: BoxProps;
   displayCreatorHelpAsTooltip?: boolean;
+  defaultGoalId?: string;
+  defaultSpaceId?: string;
 };
 
 export class TasksListWithCreatorStore {

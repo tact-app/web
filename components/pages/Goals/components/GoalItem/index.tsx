@@ -115,7 +115,6 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
     return store.updateGoal({ ...goal, icon: { ...goal.icon, color } });
   };
 
-
   return (
     <Box
       borderWidth={1}

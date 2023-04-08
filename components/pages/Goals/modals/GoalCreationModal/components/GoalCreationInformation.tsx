@@ -86,10 +86,12 @@ export const GoalCreationInformation = observer(
               listId={store.goal.id}
               tasksListCallbacks={store.tasksListCallbacks}
               forcedLoadTasks={store.isUpdating}
+              delayedCreation={!store.isUpdating}
               dnd
-              delayedCreation
               disableSpaceChange
               disableGoalChange
+              defaultSpaceId={store.goal.spaceId}
+              defaultGoalId={store.goal.id}
               disableReferenceChange
               displayCreatorHelpAsTooltip
               taskListWrapperProps={{

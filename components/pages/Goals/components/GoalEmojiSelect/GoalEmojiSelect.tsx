@@ -5,6 +5,7 @@ import { EmojiSelectProps } from "../../../../shared/EmojiSelect/types";
 import { GoalData, GoalStatus } from "../../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GOALS_STATUSES_COLORS, GOALS_STATUSES_ICONS } from "../../constants";
+import { observer } from "mobx-react-lite";
 
 type Props = Omit<EmojiSelectProps, 'icon' | 'color'> & {
   goal: GoalData;
@@ -12,7 +13,7 @@ type Props = Omit<EmojiSelectProps, 'icon' | 'color'> & {
   statusIconRight?: number;
 };
 
-export function GoalEmojiSelect({
+export const GoalEmojiSelect = observer(function GoalEmojiSelect({
   goal,
   statusIconBottom = -1,
   statusIconRight = -1,
@@ -46,4 +47,4 @@ export function GoalEmojiSelect({
       )}
     </chakra.div>
   );
-}
+});
