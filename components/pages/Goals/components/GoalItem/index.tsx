@@ -19,10 +19,10 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { GoalDataExtended, GoalState, GoalStatus } from "../../types";
-import { EmojiSelect } from "../../../../shared/EmojiSelect";
 import { ActionMenu } from "../../../../shared/ActionMenu";
 import { EditableTitle } from "../../../../shared/EditableTitle";
 import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
+import { GoalEmojiSelect } from "../GoalEmojiSelect/GoalEmojiSelect";
 
 type Props = {
   goal: GoalDataExtended
@@ -122,11 +122,12 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       onClick={handleOpenGoal}
     >
       <Flex>
-        <EmojiSelect
-          icon={goal.icon.value}
-          color={goal.icon.color}
+        <GoalEmojiSelect
+          goal={goal}
           size={12}
           iconFontSize='3xl'
+          statusIconBottom={-0.5}
+          statusIconRight={0.5}
           onIconChange={handleChangeIcon}
           onColorChange={handleColorChange}
         />

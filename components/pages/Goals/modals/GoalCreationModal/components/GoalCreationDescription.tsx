@@ -3,8 +3,8 @@ import { chakra, Box, Center, CircularProgress, Input, Flex, FormControl } from 
 import { useGoalCreationModalStore } from '../store';
 import { Editor } from '../../../../../shared/Editor';
 import React from "react";
-import { EmojiSelect } from "../../../../../shared/EmojiSelect";
 import { FormError } from "../../../../../shared/FormError";
+import { GoalEmojiSelect } from "../../../components/GoalEmojiSelect/GoalEmojiSelect";
 
 export const GoalCreationDescription = observer(
   function GoalCreationDescription() {
@@ -29,9 +29,8 @@ export const GoalCreationDescription = observer(
           pl={10}
           pr={10}
         >
-          <EmojiSelect
-            icon={store.goal.icon.value}
-            color={store.goal.icon.color}
+          <GoalEmojiSelect
+            goal={store.goal}
             onColorChange={store.handleColorSelect}
             onIconChange={store.handleEmojiSelect}
           />

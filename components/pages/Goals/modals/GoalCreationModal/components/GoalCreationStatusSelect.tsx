@@ -4,15 +4,14 @@ import { useGoalCreationModalStore } from '../store';
 import React from "react";
 import { GoalStatus } from "../../../types";
 import {
-  GOALS_STATUSES_COLORS,
   GOALS_STATUSES_COMMANDS,
   GOALS_STATUSES_HOTKEYS,
-  GOALS_STATUSES_ICONS,
   GOALS_STATUSES_TITLES
 } from "../constants";
 import { Tooltip } from "../../../../../shared/Tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ActionMenu } from "../../../../../shared/ActionMenu";
+import { GOALS_STATUSES_ICONS, GOALS_STATUSES_COLORS } from '../../../constants';
 
 export const GoalCreationStatusSelect = observer(
   function GoalCreationStatusSelect() {
