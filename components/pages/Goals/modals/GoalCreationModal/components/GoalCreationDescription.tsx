@@ -46,6 +46,8 @@ export const GoalCreationDescription = observer(
                 variant='flushed'
                 fontSize='md'
                 fontWeight='semibold'
+                textDecoration={store.isGoalFinished ? 'line-through' : 'none'}
+                color={store.isGoalFinished ? 'gray.400' : 'initial'}
                 height='2rem'
                 _focusVisible={{
                   borderColor: 'blue.400',

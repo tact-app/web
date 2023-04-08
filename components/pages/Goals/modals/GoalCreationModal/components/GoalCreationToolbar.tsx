@@ -9,6 +9,7 @@ import { BackArrowIcon } from '../../../../../shared/Icons/BackArrowIcon';
 import { NextPrevItemController } from "../../../../../shared/NextPrevItemController/NextPrevItemController";
 import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
 import { GoalCreationStatusSelect } from "./GoalCreationStatusSelect";
+import { Tooltip } from "../../../../../shared/Tooltip";
 
 export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
   const store = useGoalCreationModalStore();
@@ -42,41 +43,58 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
   const renderButton = ({
     onClick,
     icon,
-    ariaLabel,
     withMargin,
     iconFontSize = 20,
+    tooltipLabel,
+    tooltipHotkey,
+    disableTooltip,
   }: {
     onClick?(): void,
     icon: IconDefinition;
-    ariaLabel: string;
     withMargin?: boolean ;
     iconFontSize?: number;
-  }) => (
-    <Button
-      variant='ghost'
-      size='xs'
-      color='gray.500'
-      pl={0.5}
-      pr={0.5}
-      h={7}
-      ml={withMargin ? 0.5 : 0}
-      aria-label={ariaLabel}
-      onClick={onClick}
-    >
-      <FontAwesomeIcon
-        fontSize={iconFontSize}
-        icon={icon}
-        fixedWidth
-      />
-    </Button>
-  );
+    tooltipLabel?: string;
+    tooltipHotkey?: string;
+    disableTooltip?: boolean;
+  }) => {
+    const content = (
+      <Button
+        variant='ghost'
+        size='xs'
+        color='gray.500'
+        pl={0.5}
+        pr={0.5}
+        h={7}
+        ml={withMargin ? 0.5 : 0}
+        aria-label={tooltipLabel}
+        onClick={onClick}
+      >
+        <FontAwesomeIcon
+          fontSize={iconFontSize}
+          icon={icon}
+          fixedWidth
+        />
+      </Button>
+    );
+
+    if (disableTooltip) {
+      return content;
+    }
+
+    return (
+      <Tooltip label={tooltipLabel} hotkey={tooltipHotkey}>
+        {content}
+      </Tooltip>
+    );
+  }
 
   const renderContentForUpdate = () => [
     <Flex key='left-content' alignItems='center'>
       {renderButton({
         onClick: store.handleBack,
         icon: faXmark,
-        ariaLabel: 'Close',
+        tooltipLabel: 'Close',
+        disableTooltip: true,
         iconFontSize: 22,
       })}
       <chakra.div w={0.5} h={4} bg='gray.200' borderRadius={4} mr={1} ml={1} />
@@ -94,18 +112,22 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
       <GoalCreationStatusSelect />
       {renderButton({
         icon: faComment,
-        ariaLabel: 'Comment',
         withMargin: true,
+        tooltipLabel: 'Comment',
+        tooltipHotkey: '⌥C',
       })}
       {renderButton({
         icon: faSquareInfo,
-        ariaLabel: 'Info',
         withMargin: true,
+        tooltipLabel: 'Info',
+        tooltipHotkey: '⌥I',
       })}
       {renderButton({
         icon: faBoxArchive,
-        ariaLabel: 'Archive',
         withMargin: true,
+        tooltipLabel: store.goal.isArchived ? 'Unarchive' : 'Archive',
+        tooltipHotkey: '⌥A',
+        onClick: () => store.handleUpdate({ isArchived: !store.goal.isArchived })
       })}
     </Flex>
   ];

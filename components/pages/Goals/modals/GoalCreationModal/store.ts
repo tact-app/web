@@ -150,6 +150,10 @@ export class GoalCreationModalStore {
     );
   }
 
+  get isGoalFinished() {
+    return this.goal.status !== GoalStatus.TODO;
+  }
+
   handleCloseTask = () => {
     this.resizableConfig[0].size = 3;
     this.resizableConfig[2].size = 0;
@@ -306,6 +310,7 @@ export class GoalCreationModalStore {
       }
     }
   };
+
   handleUpdate = async (data: Partial<GoalData>) => {
     const updatedGoal = { ...this.goal, ...data, };
 
