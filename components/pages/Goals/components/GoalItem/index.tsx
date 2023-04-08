@@ -70,7 +70,12 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       hidden: goal.status === GoalStatus.WONT_DO,
       onClick: () => store.wontDoSubmitModalOpen(goal),
     },
-    { icon: faClone, title: 'Clone', command: '⌥C', onClick: () => null, },
+    {
+      icon: faClone,
+      title: 'Clone',
+      command: '⌥C',
+      onClick: () => store.cloneGoal(goal),
+    },
     { icon: faBoxArchive, title: 'Archive', command: '⌥A', onClick: () => null, }
   ];
 

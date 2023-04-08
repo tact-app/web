@@ -7,6 +7,7 @@ import { GoalDataExtended, GoalState, GoalStatus } from './types';
 import { TaskData, TaskStatus } from "../../shared/TasksList/types";
 import { UpdateOrCreateGoalParams } from "../../../stores/RootStore/Resources/GoalsStore";
 import { GoalWontDoSubmitModal } from "./modals/GoalWontDoSubmitModal";
+import { v4 as uuidv4 } from 'uuid';
 
 export enum GoalsModalsTypes {
   CREATE_OR_UPDATE_GOAL,
@@ -106,6 +107,10 @@ export class GoalsStore {
     });
   };
 
+  cloneGoal = async ({ customFields, ...goal }: GoalDataExtended) => {
+    await this.root.resources.goals.cloneGoal(goal);
+  }
+
   editGoal = (goalId: string) => {
     this.modals.open({
       type: GoalsModalsTypes.CREATE_OR_UPDATE_GOAL,
@@ -129,7 +134,7 @@ export class GoalsStore {
     await this.loadTaskList();
   };
 
-  updateGoalOnly = (goal: GoalDataExtended) => {
+  updateGoalOnly = async (goal: GoalDataExtended) => {
     return this.updateGoal({ goal })
   };
 

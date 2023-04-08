@@ -102,6 +102,7 @@ export function EditableTitle({
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onClick={(e) => e.stopPropagation()}
         ref={ref}
         {...inputProps}
         {...sharedProps}
@@ -116,10 +117,12 @@ export function EditableTitle({
         fontSize='md'
         lineHeight='6'
         fontWeight='semibold'
-        w='100%'
+        w='fit-content'
+        maxW='100%'
         textOverflow='ellipsis'
         overflow='hidden'
         whiteSpace='nowrap'
+        cursor='text'
         onClick={handleEditModeToggle}
         {...titleProps}
         {...sharedProps}

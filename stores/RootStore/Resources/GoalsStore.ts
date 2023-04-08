@@ -4,6 +4,7 @@ import { GoalData, GoalStatus } from '../../../components/pages/Goals/types';
 import { DescriptionData } from '../../../types/description';
 import { TaskData } from "../../../components/shared/TasksList/types";
 import { cloneDeep } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 export type UpdateOrCreateGoalParams<T = GoalData> = {
   goal: T,
@@ -141,6 +142,20 @@ export class GoalsStore {
     }
 
     this.descriptions[description.id] = description;
+  }
+
+  cloneGoal = async (goal: GoalData) => {
+    const description = await this.root.api.descriptions.get(goal.descriptionId);
+
+    const goalToClone = {
+      ...goal,
+      id: uuidv4(),
+      descriptionId: uuidv4()
+    };
+
+    await this.root.api.descriptions.add({ ...description, id: goalToClone.descriptionId });
+
+    return this.add({ goal: goalToClone });
   }
 
   init = async () => {

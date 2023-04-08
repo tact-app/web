@@ -45,7 +45,7 @@ export const SpaceItem = observer(function SpaceItem({ spaceId, goals }: Props) 
         <chakra.div ml='2' w='calc(100% - var(--chakra-space-10))'>
           <EditableTitle
             widthByTitle
-            sharedProps={{ color: 'gray.700', fontWeight: 400, w: '100%' }}
+            sharedProps={{ color: 'gray.700', fontWeight: 400 }}
             value={space.name}
             onSave={handleSpaceNameChange}
           />
