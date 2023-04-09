@@ -9,14 +9,14 @@ import {
 } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
 import { ButtonHotkey } from "../../../../../shared/ButtonHotkey";
-import { faBoxArchive, faComment, faXmark, } from "@fortawesome/pro-light-svg-icons";
+import { faBoxArchive, faXmark } from "@fortawesome/pro-light-svg-icons";
 import { BackArrowIcon } from '../../../../../shared/Icons/BackArrowIcon';
 import { NextPrevItemController } from "../../../../../shared/NextPrevItemController/NextPrevItemController";
 import { GoalCreationStatusSelect } from "./GoalCreationStatusSelect";
 import { GoalCreationToolbarButton } from "./GoalCreationToolbarButton";
-import { GoalCreationToolbarPopover } from "./GoalCreationToolbarPopover";
 import { EntityMetadataPopover } from "../../../../../shared/EntityMetadataPopover";
 import { DateHelper } from "../../../../../../helpers/DateHelper";
+import { CommentPopover } from "../../../../../shared/CommentPopover";
 
 export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
   const store = useGoalCreationModalStore();
@@ -71,22 +71,7 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
     </Flex>,
     <Flex key='right-content'>
       <GoalCreationStatusSelect />
-      <GoalCreationToolbarPopover
-        isOpen={isCommentPopoverOpen}
-        onClose={() => setIsCommentPopoverOpen(false)}
-        onOpen={() => setIsCommentPopoverOpen(true)}
-        trigger={
-          <GoalCreationToolbarButton
-            tooltipHotkey='⌥C'
-            tooltipLabel='Comment'
-            icon={faComment}
-            withMargin
-          />
-        }
-        content={
-          <>TEST</>
-        }
-      />
+      <CommentPopover triggerProps={{ ml: 0.5 }} />
       <EntityMetadataPopover
         triggerProps={{ ml: 0.5 }}
         created={{
