@@ -330,17 +330,18 @@ export class GoalCreationModalStore {
   };
 
   handleUpdate = async (data?: Partial<GoalData>) => {
-    if (!this.isUpdating || !this.isGoalParamsChanged) {
-      return;
-    }
-
     const updatedGoal = {
       ...this.goal,
       ...data,
-      updatedDate: new Date().toISOString()
     };
 
-    await this.onSave({ goal: updatedGoal });
+    if (!this.isUpdating || !(this.isGoalParamsChanged || !isEqual(this.goal, updatedGoal))) {
+      return;
+    }
+
+    updatedGoal.updatedDate = new Date().toISOString();
+
+    await this.onSave({ goal: updatedGoal, description: this.description });
 
     this.goal = updatedGoal;
     this.goals[this.currentGoalIndex] = updatedGoal;
