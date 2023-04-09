@@ -1,5 +1,5 @@
 import { Flex, Text } from '@chakra-ui/react';
-import { MascotGoals } from '../../../../images/MascotGoals';
+import { MascotGoals } from '../../../../images/illustrations/MascotGoals';
 import { GoalCreateNewButton } from "../GoalCreateNewButton";
 import React from "react";
 

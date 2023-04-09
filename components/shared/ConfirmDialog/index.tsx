@@ -63,7 +63,7 @@ export function ConfirmDialog({ onClose, onSubmit, content, title, type }: Confi
                     hotkey='⌘⌫'
                     pl={1}
                     pr={1}
-                    backgroundColor='gray.100'
+                    bg='gray.100'
                     borderRadius={4}
                     color='gray.400'
                   />

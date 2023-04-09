@@ -5,9 +5,31 @@ import { GoalCreateNewButton } from '../GoalCreateNewButton';
 import React from 'react';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { faPlus } from '@fortawesome/pro-regular-svg-icons';
+import { faList } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SpaceItem } from '../SpaceItem';
 import { EmptyGoalListMessage } from '../EmptyGoalListMessage/EmptyGoalListMessage';
+import { Filters } from "../../../../shared/Filters";
+import { ManArrowToIcon } from "../../../../images/icons/ManArrowToIcon";
+import { ManArrowOffIcon } from "../../../../images/icons/ManArrowOffIcon";
+
+const GOALS_LIST_FILTERS = [
+  {
+    value: 'all',
+    label: 'All',
+    icon: <FontAwesomeIcon icon={faList} fontSize={18} />
+  },
+  {
+    value: 'created-by-me',
+    label: 'Created by me',
+    icon: <ManArrowOffIcon width={24} />
+  },
+  {
+    value: 'assigned-by-me',
+    label: 'Assigned by me',
+    icon: <ManArrowToIcon width={24} />
+  },
+]
 
 export const GoalsList = observer(function GoalsList() {
   const store = useGoalsStore();
@@ -32,7 +54,10 @@ export const GoalsList = observer(function GoalsList() {
       >
         Goals
       </Heading>
-      <Flex flexDirection='column' mb={2}>
+
+      <Filters options={GOALS_LIST_FILTERS} value='all' />
+
+      <Flex flexDirection='column' mb={2} mt={8}>
         {haveGoals
           ? Object.entries(store.extendedGoals).map(([spaceId, goals]) => (
               <SpaceItem key={spaceId} spaceId={spaceId} goals={goals} />
