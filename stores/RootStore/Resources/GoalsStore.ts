@@ -45,7 +45,10 @@ export class GoalsStore {
   };
 
   update = async (goalToUpdate: GoalData) => {
-    const goal = goalToUpdate.status === GoalStatus.WONT_DO ? goalToUpdate : { ...goalToUpdate, wontDoReason: '' };
+    const goal = {
+      ...goalToUpdate,
+      wontDoReason: goalToUpdate.status === GoalStatus.WONT_DO ? goalToUpdate.wontDoReason : '',
+    };
 
     this.map[goal.id] = goal;
     await this.root.api.goals.update({ id: goal.id, fields: goal });

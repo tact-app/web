@@ -9,18 +9,19 @@ import {
 } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
 import { ButtonHotkey } from "../../../../../shared/ButtonHotkey";
-import { faBoxArchive, faComment, faSquareInfo, faXmark, } from "@fortawesome/pro-light-svg-icons";
+import { faBoxArchive, faComment, faXmark, } from "@fortawesome/pro-light-svg-icons";
 import { BackArrowIcon } from '../../../../../shared/Icons/BackArrowIcon';
 import { NextPrevItemController } from "../../../../../shared/NextPrevItemController/NextPrevItemController";
 import { GoalCreationStatusSelect } from "./GoalCreationStatusSelect";
 import { GoalCreationToolbarButton } from "./GoalCreationToolbarButton";
 import { GoalCreationToolbarPopover } from "./GoalCreationToolbarPopover";
+import { EntityMetadataPopover } from "../../../../../shared/EntityMetadataPopover";
+import { DateHelper } from "../../../../../../helpers/DateHelper";
 
 export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
   const store = useGoalCreationModalStore();
 
   const [isCommentPopoverOpen, setIsCommentPopoverOpen] = useState(false);
-  const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState(false);
 
   const renderContentForCreate = () => [
     <Button
@@ -86,21 +87,16 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
           <>TEST</>
         }
       />
-      <GoalCreationToolbarPopover
-        isOpen={isInfoPopoverOpen}
-        onClose={() => setIsInfoPopoverOpen(false)}
-        onOpen={() => setIsInfoPopoverOpen(true)}
-        trigger={
-          <GoalCreationToolbarButton
-            tooltipHotkey='⌥I'
-            tooltipLabel='Info'
-            icon={faSquareInfo}
-            withMargin
-          />
-        }
-        content={
-          <>TEST</>
-        }
+      <EntityMetadataPopover
+        triggerProps={{ ml: 0.5 }}
+        created={{
+          date: DateHelper.getFormattedDate(store.goal.createdDate),
+          user: store.root.user.data
+        }}
+        updated={{
+          date: DateHelper.getFormattedDate(store.goal.updatedDate),
+          user: store.root.user.data
+        }}
       />
       <GoalCreationToolbarButton
         tooltipHotkey='⌥A'

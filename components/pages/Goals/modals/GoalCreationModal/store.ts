@@ -137,7 +137,7 @@ export class GoalCreationModalStore {
     return Boolean(
       !isEqual(this.goal, this.initialGoal) ||
       !isEqual(this.description, this.initialDescription) ||
-      Object.keys(this.listWithCreator.list.items).length ||
+      !isEqual(this.listWithCreator.list.items, this.listWithCreator.list.initialItems) ||
       Object.keys(this.tasksDescriptions).length
     );
   }
@@ -288,6 +288,7 @@ export class GoalCreationModalStore {
       ...this.goal,
       descriptionId: this.description.id,
       title,
+      createdDate: new Date().toISOString(),
     };
 
     try {
@@ -329,11 +330,15 @@ export class GoalCreationModalStore {
   };
 
   handleUpdate = async (data?: Partial<GoalData>) => {
-    if (!this.isUpdating) {
+    if (!this.isUpdating || !this.isGoalParamsChanged) {
       return;
     }
 
-    const updatedGoal = { ...this.goal, ...data, };
+    const updatedGoal = {
+      ...this.goal,
+      ...data,
+      updatedDate: new Date().toISOString()
+    };
 
     await this.onSave({ goal: updatedGoal });
 

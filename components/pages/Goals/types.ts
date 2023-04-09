@@ -28,6 +28,8 @@ export type GoalData = {
   status: GoalStatus;
   wontDoReason?: string;
   isArchived?: boolean;
+  createdDate?: string;
+  updatedDate?: string;
 };
 
 export enum GoalStatus {
