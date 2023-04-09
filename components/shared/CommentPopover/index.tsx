@@ -13,21 +13,13 @@ import React, { ChangeEvent, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tooltip } from "../Tooltip";
 import { faComment } from "@fortawesome/pro-light-svg-icons";
-import { UserData } from "../../../stores/RootStore/UserStore";
 import { Textarea } from "../Textarea";
-
-type Metadata = {
-  date?: string;
-  user?: UserData;
-};
 
 type Props = {
   triggerProps: ButtonProps;
-  created?: Metadata;
-  updated?: Metadata;
 };
 
-export function CommentPopover({ triggerProps, created, updated }: Props) {
+export function CommentPopover({ triggerProps }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [text, setText] = useState('');
 
