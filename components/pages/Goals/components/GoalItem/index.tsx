@@ -66,7 +66,6 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       icon: faCircleCheck,
       title: isDone ? 'Unmark as done' : 'Done',
       command: '⌥D',
-      hidden: goal.isArchived,
       onClick: () => store.updateGoal({
         ...goal,
         status: isDone ? GoalStatus.TODO : GoalStatus.DONE,
@@ -76,14 +75,12 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       icon: faCircleMinus,
       title: isWontDo ? "Unmark as won't do" : "Won't do",
       command: '⌥W',
-      hidden: goal.isArchived,
       onClick: () => store.wontDoSubmitModalOpen(goal),
     },
     {
       icon: faClone,
       title: 'Clone',
       command: '⌥C',
-      hidden: goal.isArchived,
       onClick: () => store.cloneGoal(goal),
     },
     {
