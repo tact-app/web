@@ -10,10 +10,22 @@ import { NextRouter } from 'next/router';
 import { SpacesStore } from './Resources/SpacesStore';
 import { TagsStore } from './Resources/TagsStore';
 import { GoalsStore } from './Resources/GoalsStore';
+import { ModalsController } from "../../helpers/ModalsController";
+import { ConfirmDialog, ConfirmDialogProps } from "../../components/shared/ConfirmDialog";
 
 enableStaticRendering(typeof window === 'undefined');
 
+export enum GlobalModalsEnum {
+  CONFIRM = 'confirm'
+}
+
+const GlobalModals = {
+  [GlobalModalsEnum.CONFIRM]: ConfirmDialog
+};
+
 export class RootStore {
+  globalModals = new ModalsController(GlobalModals);
+
   constructor() {
     makeObservable(this, {
       isLoading: true,
@@ -64,6 +76,25 @@ export class RootStore {
 
   toggleModal = (isOpen: boolean) => {
     this.isModalOpen = isOpen
+  }
+
+  confirm = (props: Omit<ConfirmDialogProps, 'onClose' | 'onSubmit'>) => {
+    return new Promise((resolve) => {
+      this.globalModals.open({
+        type: GlobalModalsEnum.CONFIRM,
+        props: {
+          ...props,
+          onSubmit: () => {
+            resolve(true);
+            this.globalModals.close();
+          },
+          onClose: () => {
+            resolve(false);
+            this.globalModals.close();
+          },
+        },
+      });
+    });
   }
 
   init = async () => {

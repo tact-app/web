@@ -3,7 +3,7 @@ import { makeAutoObservable, toJS } from 'mobx';
 import { GoalData, GoalStatus } from '../../../components/pages/Goals/types';
 import { DescriptionData } from '../../../types/description';
 import { TaskData } from "../../../components/shared/TasksList/types";
-import { cloneDeep } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 export type CreateGoalParams<T = GoalData> = {
@@ -42,6 +42,12 @@ export class GoalsStore {
 
   getByIndex = (index: number) => {
     return this.list[index];
+  };
+
+  delete = async (ids: string[]) => {
+    await this.root.api.goals.delete(ids);
+
+    this.map = omit(this.map, ids);
   };
 
   update = async (goalToUpdate: GoalData) => {

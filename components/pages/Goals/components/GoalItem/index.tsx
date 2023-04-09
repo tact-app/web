@@ -11,6 +11,7 @@ import {
   faCircleMinus,
   faClone,
   faSquareArrowUpRight,
+  faTrashCan,
 } from "@fortawesome/pro-light-svg-icons";
 import {
   faCircleCheck as faCircleCheckSolid,
@@ -90,7 +91,23 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
         ...goal,
         isArchived: !goal.isArchived
       }),
-    }
+    },
+    {
+      icon: faTrashCan,
+      title: 'Delete',
+      command: '⌥⌫',
+      onClick: async () => {
+        if (
+          await store.root.confirm({
+            title: 'Delete goal',
+            type: 'delete',
+            content: 'Are you sure you would like to delete this goal?'
+          })
+        ) {
+          await store.deleteGoal(goal.id);
+        }
+      },
+    },
   ];
 
   const handleChangeStartDate = async (date: string) => {

@@ -163,6 +163,10 @@ export class GoalsStore {
     this.modals.close();
   };
 
+  deleteGoal = async (goalId: string) => {
+    await this.root.resources.goals.delete([goalId]);
+  };
+
   loadTaskList = async () => {
     this.taskList = await this.root.api.tasks.all();
   }
