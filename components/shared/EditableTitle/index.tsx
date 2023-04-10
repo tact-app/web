@@ -8,10 +8,13 @@ type Props = {
   inputProps?: InputProps;
   sharedProps?: TextProps & InputProps;
   widthByTitle?: boolean;
+  idEnding?: string;
   onChange?(value: string): void;
   onSave?(value: string): void;
   onNavigate?(direction: NavigationDirections): void;
 };
+
+export const EDITABLE_TITLE_ID_SLUG = 'editable-title';
 
 export function EditableTitle({
   value: initialValue,
@@ -22,6 +25,7 @@ export function EditableTitle({
   onChange,
   onSave,
   onNavigate,
+  idEnding,
 }: Props) {
   let setCaretTimeout: NodeJS.Timeout;
 
@@ -127,6 +131,7 @@ export function EditableTitle({
         overflow='hidden'
         whiteSpace='nowrap'
         cursor='text'
+        id={`${EDITABLE_TITLE_ID_SLUG}${idEnding ? `-${idEnding}` : ''}`}
         onClick={handleEditModeToggle}
         {...titleProps}
         {...sharedProps}

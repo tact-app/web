@@ -111,13 +111,18 @@ export class GoalsStore {
 
     const goalToClone = {
       ...goal,
+      title: `Copied: ${goal.title}`,
       id: uuidv4(),
       descriptionId: uuidv4()
     };
+    const descriptionToClone = { ...description, id: goalToClone.descriptionId };
 
-    await this.root.api.descriptions.add({ ...description, id: goalToClone.descriptionId });
+    await this.root.api.descriptions.add(descriptionToClone);
+    this.descriptions[descriptionToClone.id] = descriptionToClone;
 
-    return this.add({ goal: goalToClone });
+    await this.add({ goal: goalToClone });
+
+    return goalToClone;
   }
 
   init = async () => {

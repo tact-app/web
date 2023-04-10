@@ -65,9 +65,11 @@ export const CheckboxGroupView = observer(
 
     return (
       <FormControl isInvalid={Boolean(store.error)}>
-        <Text fontWeight='bold' fontSize='semibold' mb={4}>
-          Chose reason
-        </Text>
+        {Boolean(store.title) && (
+          <Text fontWeight='bold' fontSize='semibold' mb={4}>
+            {store.title}
+          </Text>
+        )}
         <List>{store.items.map(renderItem)}</List>
         <FormError inControl>{store.error}</FormError>
       </FormControl>

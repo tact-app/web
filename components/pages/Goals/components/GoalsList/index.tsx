@@ -25,8 +25,8 @@ const GOALS_LIST_FILTERS = [
     icon: <ManArrowOffIcon width={24} />
   },
   {
-    value: 'assigned-by-me',
-    label: 'Assigned by me',
+    value: 'assigned-to-me',
+    label: 'Assigned to me',
     icon: <ManArrowToIcon width={24} />
   },
 ]
@@ -55,7 +55,7 @@ export const GoalsList = observer(function GoalsList() {
         Goals
       </Heading>
 
-      <Filters options={GOALS_LIST_FILTERS} value='all' />
+      {haveGoals && <Filters options={GOALS_LIST_FILTERS} value='all' />}
 
       <Flex flexDirection='column' mb={2} mt={8}>
         {haveGoals

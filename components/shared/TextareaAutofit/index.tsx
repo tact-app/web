@@ -17,11 +17,11 @@ export const TextareaAutofit = observer(
         internalRef.current.style.height = '0';
         internalRef.current.style.height = `${internalRef.current.scrollHeight}px`;
 
-        if (internalRef.current.scrollHeight >= Number(internalRef.current.style.maxHeight)) {
+        if (internalRef.current.scrollHeight >= Number(props.maxHeight)) {
           internalRef.current.style.overflowY = 'auto';
         }
       }
-    }, [internalRef]);
+    }, [props.maxHeight, internalRef]);
 
     useResizeObserver({
       ref: internalRef,

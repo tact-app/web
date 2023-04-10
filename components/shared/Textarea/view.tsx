@@ -63,7 +63,7 @@ export const TextareaView = observer(forwardRef<TextareaViewProps, typeof Textar
           <TextareaAutofit
             ref={refs}
             maxLength={store.maxLength}
-            minHeight='unset'
+            minHeight={25}
             maxHeight={250}
             minRows={1}
             resize='none'

@@ -11,6 +11,7 @@ export type CheckboxGroupCallbacks = {
 };
 
 export type CheckboxGroupProps = CheckboxGroupCallbacks & {
+  title?: string;
   items: CheckboxGroupItem[];
   value?: CheckboxGroupItem['value'];
   error?: string;

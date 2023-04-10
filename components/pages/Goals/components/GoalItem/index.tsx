@@ -134,6 +134,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
 
   return (
     <Box
+      ref={(ref) => store.setGoalRef(goal.id, ref)}
       borderWidth={1}
       borderRadius={8}
       borderColor={
@@ -162,7 +163,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
           onColorChange={handleColorChange}
         />
         <chakra.div ml={2} w='calc(100% - var(--chakra-space-20))'>
-          <EditableTitle value={goal.title} onSave={handleChangeTitle} />
+          <EditableTitle value={goal.title} idEnding={goal.id} onSave={handleChangeTitle} />
           <Flex mt={1} fontSize='xs' color='gray.500'>
             <chakra.span>All task: {goal.customFields.allTasks.length}</chakra.span>
             <chakra.span ml={2}>

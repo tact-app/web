@@ -8,6 +8,7 @@ import { TaskData, TaskStatus } from "../../shared/TasksList/types";
 import { CreateGoalParams } from "../../../stores/RootStore/Resources/GoalsStore";
 import { GoalWontDoSubmitModal } from "./modals/GoalWontDoSubmitModal";
 import moment from "moment";
+import { EDITABLE_TITLE_ID_SLUG } from "../../shared/EditableTitle";
 
 export enum GoalsModalsTypes {
   CREATE_OR_UPDATE_GOAL,
@@ -21,6 +22,7 @@ const GoalsModals = {
 
 export class GoalsStore {
   taskList: TaskData[];
+  goalsRefs: Record<string, HTMLDivElement> = {};
 
   constructor(public root: RootStore) {
     makeAutoObservable(this);
@@ -77,6 +79,12 @@ export class GoalsStore {
     }), {} as Record<string, GoalDataExtended[]>);
   }
 
+  getGoalTitleElement = (goalId: string) => {
+    return this.goalsRefs[goalId].querySelector(
+      `#${EDITABLE_TITLE_ID_SLUG}-${goalId}`
+    ) as HTMLParagraphElement;
+  };
+
   getStateByDate = (startDate: string, targetDate: string) => {
     const start = moment(startDate);
     const target = moment(targetDate);
@@ -92,6 +100,10 @@ export class GoalsStore {
       return GoalState.END_DATE_ALREADY_PASSED;
     }
   };
+
+  setGoalRef = (goalId: string, ref: HTMLDivElement) => {
+    this.goalsRefs[goalId] = ref;
+  }
 
   modals = new ModalsController(GoalsModals);
 
@@ -123,7 +135,8 @@ export class GoalsStore {
   };
 
   cloneGoal = async ({ customFields, ...goal }: GoalDataExtended) => {
-    await this.root.resources.goals.cloneGoal(goal);
+    const clonedGoal = await this.root.resources.goals.cloneGoal(goal);
+    this.getGoalTitleElement(clonedGoal.id).click();
   }
 
   editGoal = (goalId: string) => {

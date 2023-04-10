@@ -2,8 +2,8 @@ export const WONT_DO_OTHER_REASON = 'Other';
 
 export const WONT_DO_REASONS = [
   'Deadline passed',
-  'Irrelevant task',
-  'Complex task',
+  'Irrelevant goal',
+  'Complex goal',
   'Not now',
   WONT_DO_OTHER_REASON,
 ];

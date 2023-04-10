@@ -28,6 +28,7 @@ export const GoalWontDoSubmitModalView = observer(function GoalWontDoSubmitModal
         <ModalHeader>Why you won&lsquo;t do this goal?</ModalHeader>
         <ModalBody pt={4} pb={6}>
           <CheckboxGroup
+            title='Choose reason'
             items={store.reasons}
             value={store.reason}
             onChange={store.handleChangeReason}
