@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { Validator } from "../../../helpers/Validator";
-import { TextareaProps as ChakraTextareaProps } from "@chakra-ui/textarea/dist/textarea";
+import { TextareaProps as ChakraTextareaProps } from "@chakra-ui/textarea";
 import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
 import { NavigationDirections } from "../../../types/navigation";
 import { FocusEvent, KeyboardEvent } from "react";

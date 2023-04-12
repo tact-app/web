@@ -95,7 +95,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
     {
       icon: faTrashCan,
       title: 'Delete',
-      command: '⌥⌫',
+      command: '⌫ / ⌥⌫',
       onClick: async () => {
         if (
           await store.root.confirm({
