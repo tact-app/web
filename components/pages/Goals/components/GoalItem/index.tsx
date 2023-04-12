@@ -110,7 +110,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
     },
   ];
 
-  const handleChangeStartDate = async (date: string) => {
+  const handleChangeStartDate = (date: string) => {
     return store.updateGoal({
       ...goal,
       startDate: date,

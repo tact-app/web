@@ -28,7 +28,7 @@ export const DatePickerView = observer(
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.currentValue && !store.isFocused);
 
     return (
-      <Flex alignItems='center' {...flexProps} onClick={store.handleIconClick}>
+      <Flex alignItems='center' {...flexProps} onClick={store.handleAreaEvent}>
         {mustShowIcon && (
           <Tooltip
             label='Add date'
@@ -39,6 +39,7 @@ export const DatePickerView = observer(
               tabIndex={-1}
               color={store.isFocused ? 'blue.500' : 'gray.500'}
               _hover={{ color: 'blue.400' }}
+              onClick={store.handleIconClick}
             >
               <FontAwesomeIcon
                 tabIndex={-1}
@@ -68,7 +69,7 @@ export const DatePickerView = observer(
           startDate={store.getDateFromString(startDate)}
           endDate={store.getDateFromString(endDate)}
           minDate={store.getDateFromString(minDate)}
-          onKeyDown={(e) => e.stopPropagation()}
+          onKeyDown={store.handleAreaEvent}
           className={store.isFocused ? 'datepicker-focused' : ''}
           renderDayContents={(dayOfMonth) => (
             <>

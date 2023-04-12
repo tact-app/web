@@ -47,9 +47,11 @@ export class DatePickerStore {
     this.handleBlur();
   };
 
-  handleIconClick = (e: SyntheticEvent) => {
+  handleAreaEvent = (e: SyntheticEvent) => {
     e.stopPropagation();
+  }
 
+  handleIconClick = (e: SyntheticEvent) => {
     if (this.isFocused || this.isClickedOutside) {
       this.datePickerRef?.setBlur();
       this.isClickedOutside = false;
