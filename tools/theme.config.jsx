@@ -18,7 +18,7 @@ export default {
            src="https://raw.githubusercontent.com/octomation/.github/main/.static/octolab.png"
            alt="OctoLab"
       />
-      <span>Module</span>
+      <span>Tact.app</span>
     </>
   ),
   banner: {

@@ -1,0 +1,16 @@
+{
+  "index": {
+    "title": "Tact.app",
+    "theme": {
+      "breadcrumb": false,
+      "pagination": false
+    }
+  },
+  "changelog": {
+    "title": "Changelog",
+    "theme": {
+      "breadcrumb": false,
+      "pagination": false
+    }
+  }
+}
