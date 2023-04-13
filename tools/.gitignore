@@ -4,3 +4,6 @@
 # dependencies
 /node_modules/
 /vendor/
+
+# generated files
+/.next/
