@@ -291,6 +291,50 @@ deploy() {
   vercel deploy --yes --prebuilt
 }
 
+# Example: run docs
+# Example: run docs build publish
+function docs() {
+  # dirty hack related to "docker: open .env: no such file or directory"
+  unset -f npm
+
+  pushd tools
+  trap popd EXIT
+
+  local args=("${@}")
+  if [ ${#args[@]} = 0 ]; then
+    args=(install build start)
+  fi
+
+  for arg in "${args[@]}"; do
+    case "${arg}" in
+    install)
+      local lock file=package-lock.json
+      lock=$(dirname "${file}")/node_modules/checksum.lock
+      if [ ! -f "${lock}" ] || [ "$(cat "${lock}")" != "$(md5sum "${file}")" ]; then
+        npm ci
+        md5sum "${file}" >"${lock}"
+      fi
+      ;;
+
+    build)
+      npx --no-install next build
+      ;;
+
+    publish)
+      rm -rf ../docs/*
+      npx --no-install next export -o ../docs
+      git checkout ../docs/redirects ../docs/CNAME
+      ;;
+
+    start)
+      npx --no-install next start
+      ;;
+
+    *) break ;;
+    esac
+  done
+}
+
 whoami() {
   echo "You are $(git config user.name) <$(git config user.email)>"
   echo "* Docker ------------------------------------------"
