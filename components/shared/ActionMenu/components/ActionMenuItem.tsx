@@ -1,5 +1,5 @@
 import { Button, chakra, forwardRef } from "@chakra-ui/react";
-import React, { PropsWithChildren, useCallback } from "react";
+import React, { PropsWithChildren, useCallback, SyntheticEvent } from "react";
 import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useActionMenuStore } from "../store";
@@ -7,6 +7,8 @@ import { useActionMenuStore } from "../store";
 type Props = PropsWithChildren<{
   command?: string;
   icon: IconDefinition;
+  iconFontSize?: number;
+  iconColor?: string;
   onClick(): void;
 }>;
 
@@ -16,13 +18,17 @@ export const ActionMenuItem = forwardRef(
       onClick,
       command,
       icon,
+      iconFontSize,
+      iconColor = 'gray.400',
       children,
     }: Props,
     ref
   ) => {
     const store = useActionMenuStore();
 
-    const handleClick = useCallback(() => {
+    const handleClick = useCallback((e: SyntheticEvent) => {
+      e.stopPropagation();
+
       store.closeMenu();
       onClick();
     }, [store, onClick]);
@@ -42,8 +48,8 @@ export const ActionMenuItem = forwardRef(
         pl={4}
       >
         <chakra.span fontWeight='normal'>
-          <chakra.span color='gray.400' mr={2}>
-            <FontAwesomeIcon icon={icon} fixedWidth />
+          <chakra.span color={iconColor} mr={2}>
+            <FontAwesomeIcon icon={icon} fontSize={iconFontSize} fixedWidth />
           </chakra.span>
           {children}
         </chakra.span>

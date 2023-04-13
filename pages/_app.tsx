@@ -487,7 +487,7 @@ const theme = extendTheme({
                 borderRadius: '50%',
               }
             },
-            '.react-datepicker__day--in-selecting-range:first-of-type.react-datepicker__day--selecting-range-end': {
+            '.react-datepicker__day--in-selecting-range:first-of-type.react-datepicker__day--selecting-range-end, .react-datepicker__day--in-selecting-range:last-of-type.react-datepicker__day--selecting-range-start': {
               '.day-backdrop': {
                 bg: 'transparent'
               },

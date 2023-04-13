@@ -1,30 +1,29 @@
 import { observer } from 'mobx-react-lite';
-import { chakra, Box, Text, Flex, Tooltip } from '@chakra-ui/react';
+import { Box, chakra, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useGoalsStore } from '../../store';
 import { DatePicker } from "../../../../shared/DatePicker";
 import {
+  faAlarmClock,
+  faBoxArchive,
+  faCalendarCircleExclamation,
+  faCalendarClock,
   faCircleCheck,
   faCircleMinus,
-  faBoxArchive,
   faClone,
-  faPenToSquare,
-} from "@fortawesome/pro-regular-svg-icons";
-import {
-  faAlarmClock,
-  faCalendarClock,
-  faCalendarCircleExclamation,
-} from "@fortawesome/pro-light-svg-icons"
+  faSquareArrowUpRight,
+  faTrashCan,
+} from "@fortawesome/pro-light-svg-icons";
 import {
   faCircleCheck as faCircleCheckSolid,
   faCircleMinus as faCircleMinusSolid
 } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { GoalDataExtended, GoalState } from "../../types";
-import { EmojiSelect } from "../../../../shared/EmojiSelect";
+import { GoalDataExtended, GoalState, GoalStatus } from "../../types";
 import { ActionMenu } from "../../../../shared/ActionMenu";
 import { EditableTitle } from "../../../../shared/EditableTitle";
 import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
+import { GoalEmojiSelect } from "../GoalEmojiSelect/GoalEmojiSelect";
 
 type Props = {
   goal: GoalDataExtended
@@ -51,18 +50,68 @@ const GOAL_STATE_PARAMS = {
 export const GoalItem = observer(function GoalItem({ goal }: Props) {
   const store = useGoalsStore();
 
-  const handleEditGoal = () => store.editGoal(goal.id);
+  const handleOpenGoal = () => store.editGoal(goal.id);
+
+  const isDone = goal.status === GoalStatus.DONE;
+  const isWontDo = goal.status === GoalStatus.WONT_DO;
 
   const actions = [
-    { icon: faCircleCheck, title: 'Complete', onClick: () => null, },
-    { icon: faCircleMinus, title: "Won't do", onClick: () => null, },
-    { icon: faPenToSquare, title: 'Edit', onClick: handleEditGoal, },
-    { icon: faClone, title: 'Duplicate', onClick: () => null, },
-    { icon: faBoxArchive, title: 'Archive', onClick: () => null, }
+    {
+      icon: faSquareArrowUpRight,
+      title: 'Open',
+      command: '↵/⌥O',
+      onClick: handleOpenGoal
+    },
+    {
+      icon: faCircleCheck,
+      title: isDone ? 'Unmark as done' : 'Done',
+      command: '⌥D',
+      onClick: () => store.updateGoal({
+        ...goal,
+        status: isDone ? GoalStatus.TODO : GoalStatus.DONE,
+      }),
+    },
+    {
+      icon: faCircleMinus,
+      title: isWontDo ? "Unmark as won't do" : "Won't do",
+      command: '⌥W',
+      onClick: () => store.wontDoSubmitModalOpen(goal),
+    },
+    {
+      icon: faClone,
+      title: 'Clone',
+      command: '⌥C',
+      onClick: () => store.cloneGoal(goal),
+    },
+    {
+      icon: faBoxArchive,
+      title: goal.isArchived ? 'Unarchive' : 'Archive',
+      command: '⌥A',
+      onClick: () => store.updateGoal({
+        ...goal,
+        isArchived: !goal.isArchived
+      }),
+    },
+    {
+      icon: faTrashCan,
+      title: 'Delete',
+      command: '⌫ / ⌥⌫',
+      onClick: async () => {
+        if (
+          await store.root.confirm({
+            title: 'Delete goal',
+            type: 'delete',
+            content: 'Are you sure you would like to delete this goal?'
+          })
+        ) {
+          await store.deleteGoal(goal.id);
+        }
+      },
+    },
   ];
 
-  const handleChangeStartDate = async (date: string) => {
-    return store.updateGoalOnly({
+  const handleChangeStartDate = (date: string) => {
+    return store.updateGoal({
       ...goal,
       startDate: date,
       targetDate: DatePickerHelpers.isStartDateAfterEndDate(date, goal.targetDate)
@@ -71,21 +120,21 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
     });
   };
   const handleChangeTargetDate = (date: string) => {
-    return store.updateGoalOnly({ ...goal, targetDate: date });
+    return store.updateGoal({ ...goal, targetDate: date });
   };
   const handleChangeTitle = (title: string) => {
-    return store.updateGoalOnly({ ...goal, title });
+    return store.updateGoal({ ...goal, title });
   };
   const handleChangeIcon = (icon: string) => {
-    return store.updateGoalOnly({ ...goal, icon: { ...goal.icon, value: icon } });
+    return store.updateGoal({ ...goal, icon: { ...goal.icon, value: icon } });
   };
   const handleColorChange = (color: string) => {
-    return store.updateGoalOnly({ ...goal, icon: { ...goal.icon, color } });
+    return store.updateGoal({ ...goal, icon: { ...goal.icon, color } });
   };
-
 
   return (
     <Box
+      ref={(ref) => store.setGoalRef(goal.id, ref)}
       borderWidth={1}
       borderRadius={8}
       borderColor={
@@ -101,19 +150,20 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       position='relative'
       cursor='pointer'
       height={124}
-      onClick={handleEditGoal}
+      onClick={handleOpenGoal}
     >
       <Flex>
-        <EmojiSelect
-          icon={goal.icon.value}
-          color={goal.icon.color}
+        <GoalEmojiSelect
+          goal={goal}
           size={12}
           iconFontSize='3xl'
+          statusIconBottom={-0.5}
+          statusIconRight={0.5}
           onIconChange={handleChangeIcon}
           onColorChange={handleColorChange}
         />
         <chakra.div ml={2} w='calc(100% - var(--chakra-space-20))'>
-          <EditableTitle value={goal.title} onSave={handleChangeTitle} />
+          <EditableTitle value={goal.title} idEnding={goal.id} onSave={handleChangeTitle} />
           <Flex mt={1} fontSize='xs' color='gray.500'>
             <chakra.span>All task: {goal.customFields.allTasks.length}</chakra.span>
             <chakra.span ml={2}>
@@ -169,6 +219,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
 
       <ActionMenu
         items={actions}
+        menuMinWidth={250}
         triggerButtonProps={(isOpen) => ({
           color: isOpen ? 'blue.400' : 'gray.500',
           position: 'absolute',

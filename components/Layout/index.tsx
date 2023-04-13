@@ -1,10 +1,11 @@
 import Head from 'next/head';
 import { Box, Flex } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { MenuBar } from './components/MenuBar';
 import { useHotkeysHandler } from '../../helpers/useHotkeysHandler';
 import { useRootStore } from '../../stores/RootStore';
 import { observer } from 'mobx-react-lite';
+import { ModalsSwitcher } from "../../helpers/ModalsController";
 
 const Layout = observer(function Layout({ children }: { children: ReactNode }) {
   const store = useRootStore();
@@ -21,6 +22,7 @@ const Layout = observer(function Layout({ children }: { children: ReactNode }) {
       <Box flex='1' overflow='scroll'>
         {store.isLoading ? null : children}
       </Box>
+      <ModalsSwitcher controller={store.globalModals} />
     </Flex>
   );
 });

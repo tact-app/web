@@ -1,13 +1,14 @@
 import { GoalData } from "../../types";
-import { UpdateOrCreateGoalParams } from "../../../../../stores/RootStore/Resources/GoalsStore";
+import { CreateGoalParams } from "../../../../../stores/RootStore/Resources/GoalsStore";
 
 export type GoalCreationModalProps = {
   onClose: () => void;
-  onSave: (data: UpdateOrCreateGoalParams) => Promise<void>;
-  editMode?: boolean;
-  goal?: GoalData;
+  onSave: (data: Partial<CreateGoalParams>) => Promise<void>;
+  goalId?: string;
+  goals?: GoalData[];
 };
 
 export enum GoalCreationModalsTypes {
   CLOSE_SUBMIT,
+  WONT_DO_SUBMIT
 }

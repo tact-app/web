@@ -8,9 +8,14 @@ import { ActionMenuItems } from "./ActionMenuItems";
 type Props = {
   isOpen: boolean;
   stopAnimation(): void;
+  menuMinWidth?: number;
 };
 
-export const ActionMenuContent = observer(function ActionMenuContent({ isOpen, stopAnimation }: Props) {
+export const ActionMenuContent = observer(function ActionMenuContent({
+  isOpen,
+  stopAnimation,
+  menuMinWidth = 72
+}: Props) {
   const store = useActionMenuStore();
 
   const { keyMap, hotkeyHandlers } = useMemo(() => {
@@ -41,13 +46,14 @@ export const ActionMenuContent = observer(function ActionMenuContent({ isOpen, s
           shadow='lg'
           overflow='hidden'
           w='auto'
-          minW={72}
+          minW={menuMinWidth}
           onFocus={store.menuNavigation.handleFocus}
         >
           <PopoverBody p={0}>
             <ActionMenuItems
               refs={store.menuNavigation.setRefs}
               items={store.items}
+              onClose={store.closeMenu}
             />
           </PopoverBody>
         </PopoverContent>

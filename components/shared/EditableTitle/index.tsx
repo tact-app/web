@@ -8,10 +8,13 @@ type Props = {
   inputProps?: InputProps;
   sharedProps?: TextProps & InputProps;
   widthByTitle?: boolean;
+  idEnding?: string;
   onChange?(value: string): void;
   onSave?(value: string): void;
   onNavigate?(direction: NavigationDirections): void;
 };
+
+export const EDITABLE_TITLE_ID_SLUG = 'editable-title';
 
 export function EditableTitle({
   value: initialValue,
@@ -22,6 +25,7 @@ export function EditableTitle({
   onChange,
   onSave,
   onNavigate,
+  idEnding,
 }: Props) {
   let setCaretTimeout: NodeJS.Timeout;
 
@@ -29,6 +33,10 @@ export function EditableTitle({
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
   useEffect(() => () => clearTimeout(setCaretTimeout), []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -102,6 +110,7 @@ export function EditableTitle({
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onClick={(e) => e.stopPropagation()}
         ref={ref}
         {...inputProps}
         {...sharedProps}
@@ -116,10 +125,13 @@ export function EditableTitle({
         fontSize='md'
         lineHeight='6'
         fontWeight='semibold'
-        w='100%'
+        w='fit-content'
+        maxW='100%'
         textOverflow='ellipsis'
         overflow='hidden'
         whiteSpace='nowrap'
+        cursor='text'
+        id={`${EDITABLE_TITLE_ID_SLUG}${idEnding ? `-${idEnding}` : ''}`}
         onClick={handleEditModeToggle}
         {...titleProps}
         {...sharedProps}

@@ -40,7 +40,7 @@ export const TaskWontDoModalView = observer(function TaskWontDoModalView({
         <ModalHeader>Why you won&apos;t do this task?</ModalHeader>
         <ModalBody pb={6} pl={5} pr={5}>
           <Box pr={1} pl={1}>
-            <Text mb={4}>Chose reason</Text>
+            <Text mb={4}>Choose reason</Text>
             {WontDoReasons.map((reason, index) => (
               <Box key={reason} mb={2}>
                 <Checkbox

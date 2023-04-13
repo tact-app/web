@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { GoalData, GoalIconVariants } from '../../types';
+import { GoalData, GoalIconVariants, GoalStatus } from '../../types';
 import { SyntheticEvent } from 'react';
 import { JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,20 +16,12 @@ import { GoalCreationModalProps, GoalCreationModalsTypes } from "./types";
 import { GoalCreationCloseSubmitModal } from "./modals/GoalCreationCloseSubmitModal";
 import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
 import { cloneDeep, isEqual } from "lodash";
-
-export const colors = [
-  'red.200',
-  'orange.100',
-  'orange.200',
-  'yellow.200',
-  'green.200',
-  'blue.200',
-  'teal.200',
-  'purple.200',
-];
+import { GoalWontDoSubmitModal } from "../GoalWontDoSubmitModal";
+import { EMOJI_SELECT_COLORS } from "../../../../shared/EmojiSelect/constants";
 
 const GoalsModals = {
   [GoalCreationModalsTypes.CLOSE_SUBMIT]: GoalCreationCloseSubmitModal,
+  [GoalCreationModalsTypes.WONT_DO_SUBMIT]: GoalWontDoSubmitModal,
 };
 
 export class GoalCreationModalStore {
@@ -83,6 +75,8 @@ export class GoalCreationModalStore {
   isDescriptionLoading: boolean = true;
   isGoalCreatingOrUpdating: boolean = false;
   draggingTask: TaskData | null = null;
+  goals: GoalData[] = [];
+  currentGoalIndex: number = 0;
   error: string = '';
 
   goal: GoalData = {
@@ -91,6 +85,7 @@ export class GoalCreationModalStore {
     startDate: '',
     targetDate: '',
     spaceId: '',
+    status: GoalStatus.TODO,
     icon: {
       type: GoalIconVariants.EMOJI,
       color: '',
@@ -112,7 +107,7 @@ export class GoalCreationModalStore {
       hasPrevious: this.listWithCreator.list.hasPrevTask,
       isEditorFocused: this.listWithCreator.list.isEditorFocused,
       isExpanded: this.isTaskExpanded,
-      delayedCreation: true,
+      delayedCreation: !this.isUpdating,
       disableSpaceChange: true,
       disableGoalChange: true,
       disableReferenceChange: true,
@@ -147,6 +142,10 @@ export class GoalCreationModalStore {
     );
   }
 
+  get isGoalFinished() {
+    return this.goal.status !== GoalStatus.TODO || this.goal.isArchived;
+  }
+
   handleCloseTask = () => {
     this.resizableConfig[0].size = 3;
     this.resizableConfig[2].size = 0;
@@ -179,10 +178,14 @@ export class GoalCreationModalStore {
 
   handleEmojiSelect = (emoji: string) => {
     this.goal.icon.value = emoji;
+
+    this.handleUpdate({ icon: { ...this.goal.icon, value: emoji } });
   };
 
   handleColorSelect = (color: string) => {
     this.goal.icon.color = color;
+
+    this.handleUpdate({ icon: { ...this.goal.icon, color } });
   };
 
   handleTitleChange = (e: SyntheticEvent) => {
@@ -191,6 +194,8 @@ export class GoalCreationModalStore {
 
   handleSpaceChange = (value: string) => {
     this.goal.spaceId = value;
+
+    this.handleUpdate({ spaceId: value });
   }
 
   handleStartDateChange = (value: string) => {
@@ -209,6 +214,8 @@ export class GoalCreationModalStore {
     this.description.content = value;
   };
 
+  handleGoalParamBlur = () => this.handleUpdate();
+
   handleNavigateToSpace = (spaceId: string) => {
     this.handleClose(() => this.root.router.push(`/inbox/${spaceId}`));
   };
@@ -221,9 +228,26 @@ export class GoalCreationModalStore {
     }
   };
 
+  handleNextGoal = () => {
+    this.handleSetGoal(this.currentGoalIndex + 1);
+  };
+
+  handlePrevGoal = () => {
+    this.handleSetGoal(this.currentGoalIndex - 1);
+  };
+
+  handleSetGoal = async (index: number) => {
+    const goal = cloneDeep(this.goals[index]);
+
+    this.goal = goal;
+    this.currentGoalIndex = index;
+
+    await this.loadDescription(goal);
+  };
+
   handleClose = (submitCb?: () => void) => {
     if (!this.isEmojiPickerOpen) {
-      if (this.isGoalParamsChanged) {
+      if (!this.isUpdating && this.isGoalParamsChanged) {
         this.modals.open({
           type: GoalCreationModalsTypes.CLOSE_SUBMIT,
           props: {
@@ -264,6 +288,7 @@ export class GoalCreationModalStore {
       ...this.goal,
       descriptionId: this.description.id,
       title,
+      createdDate: new Date().toISOString(),
     };
 
     try {
@@ -283,6 +308,43 @@ export class GoalCreationModalStore {
     } catch (e) {
       this.isGoalCreatingOrUpdating = false;
     }
+  };
+
+  handleUpdateStatus = (status: GoalStatus) => {
+    if (this.goal.status !== status) {
+      if (status === GoalStatus.WONT_DO) {
+        this.modals.open({
+          type: GoalCreationModalsTypes.WONT_DO_SUBMIT,
+          props: {
+            onSubmit: async (wontDoReason) => {
+              await this.handleUpdate({ status, wontDoReason });
+              this.modals.close();
+            },
+            onClose: this.modals.close,
+          },
+        });
+      } else {
+        this.handleUpdate({ status });
+      }
+    }
+  };
+
+  handleUpdate = async (data?: Partial<GoalData>) => {
+    const updatedGoal = {
+      ...this.goal,
+      ...data,
+    };
+
+    if (!this.isUpdating || !(this.isGoalParamsChanged || !isEqual(this.goal, updatedGoal))) {
+      return;
+    }
+
+    updatedGoal.updatedDate = new Date().toISOString();
+
+    await this.onSave({ goal: updatedGoal, description: this.description });
+
+    this.goal = updatedGoal;
+    this.goals[this.currentGoalIndex] = updatedGoal;
   };
 
   get sensors() {
@@ -308,6 +370,24 @@ export class GoalCreationModalStore {
     this.draggingTask = null;
   };
 
+  loadDescription = async (goal: GoalData) => {
+    if (goal.descriptionId) {
+      this.isDescriptionLoading = true;
+      const description =
+        (await this.root.api.descriptions.get(goal.descriptionId)) || undefined;
+
+      runInAction(() => {
+        this.description = description;
+        this.initialDescription = cloneDeep(description);
+        this.isDescriptionLoading = false;
+      });
+    }
+
+    runInAction(() => {
+      this.isDescriptionLoading = false;
+    });
+  }
+
   init = async () => {
     await EmojiStore.loadIfNotLoaded();
 
@@ -320,50 +400,36 @@ export class GoalCreationModalStore {
         return [...acc, ...category.emojis];
       }, []);
 
-      const randomEmojiKey: any =
-        emojiKeys[Math.floor(Math.random() * emojiKeys.length)];
+      const randomEmojiKey = emojiKeys[Math.floor(Math.random() * emojiKeys.length)];
       const randomEmoji = EmojiStore.emojiData.emojis[randomEmojiKey];
 
       if (randomEmoji) {
         this.goal.icon.value = randomEmoji.skins[0].native;
       }
 
-      this.goal.icon.color = colors[Math.floor(Math.random() * colors.length)];
+      this.goal.icon.color = EMOJI_SELECT_COLORS[Math.floor(Math.random() * EMOJI_SELECT_COLORS.length)];
 
       this.initialGoal = cloneDeep(this.goal);
     }
   };
 
-  update = async (props: GoalCreationModalProps) => {
-    this.onClose = props.onClose;
-    this.onSave = props.onSave;
-    const goal = { ...this.goal, ...props.goal };
+  update = async ({ onClose, onSave, goals = [], goalId }: GoalCreationModalProps) => {
+    this.onClose = onClose;
+    this.onSave = onSave;
+    this.goals = cloneDeep(goals);
 
+    const goalIndex = goals.findIndex((goal) => goal.id === goalId);
+    const goal = { ...this.goal, ...goals[goalIndex] };
+
+    this.currentGoalIndex = goalIndex;
     this.goal = goal;
     this.initialGoal = cloneDeep(goal);
 
-
-    if (props.goal?.id) {
+    if (goalId) {
       this.isUpdating = true;
     }
 
-    if (this.goal.descriptionId) {
-      this.isDescriptionLoading = true;
-      const description =
-        (await this.root.api.descriptions.get(
-          this.goal.descriptionId
-        )) || undefined;
-
-      runInAction(() => {
-        this.description = description;
-        this.initialDescription = cloneDeep(description);
-        this.isDescriptionLoading = false;
-      });
-    }
-
-    runInAction(() => {
-      this.isDescriptionLoading = false;
-    });
+    await this.loadDescription(goal);
   };
 }
 

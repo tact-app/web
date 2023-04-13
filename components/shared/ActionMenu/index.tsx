@@ -9,9 +9,11 @@ export const ActionMenu = observer(function ActionMenu(props: ActionMenuProps) {
       <ActionMenuView
         triggerIcon={props.triggerIcon}
         hidden={props.hidden}
+        menuMinWidth={props.menuMinWidth}
         triggerButtonProps={props.triggerButtonProps}
         triggerIconFontSize={props.triggerIconFontSize}
         isOpenByContextMenu={props.isOpenByContextMenu}
+        customTrigger={props.customTrigger}
       />
     </ActionMenuStoreProvider>
   );

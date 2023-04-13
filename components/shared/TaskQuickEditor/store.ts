@@ -38,6 +38,8 @@ export type TaskQuickEditorProps = {
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
   disableReferenceChange?: boolean;
+  defaultSpaceId?: string;
+  defaultGoalId?: string;
 };
 
 export enum Modes {
@@ -86,6 +88,8 @@ export class TaskQuickEditorStore {
   activeModeType: Modes = Modes.DEFAULT;
   focusedMode: Modes | null = null;
   inputData: SpacesInboxItemData | null = null;
+  defaultGoalId: null | string = null;
+  defaultSpaceId: null | string = null;
   disableSpaceChange: boolean = false;
   disableGoalChange: boolean = false;
   disableReferenceChange: boolean = false;
@@ -266,8 +270,8 @@ export class TaskQuickEditorStore {
         tags: this.modes.tag.tags.map(({ id }) => id),
         status: this.task ? this.task.status : TaskStatus.TODO,
         priority: this.modes.priority.priority,
-        spaceId: this.modes.space.selectedSpaceId || undefined,
-        goalId: this.modes.goal.selectedGoalId || undefined,
+        spaceId: this.defaultSpaceId || this.modes.space.selectedSpaceId || undefined,
+        goalId: this.defaultGoalId || this.modes.goal.selectedGoalId || undefined,
       };
 
       const reference = this.modes[Modes.REFERENCE].selectedReferenceId;
@@ -684,6 +688,8 @@ export class TaskQuickEditorStore {
     disableReferenceChange,
     input,
     isCreator,
+    defaultSpaceId: externalDefaultSpaceId,
+    defaultGoalId,
   }: TaskQuickEditorProps) => {
     this.callbacks = callbacks || {};
     this.keepFocus = keepFocus;
@@ -697,6 +703,9 @@ export class TaskQuickEditorStore {
 
     const defaultSpaceId = task?.spaceId || input?.spaceId;
 
+    this.defaultSpaceId = externalDefaultSpaceId;
+    this.defaultGoalId = defaultGoalId;
+
     if (task) {
       if (
         (this.task === null && task) ||
@@ -708,6 +717,8 @@ export class TaskQuickEditorStore {
       this.reset();
       this.task = task;
       this.restoreTask();
+    } else if (externalDefaultSpaceId) {
+      this.modes.space.selectedSpaceId = defaultSpaceId;
     } else if (this.root.resources.spaces.count) {
       if (defaultSpaceId) {
         this.modes.space.selectedSpaceId = defaultSpaceId;

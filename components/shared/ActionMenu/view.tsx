@@ -18,6 +18,8 @@ export const ActionMenuView = observer(
     isOpenByContextMenu,
     triggerButtonProps,
     triggerIconFontSize,
+    customTrigger,
+    menuMinWidth,
     triggerIcon = faEllipsis
   }: ActionMenuViewProps) {
     const store = useActionMenuStore();
@@ -68,23 +70,25 @@ export const ActionMenuView = observer(
         onClose={close}
       >
         <PopoverTrigger>
-          <Button
-            size='xs'
-            h='auto'
-            minW={5}
-            w={5}
-            p={0}
-            variant='unstyled'
-            borderRadius='none'
-            visibility={hidden ? 'hidden' : 'visible'}
-            onClick={(e) => e.stopPropagation()}
-            {...triggerButtonProps(isOpen)}
-          >
-            <FontAwesomeIcon icon={triggerIcon} fontSize={triggerIconFontSize} fixedWidth />
-          </Button>
+          {customTrigger ? customTrigger(isOpen) : (
+            <Button
+              size='xs'
+              h='auto'
+              minW={5}
+              w={5}
+              p={0}
+              variant='unstyled'
+              borderRadius='none'
+              visibility={hidden ? 'hidden' : 'visible'}
+              onClick={(e) => e.stopPropagation()}
+              {...triggerButtonProps(isOpen)}
+            >
+              <FontAwesomeIcon icon={triggerIcon} fontSize={triggerIconFontSize} fixedWidth />
+            </Button>
+          )}
         </PopoverTrigger>
         {(isOpen || isAnimationInProcess) && (
-          <ActionMenuContent isOpen={isOpen} stopAnimation={stopAnimation} />
+          <ActionMenuContent isOpen={isOpen} stopAnimation={stopAnimation} menuMinWidth={menuMinWidth} />
         )}
       </Popover>
     );

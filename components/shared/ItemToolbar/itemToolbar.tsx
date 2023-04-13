@@ -10,10 +10,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowDownLeftAndArrowUpRightToCenter,
   faArrowUpRightAndArrowDownLeftFromCenter,
-  faChevronDown,
-  faChevronUp,
 } from '@fortawesome/pro-solid-svg-icons';
 import { TooltipWithHotkey } from '../TooltipWithHotkey';
+import { NextPrevItemController } from "../NextPrevItemController/NextPrevItemController";
 
 export const ItemToolbar = ({
   isExpanded,
@@ -86,37 +85,12 @@ export const ItemToolbar = ({
         <chakra.div h={4} bg='gray.200' w={0.5} display='inline-block' mr={2} />
       )}
       {(onPreviousItem || onNextItem) && (
-        <>
-          <IconButton
-            aria-label={'prev'}
-            size='xs'
-            isDisabled={!hasPreviousItem}
-            variant='ghost'
-            mr={2}
-            onClick={onPreviousItem}
-          >
-            <FontAwesomeIcon
-              fontSize={16}
-              color={`var(--chakra-colors-gray-400)`}
-              icon={faChevronUp}
-              fixedWidth
-            />
-          </IconButton>
-          <IconButton
-            aria-label={'next'}
-            size='xs'
-            isDisabled={!hasNextItem}
-            variant='ghost'
-            onClick={onNextItem}
-          >
-            <FontAwesomeIcon
-              fontSize={16}
-              color={`var(--chakra-colors-gray-400)`}
-              icon={faChevronDown}
-              fixedWidth
-            />
-          </IconButton>
-        </>
+        <NextPrevItemController
+          hasPreviousItem={hasPreviousItem}
+          hasNextItem={hasNextItem}
+          onNextItem={onNextItem}
+          onPrevItem={onPreviousItem}
+        />
       )}
     </Box>
     <CloseButton onClick={onClose} color='gray.400' size='sm' />

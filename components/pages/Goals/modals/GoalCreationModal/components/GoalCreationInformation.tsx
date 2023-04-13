@@ -51,6 +51,7 @@ export const GoalCreationInformation = observer(
                     startDate={store.goal.startDate}
                     endDate={store.goal.targetDate}
                     onChanged={store.handleStartDateChange}
+                    onBlur={store.handleGoalParamBlur}
                     pl='0.3rem'
                   />
                 )}
@@ -65,6 +66,7 @@ export const GoalCreationInformation = observer(
                     minDate={store.goal.startDate}
                     value={store.goal.targetDate}
                     onChanged={store.handleTargetDateChange}
+                    onBlur={store.handleGoalParamBlur}
                     pl='0.3rem'
                   />
                 )}
@@ -84,10 +86,12 @@ export const GoalCreationInformation = observer(
               listId={store.goal.id}
               tasksListCallbacks={store.tasksListCallbacks}
               forcedLoadTasks={store.isUpdating}
+              delayedCreation={!store.isUpdating}
               dnd
-              delayedCreation
               disableSpaceChange
               disableGoalChange
+              defaultSpaceId={store.goal.spaceId}
+              defaultGoalId={store.goal.id}
               disableReferenceChange
               displayCreatorHelpAsTooltip
               taskListWrapperProps={{

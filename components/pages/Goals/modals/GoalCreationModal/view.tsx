@@ -1,8 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button, Text, HStack, Box } from '@chakra-ui/react';
+import { HStack, Box } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from './store';
-import { BackArrowIcon } from '../../../../shared/Icons/BackArrowIcon';
 import {
   Modal,
   ModalContent,
@@ -14,7 +13,7 @@ import { ResizableGroupChild } from "../../../../shared/ResizableGroup/Resizable
 import { GoalCreationInformation } from "./components/GoalCreationInformation";
 import { Task } from "../../../../shared/Task";
 import { ModalsSwitcher } from "../../../../../helpers/ModalsController";
-import { ButtonHotkey } from "../../../../shared/ButtonHotkey";
+import { GoalCreationToolbar } from "./components/GoalCreationToolbar";
 
 export const GoalCreationModalView = observer(function GoalCreationModal() {
   const store = useGoalCreationModalStore();
@@ -41,29 +40,7 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
             borderColor='gray.200'
           >
             <HStack flexDirection='column' width='100%' height='100%'>
-              <HStack justifyContent='space-between' width='100%' maxW='3xl' pt={4} pb={8} pl={10} pr={10}>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  pl={1.5}
-                  pr={1.5}
-                  onClick={store.handleBack}
-                >
-                  <BackArrowIcon />
-                  <Text fontSize='lg' lineHeight={3} color='gray.500' fontWeight='normal' ml={2}>
-                    Back
-                  </Text>
-                </Button>
-                <Button
-                  colorScheme='blue'
-                  size='sm'
-                  onClick={store.handleSave}
-                  disabled={store.isGoalCreatingOrUpdating}
-                >
-                  Save
-                  <ButtonHotkey hotkey='⌘+Enter' />
-                </Button>
-              </HStack>
+              <GoalCreationToolbar />
               <GoalCreationDescription />
             </HStack>
           </ResizableGroupChild>

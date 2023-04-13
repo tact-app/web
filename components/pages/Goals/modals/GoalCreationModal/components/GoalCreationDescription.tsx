@@ -3,8 +3,8 @@ import { chakra, Box, Center, CircularProgress, Input, Flex, FormControl } from 
 import { useGoalCreationModalStore } from '../store';
 import { Editor } from '../../../../../shared/Editor';
 import React from "react";
-import { EmojiSelect } from "../../../../../shared/EmojiSelect";
 import { FormError } from "../../../../../shared/FormError";
+import { GoalEmojiSelect } from "../../../components/GoalEmojiSelect/GoalEmojiSelect";
 
 export const GoalCreationDescription = observer(
   function GoalCreationDescription() {
@@ -29,9 +29,8 @@ export const GoalCreationDescription = observer(
           pl={10}
           pr={10}
         >
-          <EmojiSelect
-            icon={store.goal.icon.value}
-            color={store.goal.icon.color}
+          <GoalEmojiSelect
+            goal={store.goal}
             onColorChange={store.handleColorSelect}
             onIconChange={store.handleEmojiSelect}
           />
@@ -44,9 +43,12 @@ export const GoalCreationDescription = observer(
                 placeholder='Goal Name'
                 _placeholder={{ color: 'gray.400' }}
                 onChange={store.handleTitleChange}
+                onBlur={store.handleGoalParamBlur}
                 variant='flushed'
                 fontSize='md'
                 fontWeight='semibold'
+                textDecoration={store.isGoalFinished ? 'line-through' : 'none'}
+                color={store.isGoalFinished ? 'gray.400' : 'initial'}
                 height='2rem'
                 _focusVisible={{
                   borderColor: 'blue.400',
@@ -80,7 +82,7 @@ export const GoalCreationDescription = observer(
                   pr: 10,
                 }}
                 onUpdate={store.handleDescriptionChange}
-                onSave={store.handleSave}
+                onBlur={store.handleGoalParamBlur}
               />
             </Box>
           )}

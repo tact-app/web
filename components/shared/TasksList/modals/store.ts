@@ -8,7 +8,7 @@ import { TaskSpaceChangeModal } from './TaskSpaceChangeModal';
 import { TaskData } from '../types';
 import { SpaceCreationModal } from '../../../pages/Spaces/modals/SpaceCreationModal';
 import { SpaceData } from '../../../pages/Spaces/types';
-
+import { CreateGoalParams } from "../../../../stores/RootStore/Resources/GoalsStore";
 
 export enum ModalsTypes {
   DELETE_TASK,
@@ -67,7 +67,7 @@ export class TasksModals {
           this.controller.close();
           cb && cb();
         },
-        onSave: async (data) => {
+        onSave: async (data: CreateGoalParams) => {
           await this.parent.root.resources.goals.add(data);
           this.controller.close();
           cb && cb();

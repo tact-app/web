@@ -31,6 +31,8 @@ export const TasksListWithCreatorView = observer(
           disableGoalChange={props.disableGoalChange}
           disableReferenceChange={props.disableReferenceChange}
           displayHelpAsTooltip={props.displayCreatorHelpAsTooltip}
+          defaultGoalId={props.defaultGoalId}
+          defaultSpaceId={props.defaultSpaceId}
         />
         <TasksList
           {...props}
