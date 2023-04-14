@@ -64,7 +64,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-datepicker": "4.11.0",
     "react-dom": "^18.2.0",
-    "react-hotkeys-hook": "^4.3.8",
+    "react-hotkeys-hook": "^4.4.0",
     "tippy.js": "^6.3.7",
     "use-resize-observer": "^9.1.0",
     "uuid": "^9.0.0"
