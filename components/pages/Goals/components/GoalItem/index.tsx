@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite';
 import { Box, chakra, Flex, Text, Tooltip } from '@chakra-ui/react';
-import { useGoalsStore } from '../../store';
 import { DatePicker } from "../../../../shared/DatePicker";
 import {
   faAlarmClock,
@@ -24,6 +23,7 @@ import { ActionMenu } from "../../../../shared/ActionMenu";
 import { EditableTitle } from "../../../../shared/EditableTitle";
 import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
 import { GoalEmojiSelect } from "../GoalEmojiSelect/GoalEmojiSelect";
+import { useGoalListStore } from "../GoalsList/store";
 
 type Props = {
   goal: GoalDataExtended
@@ -48,9 +48,7 @@ const GOAL_STATE_PARAMS = {
 }
 
 export const GoalItem = observer(function GoalItem({ goal }: Props) {
-  const store = useGoalsStore();
-
-  const handleOpenGoal = () => store.editGoal(goal.id);
+  const store = useGoalListStore();
 
   const isDone = goal.status === GoalStatus.DONE;
   const isWontDo = goal.status === GoalStatus.WONT_DO;
@@ -60,13 +58,13 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       icon: faSquareArrowUpRight,
       title: 'Open',
       command: '↵/⌥O',
-      onClick: handleOpenGoal
+      onClick: () => store.callbacks?.onOpenGoal(goal.id),
     },
     {
       icon: faCircleCheck,
       title: isDone ? 'Unmark as done' : 'Done',
       command: '⌥D',
-      onClick: () => store.updateGoal({
+      onClick: () => store.callbacks?.onUpdateGoal({
         ...goal,
         status: isDone ? GoalStatus.TODO : GoalStatus.DONE,
       }),
@@ -75,19 +73,20 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       icon: faCircleMinus,
       title: isWontDo ? "Unmark as won't do" : "Won't do",
       command: '⌥W',
-      onClick: () => store.wontDoSubmitModalOpen(goal),
+      onClick: () => store.callbacks?.onWontDo(goal),
     },
     {
       icon: faClone,
       title: 'Clone',
       command: '⌥C',
+      hidden: !store.hasClone,
       onClick: () => store.cloneGoal(goal),
     },
     {
       icon: faBoxArchive,
       title: goal.isArchived ? 'Unarchive' : 'Archive',
       command: '⌥A',
-      onClick: () => store.updateGoal({
+      onClick: () => store.callbacks?.onUpdateGoal({
         ...goal,
         isArchived: !goal.isArchived
       }),
@@ -104,14 +103,14 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
             content: 'Are you sure you would like to delete this goal?'
           })
         ) {
-          await store.deleteGoal(goal.id);
+          await store.callbacks?.onDeleteGoal(goal.id);
         }
       },
     },
   ];
 
   const handleChangeStartDate = (date: string) => {
-    return store.updateGoal({
+    return store.callbacks?.onUpdateGoal({
       ...goal,
       startDate: date,
       targetDate: DatePickerHelpers.isStartDateAfterEndDate(date, goal.targetDate)
@@ -120,16 +119,16 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
     });
   };
   const handleChangeTargetDate = (date: string) => {
-    return store.updateGoal({ ...goal, targetDate: date });
+    return store.callbacks?.onUpdateGoal({ ...goal, targetDate: date });
   };
   const handleChangeTitle = (title: string) => {
-    return store.updateGoal({ ...goal, title });
+    return store.callbacks?.onUpdateGoal({ ...goal, title });
   };
   const handleChangeIcon = (icon: string) => {
-    return store.updateGoal({ ...goal, icon: { ...goal.icon, value: icon } });
+    return store.callbacks?.onUpdateGoal({ ...goal, icon: { ...goal.icon, value: icon } });
   };
   const handleColorChange = (color: string) => {
-    return store.updateGoal({ ...goal, icon: { ...goal.icon, color } });
+    return store.callbacks?.onUpdateGoal({ ...goal, icon: { ...goal.icon, color } });
   };
 
   return (
@@ -150,7 +149,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       position='relative'
       cursor='pointer'
       height={124}
-      onClick={handleOpenGoal}
+      onClick={() => store.callbacks?.onOpenGoal(goal.id)}
     >
       <Flex>
         <GoalEmojiSelect

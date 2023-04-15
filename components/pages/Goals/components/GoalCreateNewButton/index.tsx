@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite';
 import { Button, Text, ButtonProps } from '@chakra-ui/react';
-import { useGoalsStore } from '../../store';
 import React from 'react';
 import { HotkeyBlock } from '../../../../shared/HotkeyBlock';
 import { Tooltip } from "../../../../shared/Tooltip";
@@ -12,8 +11,6 @@ type Props = ButtonProps & {
 
 export const GoalCreateNewButton = observer(
   function GoalCreateNewButton({ children, withHotkey, withTooltip, ...buttonProps }: Props) {
-    const store = useGoalsStore();
-
     return (
       <>
         <Tooltip
@@ -23,7 +20,6 @@ export const GoalCreateNewButton = observer(
           placement='left'
         >
           <Button
-            onClick={store.startGoalCreation}
             size='md'
             minH={8}
             mb={2}

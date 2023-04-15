@@ -5,8 +5,8 @@ import { EditableTitle } from "../../../../shared/EditableTitle";
 import { GoalItem } from "../GoalItem";
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { useGoalsStore } from "../../store";
 import { toJS } from "mobx";
+import { useRootStore } from "../../../../../stores/RootStore";
 
 type Props = {
   spaceId: string;
@@ -14,18 +14,18 @@ type Props = {
 };
 
 export const SpaceItem = observer(function SpaceItem({ spaceId, goals }: Props) {
-  const store = useGoalsStore();
+  const store = useRootStore();
 
-  const space = toJS(store.root.resources.spaces.getById(spaceId));
+  const space = toJS(store.resources.spaces.getById(spaceId));
 
   const handleSpaceNameChange = (name: string) => {
-    return store.root.resources.spaces.update({ ...space, name });
+    return store.resources.spaces.update({ ...space, name });
   };
   const handleSpaceIconChange = (icon: string) => {
-    return store.root.resources.spaces.update({ ...space, icon });
+    return store.resources.spaces.update({ ...space, icon });
   };
   const handleSpaceColorChange = (color: string) => {
-    return store.root.resources.spaces.update({ ...space, color });
+    return store.resources.spaces.update({ ...space, color });
   };
 
   return (
