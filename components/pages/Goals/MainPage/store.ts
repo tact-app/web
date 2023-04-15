@@ -48,6 +48,10 @@ export class GoalsStore extends BaseGoalsStore {
     return Object.keys(this.list).length;
   }
 
+  get hasArchivedGoals() {
+    return this.root.resources.goals.list.some((goal) => goal.isArchived);
+  }
+
   cloneGoal = ({ customFields, ...goal }: GoalDataExtended) => {
     return this.root.resources.goals.cloneGoal(goal);
   }

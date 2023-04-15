@@ -27,6 +27,10 @@ export class GoalsArchiveStore extends BaseGoalsStore {
       return acc;
     }, {} as Record<string, GoalDataExtended[]>)
   }
+
+  get hasGoals() {
+    return Boolean(Object.keys(this.list).length);
+  }
 }
 
 export const {
