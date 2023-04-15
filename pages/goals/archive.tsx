@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import { PageLoader } from '../../components/shared/PageLoader';
 
-const DynamicGoalsArchivePage = dynamic(() => import('../../components/pages/Goals/pages/Archive'), {
+const DynamicGoalsArchivePage = dynamic(() => import('../../components/pages/Goals/ArchivePage'), {
   loading: () => <PageLoader />,
   ssr: false,
 });

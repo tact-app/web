@@ -1,8 +1,8 @@
 import { computed, makeObservable } from 'mobx';
-import { RootStore } from '../../../../../stores/RootStore';
-import { getProvider } from '../../../../../helpers/StoreProvider';
-import { BaseGoalsStore } from "../../stores/BaseGoalsStore";
-import { GoalDataExtended } from "../../types";
+import { RootStore } from '../../../../stores/RootStore';
+import { getProvider } from '../../../../helpers/StoreProvider';
+import { BaseGoalsStore } from "../stores/BaseGoalsStore";
+import { GoalDataExtended } from "../types";
 
 export class GoalsArchiveStore extends BaseGoalsStore {
   constructor(public root: RootStore) {

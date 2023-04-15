@@ -1,15 +1,15 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import Head from 'next/head';
-import { GoalList } from './components/GoalsList';
-import { ModalsSwitcher } from '../../../helpers/ModalsController';
+import { GoalList } from '../components/GoalsList';
+import { ModalsSwitcher } from '../../../../helpers/ModalsController';
 import { useGoalsStore } from './store';
-import { useHotkeysHandler } from "../../../helpers/useHotkeysHandler";
+import { useHotkeysHandler } from "../../../../helpers/useHotkeysHandler";
 import { Box, Heading } from "@chakra-ui/react";
-import { GoalCreateNewButton } from "./components/GoalCreateNewButton";
+import { GoalCreateNewButton } from "../components/GoalCreateNewButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/pro-regular-svg-icons";
-import { EmptyGoalListMessage } from "./components/EmptyGoalListMessage/EmptyGoalListMessage";
+import { EmptyGoalListMessage } from "../components/EmptyGoalListMessage/EmptyGoalListMessage";
 
 export const GoalsView = observer(function GoalsView() {
   const store = useGoalsStore();

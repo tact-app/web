@@ -1,9 +1,9 @@
 import { action, computed, makeObservable, observable } from 'mobx';
-import { RootStore } from '../../../stores/RootStore';
-import { getProvider } from '../../../helpers/StoreProvider';
-import { BaseGoalsStore, GoalsModalsTypes } from "./stores/BaseGoalsStore";
-import { GoalDataExtended } from "./types";
-import { CreateGoalParams } from "../../../stores/RootStore/Resources/GoalsStore";
+import { RootStore } from '../../../../stores/RootStore';
+import { getProvider } from '../../../../helpers/StoreProvider';
+import { BaseGoalsStore, GoalsModalsTypes } from "../stores/BaseGoalsStore";
+import { GoalDataExtended } from "../types";
+import { CreateGoalParams } from "../../../../stores/RootStore/Resources/GoalsStore";
 
 export class GoalsStore extends BaseGoalsStore {
   keymap = {

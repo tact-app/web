@@ -1,8 +1,8 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import Head from 'next/head';
-import { GoalList } from '../../components/GoalsList';
-import { ModalsSwitcher } from '../../../../../helpers/ModalsController';
+import { GoalList } from '../components/GoalsList';
+import { ModalsSwitcher } from '../../../../helpers/ModalsController';
 import { useGoalsArchiveStore } from './store';
 import { Box, Heading } from "@chakra-ui/react";
 
