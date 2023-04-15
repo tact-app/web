@@ -1,12 +1,12 @@
-import { GoalDataExtended } from "../../types";
+import { GoalDataExtended } from "../../../types";
 import { chakra, Flex } from "@chakra-ui/react";
-import { EmojiSelect } from "../../../../shared/EmojiSelect";
-import { EditableTitle } from "../../../../shared/EditableTitle";
+import { EmojiSelect } from "../../../../../shared/EmojiSelect";
+import { EditableTitle } from "../../../../../shared/EditableTitle";
 import { GoalItem } from "../GoalItem";
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { toJS } from "mobx";
-import { useRootStore } from "../../../../../stores/RootStore";
+import { useRootStore } from "../../../../../../stores/RootStore";
 
 type Props = {
   spaceId: string;

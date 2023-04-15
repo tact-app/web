@@ -1,5 +1,5 @@
 import { Box, Text } from '@chakra-ui/react';
-import { GoalIconData, GoalIconVariants } from '../../types';
+import { GoalIconData, GoalIconVariants } from '../../pages/Goals/types';
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 

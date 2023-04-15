@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { Box, chakra, Flex, Text, Tooltip } from '@chakra-ui/react';
-import { DatePicker } from "../../../../shared/DatePicker";
+import { DatePicker } from "../../../../../shared/DatePicker";
 import {
   faAlarmClock,
   faBoxArchive,
@@ -18,12 +18,12 @@ import {
 } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { GoalDataExtended, GoalState, GoalStatus } from "../../types";
-import { ActionMenu } from "../../../../shared/ActionMenu";
-import { EditableTitle } from "../../../../shared/EditableTitle";
-import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
-import { GoalEmojiSelect } from "../GoalEmojiSelect/GoalEmojiSelect";
-import { useGoalListStore } from "../GoalsList/store";
+import { GoalDataExtended, GoalState, GoalStatus } from "../../../types";
+import { ActionMenu } from "../../../../../shared/ActionMenu";
+import { EditableTitle } from "../../../../../shared/EditableTitle";
+import { DatePickerHelpers } from "../../../../../shared/DatePicker/helpers";
+import { GoalEmojiSelect } from "../../GoalEmojiSelect";
+import { useGoalListStore } from "../store";
 
 type Props = {
   goal: GoalDataExtended

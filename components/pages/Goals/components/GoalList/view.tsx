@@ -3,7 +3,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import React from 'react';
 import { faList } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { SpaceItem } from '../SpaceItem';
+import { SpaceItem } from './SpaceItem';
 import { Filters } from "../../../../shared/Filters";
 import { ManArrowToIcon } from "../../../../images/icons/ManArrowToIcon";
 import { ManArrowOffIcon } from "../../../../images/icons/ManArrowOffIcon";

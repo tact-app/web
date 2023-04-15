@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import Head from 'next/head';
-import { GoalList } from '../components/GoalsList';
+import { GoalList } from '../components/GoalList';
 import { ModalsSwitcher } from '../../../../helpers/ModalsController';
 import { useGoalsStore } from './store';
 import { useHotkeysHandler } from "../../../../helpers/useHotkeysHandler";
