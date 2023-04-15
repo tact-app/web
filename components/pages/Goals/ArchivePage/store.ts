@@ -10,6 +10,7 @@ export class GoalsArchiveStore extends BaseGoalsStore {
 
     makeObservable(this, {
       list: computed,
+      hasGoals: computed,
     })
   }
 
