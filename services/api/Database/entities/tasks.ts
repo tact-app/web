@@ -30,12 +30,14 @@ const data = {
       db: DB,
       {
         id,
+        goalId,
       }: {
         id: string;
+        goalId: string;
       }
     ) => {
       const tasks = await db.getAll('tasks');
-      const tasksList = await db.get('taskLists', id);
+      const tasksList = await db.get('taskLists', goalId || id);
 
       if (!tasksList) {
         return {
@@ -45,12 +47,13 @@ const data = {
       }
 
       const filteredTasks = tasks
-        .filter(({ id }) => tasksList.taskIds.includes(id))
-        .reduce((acc, task) => {
-          acc[task.id] = task;
-          return acc;
-        }, {});
+        .filter((task) => tasksList.taskIds.includes(task.id) && (!goalId || task.goalId === goalId))
+        .reduce((acc, task) => ({
+          ...acc,
+          [task.id]: task,
+        }), {});
 
+      console.log(filteredTasks, tasksList.taskIds)
       return {
         tasks: filteredTasks,
         order: tasksList.taskIds,
@@ -80,6 +83,18 @@ const data = {
 
         return list;
       });
+
+      if (data.task.goalId) {
+        await updateList(db, data.task.goalId, (list) => {
+          if (data.placement === 'top') {
+            list.taskIds.unshift(data.task.id);
+          } else {
+            list.taskIds.push(data.task.id);
+          }
+
+          return list;
+        });
+      }
     },
     '/api/tasks/create/bulk': (
       db: DB,
@@ -103,7 +118,7 @@ const data = {
   delete: {
     '/api/tasks/delete': async (
       db: DB,
-      { ids, listId }: { ids: string[]; listId?: string }
+      { ids, listId, goalId }: { ids: string[]; listId?: string; goalId?: string; }
     ) => {
       if (!listId) {
         const tasks = await Promise.all(ids.map((id) => db.get('tasks', id)));
@@ -149,6 +164,14 @@ const data = {
         ]);
       } else {
         await updateList(db, listId, (list) => {
+          list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
+
+          return list;
+        });
+      }
+
+      if (goalId) {
+        await updateList(db, goalId, (list) => {
           list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
 
           return list;

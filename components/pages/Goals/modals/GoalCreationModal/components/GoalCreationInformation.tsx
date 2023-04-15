@@ -6,6 +6,7 @@ import { TasksListWithCreator } from "../../../../../shared/TasksListWithCreator
 import { DraggableListContext } from "../../../../../shared/DraggableList/view";
 import { SpaceSelect } from "../../../../../shared/SpaceSelect";
 import { DatePicker } from "../../../../../shared/DatePicker";
+import { Lists } from "../../../../../shared/TasksList/constants";
 
 export const GoalCreationInformation = observer(
   function GoalCreationInformation() {
@@ -83,7 +84,7 @@ export const GoalCreationInformation = observer(
           >
             <TasksListWithCreator
               instance={store.listWithCreator}
-              listId={store.goal.id}
+              listId={Lists.TODAY}
               tasksListCallbacks={store.tasksListCallbacks}
               forcedLoadTasks={store.isUpdating}
               delayedCreation={!store.isUpdating}

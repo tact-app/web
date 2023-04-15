@@ -36,6 +36,7 @@ export const TasksListWithCreatorView = observer(
         />
         <TasksList
           {...props}
+          goalId={props.defaultGoalId}
           wrapperProps={props.taskListWrapperProps}
           instance={store.list}
           callbacks={store.tasksListCallbacks}

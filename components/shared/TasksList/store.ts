@@ -22,6 +22,7 @@ export type TasksListProps = {
   listId?: string;
   tasksReceiverName?: string;
   dnd?: boolean;
+  goalId?: string;
   delayedCreation?: boolean;
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
@@ -59,6 +60,7 @@ export class TasksListStore {
   disableSpaceChange: boolean = false;
   disableGoalChange: boolean = false;
   forcedLoadTasks: boolean = false;
+  goalId: string;
 
   tasksReceiverName: string = '';
 
@@ -421,7 +423,7 @@ export class TasksListStore {
     this.order = this.order.filter((id) => !ids.includes(id));
 
     if (!this.delayedCreation) {
-      this.root.api.tasks.delete(ids);
+      this.root.api.tasks.delete(ids, this.goalId);
     }
 
     ids.forEach((id) => {
@@ -576,7 +578,7 @@ export class TasksListStore {
 
     this.isLoading = true;
 
-    const { tasks, order } = await this.root.api.tasks.list(this.listId);
+    const { tasks, order } = await this.root.api.tasks.list(this.listId, this.goalId);
 
     runInAction(() => {
       this.items = tasks;
@@ -601,6 +603,7 @@ export class TasksListStore {
 
   update = (props: TasksListProps) => {
     this.callbacks = props.callbacks || {};
+    this.goalId = props.goalId;
     this.checkTaskActivity = props.checkTaskActivity;
     this.highlightActiveTasks = props.highlightActiveTasks;
     this.isForceHotkeysEnabled = props.isHotkeysEnabled ?? true;

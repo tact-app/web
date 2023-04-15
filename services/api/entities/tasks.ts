@@ -2,10 +2,10 @@ import { ApiService } from '../ApiService';
 import { TaskData } from '../../../components/shared/TasksList/types';
 
 const getTasksApi = (apiService: ApiService) => ({
-  list: (id: string) =>
+  list: (id: string, goalId?: string) =>
     apiService.get<{ tasks: Record<string, TaskData>; order: string[] }>(
       `/api/tasks`,
-      { id }
+      { id, goalId }
     ),
   all: () =>
     apiService.get<TaskData[]>(`/api/tasks/all`),
@@ -23,8 +23,8 @@ const getTasksApi = (apiService: ApiService) => ({
       tasks,
       order,
     }),
-  delete: (ids: string[], listId?: string) =>
-    apiService.delete(`/api/tasks/delete`, { ids, listId }),
+  delete: (ids: string[], goalId?: string, listId?: string) =>
+    apiService.delete(`/api/tasks/delete`, { ids, listId, goalId }),
   order: (data: { listId: string; taskIds: string[]; destination: number }) =>
     apiService.put<TaskData[]>(`/api/tasks/order`, data),
   orderReset: (data: { listId: string; order: string[]; }) =>
