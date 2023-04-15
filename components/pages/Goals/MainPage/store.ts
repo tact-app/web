@@ -30,7 +30,18 @@ export class GoalsStore extends BaseGoalsStore {
   }
 
   get list() {
-    return this.extendedGoals;
+    return Object.entries(this.extendedGoals).reduce((acc, [id, goals]) => {
+      const notArchivedGoals = goals.filter((goal) => !goal.isArchived);
+
+      if (notArchivedGoals.length) {
+        return {
+          ...acc,
+          [id]: notArchivedGoals,
+        };
+      }
+
+      return acc;
+    }, {} as Record<string, GoalDataExtended[]>)
   }
 
   get hasGoals() {

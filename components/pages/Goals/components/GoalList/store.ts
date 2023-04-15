@@ -1,9 +1,10 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, toJS } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { GoalDataExtended } from "../../types";
 import { GoalListProps, GoalListCallbacks } from './types';
 import { EDITABLE_TITLE_ID_SLUG } from "../../../../shared/EditableTitle";
+import { SpaceData } from "../../../Spaces/types";
 
 export class GoalListStore {
   listBySpaces: Record<string, GoalDataExtended[]> = {};
@@ -36,6 +37,14 @@ export class GoalListStore {
 
     const clonedGoal = await this.callbacks.onCloneGoal(goal);
     this.getGoalTitleElement(clonedGoal.id).click();
+  }
+
+  getSpace = (spaceId: string) => {
+    return toJS(this.root.resources.spaces.getById(spaceId));
+  }
+
+  updateSpace = (space: SpaceData) => {
+    return this.root.resources.spaces.update(space);
   }
 
   update = ({ listBySpaces, onUpdateGoal, onDeleteGoal, onCloneGoal, onOpenGoal, onWontDo }: GoalListProps) => {
