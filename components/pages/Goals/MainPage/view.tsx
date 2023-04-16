@@ -27,7 +27,7 @@ export const GoalsView = observer(function GoalsView() {
       <Head>
         <title>Goals</title>
       </Head>
-      <Box pl={32} pr={32} position='relative'>
+      <Box pl={32} pr={32} position='relative' h='100%'>
         <Heading
           size='md'
           fontSize='2xl'
