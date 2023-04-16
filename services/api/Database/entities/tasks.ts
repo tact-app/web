@@ -53,7 +53,6 @@ const data = {
           [task.id]: task,
         }), {});
 
-      console.log(filteredTasks, tasksList.taskIds)
       return {
         tasks: filteredTasks,
         order: tasksList.taskIds,
@@ -98,11 +97,16 @@ const data = {
     },
     '/api/tasks/create/bulk': (
       db: DB,
-      data: { listId: string; tasks: TaskData[]; order: string[] }
+      data: { listId: string; goalId?: string; tasks: TaskData[]; order: string[] }
     ) => {
       return Promise.all([
         ...data.tasks.map((task) => db.add('tasks', task)),
-        data.order ? db.add('taskLists', { id: data.listId, taskIds: data.order }) : null
+        updateList(db, data.listId, (list) => {
+          list.taskIds.push(...data.tasks.map((task) => task.id));
+
+          return list;
+        }),
+        data.goalId ? db.add('taskLists', { id: data.goalId, taskIds: data.order }) : null,
       ])
     },
     '/api/tasks/map': async (db: DB, data: { taskIds: string[] }) => {
@@ -118,7 +122,7 @@ const data = {
   delete: {
     '/api/tasks/delete': async (
       db: DB,
-      { ids, listId, goalId }: { ids: string[]; listId?: string; goalId?: string; }
+      { ids, listId }: { ids: string[]; listId?: string; }
     ) => {
       if (!listId) {
         const tasks = await Promise.all(ids.map((id) => db.get('tasks', id)));
@@ -161,17 +165,15 @@ const data = {
 
             return list;
           }),
+          
+          ...tasks.map((task) => updateList(db, task.goalId, (list) => {
+            list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
+
+            return list;
+          }))
         ]);
       } else {
         await updateList(db, listId, (list) => {
-          list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
-
-          return list;
-        });
-      }
-
-      if (goalId) {
-        await updateList(db, goalId, (list) => {
           list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
 
           return list;
@@ -247,11 +249,25 @@ const data = {
           const existedTask = await db.get('tasks', id);
 
           if (existedTask) {
-            existedTask.goalId = data.goalId;
+            await db.put('tasks', { ...existedTask, goalId: data.goalId });
 
-            await db.put('tasks', existedTask);
+            if (existedTask.goalId) {
+              await updateList(db, existedTask.goalId, (list) => {
+                list.taskIds = list.taskIds.filter((taskId) => taskId !== id);
+
+                return list;
+              });
+            }
+
+            if (data.goalId) {
+              await updateList(db, data.goalId, (list) => {
+                list.taskIds = [...list.taskIds, id];
+
+                return list;
+              });
+            }
           }
-        })
+        }),
       );
     },
   },

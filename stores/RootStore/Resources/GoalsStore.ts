@@ -5,6 +5,7 @@ import { DescriptionData } from '../../../types/description';
 import { TaskData } from "../../../components/shared/TasksList/types";
 import { cloneDeep, omit } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
+import { Lists } from "../../../components/shared/TasksList/constants";
 
 export type CreateGoalParams<T = GoalData> = {
   goal: T,
@@ -70,13 +71,14 @@ export class GoalsStore {
 
     if (tasksData?.tasks?.length) {
       await this.root.api.tasks.createBulk(
-        goal.id,
+        Lists.TODAY,
         tasksData.tasks.map((task) => ({
           ...task,
           goalId: goal.id,
           spaceId: goal.spaceId
         })),
         cloneDeep(tasksData.order),
+        goal.id
       );
       await Promise.all(
         tasksData?.descriptions?.map((description) =>
