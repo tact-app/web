@@ -62,7 +62,7 @@
     "prosemirror-state": "^1.4.2",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
-    "react-datepicker": "4.10.0",
+    "react-datepicker": "4.11.0",
     "react-dom": "^18.2.0",
     "react-hotkeys-hook": "^4.4.0",
     "tippy.js": "^6.3.7",
