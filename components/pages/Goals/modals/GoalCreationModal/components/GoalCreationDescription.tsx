@@ -4,7 +4,7 @@ import { useGoalCreationModalStore } from '../store';
 import { Editor } from '../../../../../shared/Editor';
 import React from "react";
 import { FormError } from "../../../../../shared/FormError";
-import { GoalEmojiSelect } from "../../../components/GoalEmojiSelect/GoalEmojiSelect";
+import { GoalEmojiSelect } from "../../../components/GoalEmojiSelect";
 
 export const GoalCreationDescription = observer(
   function GoalCreationDescription() {

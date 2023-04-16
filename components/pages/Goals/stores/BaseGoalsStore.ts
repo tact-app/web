@@ -1,14 +1,12 @@
-import { makeAutoObservable } from 'mobx';
-import { RootStore } from '../../../stores/RootStore';
-import { getProvider } from '../../../helpers/StoreProvider';
-import { ModalsController } from '../../../helpers/ModalsController';
-import { GoalCreationModal } from './modals/GoalCreationModal';
-import { GoalDataExtended, GoalState, GoalStatus } from './types';
-import { TaskData, TaskStatus } from "../../shared/TasksList/types";
-import { CreateGoalParams } from "../../../stores/RootStore/Resources/GoalsStore";
-import { GoalWontDoSubmitModal } from "./modals/GoalWontDoSubmitModal";
-import moment from "moment";
-import { EDITABLE_TITLE_ID_SLUG } from "../../shared/EditableTitle";
+import { action, computed, makeObservable, observable } from 'mobx';
+import { RootStore } from '../../../../stores/RootStore';
+import { ModalsController } from '../../../../helpers/ModalsController';
+import { GoalCreationModal } from '../modals/GoalCreationModal';
+import { GoalDataExtended, GoalState, GoalStatus } from '../types';
+import { TaskData, TaskStatus } from "../../../shared/TasksList/types";
+import { CreateGoalParams } from "../../../../stores/RootStore/Resources/GoalsStore";
+import { GoalWontDoSubmitModal } from "../modals/GoalWontDoSubmitModal";
+import moment, { Moment } from "moment";
 
 export enum GoalsModalsTypes {
   CREATE_OR_UPDATE_GOAL,
@@ -20,24 +18,27 @@ const GoalsModals = {
   [GoalsModalsTypes.WONT_DO_SUBMIT]: GoalWontDoSubmitModal,
 };
 
-export class GoalsStore {
-  taskList: TaskData[];
-  goalsRefs: Record<string, HTMLDivElement> = {};
+export class BaseGoalsStore {
+  taskList: TaskData[] = [];
+  currentDay: Moment = moment();
+
+  modals = new ModalsController(GoalsModals);
 
   constructor(public root: RootStore) {
-    makeAutoObservable(this);
+    makeObservable(this, {
+      taskList: observable,
+      currentDay: observable,
+      extendedGoals: computed,
+      taskListByGoal: computed,
+      getStateByDate: action.bound,
+      wontDoSubmitModalOpen: action.bound,
+      editGoal: action.bound,
+      updateGoal: action.bound,
+      deleteGoal: action.bound,
+      loadTaskList: action.bound,
+      init: action.bound,
+    });
   }
-
-  currentDay = moment();
-  keymap = {
-    CREATE_GOAL: ['n'],
-  };
-
-  hotkeysHandlers = {
-    CREATE_GOAL: () => {
-      this.startGoalCreation();
-    },
-  };
 
   get taskListByGoal() {
     if (!this.taskList || !this.taskList.length) {
@@ -61,7 +62,7 @@ export class GoalsStore {
   }
 
   get extendedGoals() {
-    return Object.entries(this.root.resources.goals.map).reduce((acc, [id, goal], index) => ({
+    return Object.entries(this.root.resources.goals.map).reduce((acc, [id, goal]) => ({
       ...acc,
       [goal.spaceId]: [
         ...(acc[goal.spaceId] ?? []),
@@ -79,12 +80,6 @@ export class GoalsStore {
     }), {} as Record<string, GoalDataExtended[]>);
   }
 
-  getGoalTitleElement = (goalId: string) => {
-    return this.goalsRefs[goalId].querySelector(
-      `#${EDITABLE_TITLE_ID_SLUG}-${goalId}`
-    ) as HTMLParagraphElement;
-  };
-
   getStateByDate = (startDate: string, targetDate: string) => {
     const start = moment(startDate);
     const target = moment(targetDate);
@@ -101,25 +96,10 @@ export class GoalsStore {
     }
   };
 
-  setGoalRef = (goalId: string, ref: HTMLDivElement) => {
-    this.goalsRefs[goalId] = ref;
-  }
-
-  modals = new ModalsController(GoalsModals);
-
-  startGoalCreation = () => {
-    this.modals.open({
-      type: GoalsModalsTypes.CREATE_OR_UPDATE_GOAL,
-      props: {
-        onSave: this.createGoal,
-        onClose: this.modals.close,
-      },
-    });
-  };
-
   wontDoSubmitModalOpen = (goal: GoalDataExtended) => {
     if (goal.status === GoalStatus.WONT_DO) {
-      return this.updateGoal({ ...goal, status: GoalStatus.TODO });
+      this.updateGoal({ ...goal, status: GoalStatus.TODO });
+      return;
     }
 
     this.modals.open({
@@ -133,11 +113,6 @@ export class GoalsStore {
       },
     });
   };
-
-  cloneGoal = async ({ customFields, ...goal }: GoalDataExtended) => {
-    const clonedGoal = await this.root.resources.goals.cloneGoal(goal);
-    this.getGoalTitleElement(clonedGoal.id).click();
-  }
 
   editGoal = (goalId: string) => {
     this.modals.open({
@@ -167,17 +142,8 @@ export class GoalsStore {
     await this.loadTaskList();
   };
 
-  createGoal = async ({
-    goal: { customFields, ...goal },
-    ...otherParams
-  }: CreateGoalParams<GoalDataExtended>) => {
-    await this.root.resources.goals.add({ goal, ...otherParams });
-    await this.loadTaskList();
-    this.modals.close();
-  };
-
-  deleteGoal = async (goalId: string) => {
-    await this.root.resources.goals.delete([goalId]);
+  deleteGoal = (goalId: string) => {
+    return this.root.resources.goals.delete([goalId]);
   };
 
   loadTaskList = async () => {
@@ -190,6 +156,3 @@ export class GoalsStore {
 
   update = () => null;
 }
-
-export const { StoreProvider: GoalsStoreProvider, useStore: useGoalsStore } =
-  getProvider(GoalsStore);

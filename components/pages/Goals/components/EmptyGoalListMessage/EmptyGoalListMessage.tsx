@@ -3,7 +3,11 @@ import { MascotGoals } from '../../../../images/illustrations/MascotGoals';
 import { GoalCreateNewButton } from "../GoalCreateNewButton";
 import React from "react";
 
-export function EmptyGoalListMessage() {
+type Props = {
+  onCreate(): void;
+}
+
+export function EmptyGoalListMessage({ onCreate }: Props) {
   return (
     <Flex
       flexDirection='column'
@@ -27,7 +31,7 @@ export function EmptyGoalListMessage() {
         help you focus and&nbsp;complete only essential things that
         bring you closer to it, postponing or&nbsp;canceling the rest.
       </Text>
-      <GoalCreateNewButton withHotkey>
+      <GoalCreateNewButton onClick={onCreate} withHotkey>
         Create new goal 🎯
       </GoalCreateNewButton>
     </Flex>

@@ -12,7 +12,7 @@ import {
 import { GoalsSelectionProps, useGoalsSelectionStore } from './store';
 import React, { useRef } from 'react';
 import { LargePlusIcon } from '../Icons/LargePlusIcon';
-import { GoalIcon } from '../../pages/Goals/components/GoalIcon';
+import { GoalIcon } from '../GoalIcon';
 
 type GoalSelectionListItemProps = {
   id: string | null;

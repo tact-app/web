@@ -1,12 +1,11 @@
-import { GoalDataExtended } from "../../types";
+import { GoalDataExtended } from "../../../types";
 import { chakra, Flex } from "@chakra-ui/react";
-import { EmojiSelect } from "../../../../shared/EmojiSelect";
-import { EditableTitle } from "../../../../shared/EditableTitle";
+import { EmojiSelect } from "../../../../../shared/EmojiSelect";
+import { EditableTitle } from "../../../../../shared/EditableTitle";
 import { GoalItem } from "../GoalItem";
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { useGoalsStore } from "../../store";
-import { toJS } from "mobx";
+import { useGoalListStore } from "../store";
 
 type Props = {
   spaceId: string;
@@ -14,18 +13,18 @@ type Props = {
 };
 
 export const SpaceItem = observer(function SpaceItem({ spaceId, goals }: Props) {
-  const store = useGoalsStore();
+  const store = useGoalListStore();
 
-  const space = toJS(store.root.resources.spaces.getById(spaceId));
+  const space = store.getSpace(spaceId);
 
   const handleSpaceNameChange = (name: string) => {
-    return store.root.resources.spaces.update({ ...space, name });
+    return store.updateSpace({ ...space, name });
   };
   const handleSpaceIconChange = (icon: string) => {
-    return store.root.resources.spaces.update({ ...space, icon });
+    return store.updateSpace({ ...space, icon });
   };
   const handleSpaceColorChange = (color: string) => {
-    return store.root.resources.spaces.update({ ...space, color });
+    return store.updateSpace({ ...space, color });
   };
 
   return (
