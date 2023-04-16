@@ -1,4 +1,3 @@
-import { observer } from 'mobx-react-lite';
 import { Button, Text, ButtonProps } from '@chakra-ui/react';
 import React from 'react';
 import { HotkeyBlock } from '../../../../shared/HotkeyBlock';

@@ -45,7 +45,7 @@ export class GoalsStore extends BaseGoalsStore {
   }
 
   get hasGoals() {
-    return Object.keys(this.list).length;
+    return Boolean(Object.keys(this.list).length);
   }
 
   get hasArchivedGoals() {
