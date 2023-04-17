@@ -1,7 +1,7 @@
 import { Button, Tag, IconButton, ButtonProps } from "@chakra-ui/react";
 import { faXmark } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FC } from "react";
+import React, { forwardRef } from "react";
 
 interface TactTaskTagProps {
     buttonProps?: ButtonProps;
@@ -11,12 +11,13 @@ interface TactTaskTagProps {
     title: string;
 }
 
-export const TactTaskTag: FC<TactTaskTagProps> = ({
+const TactTaskTag = forwardRef<HTMLButtonElement, TactTaskTagProps>(({
     buttonProps,
     iconButtonProps,
     tagProps,
     title,
-    showRemoveIcon = false }) => (
+    showRemoveIcon = false
+}, ref) => (
     <Button
         key={title}
         variant='unstyled'
@@ -38,6 +39,7 @@ export const TactTaskTag: FC<TactTaskTagProps> = ({
                 boxShadow: 'inset 0px 0px 0px 2px var(--chakra-colors-blue-600)'
             }
         }}
+        ref={ref}
         {...buttonProps}
     >
         <Tag
@@ -76,4 +78,8 @@ export const TactTaskTag: FC<TactTaskTagProps> = ({
             </IconButton>
         )}
     </Button>
-)
+));
+
+TactTaskTag.displayName = 'TactTaskTag';
+
+export {TactTaskTag};

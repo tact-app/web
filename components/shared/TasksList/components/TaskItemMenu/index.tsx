@@ -79,7 +79,6 @@ const singleTaskItems = (store: TaskItemStore) => [
   {
     onClick: () => {
       store.parent.modals.openPriorityModal(store.task.id);
-      // setTimeout(() => store.quickEdit.activateMode(Modes.PRIORITY));
     },
     title: 'Change priority',
     icon: faCircleExclamation,

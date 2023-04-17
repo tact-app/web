@@ -31,18 +31,18 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
 
   const renderContent = ({ title, id }: TaskTag) => (
     <TactTaskTag
+      ref={(el) => store.modes.tag.setTagRef(el, id)}
       buttonProps={{
-        onClick:(e) => {
+        onClick: (e) => {
           e.stopPropagation();
           store.modes.tag.focusTagById(id);
         },
-        ref: (el) => store.modes.tag.setTagRef(el, id),
         onKeyDown: (e) => store.modes.tag.handleButtonKeyDown(e, id),
         onFocus: store.handleModeFocus(Modes.TAG),
         ...buttonProps,
       }}
       iconButtonProps={{
-        onClick:(e) => {
+        onClick: (e) => {
           e.stopPropagation();
           store.modes.tag.removeTag(id);
         }
@@ -55,24 +55,24 @@ const TaskQuickEditorTagsList = observer(function TaskQuickEditorTags({
   return (
     <AnimatePresence mode='popLayout' initial={false}>
       {store.modes.tag.tags.map((tag) =>
-          disableAnimating
-              ?
-                <motion.span key={tag.title}>
-                    {renderContent(tag)}
-                </motion.span>
-              : (
-                  <motion.span
-                      layout
-                      key={tag.title}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ type: 'just' }}
-                      exit={{ opacity: 0 }}
-                      style={{ display: 'inline-block' }}
-                  >
-                    {renderContent(tag)}
-                  </motion.span>
-              )
+        disableAnimating
+          ?
+          <motion.span key={tag.title}>
+            {renderContent(tag)}
+          </motion.span>
+          : (
+            <motion.span
+              layout
+              key={tag.title}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ type: 'just' }}
+              exit={{ opacity: 0 }}
+              style={{ display: 'inline-block' }}
+            >
+              {renderContent(tag)}
+            </motion.span>
+          )
       )}
     </AnimatePresence>
   );
@@ -118,75 +118,75 @@ export const TaskQuickEditorTags = observer(function TaskQuickEditTags({
       ref={store.modes.tag.setContainerRef}
     >
       {store.modes.tag.isCollapsed ? (
-          <Popover
-            isOpen={isOpen}
-            onOpen={store.modes.tag.handleCollapseOpen}
-            onClose={store.modes.tag.handleCollapseClose}
-            offset={[0, 16]}
-            returnFocusOnClose={false}
-            autoFocus={false}
-            closeOnBlur={true}
-          >
-            <PopoverTrigger>
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  store.suggestionsMenu.openFor(Modes.TAG);
-                }}
-                ref={store.modes.tag.setCollapseRef}
-                onKeyDown={store.modes.tag.handleCollapseButtonKeyDown}
-                onFocus={store.handleModeFocus(Modes.TAG)}
-                size='xs'
-                role='group'
-                bg='blue.400'
-                _hover={{
-                  bg: 'blue.500',
-                }}
-                _focus={{
-                  boxShadow: 'var(--chakra-shadows-outline)',
-                }}
+        <Popover
+          isOpen={isOpen}
+          onOpen={store.modes.tag.handleCollapseOpen}
+          onClose={store.modes.tag.handleCollapseClose}
+          offset={[0, 16]}
+          returnFocusOnClose={false}
+          autoFocus={false}
+          closeOnBlur={true}
+        >
+          <PopoverTrigger>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                store.suggestionsMenu.openFor(Modes.TAG);
+              }}
+              ref={store.modes.tag.setCollapseRef}
+              onKeyDown={store.modes.tag.handleCollapseButtonKeyDown}
+              onFocus={store.handleModeFocus(Modes.TAG)}
+              size='xs'
+              role='group'
+              bg='blue.400'
+              _hover={{
+                bg: 'blue.500',
+              }}
+              _focus={{
+                boxShadow: 'var(--chakra-shadows-outline)',
+              }}
+              color='white'
+            >
+              Tags
+              <chakra.span
+                ml={1}
+                bg='blue.300'
+                pl={1}
+                pr={1}
+                borderRadius='full'
+                transitionProperty='common'
+                transitionDuration='normal'
                 color='white'
+                fontSize='xs'
               >
-                Tags
-                <chakra.span
-                  ml={1}
-                  bg='blue.300'
-                  pl={1}
-                  pr={1}
-                  borderRadius='full'
-                  transitionProperty='common'
-                  transitionDuration='normal'
-                  color='white'
-                  fontSize='xs'
-                >
-                  {store.modes.tag.tags.length}
-                </chakra.span>
-              </Button>
-            </PopoverTrigger>
-            <Portal>
-              <PopoverContent
-                  onFocus={store.handleFocusMenu}
-                  w='auto'
+                {store.modes.tag.tags.length}
+              </chakra.span>
+            </Button>
+          </PopoverTrigger>
+          <Portal>
+            <PopoverContent
+              onFocus={store.handleFocusMenu}
+              w='auto'
+            >
+              <PopoverBody
+                display='flex'
+                flexDirection='column'
+                overflow='auto'
+                maxH={64}
               >
-                <PopoverBody
-                    display='flex'
-                    flexDirection='column'
-                    overflow='auto'
-                    maxH={64}
-                >
-                  <VStack alignItems='start'>
-                    <TaskQuickEditorTagsList
-                        buttonProps={buttonProps}
-                        disableAnimating
-                    />
-                  </VStack>
-                </PopoverBody>
-              </PopoverContent>
-            </Portal>
-          </Popover>
+                <VStack alignItems='start'>
+                  <TaskQuickEditorTagsList
+                    buttonProps={buttonProps}
+                    disableAnimating
+                  />
+                </VStack>
+              </PopoverBody>
+            </PopoverContent>
+          </Portal>
+        </Popover>
       ) : (
         <TaskQuickEditorTagsList
-            buttonProps={buttonProps}
+          buttonProps={buttonProps}
         />
       )}
     </Box>

@@ -67,8 +67,8 @@ export const TaskAddTagModalView = observer(function TaskAddTagModalView() {
                 return(
                 <TactTaskTag
                   title={title}
+                  key={id}
                   buttonProps={{
-                    key: id,
                     mb: 2.5,
                     mr: 2,
                     onClick: () => alreadySelected ? store.removeTag(id) : store.addTag({ title, id })

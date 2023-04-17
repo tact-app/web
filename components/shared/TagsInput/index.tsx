@@ -1,4 +1,4 @@
-import { HStack, Input, Tag } from '@chakra-ui/react';
+import { HStack, Input } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { TactTaskTag } from '../TactTaskTag';
 import { TaskTag } from '../TasksList/types';
@@ -40,9 +40,9 @@ export const TagsInput: FC<TagsInputProps> = ({ tags, addTag, removeTag }) => {
                 <TactTaskTag
                     title={title}
                     showRemoveIcon
+                    key={id}
                     buttonProps={{
                         mr: 0,
-                        key: id,
                     }}
                     iconButtonProps={{
                         onClick: (e) => {

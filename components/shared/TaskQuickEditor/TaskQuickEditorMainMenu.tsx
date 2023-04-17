@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { Modes, useTaskQuickEditorStore } from './store';
+import { useTaskQuickEditorStore } from './store';
 import {
   chakra,
   IconButton,
