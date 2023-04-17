@@ -1,11 +1,12 @@
 import { RootStore } from '../index';
 import { makeAutoObservable, toJS } from 'mobx';
-import { GoalData, GoalStatus } from '../../../components/pages/Goals/types';
+import { GoalData, GoalDataExtended, GoalState, GoalStatus } from '../../../components/pages/Goals/types';
 import { DescriptionData } from '../../../types/description';
 import { TaskData } from "../../../components/shared/TasksList/types";
 import { cloneDeep, omit } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Lists } from "../../../components/shared/TasksList/constants";
+import moment, { Moment } from "moment/moment";
 
 export type CreateGoalParams<T = GoalData> = {
   goal: T,
@@ -24,6 +25,7 @@ export class GoalsStore {
 
   map: Record<string, GoalData> = {};
   descriptions: Record<string, DescriptionData> = {};
+  currentDay: Moment = moment();
 
   get list() {
     return Object.values(this.map);
@@ -33,6 +35,26 @@ export class GoalsStore {
     return Boolean(this.list.length);
   }
 
+  get listBySpaces() {
+    const goalsBySpaces = this.list.reduce((acc, goal) => ({
+      ...acc,
+      [goal.spaceId]: [
+        ...(acc[goal.spaceId] ?? []),
+        {
+          ...goal,
+          customFields: {
+            state: this.getStateByDate(goal.startDate, goal.targetDate),
+          },
+        },
+      ],
+    }), {} as Record<string, GoalDataExtended[]>);
+
+    return Object.entries(goalsBySpaces).map(([spaceId, goals]) => ({
+      space: this.root.resources.spaces.getById(spaceId),
+      goals,
+    }));
+  }
+
   get count() {
     return this.list.length;
   }
@@ -40,6 +62,22 @@ export class GoalsStore {
   getById(id: string) {
     return this.map[id];
   }
+
+  getStateByDate = (startDate: string, targetDate: string) => {
+    const start = moment(startDate);
+    const target = moment(targetDate);
+
+    const beforeStartDiff = start.diff(this.currentDay, 'days');
+    const beforeTargetDiff = target.diff(this.currentDay, 'days');
+
+    if (startDate && beforeStartDiff <= 14 && beforeStartDiff > 0) {
+      return GoalState.IS_COMING;
+    } else if (targetDate && beforeStartDiff <= 0 && beforeTargetDiff <= 14 && beforeTargetDiff >= 0) {
+      return GoalState.TIME_TO_ACHIEVE;
+    } else if (targetDate && beforeTargetDiff < 0) {
+      return GoalState.END_DATE_ALREADY_PASSED;
+    }
+  };
 
   getByIndex = (index: number) => {
     return this.list[index];

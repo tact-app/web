@@ -54,11 +54,11 @@ export class FocusConfigurationStore {
       }
     },
     NUMBER: (e: KeyboardEvent) => {
-      if (this.goalsSelection.isFocused) {
-        const number = parseInt(e.key, 10);
+      if (this.isFocused) {
+        const number = parseInt(e.key, 10) - 1;
 
-        if (number && number <= this.root.resources.goals.count) {
-          this.goalsSelection.handleGoalCheck(number - 1);
+        if (this.navigation.refs[number]) {
+          (this.navigation.refs[number] as HTMLInputElement).checked = true;
         }
       }
     },
@@ -116,8 +116,10 @@ export class FocusConfigurationStore {
 
   handleSelectGoal = () => {
     this.isBlockFocused = true;
-    this.data.goals = this.goalsSelection.checked;
+    this.data.goals = this.goalsSelection.checkedGoals;
     this.sendChanges();
+    this.navigation.enable();
+    this.navigation.focus();
   };
 
   handleShowImportantChange = (e) => {

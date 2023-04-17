@@ -9,6 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
+  Portal,
   useOutsideClick,
 } from '@chakra-ui/react';
 import { useEmojiSelectStore } from './store';
@@ -67,52 +68,54 @@ export const EmojiSelectComponent = observer(
             <Text fontSize={iconFontSize}>{store.triggerContent}</Text>
           </Button>
         </PopoverTrigger>
-        <PopoverContent w='auto' ref={ref} onClick={(e) => e.stopPropagation()}>
-          <PopoverBody p={0}>
-            <Box display='flex' justifyContent='center'>
-              <HStack p={2}>
-                {EMOJI_SELECT_COLORS.map((color) => (
-                  <Button
-                    onClick={() => store.handleColorSelect(color)}
-                    key={color}
-                    borderColor={
-                      color === store.color
-                        ? `${store.mainColor.color}.400`
-                        : 'transparent'
-                    }
-                    borderWidth={4}
-                    variant='filled'
-                    bg={color}
-                    borderRadius='full'
-                    size='sm'
-                    p={0}
-                  />
-                ))}
-              </HStack>
-            </Box>
-            <Box position='relative'>
-              <Picker
-                autoFocus
-                theme='light'
-                data={EmojiStore.emojiData}
-                onEmojiSelect={store.handleEmojiSelect}
-              />
-              {canRemoveEmoji && store.icon && (
-                <Button
-                  right='16px'
-                  bottom='20px'
-                  position='absolute'
-                  size='xs'
-                  colorScheme='gray'
-                  onClick={store.handleEmojiRemove}
-                  zIndex='2'
-                >
-                  Remove
-                </Button>
-              )}
-            </Box>
-          </PopoverBody>
-        </PopoverContent>
+        <Portal>
+          <PopoverContent w='auto' ref={ref} onClick={(e) => e.stopPropagation()}>
+            <PopoverBody p={0}>
+              <Box display='flex' justifyContent='center'>
+                <HStack p={2}>
+                  {EMOJI_SELECT_COLORS.map((color) => (
+                      <Button
+                          onClick={() => store.handleColorSelect(color)}
+                          key={color}
+                          borderColor={
+                            color === store.color
+                                ? `${store.mainColor.color}.400`
+                                : 'transparent'
+                          }
+                          borderWidth={4}
+                          variant='filled'
+                          bg={color}
+                          borderRadius='full'
+                          size='sm'
+                          p={0}
+                      />
+                  ))}
+                </HStack>
+              </Box>
+              <Box position='relative'>
+                <Picker
+                    autoFocus
+                    theme='light'
+                    data={EmojiStore.emojiData}
+                    onEmojiSelect={store.handleEmojiSelect}
+                />
+                {canRemoveEmoji && store.icon && (
+                    <Button
+                        right='16px'
+                        bottom='20px'
+                        position='absolute'
+                        size='xs'
+                        colorScheme='gray'
+                        onClick={store.handleEmojiRemove}
+                        zIndex='2'
+                    >
+                      Remove
+                    </Button>
+                )}
+              </Box>
+            </PopoverBody>
+          </PopoverContent>
+        </Portal>
       </Popover>
     );
   }

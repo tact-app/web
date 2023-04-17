@@ -42,7 +42,10 @@ export function EditableTitle({
 
   const handleSave = () => {
     setIsEditMode(false);
-    onSave?.(value);
+
+    const validValue = value.trim();
+    setValue(validValue);
+    onSave?.(validValue);
   };
 
   useOutsideClick({
@@ -52,6 +55,8 @@ export function EditableTitle({
   });
 
   const handleChange = (e: SyntheticEvent) => {
+    e.stopPropagation();
+
     const updatedValue = (e.target as HTMLInputElement).value;
 
     setValue(updatedValue);
@@ -59,6 +64,8 @@ export function EditableTitle({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+
     switch (e.key) {
       case 'Escape':
         setIsEditMode(false);
@@ -87,6 +94,7 @@ export function EditableTitle({
   };
 
   const handleEditModeToggle = (e: SyntheticEvent) => {
+    e.preventDefault();
     e.stopPropagation();
 
     setIsEditMode(true);

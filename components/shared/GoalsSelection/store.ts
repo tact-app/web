@@ -20,44 +20,39 @@ export class GoalsSelectionStore {
 
   callbacks: GoalsSelectionProps['callbacks'] = {};
 
-  checkedGoals: Record<string, boolean> = {};
+  checkedGoals: string[] = [];
   isFocused: boolean = false;
   multiple: boolean = false;
 
-  get checked() {
-    return Object.keys(this.checkedGoals);
+  isChecked = (id: string) => {
+    return this.checkedGoals.includes(id);
   }
 
-  handleGoalCheck = (index: number | null) => {
-    const goalId =
-      index === null ? null : this.root.resources.goals.getByIndex(index).id;
-
+  handleGoalCheck = (id: string | null) => {
     if (this.multiple) {
-      if (goalId !== null) {
-        if (this.checkedGoals[goalId]) {
-          delete this.checkedGoals[goalId];
+      if (id) {
+        if (this.isChecked(id)) {
+          this.checkedGoals = this.checkedGoals.filter((checkedGoalId) => checkedGoalId !== id);
         } else {
-          this.checkedGoals[goalId] = true;
+          this.checkedGoals = [...this.checkedGoals, id];
         }
       } else {
-        this.checkedGoals = {};
+        this.checkedGoals = [];
       }
     } else {
-      if (goalId !== null) {
-        this.checkedGoals = {
-          [goalId]: true,
-        };
+      if (id) {
+        this.checkedGoals = [...this.checkedGoals, id];
       } else {
-        this.checkedGoals = {};
+        this.checkedGoals = [];
       }
     }
 
-    this.callbacks.onSelect?.(this.checked);
+    this.callbacks.onSelect?.(this.checkedGoals);
   };
 
   uncheckAll = () => {
-    this.checkedGoals = {};
-    this.callbacks.onSelect?.(this.checked);
+    this.checkedGoals = [];
+    this.callbacks.onSelect?.(this.checkedGoals);
   };
 
   update = (props: GoalsSelectionProps) => {
@@ -66,13 +61,9 @@ export class GoalsSelectionStore {
 
     if (props.checked) {
       if (this.multiple) {
-        props.checked.forEach((id) => {
-          this.checkedGoals[id] = true;
-        });
+        this.checkedGoals = props.checked;
       } else {
-        this.checkedGoals = {
-          [props.checked[0]]: true,
-        };
+        this.checkedGoals = [props.checked[0]];
       }
     }
   };

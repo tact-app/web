@@ -1,6 +1,6 @@
 import { RootStore } from '../index';
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
-import { OriginData, SpaceData } from '../../../components/pages/Spaces/types';
+import { SpaceData } from '../../../components/pages/Spaces/types';
 
 export class SpacesStore {
   constructor(public root: RootStore) {
