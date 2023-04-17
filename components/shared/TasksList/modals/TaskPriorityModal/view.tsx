@@ -9,14 +9,14 @@ import {
   ModalOverlay,
 } from '@chakra-ui/modal';
 import { Button, Text } from '@chakra-ui/react';
-import { useTaskSpaceChangeModalStore } from './store';
-import { SpacesSelection } from '../../../SpacesSelection';
+import { useTaskPriorityModalStore } from './store';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import { PrioritySelection } from '../../../PrioritySelection';
 
-export const TaskSpaceChangeModalView = observer(
-  function TaskSpaceChangeModalView() {
-    const store = useTaskSpaceChangeModalStore();
+export const TaskPriorityModalView = observer(
+  function TaskPriorityModalView() {
+    const store = useTaskPriorityModalStore();
 
     useListNavigation(store.navigation);
     useHotkeysHandler(store.keyMap, store.hotkeyHandlers)
@@ -27,19 +27,18 @@ export const TaskSpaceChangeModalView = observer(
         <ModalContent
           onFocus={store.navigation.handleFocus}
         >
-          <ModalHeader>My spaces</ModalHeader>
+          <ModalHeader>Set priority</ModalHeader>
           <ModalBody
             maxH={80}
             overflow='auto'
             pl={5}
             pr={5}
           >
-            <SpacesSelection
+            <PrioritySelection
               setRefs={store.navigation.setRefs}
-              checked={store.selectedSpaceId ? [store.selectedSpaceId] : []}
+              checked={store.selectedPriority ? [store.selectedPriority] : []}
               callbacks={{
                 onSelect: store.handleSelect,
-                onSpaceCreateClick: store.callbacks.onSpaceCreateClick,
               }}
             />
           </ModalBody>

@@ -1,18 +1,16 @@
-import { makeAutoObservable, toJS } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { SpacesSelectionStore } from '../../../SpacesSelection/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
-import { TaskData } from '../../types';
 
 export type TaskSpaceChangeModalProps = {
   callbacks: {
     onClose?: () => void;
-    onSelect?: (updatedTask: TaskData) => void;
+    onSelect?: (spaceId: string) => void;
     onSpaceCreateClick?: () => void;
   };
   multiple?: boolean;
-  task: TaskData;
   spaceId: string;
 };
 
@@ -25,7 +23,6 @@ export class TaskSpaceChangeModalStore {
 
   spacesSelection = new SpacesSelectionStore(this.root);
 
-  selectedTask: TaskData = {} as TaskData;
   emptyRef: HTMLInputElement | null = null;
   selectedSpaceId: string | null = null;
   multiple: boolean = false;
@@ -47,11 +44,7 @@ export class TaskSpaceChangeModalStore {
   };
 
   handleSubmit = () => {
-    this.callbacks.onSelect?.({
-      ...this.selectedTask,
-      spaceId: this.selectedSpaceId,
-      tags: toJS(this.selectedTask.tags)
-    });
+    this.callbacks.onSelect?.(this.selectedSpaceId);
   };
 
   update = (props: TaskSpaceChangeModalProps) => {
@@ -59,7 +52,6 @@ export class TaskSpaceChangeModalStore {
     this.multiple = props.multiple;
 
     this.selectedSpaceId = props.spaceId;
-    this.selectedTask = props.task;
   };
 
   navigation = new ListNavigation({

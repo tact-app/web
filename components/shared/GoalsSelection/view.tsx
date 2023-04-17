@@ -13,6 +13,7 @@ import { GoalsSelectionProps, useGoalsSelectionStore } from './store';
 import React, { useRef } from 'react';
 import { LargePlusIcon } from '../Icons/LargePlusIcon';
 import { GoalIcon } from '../GoalIcon';
+import { HeavyPlusIcon } from '../Icons/HeavyPlusIcon';
 
 type GoalSelectionListItemProps = {
   id: string | null;
@@ -112,6 +113,49 @@ export const GoalsSelectionView = observer(function GoalsSelectionView(
           checkboxContent={index < 9 ? index + 1 : null}
         />
       ))}
+      {store.root.resources.goals.list?.length < 9 &&
+        <ListItem
+          h={10}
+          display='flex'
+          alignItems='center'
+          borderBottom='1px'
+          borderColor='gray.100'
+          key={'add-space'}
+          cursor='pointer'
+          onClick={store.callbacks.onGoalCreateClick}
+        >
+          <Checkbox
+            ref={(el) => props.setRefs(store.root.resources.goals.list.length + 1, el)}
+            isChecked={false}
+            size='xl'
+            position='relative'
+            width='100%'
+            icon={
+              <chakra.div
+                display='flex'
+                justifyContent='center'
+                alignItems='center'
+              >
+                <HeavyPlusIcon />
+              </chakra.div>}
+            css={{
+              '.chakra-checkbox__label': {
+                width: 'calc(100% - 2rem)',
+              },
+              '.chakra-checkbox__control': {
+                borderRadius: '100%',
+              }
+            }}
+          >
+            <chakra.span
+              fontSize='sm'
+              fontWeight='normal'
+              lineHeight={5}>
+              Create new goal
+            </chakra.span>
+          </Checkbox>
+        </ListItem>
+      }
     </List>
   ) : (
     <Box ref={ref}>

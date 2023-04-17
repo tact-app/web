@@ -78,15 +78,15 @@ const multiTaskItems = (store: TaskItemStore) => [
 const singleTaskItems = (store: TaskItemStore) => [
   {
     onClick: () => {
-      store.parent.setEditingTask(store.task.id);
-      setTimeout(() => store.quickEdit.activateMode(Modes.PRIORITY));
+      store.parent.modals.openPriorityModal(store.task.id);
+      // setTimeout(() => store.quickEdit.activateMode(Modes.PRIORITY));
     },
     title: 'Change priority',
     icon: faCircleExclamation,
   },
   {
     onClick: () => {
-      store.parent.setEditingTask(store.task.id);
+      store.parent.modals.openAddTagModal(store.task.id);
       setTimeout(() => store.quickEdit.activateMode(Modes.TAG));
     },
     title: 'Add tag',

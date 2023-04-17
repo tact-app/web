@@ -76,7 +76,7 @@ export class TaskQuickEditorStore {
     onOpen: (isOpen: boolean) => this.callbacks.onSuggestionsMenuOpen?.(isOpen),
   });
 
-  modals = new TasksEditorModals(this.root);
+  modals = new TasksEditorModals(this.root, this);
   order = [Modes.TAG, Modes.SPACE, Modes.PRIORITY, Modes.GOAL];
   callbacks: TaskQuickEditorProps['callbacks'];
 
@@ -701,7 +701,8 @@ export class TaskQuickEditorStore {
     this.disableGoalChange = disableGoalChange;
     this.disableReferenceChange = disableReferenceChange;
 
-    const defaultSpaceId = task?.spaceId || input?.spaceId;
+    const defaultSpaceId = task?.spaceId || input?.spaceId || this.modes.space.selectedSpaceId;
+
 
     this.defaultSpaceId = externalDefaultSpaceId;
     this.defaultGoalId = defaultGoalId;
