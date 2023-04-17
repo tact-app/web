@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { GoalIconData } from '../../pages/Goals/types';
+import { GoalDataExtended } from '../../pages/Goals/types';
 import {
   chakra,
   Box,
@@ -15,35 +15,34 @@ import React, { useRef } from 'react';
 import { LargePlusIcon } from '../Icons/LargePlusIcon';
 import { EmojiSelect } from "../../../components/shared/EmojiSelect";
 import { EditableTitle } from "../../../components/shared/EditableTitle";
+import { GoalStateIcon } from "../../../components/shared/GoalStateIcon";
 
 type GoalSelectionListItemProps = {
-  id: string | null;
   index: number | null;
-  title: string;
-  icon?: GoalIconData;
+  goal: GoalDataExtended;
   checkboxContent?: React.ReactNode;
 };
 
 const GoalSelectionListItem = observer(
   forwardRef(function GoalSelectionListItem(
-    { id, index, icon, title, checkboxContent }: GoalSelectionListItemProps,
+    { index, goal, checkboxContent }: GoalSelectionListItemProps,
     ref
   ) {
     const store = useGoalsSelectionStore();
 
-    const isChecked = store.isChecked(id);
+    const isChecked = store.isChecked(goal.id);
 
     return (
       <ListItem
         h={10}
         display='flex'
         alignItems='center'
-        key={id}
+        position='relative'
       >
         <Checkbox
           ref={ref}
           isChecked={isChecked}
-          onChange={() => store.handleGoalCheck(id)}
+          onChange={() => store.handleGoalCheck(goal.id)}
           size='xl'
           position='relative'
           fontWeight='semibold'
@@ -73,8 +72,8 @@ const GoalSelectionListItem = observer(
           ) : null}
           <Flex alignItems='center'>
             <EmojiSelect
-                icon={icon.value}
-                color={icon.color}
+                icon={goal.icon.value}
+                color={goal.icon.color}
                 size={6}
                 iconFontSize='sm'
                 onColorChange={() => null}
@@ -84,12 +83,21 @@ const GoalSelectionListItem = observer(
               <EditableTitle
                   widthByTitle
                   sharedProps={{ color: 'gray.700', fontWeight: 400 }}
-                  value={title}
+                  value={goal.title}
                   onSave={() => null}
               />
             </chakra.div>
           </Flex>
         </Checkbox>
+
+        {goal.customFields.state && (
+            <GoalStateIcon
+                position='absolute'
+                left={-6}
+                iconFontSize={18}
+                state={goal.customFields.state}
+            />
+        )}
       </ListItem>
     );
   })
@@ -137,10 +145,8 @@ export const GoalsSelectionView = observer(function GoalsSelectionView(
                   <GoalSelectionListItem
                     ref={(el) => props.setRefs(currentIndex, el)}
                     key={goal.id}
-                    id={goal.id}
                     index={currentIndex}
-                    title={goal.title}
-                    icon={goal.icon}
+                    goal={goal}
                     checkboxContent={lastIndex < 9 ? lastIndex : null}
                   />
                 );
