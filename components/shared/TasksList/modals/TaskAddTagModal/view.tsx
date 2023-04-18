@@ -16,7 +16,6 @@ import {
 import {
   useTaskAddTagModalStore,
 } from './store';
-import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { TagsInput } from '../../../TagsInput';
 import { TactTaskTag } from '../../../TactTaskTag';
@@ -25,13 +24,12 @@ import { TactTaskTag } from '../../../TactTaskTag';
 export const TaskAddTagModalView = observer(function TaskAddTagModalView() {
   const store = useTaskAddTagModalStore();
 
-  useListNavigation(store.navigation);
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers)
 
   return (
     <Modal isCentered isOpen={true} onClose={store.callbacks.onClose}>
       <ModalOverlay />
-      <ModalContent onFocus={store.navigation.handleFocus}>
+      <ModalContent>
         <ModalHeader>Add hashtag</ModalHeader>
         <ModalBody pb={6} pl={5} pr={5}>
           <Text fontSize='xs' fontWeight='semibold' mb={2} lineHeight={4}>
@@ -42,7 +40,7 @@ export const TaskAddTagModalView = observer(function TaskAddTagModalView() {
             addTag={store.createNewTag}
             removeTag={store.removeTag}
           />
-          {store.availableTags.length && (<Box flex={1}>
+          {!!store.availableTags.length && (<Box flex={1}>
             <Text fontSize='xs' fontWeight='semibold' mt={4} lineHeight={4}>
               All your hashtags
             </Text>

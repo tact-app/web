@@ -1,6 +1,5 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { ListNavigation } from '../../../../../helpers/ListNavigation';
 import { RootStore } from '../../../../../stores/RootStore';
 import { TaskTag } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,7 +26,7 @@ export class TaskAddTagModalStore {
     FORCE_ENTER: (e) => {
       e.preventDefault();
       e.stopPropagation();
-      this.navigation.hotkeyHandlers.FORCE_ENTER?.(e);
+      this.handleSave();
     },
   };
 
@@ -76,14 +75,6 @@ export class TaskAddTagModalStore {
     this.selectedTags = this.availableTags.filter(({ id }) => tags.includes(id));
     this.callbacks = callbacks;
   };
-
-  navigationCallbacks = {
-    onForceEnter: () => {
-      this.handleSave();
-    },
-  };
-
-  navigation = new ListNavigation(this.navigationCallbacks);
 }
 
 export const {
