@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite';
 import { FocusConfigurationProps, useFocusConfigurationStore } from './store';
 import {
   Box,
-  CloseButton,
   Fade,
   FormControl,
   FormLabel,
@@ -19,6 +18,7 @@ import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { AnimatedBlock } from "../../../../shared/AnimatedBlock";
 import { HotkeyBlock } from "../../../../shared/HotkeyBlock";
+import { CloseButton } from "../../../../shared/CloseButton";
 
 export const FocusConfigurationView = observer(function FocusConfigurationView(
   props: FocusConfigurationProps
@@ -52,11 +52,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           alignItems='center'
         >
           <Heading as='h3' fontSize='22px'>Focusing</Heading>
-          <CloseButton
-            onClick={store.callbacks.onClose}
-            color='gray.400'
-            size='sm'
-          />
+          <CloseButton onlyIcon onClick={store.callbacks.onClose} />
         </HStack>
         <Box
           mt={4}
