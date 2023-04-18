@@ -36,11 +36,10 @@ export class FocusConfigurationStore {
   goalsSelection = new GoalsSelectionStore(this.root);
 
   keyMap = {
-    FOCUS_GOAL_SELECTION: 'shift+g',
+    FOCUS_GOAL_SELECTION: 'g',
     BLUR: 'right',
     NUMBER: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-    CLEAR: ['shift+backspace', 'shift+delete', 'shift+c'],
-    SHOW_IMPORTANT: 'i',
+    SHOW_IMPORTANT: 'h',
     ESCAPE: 'escape',
   };
 
@@ -61,9 +60,6 @@ export class FocusConfigurationStore {
           (this.navigation.refs[number] as HTMLInputElement).checked = true;
         }
       }
-    },
-    CLEAR: () => {
-      this.goalsSelection.uncheckAll();
     },
     SHOW_IMPORTANT: () => {
       this.data.showImportant = !this.data.showImportant;

@@ -92,8 +92,10 @@ const GoalSelectionListItem = observer(
 
         {goal.customFields.state && (
             <GoalStateIcon
+                w={6}
+                h={6}
                 position='absolute'
-                left={-6}
+                left={-7}
                 iconFontSize={18}
                 state={goal.customFields.state}
             />
@@ -114,7 +116,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView(
 
     return store.root.resources.goals.listBySpaces.map(({ space, goals }) => {
       return (
-          <Box m={0} p={0} mb={6} key={space.id}>
+          <Box m={0} p={0} mb={6} _last={{ mb: 0 }} key={space.id}>
             <Flex mb={2} alignItems='center'>
               <EmojiSelect
                 icon={space.icon}

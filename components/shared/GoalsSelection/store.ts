@@ -50,11 +50,6 @@ export class GoalsSelectionStore {
     this.callbacks.onSelect?.(this.checkedGoals);
   };
 
-  uncheckAll = () => {
-    this.checkedGoals = [];
-    this.callbacks.onSelect?.(this.checkedGoals);
-  };
-
   update = (props: GoalsSelectionProps) => {
     this.callbacks = props.callbacks;
     this.multiple = props.multiple;
