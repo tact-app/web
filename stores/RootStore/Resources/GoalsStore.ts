@@ -3,7 +3,7 @@ import { makeAutoObservable, toJS } from 'mobx';
 import { GoalData, GoalDataExtended, GoalState, GoalStatus } from '../../../components/pages/Goals/types';
 import { DescriptionData } from '../../../types/description';
 import { TaskData } from "../../../components/shared/TasksList/types";
-import { cloneDeep, omit } from 'lodash';
+import { cloneDeep, omit, set } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Lists } from "../../../components/shared/TasksList/constants";
 import moment, { Moment } from "moment/moment";
@@ -89,10 +89,33 @@ export class GoalsStore {
     this.map = omit(this.map, ids);
   };
 
+  updateProperty = async (id: string, path: string, value: string) => {
+    const goal = set(cloneDeep(this.map[id]), path, value);
+
+    await this.update(goal)
+
+    this.map[id] = goal;
+  };
+
+  updateColor = (id, color: string) => {
+    const goal = this.map[id];
+    goal.icon.color = color;
+
+    return this.update(goal)
+  }
+
+  updateTitle = (id, title: string) => {
+    const goal = this.map[id];
+    goal.title = title;
+
+    return this.update(goal)
+  }
+
   update = async (goalToUpdate: GoalData) => {
     const goal = {
       ...goalToUpdate,
       wontDoReason: goalToUpdate.status === GoalStatus.WONT_DO ? goalToUpdate.wontDoReason : '',
+      updatedDate: new Date().toISOString(),
     };
 
     this.map[goal.id] = goal;

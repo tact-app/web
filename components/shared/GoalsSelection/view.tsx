@@ -76,15 +76,15 @@ const GoalSelectionListItem = observer(
                 color={goal.icon.color}
                 size={6}
                 iconFontSize='sm'
-                onColorChange={() => null}
-                onIconChange={() => null}
+                onColorChange={(color) => store.root.resources.goals.updateProperty(goal.id, 'icon.color', color)}
+                onIconChange={(icon) => store.root.resources.goals.updateProperty(goal.id, 'icon.value', icon)}
             />
             <chakra.div ml='2' w='calc(100% - var(--chakra-space-10))'>
               <EditableTitle
                   widthByTitle
                   sharedProps={{ color: 'gray.700', fontWeight: 400 }}
                   value={goal.title}
-                  onSave={() => null}
+                  onSave={(title) => store.root.resources.goals.updateProperty(goal.id, 'title', title)}
               />
             </chakra.div>
           </Flex>
@@ -125,8 +125,8 @@ export const GoalsSelectionView = observer(function GoalsSelectionView(
                 size={6}
                 iconFontSize='sm'
                 borderRadius={4}
-                onColorChange={() => null}
-                onIconChange={() => null}
+                onColorChange={(color) => store.root.resources.spaces.updateProperty(space.id, 'color', color)}
+                onIconChange={(icon) => store.root.resources.spaces.updateProperty(space.id, 'icon', icon)}
                 canRemoveEmoji
               />
               <chakra.div ml='2' w='calc(100% - var(--chakra-space-10))'>
@@ -134,7 +134,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView(
                   widthByTitle
                   sharedProps={{ color: 'gray.700', fontWeight: 400 }}
                   value={space.name}
-                  onSave={() => null}
+                  onSave={(name) => store.root.resources.spaces.updateProperty(space.id, 'name', name)}
                 />
               </chakra.div>
             </Flex>
