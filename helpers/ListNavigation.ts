@@ -11,6 +11,7 @@ export type NavigationCallbacks = {
   onForceEnter?: () => void;
   onEnter?: () => void;
   onNumber?: (number: number) => void;
+  onFocused?: () => void;
 };
 
 const defaultCallbacks: NavigationCallbacks = {};
@@ -152,6 +153,8 @@ export class ListNavigation {
     } else {
       this.setFocusedIndex(null);
     }
+
+    this.callbacks.onFocused?.();
   };
 
   reset = () => {

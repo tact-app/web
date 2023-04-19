@@ -17,6 +17,7 @@ import { EmojiStore } from '../../../stores/EmojiStore';
 import { EmojiSelectViewProps } from './types';
 import { EMOJI_SELECT_COLORS } from './constants';
 import React, { useRef } from "react";
+import { useHotkeysHandler } from "../../../helpers/useHotkeysHandler";
 
 export const EmojiSelectComponent = observer(
   function EmojiSelectComponent({
@@ -29,6 +30,7 @@ export const EmojiSelectComponent = observer(
 
     const ref = useRef();
 
+    useHotkeysHandler(store.keymap, store.hotkeysHandlers, { enabled: store.isEmojiPickerOpen });
     useOutsideClick({
       ref,
       handler: store.closeEmojiPicker,

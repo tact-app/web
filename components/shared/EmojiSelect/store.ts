@@ -11,6 +11,17 @@ export class EmojiSelectStore {
 
   isEmojiPickerOpen = false;
 
+  keymap = {
+    CLOSE: 'escape',
+  };
+
+  hotkeysHandlers = {
+    CLOSE: (e) => {
+      e.stopPropagation();
+      this.closeEmojiPicker();
+    },
+  };
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -30,10 +41,12 @@ export class EmojiSelectStore {
 
   openEmojiPicker = () => {
     this.isEmojiPickerOpen = true;
+    this.callbacks?.onToggleOpen?.(true);
   };
 
   closeEmojiPicker = () => {
     this.isEmojiPickerOpen = false;
+    this.callbacks?.onToggleOpen?.(false);
   };
 
   handleEmojiSelect = (emoji: { native: string }) => {
@@ -52,7 +65,7 @@ export class EmojiSelectStore {
     await EmojiStore.loadIfNotLoaded();
   }
 
-  update = ({ icon, color, title, onColorChange, onIconChange }: EmojiSelectProps) => {
+  update = ({ icon, color, title, onColorChange, onIconChange, onToggleOpen }: EmojiSelectProps) => {
     this.icon = icon;
     this.color = color;
     this.title = title;
@@ -60,6 +73,7 @@ export class EmojiSelectStore {
     this.callbacks = {
       onColorChange,
       onIconChange,
+      onToggleOpen,
     };
   };
 }

@@ -9,6 +9,8 @@ type Props = {
   sharedProps?: TextProps & InputProps;
   widthByTitle?: boolean;
   idEnding?: string;
+  onFocus?(): void;
+  onBlur?(): void;
   onChange?(value: string): void;
   onSave?(value: string): void;
   onNavigate?(direction: NavigationDirections): void;
@@ -22,6 +24,8 @@ export function EditableTitle({
   inputProps,
   sharedProps,
   widthByTitle,
+  onFocus,
+  onBlur,
   onChange,
   onSave,
   onNavigate,
@@ -46,6 +50,7 @@ export function EditableTitle({
     const validValue = value.trim();
     setValue(validValue);
     onSave?.(validValue);
+    onBlur?.();
   };
 
   useOutsideClick({
@@ -70,6 +75,7 @@ export function EditableTitle({
       case 'Escape':
         setIsEditMode(false);
         setValue(initialValue);
+        onBlur?.();
         break;
       case 'Enter':
         handleSave();
@@ -118,6 +124,8 @@ export function EditableTitle({
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onFocus={onFocus}
+        onBlur={onBlur}
         onClick={(e) => e.stopPropagation()}
         ref={ref}
         {...inputProps}

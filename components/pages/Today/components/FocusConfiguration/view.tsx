@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite';
 import { FocusConfigurationProps, useFocusConfigurationStore } from './store';
 import {
   Box,
-  Fade,
   FormControl,
   FormLabel,
   Heading,
@@ -38,13 +37,11 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
     <AnimatedBlock
       animateParams={props.focusHighlightParams}
       component={Box}
-      ref={ref}
       p={6}
       height='100%'
       display='flex'
       flexDirection='column'
       justifyContent='space-between'
-      onMouseDown={store.handleMouseDown}
     >
       <Box width='100%' minH={0} display='flex' flexDirection='column'>
         <HStack
@@ -55,6 +52,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           <CloseButton onlyIcon onClick={store.callbacks.onClose} />
         </HStack>
         <Box
+          ref={ref}
           mt={4}
           p={2}
           pl={1}
@@ -101,21 +99,6 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           </FormLabel>
         </FormControl>
       </Box>
-      <Fade in={store.hasConfiguration}>
-        <Box
-          ml={4}
-          mb={6}
-          h={10}
-          borderBottom='1px'
-          borderColor='gray.100'
-          display='flex'
-          alignItems='center'
-        >
-          <Text fontSize='md' fontWeight='normal'>
-            Total: {props.getItemsCount()} tasks
-          </Text>
-        </Box>
-      </Fade>
     </AnimatedBlock>
   );
 });

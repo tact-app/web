@@ -76,6 +76,7 @@ const GoalSelectionListItem = observer(
                 color={goal.icon.color}
                 size={6}
                 iconFontSize='sm'
+                onToggleOpen={(isOpen) => store.callbacks?.onToggleOpenEmojiPicker(goal.id, isOpen)}
                 onColorChange={(color) => store.root.resources.goals.updateProperty(goal.id, 'icon.color', color)}
                 onIconChange={(icon) => store.root.resources.goals.updateProperty(goal.id, 'icon.value', icon)}
             />
@@ -84,6 +85,8 @@ const GoalSelectionListItem = observer(
                   widthByTitle
                   sharedProps={{ color: 'gray.700', fontWeight: 400 }}
                   value={goal.title}
+                  onFocus={() => store.callbacks?.onToggleTitleFocus(goal.id, true)}
+                  onBlur={() => store.callbacks?.onToggleTitleFocus(goal.id, false)}
                   onSave={(title) => store.root.resources.goals.updateProperty(goal.id, 'title', title)}
               />
             </chakra.div>
@@ -112,8 +115,6 @@ export const GoalsSelectionView = observer(function GoalsSelectionView(
   const ref = useRef();
 
   const renderSpacesAndGoals = () => {
-    let lastIndex = 0;
-
     return store.root.resources.goals.listBySpaces.map(({ space, goals }) => {
       return (
           <Box m={0} p={0} mb={6} _last={{ mb: 0 }} key={space.id}>
@@ -125,6 +126,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView(
                 size={6}
                 iconFontSize='sm'
                 borderRadius={4}
+                onToggleOpen={(isOpen) => store.callbacks?.onToggleOpenEmojiPicker(space.id, isOpen)}
                 onColorChange={(color) => store.root.resources.spaces.updateProperty(space.id, 'color', color)}
                 onIconChange={(icon) => store.root.resources.spaces.updateProperty(space.id, 'icon', icon)}
                 canRemoveEmoji
@@ -134,25 +136,22 @@ export const GoalsSelectionView = observer(function GoalsSelectionView(
                   widthByTitle
                   sharedProps={{ color: 'gray.700', fontWeight: 400 }}
                   value={space.name}
+                  onFocus={() => store.callbacks?.onToggleTitleFocus(space.id, true)}
+                  onBlur={() => store.callbacks?.onToggleTitleFocus(space.id, false)}
                   onSave={(name) => store.root.resources.spaces.updateProperty(space.id, 'name', name)}
                 />
               </chakra.div>
             </Flex>
             <Box m={0} p={0} ml={7}>
-              {goals.map((goal) => {
-                lastIndex++;
-                const currentIndex = lastIndex - 1;
-
-                return (
+              {goals.map((goal) => (
                   <GoalSelectionListItem
-                    ref={(el) => props.setRefs(currentIndex, el)}
-                    key={goal.id}
-                    index={currentIndex}
-                    goal={goal}
-                    checkboxContent={lastIndex < 9 ? lastIndex : null}
+                      ref={(el) => props.setRefs(goal.customFields.order, el)}
+                      key={goal.id}
+                      index={goal.customFields.order}
+                      goal={goal}
+                      checkboxContent={goal.customFields.order + 1 < 9 ? goal.customFields.order + 1 : null}
                   />
-                );
-              })}
+              ))}
             </Box>
           </Box>
       );

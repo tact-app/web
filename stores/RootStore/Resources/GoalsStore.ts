@@ -36,13 +36,14 @@ export class GoalsStore {
   }
 
   get listBySpaces() {
-    const goalsBySpaces = this.list.reduce((acc, goal) => ({
+    const goalsBySpaces = this.list.reduce((acc, goal, index) => ({
       ...acc,
       [goal.spaceId]: [
         ...(acc[goal.spaceId] ?? []),
         {
           ...goal,
           customFields: {
+            order: index,
             state: this.getStateByDate(goal.startDate, goal.targetDate),
           },
         },
@@ -51,7 +52,7 @@ export class GoalsStore {
 
     return Object.entries(goalsBySpaces).map(([spaceId, goals]) => ({
       space: this.root.resources.spaces.getById(spaceId),
-      goals,
+      goals: goals as GoalDataExtended[],
     }));
   }
 

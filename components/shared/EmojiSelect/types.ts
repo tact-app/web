@@ -6,6 +6,7 @@ export type EmojiSelectViewProps = {
 };
 
 export type EmojiSelectCallbacks = {
+  onToggleOpen?(isOpen: boolean): void;
   onColorChange?(color: string): void;
   onIconChange?(icon: string): void;
 };

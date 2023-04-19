@@ -4,6 +4,8 @@ import { getProvider } from '../../../helpers/StoreProvider';
 
 export type GoalsSelectionProps = {
   callbacks?: {
+    onToggleTitleFocus?: (id: string, isFocused: boolean) => void;
+    onToggleOpenEmojiPicker?: (id: string, isOpen: boolean) => void;
     onSelect?: (goalIds: string[]) => void;
     onGoalCreateClick?: () => void;
   };

@@ -1,5 +1,5 @@
 import React, { LegacyRef, useEffect, useRef } from 'react';
-import { Box, Container, BoxProps, ContainerProps } from '@chakra-ui/react';
+import { Box, Container, BoxProps, ContainerProps, useMergeRefs } from '@chakra-ui/react';
 
 export type AnimatedBlockParams = {
   deps: unknown[];
@@ -18,12 +18,7 @@ export const AnimatedBlock = React.forwardRef<HTMLDivElement, Props>((
   containerRef
 )  => {
   const componentRef = useRef<HTMLDivElement>(null);
-
-  const setRef = (ref: HTMLDivElement) => {
-    componentRef.current = ref;
-
-    return containerRef;
-  };
+  const refs = useMergeRefs(componentRef, containerRef);
 
   useEffect(() => {
     if (animateParams.condition) {
@@ -40,7 +35,7 @@ export const AnimatedBlock = React.forwardRef<HTMLDivElement, Props>((
     }
   }, animateParams.deps); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return <Component {...compProps} ref={setRef} />;
+  return <Component {...compProps} ref={refs} />;
 });
 
 AnimatedBlock.displayName = 'AnimatedBox';
