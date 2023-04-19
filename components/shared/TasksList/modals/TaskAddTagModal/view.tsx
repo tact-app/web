@@ -155,7 +155,7 @@ export const TaskAddTagModalView = observer(function TaskAddTagModalView() {
                   </Portal>
                 </Popover>
               )}
-              <InputLeftElement maxH='100%' color='gray.500' fontWeight='300' fontSize='1.2em' children='#' />
+              <InputLeftElement maxH='100%' color='gray.500' fontWeight='300' fontSize='1.2em'>#</InputLeftElement>
               <Input
                 placeholder='Type in a tag'
                 flexGrow={1}

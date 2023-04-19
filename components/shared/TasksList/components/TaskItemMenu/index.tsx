@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite';
 import { TaskItemStore, useTaskItemStore } from '../TaskItem/store';
 import React from 'react';
 import { TaskStatus } from '../../types';
-import { Modes } from '../../../TaskQuickEditor/store';
 import {
   faBan,
   faBullseyePointer,
