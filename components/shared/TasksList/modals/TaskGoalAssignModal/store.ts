@@ -29,7 +29,7 @@ export class TaskGoalAssignModalStore {
 
   keyMap = {
     RESET: ['backspace', 'delete'],
-    FORCE_ENTER: ['meta+enter'],
+    FORCE_ENTER: ['meta+enter', 'ctrl+enter'],
   };
 
   hotkeyHandlers = {

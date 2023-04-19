@@ -13,6 +13,7 @@ import { useTaskPriorityModalStore } from './store';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { PrioritySelection } from '../../../PrioritySelection';
+import { isMac } from '../../../../../helpers/os';
 
 export const TaskPriorityModalView = observer(
   function TaskPriorityModalView() {
@@ -77,7 +78,7 @@ export const TaskPriorityModalView = observer(
                 color='white'
                 fontWeight={400}
               >
-                ⌘ + Enter
+                {`${isMac() ? '⌘' : 'Ctrl'} + Enter`}
               </Text>
             </Button>
           </ModalFooter>

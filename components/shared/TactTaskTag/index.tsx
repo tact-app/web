@@ -9,6 +9,7 @@ interface TactTaskTagProps {
     tagProps?: ButtonProps;
     showRemoveIcon?: boolean;
     title: string;
+    selected?: boolean;
 }
 
 const TactTaskTag = forwardRef<HTMLButtonElement, TactTaskTagProps>(({
@@ -16,7 +17,8 @@ const TactTaskTag = forwardRef<HTMLButtonElement, TactTaskTagProps>(({
     iconButtonProps,
     tagProps,
     title,
-    showRemoveIcon = false
+    showRemoveIcon = false,
+    selected = false,
 }, ref) => (
     <Button
         key={title}
@@ -30,20 +32,20 @@ const TactTaskTag = forwardRef<HTMLButtonElement, TactTaskTagProps>(({
                 opacity: 100
             },
             span: {
-                bg: 'var(--chakra-colors-blue-600)'
+                bg: `var(--chakra-colors-blue-${selected ? 600 : 400})`
             }
         }}
         _focus={{
             boxShadow: 'none',
             span: {
-                boxShadow: 'inset 0px 0px 0px 2px var(--chakra-colors-blue-600)'
+                boxShadow: `inset 0px 0px 0px 3px var(--chakra-colors-blue-${selected ? 300 : 600})`
             }
         }}
         ref={ref}
         {...buttonProps}
     >
         <Tag
-            bg='blue.400'
+            bg={`blue.${selected ? 500 : 300}`}
             color='white'
             cursor='pointer'
             boxSizing='border-box'

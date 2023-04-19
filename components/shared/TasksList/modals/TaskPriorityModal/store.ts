@@ -24,7 +24,7 @@ export class TaskPriorityModalStore {
   multiple: boolean = false;
 
   keyMap = {
-    FORCE_ENTER: ['meta+enter'],
+    FORCE_ENTER: ['meta+enter', 'ctrl+enter'],
   };
 
   hotkeyHandlers = {

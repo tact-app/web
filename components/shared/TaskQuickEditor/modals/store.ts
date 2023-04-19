@@ -155,12 +155,12 @@ export class TasksEditorModals {
             this.root.toggleModal(false);
           },
           onSelect: (priority: TaskPriority) => {
-            this.parent.modes.priority.currentPriority = priority;
+            this.parent.modes.priority.priority = priority;
             this.controller.close();
             this.root.toggleModal(false);
           },
         },
-        priority: this.parent.modes.priority.currentPriority,
+        priority: this.parent.modes.priority.priority,
       },
     });
   };

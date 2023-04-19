@@ -13,6 +13,7 @@ import { useTaskSpaceChangeModalStore } from './store';
 import { SpacesSelection } from '../../../SpacesSelection';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import { isMac } from '../../../../../helpers/os';
 
 export const TaskSpaceChangeModalView = observer(
   function TaskSpaceChangeModalView() {
@@ -78,7 +79,7 @@ export const TaskSpaceChangeModalView = observer(
                 color='white'
                 fontWeight={400}
               >
-                ⌘ + Enter
+                {`${isMac() ? '⌘' : 'Ctrl'} + Enter`}
               </Text>
             </Button>
           </ModalFooter>

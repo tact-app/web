@@ -86,7 +86,6 @@ const singleTaskItems = (store: TaskItemStore) => [
   {
     onClick: () => {
       store.parent.modals.openAddTagModal(store.task.id);
-      setTimeout(() => store.quickEdit.activateMode(Modes.TAG));
     },
     title: 'Add tag',
     icon: faHashtag,

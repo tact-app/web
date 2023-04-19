@@ -13,6 +13,7 @@ import React from 'react';
 import { GoalsSelection } from '../../../GoalsSelection';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import { isMac } from '../../../../../helpers/os';
 
 export const TaskGoalAssignModalView = observer(
   function TaskGoalAssignModalView() {
@@ -78,7 +79,7 @@ export const TaskGoalAssignModalView = observer(
                 color='white'
                 fontWeight={400}
               >
-                ⌘ + Enter
+                {`${isMac() ? '⌘' : 'Ctrl'} + Enter`}
               </Text>
             </Button>
           </ModalFooter>
