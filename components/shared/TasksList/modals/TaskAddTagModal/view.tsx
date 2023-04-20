@@ -84,10 +84,9 @@ export const TaskAddTagModalView = observer(function TaskAddTagModalView() {
                   }
                 }}
                 iconButtonProps={{
-                  name: index.toString(),
                   onClick: (e) => {
                     e.stopPropagation();
-                    store.removeTag(id, e);
+                    store.removeTag(id);
                   },
                 }}
               />

@@ -160,7 +160,7 @@ export class TaskAddTagModalStore {
     }
 
     if (e.code === 'Backspace' && !value.length && tagsLength) {
-      this.removeTag(this.selectedTags[tagsLength - 1].id, e)
+      this.removeTag(this.selectedTags[tagsLength - 1].id)
     }
     if (e.code !== 'Enter' && e.code !== 'Space') return
     if (!value.trim()) {
