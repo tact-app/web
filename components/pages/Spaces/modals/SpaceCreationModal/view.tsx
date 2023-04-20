@@ -28,9 +28,10 @@ import { TextAreaLengthCounter } from '../../../../shared/TextAreaLengthCounter'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAlignLeft, faTrashCan } from '@fortawesome/pro-light-svg-icons';
 import { EmojiSelect } from "../../../../shared/EmojiSelect";
+import { isMac } from '../../../../../helpers/os';
 
 const keyMap = {
-  CREATE: ['meta+enter', 'meta+s'],
+  CREATE: ['meta+enter', 'meta+s', 'ctrl+enter'],
   CANCEL: ['escape'],
 };
 
@@ -151,7 +152,7 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
           >
             Save
             <Text ml={1} fontSize='xs' color='whiteAlpha.700'>
-              ⌘ + Enter
+              {`${isMac() ? '⌘' : 'Ctrl'} + Enter`}
             </Text>
           </Button>
         </ModalFooter>

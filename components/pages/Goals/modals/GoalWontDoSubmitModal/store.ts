@@ -31,7 +31,7 @@ export class GoalWontDoSubmitModalStore {
 
   callbacks: Pick<GoalWontDoSubmitModalProps, 'onClose' | 'onSubmit'>;
   keymap = {
-    SAVE: ['meta+enter']
+    SAVE: ['meta+enter', 'ctrl+enter']
   };
 
   constructor() {

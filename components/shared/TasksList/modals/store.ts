@@ -5,10 +5,14 @@ import { GoalCreationModal } from '../../../pages/Goals/modals/GoalCreationModal
 import { TasksListStore } from '../store';
 import { TaskWontDoModal } from './TaskWontDoModal';
 import { TaskSpaceChangeModal } from './TaskSpaceChangeModal';
-import { TaskData } from '../types';
+import { TaskPriority, TaskTag } from '../types';
 import { SpaceCreationModal } from '../../../pages/Spaces/modals/SpaceCreationModal';
 import { SpaceData } from '../../../pages/Spaces/types';
 import { CreateGoalParams } from "../../../../stores/RootStore/Resources/GoalsStore";
+import { TaskAddTagModal } from './TaskAddTagModal';
+import { TaskPriorityModal } from './TaskPriorityModal';
+import { toJS } from 'mobx';
+
 
 export enum ModalsTypes {
   DELETE_TASK,
@@ -17,6 +21,8 @@ export enum ModalsTypes {
   GOAL_CREATION,
   SPACE_CHANGE,
   SPACE_CREATION,
+  ADD_TAG,
+  SET_PRIORITY,
 }
 
 export class TasksModals {
@@ -29,6 +35,8 @@ export class TasksModals {
     [ModalsTypes.GOAL_CREATION]: GoalCreationModal,
     [ModalsTypes.SPACE_CHANGE]: TaskSpaceChangeModal,
     [ModalsTypes.SPACE_CREATION]: SpaceCreationModal,
+    [ModalsTypes.ADD_TAG]: TaskAddTagModal,
+    [ModalsTypes.SET_PRIORITY]: TaskPriorityModal,
   });
 
   openVerifyDeleteModal = (ids: string[], done?: () => void) => {
@@ -59,6 +67,26 @@ export class TasksModals {
     });
   };
 
+  openAddTagModal = (taskId: string) => {
+    const task = this.parent.items[taskId];
+    this.controller.open({
+      type: ModalsTypes.ADD_TAG,
+      props: {
+        callbacks: {
+          onSave: (tags: TaskTag[]) => {
+            this.parent.updateTask({
+              ...task,
+              tags: tags.map(({ id }) => id),
+            });
+            this.controller.close();
+          },
+          onClose: this.controller.close,
+        },
+        tags: task.tags,
+      },
+    });
+  };
+
   openGoalCreationModal = (cb?: (goalId?: string) => void) => {
     this.controller.open({
       type: ModalsTypes.GOAL_CREATION,
@@ -72,6 +100,27 @@ export class TasksModals {
           this.controller.close();
           cb && cb();
         },
+      },
+    });
+  };
+
+  openPriorityModal = (taskId: string) => {
+    const task = this.parent.items[taskId];
+    this.controller.open({
+      type: ModalsTypes.SET_PRIORITY,
+      props: {
+        callbacks:{
+          onClose: this.controller.close,
+          onSelect: (priority: TaskPriority) => {
+            this.parent.updateTask({
+              ...task,
+              tags: toJS(task.tags),
+              priority,
+            });
+            this.controller.close();
+          },
+        },
+        priority: task.priority,
       },
     });
   };
@@ -147,12 +196,15 @@ export class TasksModals {
               this.openSpaceChangeModal(taskId, spaceId);
             });
           },
-          onSelect: (updatedTask: TaskData) => {
-            this.parent.updateTask(updatedTask);
+          onSelect: (spaceId: string) => {
+            this.parent.updateTask({
+              ...task,
+              spaceId,
+              tags: toJS(task.tags)
+            });
             this.controller.close();
           },
         },
-        task,
         spaceId,
       },
     });

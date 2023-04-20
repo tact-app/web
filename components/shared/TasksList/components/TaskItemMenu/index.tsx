@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite';
 import { TaskItemStore, useTaskItemStore } from '../TaskItem/store';
 import React from 'react';
 import { TaskStatus } from '../../types';
-import { Modes } from '../../../TaskQuickEditor/store';
 import {
   faBan,
   faBullseyePointer,
@@ -78,18 +77,16 @@ const multiTaskItems = (store: TaskItemStore) => [
 const singleTaskItems = (store: TaskItemStore) => [
   {
     onClick: () => {
-      store.parent.setEditingTask(store.task.id);
-      setTimeout(() => store.quickEdit.activateMode(Modes.PRIORITY));
+      store.parent.modals.openPriorityModal(store.task.id);
     },
     title: 'Change priority',
     icon: faCircleExclamation,
   },
   {
     onClick: () => {
-      store.parent.setEditingTask(store.task.id);
-      setTimeout(() => store.quickEdit.activateMode(Modes.TAG));
+      store.parent.modals.openAddTagModal(store.task.id);
     },
-    title: 'Add tag',
+    title: 'Add hashtag',
     icon: faHashtag,
   },
   {

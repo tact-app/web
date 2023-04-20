@@ -215,6 +215,10 @@ export class TagModeStore {
     }
   };
 
+  updateTags = (tags: TaskTag[]) => {
+    this.tags = tags
+  }
+
   addTag = (tag: TaskTag) => {
     this.tags.push(tag);
   };

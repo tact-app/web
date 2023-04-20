@@ -24,6 +24,7 @@ import {
 } from './store';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
+import { isMac } from '../../../../../helpers/os';
 
 export const TaskWontDoModalView = observer(function TaskWontDoModalView({
   onClose,
@@ -93,7 +94,7 @@ export const TaskWontDoModalView = observer(function TaskWontDoModalView({
           >
             Save
             <Text ml={1} fontSize='xs' color='whiteAlpha.700'>
-              ⌘ + Enter
+              {`${isMac() ? '⌘' : 'Ctrl'} + Enter`}
             </Text>
           </Button>
         </ModalFooter>

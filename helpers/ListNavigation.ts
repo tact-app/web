@@ -43,7 +43,7 @@ export class ListNavigation {
     UP: ['up', 'j'],
     DOWN: ['down', 'k'],
     ENTER: ['enter'],
-    FORCE_ENTER: ['meta+enter'],
+    FORCE_ENTER: ['meta+enter', 'ctrl+enter'],
     FIRST: ['meta+up', 'meta+j', 'h'],
     LAST: ['meta+down', 'meta+k', 'l'],
     NUMBERS: numbers,
