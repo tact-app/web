@@ -3,28 +3,29 @@ import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
 
 export type GoalsSelectionProps = {
+  editable?: boolean;
+  multiple?: boolean;
+  checked?: string[];
   callbacks?: {
     onToggleTitleFocus?: (id: string, isFocused: boolean) => void;
     onToggleOpenEmojiPicker?: (id: string, isOpen: boolean) => void;
     onSelect?: (goalIds: string[]) => void;
     onGoalCreateClick?: () => void;
+    setRefs?: (index: number, ref: HTMLElement) => void;
   };
-
-  setRefs?: (index: number, ref: HTMLElement) => void;
-  multiple?: boolean;
-  checked?: string[];
 };
 
 export class GoalsSelectionStore {
-  constructor(public root: RootStore) {
-    makeAutoObservable(this);
-  }
-
   callbacks: GoalsSelectionProps['callbacks'] = {};
 
   checkedGoals: string[] = [];
   isFocused: boolean = false;
   multiple: boolean = false;
+  editable: boolean = false;
+
+  constructor(public root: RootStore) {
+    makeAutoObservable(this);
+  }
 
   isChecked = (id: string) => {
     return this.checkedGoals.includes(id);
@@ -55,6 +56,7 @@ export class GoalsSelectionStore {
   update = (props: GoalsSelectionProps) => {
     this.callbacks = props.callbacks;
     this.multiple = props.multiple;
+    this.editable = props.editable;
 
     if (props.checked) {
       if (this.multiple) {

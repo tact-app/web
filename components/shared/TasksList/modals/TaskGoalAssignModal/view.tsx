@@ -35,9 +35,9 @@ export const TaskGoalAssignModalView = observer(
             pr={5}
           >
             <GoalsSelection
-              setRefs={store.navigation.setRefs}
               checked={store.selectedGoalId ? [store.selectedGoalId] : []}
               callbacks={{
+                setRefs: store.navigation.setRefs,
                 onSelect: store.handleSelect,
                 onGoalCreateClick: store.callbacks.onGoalCreateClick,
               }}

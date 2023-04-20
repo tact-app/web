@@ -10,14 +10,13 @@ import {
   Text,
   useOutsideClick,
 } from '@chakra-ui/react';
-import { GoalsSelectionStoreProvider } from '../../../../shared/GoalsSelection/store';
-import { GoalsSelectionView } from '../../../../shared/GoalsSelection/view';
 import React, { useRef } from 'react';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { AnimatedBlock } from "../../../../shared/AnimatedBlock";
 import { HotkeyBlock } from "../../../../shared/HotkeyBlock";
 import { CloseButton } from "../../../../shared/CloseButton";
+import { GoalsSelection } from "../../../../shared/GoalsSelection";
 
 export const FocusConfigurationView = observer(function FocusConfigurationView(
   props: FocusConfigurationProps
@@ -57,7 +56,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           p={2}
           pl={1}
           borderRadius='md'
-          bg={store.isFocused ? 'gray.50' : 'white'}
+          bg={store.isBlockFocused ? 'gray.50' : 'white'}
           minH={0}
           display='flex'
           flexDirection='column'
@@ -69,14 +68,12 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
             </Text>
             <HotkeyBlock hotkey='Press G' ml={2} lineHeight={5} fontSize='sm' />
           </HStack>
-          <GoalsSelectionStoreProvider
+          <GoalsSelection
             multiple
-            instance={store.goalsSelection}
-            checked={store.data.goals}
+            editable
             callbacks={store.goalsSelectionCallbacks}
-          >
-            <GoalsSelectionView setRefs={store.navigation.setRefs} />
-          </GoalsSelectionStoreProvider>
+            checked={store.data.goals}
+          />
         </Box>
         <FormControl display='flex' alignItems='center' mt={6}>
           <Switch

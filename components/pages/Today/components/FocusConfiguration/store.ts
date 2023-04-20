@@ -1,10 +1,7 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { RootStore } from '../../../../../stores/RootStore';
-import {
-  GoalsSelectionProps,
-  GoalsSelectionStore,
-} from '../../../../shared/GoalsSelection/store';
+import { GoalsSelectionProps } from '../../../../shared/GoalsSelection/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
 import { AnimatedBlockParams } from "../../../../shared/AnimatedBlock";
 
@@ -41,7 +38,6 @@ export class FocusConfigurationStore {
       }
     }
   });
-  goalsSelection = new GoalsSelectionStore(this.root);
 
   keyMap = {
     FOCUS_GOAL_SELECTION: 'g',
@@ -52,16 +48,9 @@ export class FocusConfigurationStore {
   };
 
   hotkeyHandlers = {
-    BLUR: (e) => {
-      if (this.isFocused) {
-        e.stopPropagation();
-        this.isBlockFocused = false;
-        this.navigation.disable();
-        this.callbacks.onBlur?.();
-      }
-    },
+    BLUR: () => this.handleBlur(),
     NUMBER: (e: KeyboardEvent) => {
-      if (this.isFocused) {
+      if (this.isBlockFocused) {
         const number = parseInt(e.key, 10) - 1;
 
         if (this.navigation.refs[number]) {
@@ -74,11 +63,9 @@ export class FocusConfigurationStore {
       this.sendChanges();
     },
     FOCUS_GOAL_SELECTION: () => {
-      !this?.isFocused && this.focus();
+      !this?.isBlockFocused && this.focus();
     },
-    ESCAPE: () => {
-      this.handleBlur();
-    },
+    ESCAPE: () => this.handleBlur(),
   };
 
   callbacks: FocusConfigurationProps['callbacks'] = {};
@@ -92,10 +79,6 @@ export class FocusConfigurationStore {
     goals: [],
     showImportant: false,
   };
-
-  get isFocused() {
-    return this.isBlockFocused;
-  }
 
   get isGoalEditing() {
     return Object.values({ ...this.openedEmojiPickerMap, ...this.editingTitlesMap }).includes(true);
@@ -120,7 +103,7 @@ export class FocusConfigurationStore {
   };
 
   handleBlur = () => {
-    if (!this.isFocused || this.isGoalEditing) {
+    if (!this.isBlockFocused || this.isGoalEditing) {
       return;
     }
 
@@ -129,18 +112,16 @@ export class FocusConfigurationStore {
     this.callbacks.onBlur?.();
   };
 
-  handleSelectGoal = () => {
+  handleSelectGoal = (goalsIds: string[]) => {
     this.isBlockFocused = true;
-    this.data.goals = this.goalsSelection.checkedGoals;
+    this.data.goals = goalsIds;
     this.sendChanges();
-    this.navigation.enable();
-    this.navigation.focus();
   };
 
   handleShowImportantChange = (e) => {
     this.data.showImportant = e.target.checked;
-    this.sendChanges();
     this.navigation.disable();
+    this.sendChanges();
   };
 
   handleGoalCreateClick = () => {
@@ -183,6 +164,7 @@ export class FocusConfigurationStore {
   };
 
   goalsSelectionCallbacks: GoalsSelectionProps['callbacks'] = {
+    setRefs: this.navigation.setRefs,
     onSelect: this.handleSelectGoal,
     onGoalCreateClick: this.handleGoalCreateClick,
     onToggleTitleFocus: (id, isFocused) => {
