@@ -22,8 +22,8 @@ export default {
     </>
   ),
   banner: {
-    text: <a href="https://github.com/tact-app/web/releases/tag/v0.3.0-pre.2" target="_blank">
-      🎉 Module v0.3.0-rc.2 is released. Read more →
+    text: <a href="https://github.com/tact-app/web/releases/tag/v0.3.0-pre.3" target="_blank">
+      🎉 Release v0.3.0-rc.3 is out. Read more →
     </a>,
   },
   footer: {
