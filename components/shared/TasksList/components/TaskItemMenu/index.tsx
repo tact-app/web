@@ -86,7 +86,7 @@ const singleTaskItems = (store: TaskItemStore) => [
     onClick: () => {
       store.parent.modals.openAddTagModal(store.task.id);
     },
-    title: 'Add tag',
+    title: 'Add hashtag',
     icon: faHashtag,
   },
   {

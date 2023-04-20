@@ -67,24 +67,27 @@ export const TaskAddTagModalView = observer(function TaskAddTagModalView() {
               }
             }}
           >
-            {store.selectedTags?.map(({ title, id }) => (
+            {store.selectedTags?.map(({ title, id }, index) => (
               <TactTaskTag
                 title={title}
                 showRemoveIcon
                 key={id}
+                ref={store.setRef('selectedTags', index)}
                 buttonProps={{
                   mr: 0,
+                  name: index.toString(),
+                  onFocus: () => store.changeFocusBlock('selectedTags'),
                   onKeyDown: (e) => {
-                    e.stopPropagation();
                     if (e.code === 'Backspace') {
-                      store.removeTag(id)
+                      store.removeTag(id, e)
                     }
                   }
                 }}
                 iconButtonProps={{
+                  name: index.toString(),
                   onClick: (e) => {
                     e.stopPropagation();
-                    store.removeTag(id);
+                    store.removeTag(id, e);
                   },
                 }}
               />
@@ -131,20 +134,14 @@ export const TaskAddTagModalView = observer(function TaskAddTagModalView() {
                             fontWeight='normal'
                             display='flex'
                             justifyContent='start'
-                            onClick={() => store.suggestionsMenu.onSelect(index)}
-                            bg={
-                              store.suggestionsMenu.hoveredIndex === index
-                                ? 'gray.100'
-                                : 'white'
-                            }
-                            ref={
-                              store.suggestionsMenu.hoveredIndex === index
-                                ? (el) => store.suggestionsMenu.setRef(el)
-                                : undefined
-                            }
+                            onClick={() => store.handleSuggestionSelect(index)}
+                            bg='white'
+                            name={index.toString()}
+                            ref={store.setRef('suggestionsMenu', index)}
                             _focus={{
                               outline: 'none',
                               boxShadow: 'none',
+                              background: 'gray.100',
                             }}
                           >
                             {child}
@@ -160,9 +157,10 @@ export const TaskAddTagModalView = observer(function TaskAddTagModalView() {
                 placeholder='Type in a tag'
                 flexGrow={1}
                 maxLength={20}
+                ref={store.setRef('input')}
                 onKeyDown={store.inputKeyDown}
                 onChange={store.handleInputChange}
-                onFocus={store.handleFocusMenu}
+                onFocus={store.handleFocusInput}
                 variant="unstyled"
               />
             </InputGroup>
@@ -187,17 +185,20 @@ export const TaskAddTagModalView = observer(function TaskAddTagModalView() {
                 },
               }}
             >
-              {store.availableTags.map(({ title, id }) => {
+              {store.availableTags.map(({ title, id }, index) => {
                 const alreadySelected = !!store.selectedTags.find(({ id: selectedId }) => selectedId === id)
                 return (
                   <TactTaskTag
                     title={title}
                     key={id}
                     selected={alreadySelected}
+                    ref={store.setRef('availableTags', index)}
                     buttonProps={{
                       mb: 2.5,
                       mr: 2,
-                      onClick: () => alreadySelected ? store.removeTag(id) : store.addTag({ title, id })
+                      name: index.toString(),
+                      onFocus: () => store.changeFocusBlock('availableTags'),
+                      onClick: (e) => alreadySelected ? store.removeTag(id) : store.addTag({ title, id })
                     }}
                   />
                 )
