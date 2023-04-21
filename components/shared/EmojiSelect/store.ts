@@ -7,6 +7,7 @@ export class EmojiSelectStore {
   icon: string;
   color: string;
   title: string;
+  disabled: boolean = false;
   callbacks: EmojiSelectCallbacks;
 
   isEmojiPickerOpen = false;
@@ -40,6 +41,10 @@ export class EmojiSelectStore {
   }
 
   openEmojiPicker = () => {
+    if (this.disabled) {
+      return;
+    }
+
     this.isEmojiPickerOpen = true;
     this.callbacks?.onToggleOpen?.(true);
   };
@@ -65,10 +70,11 @@ export class EmojiSelectStore {
     await EmojiStore.loadIfNotLoaded();
   }
 
-  update = ({ icon, color, title, onColorChange, onIconChange, onToggleOpen }: EmojiSelectProps) => {
+  update = ({ icon, color, title, disabled, onColorChange, onIconChange, onToggleOpen }: EmojiSelectProps) => {
     this.icon = icon;
     this.color = color;
     this.title = title;
+    this.disabled = disabled;
 
     this.callbacks = {
       onColorChange,

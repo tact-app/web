@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite';
 import {
   chakra,
   Box,
-  Checkbox,
   List,
   ListItem,
   Button,
@@ -11,7 +10,8 @@ import { useGoalsSelectionStore } from './store';
 import React, { useRef } from 'react';
 import { LargePlusIcon } from '../Icons/LargePlusIcon';
 import { GoalsSelectionSpace } from "./components/GoalsSelectionSpace";
-import { HeavyPlusIcon } from '../Icons/HeavyPlusIcon';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/pro-regular-svg-icons";
 
 export const GoalsSelectionView = observer(function GoalsSelectionView() {
   const store = useGoalsSelectionStore();
@@ -23,7 +23,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
         {store.root.resources.goals.listBySpaces.map(({ space, goals }) => (
           <GoalsSelectionSpace key={space.id} space={space} goals={goals} />
         ))}
-        {store.root.resources.goals.count < 9 &&
+        {store.abilityToCreate &&
             <ListItem
                 h={10}
                 display='flex'
@@ -34,36 +34,28 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
                 cursor='pointer'
                 onClick={store.callbacks.onGoalCreateClick}
             >
-                <Checkbox
+                <Button
                     ref={(el) => store.callbacks?.setRefs?.(store.root.resources.goals.count + 1, el)}
-                    isChecked={false}
-                    size='xl'
-                    position='relative'
-                    width='100%'
-                    icon={
-                      <chakra.div
-                        display='flex'
-                        justifyContent='center'
-                        alignItems='center'
-                      >
-                        <HeavyPlusIcon/>
-                      </chakra.div>}
-                    css={{
-                      '.chakra-checkbox__label': {
-                        width: 'calc(100% - 2rem)',
-                      },
-                      '.chakra-checkbox__control': {
-                        borderRadius: '100%',
-                      }
+                    w={6}
+                    h={6}
+                    p={0}
+                    minW='auto'
+                    rounded='full'
+                    display='flex'
+                    alignItems='center'
+                    justifyContent='center'
+                    bg='blue.400'
+                    color='white'
+                    _focus={{
+                      bg: 'blue.400'
+                    }}
+                    _hover={{
+                      bg: 'blue.400'
                     }}
                 >
-                    <chakra.span
-                        fontSize='sm'
-                        fontWeight='normal'
-                        lineHeight={5}>
-                        Create new goal
-                    </chakra.span>
-                </Checkbox>
+                    <FontAwesomeIcon icon={faPlus} fontSize={14} />
+                </Button>
+                <chakra.span ml={2} mr={2}>Create new goal</chakra.span>
             </ListItem>
         }
       </List>

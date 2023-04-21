@@ -83,8 +83,10 @@ export const GoalsSelectionGoal = observer(function GoalSelectionListItem({ goal
               <EmojiSelect
                 icon={goal.icon.value}
                 color={goal.icon.color}
+                disabled={!store.editable}
                 size={6}
                 iconFontSize='sm'
+                cursor='pointer'
                 onToggleOpen={handleEmojiSelectOpen}
                 onColorChange={handleColorChange}
                 onIconChange={handleIconChange}
@@ -92,8 +94,9 @@ export const GoalsSelectionGoal = observer(function GoalSelectionListItem({ goal
               <chakra.div ml='2' w='calc(100% - var(--chakra-space-10))'>
                   <EditableTitle
                     widthByTitle
-                    sharedProps={{ color: 'gray.700', fontWeight: 400 }}
                     value={goal.title}
+                    disabled={!store.editable}
+                    sharedProps={{ color: 'gray.700', fontWeight: 400, cursor: 'pointer' }}
                     onFocus={handleToggleTitleFocus}
                     onBlur={handleToggleTitleBlur}
                     onSave={handleTitleUpdate}

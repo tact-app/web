@@ -25,6 +25,7 @@ export const EmojiSelectComponent = observer(
     iconFontSize = 'xl',
     borderRadius = 'full',
     canRemoveEmoji,
+    cursor,
   }: EmojiSelectViewProps) {
     const store = useEmojiSelectStore();
 
@@ -56,7 +57,7 @@ export const EmojiSelectComponent = observer(
             bg={store.color}
             color={store.mainColor.color + '.500'}
             borderRadius={borderRadius}
-            boxShadow={store.isEmojiPickerOpen && focusedTriggerBoxShadow}
+            boxShadow={store.isEmojiPickerOpen && !store.disabled && focusedTriggerBoxShadow}
             p={0}
             w={size}
             h={size}
@@ -64,8 +65,9 @@ export const EmojiSelectComponent = observer(
             display='flex'
             justifyContent='center'
             alignItems='center'
-            _focus={{ boxShadow: focusedTriggerBoxShadow }}
-            onClick={(e) => e.stopPropagation()}
+            cursor={cursor ?? (store.disabled ? 'default' : 'initial')}
+            _focus={{ boxShadow: !store.disabled && focusedTriggerBoxShadow }}
+            onClick={(e) => !store.disabled && e.stopPropagation()}
           >
             <Text fontSize={iconFontSize}>{store.triggerContent}</Text>
           </Button>

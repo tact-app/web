@@ -4,6 +4,7 @@ import { NavigationDirections } from "../TasksList/types";
 
 type Props = {
   value: string;
+  disabled?: boolean;
   titleProps?: TextProps;
   inputProps?: InputProps;
   sharedProps?: TextProps & InputProps;
@@ -20,6 +21,7 @@ export const EDITABLE_TITLE_ID_SLUG = 'editable-title';
 
 export function EditableTitle({
   value: initialValue,
+  disabled,
   titleProps,
   inputProps,
   sharedProps,
@@ -100,6 +102,10 @@ export function EditableTitle({
   };
 
   const handleEditModeToggle = (e: SyntheticEvent) => {
+    if (disabled) {
+      return;
+    }
+
     e.preventDefault();
     e.stopPropagation();
 

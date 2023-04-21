@@ -42,6 +42,7 @@ export const GoalsSelectionSpace = observer(function GoalsSelectionSpace({ space
           icon={space.icon}
           color={space.color}
           title={space.name}
+          disabled={!store.editable}
           size={6}
           iconFontSize='sm'
           borderRadius={4}
@@ -53,8 +54,9 @@ export const GoalsSelectionSpace = observer(function GoalsSelectionSpace({ space
         <chakra.div ml='2' w='calc(100% - var(--chakra-space-10))'>
           <EditableTitle
             widthByTitle
-            sharedProps={{ color: 'gray.700', fontWeight: 400 }}
             value={space.name}
+            sharedProps={{ color: 'gray.700', fontWeight: 400 }}
+            disabled={!store.editable}
             onFocus={handleTitleFocus}
             onBlur={handleTitleBlur}
             onSave={handleNameSave}

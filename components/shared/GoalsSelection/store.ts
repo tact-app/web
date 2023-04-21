@@ -6,6 +6,7 @@ export type GoalsSelectionProps = {
   editable?: boolean;
   multiple?: boolean;
   checked?: string[];
+  abilityToCreate?: boolean;
   callbacks?: {
     onToggleTitleFocus?: (id: string, isFocused: boolean) => void;
     onToggleOpenEmojiPicker?: (id: string, isOpen: boolean) => void;
@@ -22,6 +23,7 @@ export class GoalsSelectionStore {
   isFocused: boolean = false;
   multiple: boolean = false;
   editable: boolean = false;
+  abilityToCreate: boolean = false;
 
   constructor(public root: RootStore) {
     makeAutoObservable(this);
@@ -44,7 +46,7 @@ export class GoalsSelectionStore {
       }
     } else {
       if (id) {
-        this.checkedGoals = [...this.checkedGoals, id];
+        this.checkedGoals = [id];
       } else {
         this.checkedGoals = [];
       }
@@ -57,6 +59,7 @@ export class GoalsSelectionStore {
     this.callbacks = props.callbacks;
     this.multiple = props.multiple;
     this.editable = props.editable;
+    this.abilityToCreate = props.abilityToCreate;
 
     if (props.checked) {
       if (this.multiple) {

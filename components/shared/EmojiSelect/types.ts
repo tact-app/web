@@ -1,8 +1,11 @@
+import { Property } from "csstype";
+
 export type EmojiSelectViewProps = {
   size?: number;
   iconFontSize?: string;
   borderRadius?: string | number;
   canRemoveEmoji?: boolean;
+  cursor?: Property.Cursor;
 };
 
 export type EmojiSelectCallbacks = {
@@ -15,4 +18,5 @@ export type EmojiSelectProps = EmojiSelectViewProps & EmojiSelectCallbacks & {
   icon: string;
   color: string;
   title?: string;
+  disabled?: boolean;
 };
