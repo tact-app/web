@@ -10,6 +10,6 @@
     "nextra-theme-docs": "^2.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "vercel": "^28.19.0"
+    "vercel": "^28.20.0"
   }
 }
