@@ -35,7 +35,7 @@ export class GoalCreationModalStore {
   modals = new ModalsController(GoalsModals);
 
   keyMap = {
-    CREATE: ['meta+enter', 'meta+s'],
+    CREATE: ['meta+enter', 'meta+s', 'ctrl+enter'],
     CANCEL: ['escape'],
   };
 

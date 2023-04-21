@@ -1,6 +1,6 @@
-> # 🖥️ Tact.app
->
-> Web version of the service for desktops.
+# 🖥️ Tact.web
+
+Web version for desktops.
 
 ## Quick Start
 

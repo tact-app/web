@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { Modes, useTaskQuickEditorStore } from './store';
+import { useTaskQuickEditorStore } from './store';
 import {
   chakra,
   IconButton,
@@ -9,6 +9,13 @@ import {
   Portal,
   MenuList,
 } from '@chakra-ui/react';
+import {
+  faBullseyePointer,
+  faCircleExclamation,
+  faHashtag,
+  faSolarSystem,
+} from '@fortawesome/pro-light-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DotsIcon } from '../Icons/DotsIcon';
 import React from 'react';
 
@@ -38,43 +45,67 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
         <Portal>
           <MenuList p={0} shadow='lg' zIndex='modal'>
             <MenuItem
-                fontSize='sm'
                 lineHeight='5'
                 fontWeight='normal'
                 command='#'
-                onClick={() => store.activateMode(Modes.TAG)}
+                p={2.5}
+                icon={
+                  <FontAwesomeIcon icon={faHashtag} fixedWidth />
+                }
+                onClick={() => {
+                  store.input.focus();
+                  store.modals.openAddTagModal();
+                }}
             >
-              Add tag
+              Add hashtag
             </MenuItem>
             <MenuItem
-                fontSize='sm'
                 lineHeight='5'
                 fontWeight='normal'
                 command='!'
-                onClick={() => store.activateMode(Modes.PRIORITY)}
+                p={2.5}
+                icon={
+                  <FontAwesomeIcon icon={faCircleExclamation} fixedWidth />
+                }
+                onClick={() => {
+                  store.input.focus();
+                  store.modals.openPriorityModal();
+                }}
             >
               Set priority
             </MenuItem>
             {!store.disableGoalChange && (
               <MenuItem
-                fontSize='sm'
                 lineHeight='5'
                 fontWeight='normal'
                 command='*'
-                onClick={() => store.activateMode(Modes.GOAL)}
+                p={2.5}
+                icon={
+                  <FontAwesomeIcon icon={faBullseyePointer} fixedWidth />
+                }
+                onClick={() => {
+                  store.input.focus();
+                  store.modals.openGoalAssignModal();
+                }}
               >
-                Add goal
+                Set goal
               </MenuItem>
             )}
             {!store.disableSpaceChange && (
               <MenuItem
-                fontSize='sm'
                 lineHeight='5'
                 fontWeight='normal'
                 command='^'
-                onClick={() => store.activateMode(Modes.SPACE)}
+                p={2.5}
+                icon={
+                  <FontAwesomeIcon icon={faSolarSystem} fixedWidth />
+                }
+                onClick={(e) => {
+                  store.input.focus();
+                  store.modals.openSpaceChangeModal();
+                }}
               >
-                Link to space
+                Change space
               </MenuItem>
             )}
           </MenuList>

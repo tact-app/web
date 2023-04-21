@@ -21,7 +21,7 @@ export const GoalCreationCloseSubmitModal = observer(
   function GoalCreationCloseSubmitModal({ onClose, onSubmit }: GoalCreationCloseSubmitModalProps) {
     const initialRef = useRef(null);
 
-    useHotkeysHandler({ STAY: ['meta+enter'] }, { STAY: onClose });
+    useHotkeysHandler({ STAY: ['meta+enter', 'ctrl+enter'] }, { STAY: onClose });
 
     return (
       <Modal
