@@ -7,6 +7,7 @@ export type GoalsSelectionProps = {
   multiple?: boolean;
   checked?: string[];
   abilityToCreate?: boolean;
+  forModal?: boolean;
   callbacks?: {
     onToggleTitleFocus?: (id: string, isFocused: boolean) => void;
     onToggleOpenEmojiPicker?: (id: string, isOpen: boolean) => void;
@@ -24,6 +25,7 @@ export class GoalsSelectionStore {
   multiple: boolean = false;
   editable: boolean = false;
   abilityToCreate: boolean = false;
+  forModal: boolean = false;
 
   constructor(public root: RootStore) {
     makeAutoObservable(this);
@@ -60,6 +62,7 @@ export class GoalsSelectionStore {
     this.multiple = props.multiple;
     this.editable = props.editable;
     this.abilityToCreate = props.abilityToCreate;
+    this.forModal = props.forModal;
 
     if (props.checked) {
       if (this.multiple) {

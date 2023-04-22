@@ -73,6 +73,7 @@ export class FocusConfigurationStore {
   isBlockFocused: boolean = false;
   openedEmojiPickerMap: Record<string, boolean> = {};
   editingTitlesMap: Record<string, boolean> = {};
+  isIntroducingClosed: boolean = false;
 
   data: FocusConfigurationData = {
     id: 'default',
@@ -144,6 +145,10 @@ export class FocusConfigurationStore {
       },
     });
     this.callbacks.onChange?.(this.data);
+  };
+
+  closeIntroducing = () => {
+    this.isIntroducingClosed = true;
   };
 
   update = (props: FocusConfigurationProps) => {

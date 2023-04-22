@@ -21,7 +21,7 @@ import {
 import { Lists, referenceToList } from '../../shared/TasksList/constants';
 import { CalendarProps, CalendarStore } from './components/Calendar/store';
 
-const FOCUS_MODE_WIDTH = 300;
+const FOCUS_MODE_WIDTH = 320;
 
 export enum TodayBlocks {
   FOCUS_CONFIGURATION = 'FOCUS_CONFIGURATION',

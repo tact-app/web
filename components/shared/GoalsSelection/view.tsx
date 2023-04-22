@@ -2,24 +2,24 @@ import { observer } from 'mobx-react-lite';
 import {
   chakra,
   Box,
+  Button,
+  Text,
   List,
   ListItem,
-  Button,
 } from '@chakra-ui/react';
 import { useGoalsSelectionStore } from './store';
-import React, { useRef } from 'react';
-import { LargePlusIcon } from '../Icons/LargePlusIcon';
-import { GoalsSelectionSpace } from "./components/GoalsSelectionSpace";
+import { GoalsSelectionSpace } from './components/GoalsSelectionSpace';
+import React from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/pro-regular-svg-icons";
+import { QuestionWithTooltip } from '../QuestionWithTooltip';
 
 export const GoalsSelectionView = observer(function GoalsSelectionView() {
   const store = useGoalsSelectionStore();
-  const ref = useRef();
 
-  if (store.root.resources.goals.count) {
+  if (store.root.resources.goals.haveGoals) {
     return (
-      <List ref={ref} h='100%' overflowY='auto' pl={1} pr={1}>
+      <List h='100%' overflowY='auto' pl={1} pr={1}>
         {store.root.resources.goals.listBySpaces.map(({ space, goals }) => (
           <GoalsSelectionSpace key={space.id} space={space} goals={goals} />
         ))}
@@ -28,11 +28,8 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
                 h={10}
                 display='flex'
                 alignItems='center'
-                borderBottom='1px'
-                borderColor='gray.100'
-                key={'add-space'}
                 cursor='pointer'
-                onClick={store.callbacks.onGoalCreateClick}
+                onClick={store.callbacks?.onGoalCreateClick}
             >
                 <Button
                     ref={(el) => store.callbacks?.setRefs?.(store.root.resources.goals.count + 1, el)}
@@ -47,10 +44,10 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
                     bg='blue.400'
                     color='white'
                     _focus={{
-                      bg: 'blue.400'
+                      bg: 'blue.500'
                     }}
                     _hover={{
-                      bg: 'blue.400'
+                      bg: 'blue.500'
                     }}
                 >
                     <FontAwesomeIcon icon={faPlus} fontSize={14} />
@@ -63,25 +60,35 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
   }
 
   return (
-    <Box ref={ref}>
+    <Box
+      display='flex'
+      flexDirection='column'
+      alignItems={store.forModal ? 'center' : 'flex-start'}
+      justifyContent='center'
+      pl={1}
+      pr={1}
+    >
+      <Text fontSize='xs' fontWeight='normal' lineHeight={4} display='flex'>
+        You haven’t created any goal yet
+        {!store.forModal && (
+          <QuestionWithTooltip
+            tooltipLabel='A goal allows you to identify a meaningful destination point, the pursuit of which is essential to you.'
+          />
+        )}
+      </Text>
       <Button
+        fontSize='xs'
+        mt={3}
+        ml={store.forModal ? 0 : -2}
+        variant='ghost'
+        size='xs'
+        color='blue.400'
+        fontWeight='normal'
+        _hover={{ bg: 'gray.75' }}
         ref={(el) => store.callbacks?.setRefs?.(0, el)}
-        h={36}
-        w='100%'
-        p={6}
-        fontSize='lg'
-        fontWeight='semibold'
-        color='gray.400'
-        display='flex'
-        flexDirection='column'
-        justifyContent='space-between'
-        onClick={store.callbacks.onGoalCreateClick}
-        _focus={{
-          boxShadow: 'var(--chakra-shadows-outline)',
-        }}
+        onClick={store.callbacks?.onGoalCreateClick}
       >
-        <LargePlusIcon />
-        New goal
+        <Text decoration='underline' mr={1}>Create new</Text> 🎯
       </Button>
     </Box>
   );

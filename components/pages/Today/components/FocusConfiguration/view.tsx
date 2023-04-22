@@ -17,6 +17,7 @@ import { AnimatedBlock } from "../../../../shared/AnimatedBlock";
 import { HotkeyBlock } from "../../../../shared/HotkeyBlock";
 import { CloseButton } from "../../../../shared/CloseButton";
 import { GoalsSelection } from "../../../../shared/GoalsSelection";
+import { FocusConfigurationIntroducing } from "./components/FocusConfigurationIntroducing";
 
 export const FocusConfigurationView = observer(function FocusConfigurationView(
   props: FocusConfigurationProps
@@ -36,13 +37,13 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
     <AnimatedBlock
       animateParams={props.focusHighlightParams}
       component={Box}
-      p={6}
+      p={4}
       height='100%'
       display='flex'
       flexDirection='column'
       justifyContent='space-between'
     >
-      <Box width='100%' minH={0} display='flex' flexDirection='column'>
+      <Box pl={2} pr={2} width='100%' minH={0} display='flex' flexDirection='column'>
         <HStack
           justifyContent='space-between'
           alignItems='center'
@@ -56,7 +57,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           p={2}
           pl={1}
           borderRadius='md'
-          bg={store.isBlockFocused ? 'gray.50' : 'white'}
+          bg={store.isBlockFocused && store.root.resources.goals.haveGoals ? 'gray.50' : 'transparent'}
           minH={0}
           display='flex'
           flexDirection='column'
@@ -96,6 +97,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
           </FormLabel>
         </FormControl>
       </Box>
+      <FocusConfigurationIntroducing />
     </AnimatedBlock>
   );
 });

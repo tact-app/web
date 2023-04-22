@@ -43,17 +43,25 @@ export class GoalsStore {
         {
           ...goal,
           customFields: {
-            order: index,
             state: this.getStateByDate(goal.startDate, goal.targetDate),
           },
         },
       ],
     }), {} as Record<string, GoalDataExtended[]>);
 
-    return Object.entries(goalsBySpaces).map(([spaceId, goals]) => ({
-      space: this.root.resources.spaces.getById(spaceId),
-      goals: goals as GoalDataExtended[],
-    }));
+    let order = 0;
+
+    return Object.entries(goalsBySpaces).map(([spaceId, goals]) => {
+      return ({
+        space: this.root.resources.spaces.getById(spaceId),
+        goals: goals.map((goal) => {
+          const goalWithOrder = { ...goal, customFields: { ...goal.customFields, order } };
+          order++;
+
+          return goalWithOrder;
+        }),
+      })
+    });
   }
 
   get count() {

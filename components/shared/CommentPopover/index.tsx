@@ -53,7 +53,7 @@ export function CommentPopover({ triggerProps }: Props) {
               pl={0.5}
               pr={0.5}
               h={7}
-              aria-label='Info'
+              aria-label='Comment'
               {...triggerProps}
             >
               <FontAwesomeIcon

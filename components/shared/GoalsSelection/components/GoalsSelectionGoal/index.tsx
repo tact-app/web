@@ -14,7 +14,8 @@ type Props = {
 export const GoalsSelectionGoal = observer(function GoalSelectionListItem({ goal }: Props) {
     const store = useGoalsSelectionStore();
 
-    const checkboxNumber = goal.customFields.order + 1 < 9 ? goal.customFields.order + 1 : null;
+    const orderNum = goal.customFields.order + 1;
+    const checkboxNumber = orderNum < 10 ? orderNum : null;
 
     const isChecked = store.isChecked(goal.id);
 
@@ -56,6 +57,11 @@ export const GoalsSelectionGoal = observer(function GoalSelectionListItem({ goal
             fontWeight='semibold'
             fontSize='lg'
             icon={checkboxNumber ? <></> : undefined}
+            css={{
+                '.chakra-checkbox__label': {
+                    margin: 0,
+                }
+            }}
           >
               {checkboxNumber ? (
                 <chakra.span
@@ -76,6 +82,7 @@ export const GoalsSelectionGoal = observer(function GoalSelectionListItem({ goal
           <Flex
             alignItems='center'
             flex={1}
+            ml={2}
             w='calc(100% - var(--chakra-space-8))'
             cursor='pointer'
             onClick={handleGoalCheck}
