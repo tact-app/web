@@ -59,7 +59,7 @@ export class GoalsStore {
           order++;
 
           return goalWithOrder;
-        }),
+        }) as GoalDataExtended[],
       })
     });
   }

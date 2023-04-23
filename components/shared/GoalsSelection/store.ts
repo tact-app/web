@@ -5,8 +5,8 @@ import { getProvider } from '../../../helpers/StoreProvider';
 export type GoalsSelectionProps = {
   editable?: boolean;
   multiple?: boolean;
+  hasInitialChecked?: boolean;
   checked?: string[];
-  abilityToCreate?: boolean;
   forModal?: boolean;
   callbacks?: {
     onToggleTitleFocus?: (id: string, isFocused: boolean) => void;
@@ -21,10 +21,10 @@ export class GoalsSelectionStore {
   callbacks: GoalsSelectionProps['callbacks'] = {};
 
   checkedGoals: string[] = [];
+  hasInitialChecked: boolean = false;
   isFocused: boolean = false;
   multiple: boolean = false;
   editable: boolean = false;
-  abilityToCreate: boolean = false;
   forModal: boolean = false;
 
   constructor(public root: RootStore) {
@@ -47,11 +47,7 @@ export class GoalsSelectionStore {
         this.checkedGoals = [];
       }
     } else {
-      if (id) {
-        this.checkedGoals = [id];
-      } else {
-        this.checkedGoals = [];
-      }
+      this.checkedGoals = [id];
     }
 
     this.callbacks.onSelect?.(this.checkedGoals);
@@ -61,8 +57,8 @@ export class GoalsSelectionStore {
     this.callbacks = props.callbacks;
     this.multiple = props.multiple;
     this.editable = props.editable;
-    this.abilityToCreate = props.abilityToCreate;
     this.forModal = props.forModal;
+    this.hasInitialChecked = props.hasInitialChecked;
 
     if (props.checked) {
       if (this.multiple) {

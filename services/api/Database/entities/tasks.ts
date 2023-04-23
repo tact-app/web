@@ -242,14 +242,18 @@ const data = {
     },
     '/api/tasks/assign-goal': async (
       db: DB,
-      data: { taskIds: string[]; goalId: string | null }
+      data: { taskIds: string[]; goalId: string | null; spaceId: string | null }
     ) => {
       await Promise.all(
         data.taskIds.map(async (id) => {
           const existedTask = await db.get('tasks', id);
 
           if (existedTask) {
-            await db.put('tasks', { ...existedTask, goalId: data.goalId });
+            await db.put('tasks', {
+              ...existedTask,
+              goalId: data.goalId,
+              spaceId: data.spaceId || existedTask.spaceId
+            });
 
             if (existedTask.goalId) {
               await updateList(db, existedTask.goalId, (list) => {

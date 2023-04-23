@@ -145,16 +145,17 @@ export class TasksModals {
               this.openGoalAssignModal(taskId, goalId);
             });
           },
-          onSelect: (goalId: string) => {
+          onSelect: (goalId: string, spaceId: string) => {
             if (taskId) {
-              this.parent.assignGoal([taskId], goalId);
+              this.parent.assignGoal([taskId], goalId, spaceId);
             } else {
-              this.parent.assignGoal(focused, goalId);
+              this.parent.assignGoal(focused, goalId, spaceId);
             }
             this.controller.close();
           },
         },
         value,
+        taskCount: taskId ? 1 : focused.length,
       },
     });
   };

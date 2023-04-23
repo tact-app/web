@@ -7,11 +7,12 @@ import { ListNavigation } from '../../../../../helpers/ListNavigation';
 export type TaskGoalAssignModalProps = {
   callbacks: {
     onClose?: () => void;
-    onSelect?: (goalId: string) => void;
+    onSelect?: (goalId: string, spaceId: string | null) => void;
     onGoalCreateClick?: () => void;
   };
   multiple?: boolean;
   value: string;
+  taskCount?: number;
 };
 
 export class TaskGoalAssignModalStore {
@@ -24,7 +25,9 @@ export class TaskGoalAssignModalStore {
   goalsSelection = new GoalsSelectionStore(this.root);
 
   emptyRef: HTMLInputElement | null = null;
+  initialGoalId: string | null = null;
   selectedGoalId: string | null = null;
+  taskCount: number = 1;
   multiple: boolean = false;
 
   keyMap = {
@@ -44,21 +47,22 @@ export class TaskGoalAssignModalStore {
   };
 
   handleSelect = (goalIds: string[]) => {
-    if (goalIds.includes(this.selectedGoalId)) {
-      this.selectedGoalId = null;
-    } else {
-      this.selectedGoalId = goalIds[0];
-    }
+    this.selectedGoalId = goalIds[0];
   };
 
   handleSubmit = () => {
-    this.callbacks.onSelect?.(this.selectedGoalId);
+    const spaceId = this.selectedGoalId
+      ? this.root.resources.goals.list.find((goal) => this.selectedGoalId === goal.id)?.spaceId
+      : null;
+    this.callbacks.onSelect?.(this.selectedGoalId, spaceId);
   };
 
   update = (props: TaskGoalAssignModalProps) => {
     this.callbacks = props.callbacks;
     this.multiple = props.multiple;
+    this.initialGoalId = props.value;
     this.selectedGoalId = props.value;
+    this.taskCount = props.taskCount;
   };
 
   navigation = new ListNavigation({

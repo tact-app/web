@@ -103,7 +103,7 @@ export const GoalsSelectionGoal = observer(function GoalSelectionListItem({ goal
                     widthByTitle
                     value={goal.title}
                     disabled={!store.editable}
-                    sharedProps={{ color: 'gray.700', fontWeight: 400, cursor: 'pointer' }}
+                    sharedProps={{ color: 'gray.700', fontWeight: 400, cursor: store.editable ? 'text' : 'pointer' }}
                     onFocus={handleToggleTitleFocus}
                     onBlur={handleToggleTitleBlur}
                     onSave={handleTitleUpdate}

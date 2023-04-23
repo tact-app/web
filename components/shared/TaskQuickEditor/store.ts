@@ -636,11 +636,27 @@ export class TaskQuickEditorStore {
       },
     }),
     [Modes.SPACE]: new SpaceModeStore(this.root, {
-      onExit: () => this.exitMode(),
+      onExit: () => {
+        this.exitMode();
+
+        const goal = this.root.resources.goals.list.find((goal) =>
+          goal.id === this.modes.goal.selectedGoalId && goal.spaceId === this.modes.space.selectedSpaceId
+        );
+        if (!goal) {
+          this.modes.goal.selectedGoalId = null;
+        }
+      },
       onCreate: this.modals.openSpaceCreationModal
     }),
     [Modes.GOAL]: new GoalModeStore(this.root, {
-      onExit: () => this.exitMode(),
+      onExit: () => {
+        this.exitMode();
+
+        const goal = this.root.resources.goals.list.find((goal) => goal.id === this.modes.goal.selectedGoalId);
+        if (goal) {
+          this.modes.space.selectedSpaceId = goal.spaceId;
+        }
+      },
     }),
     [Modes.REFERENCE]: new ReferenceModeStore(this.root, {
       onExit: () => this.exitMode(),

@@ -8,9 +8,13 @@ import {
   HStack,
   Switch,
   Text,
+  Flex,
+  ToastId,
   useOutsideClick,
+  useToast,
+  Button,
 } from '@chakra-ui/react';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useListNavigation } from '../../../../../helpers/ListNavigation';
 import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 import { AnimatedBlock } from "../../../../shared/AnimatedBlock";
@@ -23,6 +27,8 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
   props: FocusConfigurationProps
 ) {
   const ref = useRef(null);
+  const toastRef = useRef<ToastId>(null);
+  const toast = useToast();
   const store = useFocusConfigurationStore();
 
   useListNavigation(store.navigation);
@@ -32,6 +38,51 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
     ref,
     handler: store.handleBlur,
   });
+
+  useEffect(() => {
+    toastRef.current = toast({
+      position: 'bottom',
+      duration: null,
+      containerStyle: {
+        minW: 'auto',
+        m: 6,
+      },
+      render: () => (
+        <Flex
+          color='white'
+          pt={2}
+          pb={2}
+          pl={4}
+          pr={4}
+          bg='gray.700'
+          lineHeight={4}
+          borderRadius={4}
+          fontSize='xs'
+          alignItems='center'
+          justifyContent='center'
+        >
+          Focus mode is enabled
+          <Button
+            variant='unstyled'
+            h='auto'
+            color='gray.400'
+            fontSize='xs'
+            lineHeight={4}
+            fontWeight='normal'
+            p={0}
+            ml={2}
+            textDecoration='underline'
+            _hover={{ color: 'gray.500' }}
+            onClick={store.callbacks?.onClose}
+          >
+            Close mode
+          </Button>
+        </Flex>
+      ),
+    });
+
+    return () => toast.close(toastRef.current)
+  }, []);
 
   return (
     <AnimatedBlock

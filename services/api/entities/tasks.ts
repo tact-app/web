@@ -38,7 +38,7 @@ const getTasksApi = (apiService: ApiService) => ({
   }) => apiService.put<TaskData[]>(`/api/tasks/swap`, data),
   update: (data: { id: string; fields: Partial<TaskData> }) =>
     apiService.put<TaskData[]>(`/api/tasks/update`, data),
-  assignGoal: (data: { taskIds: string[]; goalId: string | null }) =>
+  assignGoal: (data: { taskIds: string[]; goalId: string | null, spaceId: string | null }) =>
     apiService.put<TaskData[]>(`/api/tasks/assign-goal`, data),
 });
 

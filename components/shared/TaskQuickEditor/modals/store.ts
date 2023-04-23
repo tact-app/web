@@ -89,8 +89,13 @@ export class TasksEditorModals {
           onGoalCreateClick: () => {
             this.openGoalCreationModal(this.openGoalAssignModal);
           },
-          onSelect: (goalId: string) => {
+          onSelect: (goalId: string, spaceId: string) => {
             this.parent.modes.goal.selectedGoalId = goalId;
+
+            if (spaceId) {
+              this.parent.modes.space.selectedSpaceId = spaceId;
+            }
+
             this.controller.close();
             this.root.toggleModal(false);
           },

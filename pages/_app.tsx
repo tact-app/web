@@ -15,6 +15,7 @@ const theme = extendTheme({
         lineHeight: 'normal',
       },
       body: {
+        '--toast-z-index': 1200,
         '.clear': {
           clear: 'both',
         },

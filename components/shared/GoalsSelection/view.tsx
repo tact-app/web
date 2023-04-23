@@ -1,18 +1,15 @@
 import { observer } from 'mobx-react-lite';
 import {
-  chakra,
   Box,
   Button,
   Text,
   List,
-  ListItem,
 } from '@chakra-ui/react';
 import { useGoalsSelectionStore } from './store';
 import { GoalsSelectionSpace } from './components/GoalsSelectionSpace';
 import React from 'react';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/pro-regular-svg-icons";
 import { QuestionWithTooltip } from '../QuestionWithTooltip';
+import { GoalsSelectionAdditionalItems } from "./components/GoalsSelectionAdditionalItems";
 
 export const GoalsSelectionView = observer(function GoalsSelectionView() {
   const store = useGoalsSelectionStore();
@@ -23,38 +20,7 @@ export const GoalsSelectionView = observer(function GoalsSelectionView() {
         {store.root.resources.goals.listBySpaces.map(({ space, goals }) => (
           <GoalsSelectionSpace key={space.id} space={space} goals={goals} />
         ))}
-        {store.abilityToCreate &&
-            <ListItem
-                h={10}
-                display='flex'
-                alignItems='center'
-                cursor='pointer'
-                onClick={store.callbacks?.onGoalCreateClick}
-            >
-                <Button
-                    ref={(el) => store.callbacks?.setRefs?.(store.root.resources.goals.count + 1, el)}
-                    w={6}
-                    h={6}
-                    p={0}
-                    minW='auto'
-                    rounded='full'
-                    display='flex'
-                    alignItems='center'
-                    justifyContent='center'
-                    bg='blue.400'
-                    color='white'
-                    _focus={{
-                      bg: 'blue.500'
-                    }}
-                    _hover={{
-                      bg: 'blue.500'
-                    }}
-                >
-                    <FontAwesomeIcon icon={faPlus} fontSize={14} />
-                </Button>
-                <chakra.span ml={2} mr={2}>Create new goal</chakra.span>
-            </ListItem>
-        }
+        <GoalsSelectionAdditionalItems />
       </List>
     );
   }

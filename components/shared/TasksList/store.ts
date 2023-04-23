@@ -310,16 +310,17 @@ export class TasksListStore {
     this.draggableList.focusPrevItem(this.openedTask);
   };
 
-  assignGoal = (taskIds: string[], goalId: string) => {
+  assignGoal = (taskIds: string[], goalId: string, spaceId: string | null) => {
     taskIds.forEach((id) => {
       // TODO:debt find a way to avoid cloning
       //  see https://linear.app/octolab/issue/TACT-115/sync-the-goal-field-after-a-quick-edit-of-a-task
-      this.items[id] = { ...cloneDeep(this.items[id]), goalId };
+      this.items[id] = { ...cloneDeep(this.items[id]), goalId, spaceId: spaceId || this.items[id].spaceId };
     });
 
     if (!this.delayedCreation) {
       this.root.api.tasks.assignGoal({
         goalId,
+        spaceId,
         taskIds: taskIds,
       });
     }

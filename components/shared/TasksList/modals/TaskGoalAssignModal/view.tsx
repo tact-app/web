@@ -21,31 +21,38 @@ export const TaskGoalAssignModalView = observer(
     const store = useTaskGoalAssignModalStore();
 
     useListNavigation(store.navigation);
-    useHotkeysHandler(store.keyMap, store.hotkeyHandlers)
+    useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
     return (
       <Modal isCentered isOpen={true} onClose={store.callbacks.onClose}>
         <ModalOverlay />
         <ModalContent
           onFocus={store.navigation.handleFocus}
+          mt='auto'
+          mb='auto'
+          maxH='90%'
         >
           <ModalHeader>
-            <Flex justifyContent='space-between'>
-              My goals
+            <Flex justifyContent='space-between' alignItems='center'>
+              {store.initialGoalId ? 'Change goal' : 'Set goal'}
+              {store.taskCount > 1 && store.root.resources.goals.haveGoals && (
+                <Text color='gray.400' fontSize='sm' fontWeight='normal'>
+                  Selected: {store.taskCount} tasks
+                </Text>
+              )}
               {!store.root.resources.goals.haveGoals && <CloseButton onlyIcon onClick={store.callbacks.onClose} />}
             </Flex>
           </ModalHeader>
           <ModalBody
-            maxH={80}
             overflow='auto'
             pl={5}
             pr={5}
             pb={store.root.resources.goals.haveGoals ? 0 : 8}
           >
             <GoalsSelection
-              abilityToCreate
               forModal
-              checked={store.selectedGoalId ? [store.selectedGoalId] : []}
+              checked={[store.selectedGoalId]}
+              hasInitialChecked={Boolean(store.initialGoalId)}
               callbacks={{
                 setRefs: store.navigation.setRefs,
                 onSelect: store.handleSelect,
