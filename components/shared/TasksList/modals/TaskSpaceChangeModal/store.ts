@@ -7,11 +7,12 @@ import { ListNavigation } from '../../../../../helpers/ListNavigation';
 export type TaskSpaceChangeModalProps = {
   callbacks: {
     onClose?: () => void;
-    onSelect?: (spaceId: string) => void;
+    onSelect?: (spaceId: string, resetGoal?: boolean) => void;
     onSpaceCreateClick?: () => void;
   };
   multiple?: boolean;
   spaceId: string;
+  goalId: string;
 };
 
 export class TaskSpaceChangeModalStore {
@@ -25,6 +26,7 @@ export class TaskSpaceChangeModalStore {
 
   emptyRef: HTMLInputElement | null = null;
   selectedSpaceId: string | null = null;
+  selectedGoalId: string | null = null;
   multiple: boolean = false;
 
   keyMap = {
@@ -44,7 +46,13 @@ export class TaskSpaceChangeModalStore {
   };
 
   handleSubmit = () => {
-    this.callbacks.onSelect?.(this.selectedSpaceId);
+    const spaceWithGoals = this.root.resources.goals.listBySpaces
+      .find(({ space }) => space.id === this.selectedSpaceId);
+    const shouldResetGoal = this.selectedGoalId && (
+      !spaceWithGoals || !spaceWithGoals.goals.map((goal) => goal.id).includes(this.selectedGoalId)
+    );
+
+    this.callbacks.onSelect?.(this.selectedSpaceId, shouldResetGoal);
   };
 
   update = (props: TaskSpaceChangeModalProps) => {
@@ -52,6 +60,7 @@ export class TaskSpaceChangeModalStore {
     this.multiple = props.multiple;
 
     this.selectedSpaceId = props.spaceId;
+    this.selectedGoalId = props.goalId;
   };
 
   navigation = new ListNavigation({

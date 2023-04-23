@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { GoalsSelectionStore } from '../../../GoalsSelection/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
 
 export type TaskGoalAssignModalProps = {
@@ -21,8 +20,6 @@ export class TaskGoalAssignModalStore {
   }
 
   callbacks: TaskGoalAssignModalProps['callbacks'] = {};
-
-  goalsSelection = new GoalsSelectionStore(this.root);
 
   emptyRef: HTMLInputElement | null = null;
   initialGoalId: string | null = null;

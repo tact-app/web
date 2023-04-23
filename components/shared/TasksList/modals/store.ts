@@ -197,16 +197,18 @@ export class TasksModals {
               this.openSpaceChangeModal(taskId, spaceId);
             });
           },
-          onSelect: (spaceId: string) => {
+          onSelect: (spaceId: string, resetGoal) => {
             this.parent.updateTask({
               ...task,
               spaceId,
+              goalId: resetGoal ? null : task.goalId,
               tags: toJS(task.tags)
             });
             this.controller.close();
           },
         },
         spaceId,
+        goalId: task.goalId,
       },
     });
   };

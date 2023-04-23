@@ -118,13 +118,19 @@ export class TasksEditorModals {
           onSpaceCreateClick: () => {
             this.openSpaceCreationModal(this.openSpaceChangeModal);
           },
-          onSelect: (spaceId: string) => {
+          onSelect: (spaceId: string, resetGoal: boolean) => {
             this.parent.modes.space.selectedSpaceId = spaceId;
+
+            if (resetGoal) {
+              this.parent.modes.goal.selectedGoalId = null;
+            }
+
             this.controller.close();
             this.root.toggleModal(false);
           },
         },
         spaceId: this.parent.modes.space.selectedSpaceId,
+        goalId: this.parent.modes.goal.selectedGoalId,
       },
     });
   };
