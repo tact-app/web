@@ -449,7 +449,7 @@ const theme = extendTheme({
               bg: 'purple.400',
             },
           },
-          '.react-datepicker__day--keyboard-selected.react-datepicker__day--in-selecting-range:not(.react-datepicker__day--selecting-range-end)': {
+          '.react-datepicker__day--keyboard-selected.react-datepicker__day--in-selecting-range:not(.react-datepicker__day--selecting-range-end):not(.react-datepicker__day--selecting-range-start)': {
             bg: 'transparent',
 
             '.day': {
