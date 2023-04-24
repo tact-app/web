@@ -1,6 +1,5 @@
 {
   "private": true,
-  "scripts": {},
   "dependencies": {
     "@sentry/cli": "^2.17.4",
     "@withgraphite/graphite-cli": "^0.20.15",

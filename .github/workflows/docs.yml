@@ -28,6 +28,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Fake step for the issue 735
+        run: echo Failed && exit 1
+
       - name: Checkout the repository
         uses: actions/checkout@v3
         with: { fetch-depth: 0 }
