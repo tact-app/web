@@ -35,6 +35,7 @@ export const EmojiSelectComponent = observer(
     useOutsideClick({
       ref,
       handler: store.closeEmojiPicker,
+      enabled: store.isEmojiPickerOpen,
     });
 
     const focusedTriggerBoxShadow = `inset 0px 0px 0px 2px var(--chakra-colors-${

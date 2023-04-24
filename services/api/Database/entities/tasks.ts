@@ -233,11 +233,31 @@ const data = {
       const existedTask = await db.get('tasks', data.id);
 
       if (existedTask) {
+        const lastGoalId = existedTask.goalId;
+
         Object.entries(data.fields).forEach(([key, value]) => {
           existedTask[key] = value;
         });
 
         await db.put('tasks', existedTask);
+
+        if (lastGoalId !== data.fields.goalId) {
+          if (lastGoalId) {
+            await updateList(db, lastGoalId, (list) => {
+              list.taskIds = list.taskIds.filter((taskId) => taskId !== existedTask.id);
+
+              return list;
+            });
+          }
+
+          if (data.fields.goalId) {
+            await updateList(db, data.fields.goalId, (list) => {
+              list.taskIds = [...list.taskIds, existedTask.id];
+
+              return list;
+            });
+          }
+        }
       }
     },
     '/api/tasks/assign-goal': async (

@@ -188,15 +188,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
       items={store.isMultiSelected ? multiTaskItems(store) : singleTaskItems(store)}
       hidden={!store.isDragging}
       triggerIconFontSize={18}
-      onToggleMenu={(isOpen) => {
-        store.isMenuOpen = isOpen;
-
-        if (isOpen) {
-          store.handleFocus();
-          store.quickEdit.suggestionsMenu.close();
-          store.quickEdit.suggestionsMenu.closeForMode();
-        }
-      }}
+      onToggleMenu={store.toggleMenu}
       triggerButtonProps={() => ({
         color: 'gray.500',
 

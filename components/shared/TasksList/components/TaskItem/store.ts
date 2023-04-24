@@ -132,30 +132,26 @@ export class TaskItemStore {
       this.quickEdit.suggestionsMenu.closeForMode();
       this.xPosContextMenu = e.pageX;
       this.toggleContextMenu(true);
-      this.openMenu();
+      this.isMenuOpen = true;
+      this.onToggleMenu(true);
     }
   }
-
-  toggleMenu = (isOpen: boolean) => {
-    this.isMenuOpen = isOpen;
-    this.onToggleMenu(isOpen);
-  };
 
   toggleContextMenu = (isContextMenu: boolean) => {
     this.isOpenByContextMenu = isContextMenu;
   };
 
-  openMenu = () => {
-    this.isMenuOpen = true;
-    this.onToggleMenu(true);
-  };
+  toggleMenu = (isOpen: boolean) => {
+    this.isMenuOpen = isOpen;
+    this.onToggleMenu(isOpen);
 
-  closeMenu = () => {
-    setTimeout(() => {
-      this.toggleMenu(false);
-      this.onToggleMenu(false);
+    if (isOpen) {
+      this.handleFocus();
+      this.quickEdit.suggestionsMenu.close();
+      this.quickEdit.suggestionsMenu.closeForMode();
+    } else {
       this.toggleContextMenu(false);
-    });
+    }
   }
 
   handleMouseDown = () => {
