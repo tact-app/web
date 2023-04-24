@@ -87,10 +87,6 @@ refresh() {
   done
   git fetch --prune --tags --prune-tags origin
 
-  local deps tools
-  deps=$(md5sum package-lock.json | awk '{print $1}')
-  tools=$(md5sum tools/package-lock.json | awk '{print $1}')
-
   local remote actual target shared
   remote=${1:-'@{u}'}
   actual=$(git rev-parse @)
@@ -106,12 +102,12 @@ refresh() {
 
   if ! @deps verify package-lock.json; then
     install --from-scratch
-    md5sum package-lock.json >node_modules/current.lock
+    md5sum package-lock.json >node_modules/package.lock
   fi
 
   if ! @deps verify tools/package-lock.json; then
     tools npm ci
-    md5sum tools/package-lock.json >tools/node_modules/current.lock
+    md5sum tools/package-lock.json >tools/node_modules/package.lock
   fi
 }
 
@@ -120,7 +116,7 @@ refresh() {
   check) depcheck --ignores=pre-commit,prettier,@fortawesome/fontawesome-pro,@types/node ;;
   verify)
     local file="${2:-package-lock.json}" lock
-    lock=$(dirname "${file}")/node_modules/current.lock
+    lock=$(dirname "${file}")/node_modules/package.lock
     if [ ! -f "${lock}" ]; then
       return 1
     fi
@@ -309,7 +305,7 @@ function docs() {
     case "${arg}" in
     install)
       local lock file=package-lock.json
-      lock=$(dirname "${file}")/node_modules/checksum.lock
+      lock=$(dirname "${file}")/node_modules/package.lock
       if [ ! -f "${lock}" ] || [ "$(cat "${lock}")" != "$(md5sum "${file}")" ]; then
         npm ci
         md5sum "${file}" >"${lock}"
@@ -356,7 +352,7 @@ whoami() {
 Usage: $0 <task> <args>
 Tasks:
 EOF
-  compgen -A function | grep -Ev '^(@|_)' | sort | cat -n
+  compgen -A function | grep -Ev '^(@|_|-|\+)' | sort | cat -n
 }
 
 @() {
