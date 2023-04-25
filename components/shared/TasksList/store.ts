@@ -212,7 +212,6 @@ export class TasksListStore {
 
   canUnsetStatus = (status: TaskStatus) => {
     if (this.draggableList.focused.length) {
-      console.log(this.draggableList.focused, this.items)
       return this.draggableList.focused.every(
         (id) => this.items[id].status === status
       );
