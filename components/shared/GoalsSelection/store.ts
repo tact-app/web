@@ -3,76 +3,68 @@ import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
 
 export type GoalsSelectionProps = {
+  editable?: boolean;
+  multiple?: boolean;
+  hasInitialChecked?: boolean;
+  checked?: string[];
+  forModal?: boolean;
   callbacks?: {
+    onToggleTitleFocus?: (id: string, isFocused: boolean) => void;
+    onToggleOpenEmojiPicker?: (id: string, isOpen: boolean) => void;
     onSelect?: (goalIds: string[]) => void;
     onGoalCreateClick?: () => void;
+    setRefs?: (index: number, ref: HTMLElement) => void;
   };
-
-  setRefs?: (index: number, ref: HTMLElement) => void;
-  multiple?: boolean;
-  checked?: string[];
 };
 
 export class GoalsSelectionStore {
+  callbacks: GoalsSelectionProps['callbacks'] = {};
+
+  checkedGoals: string[] = [];
+  hasInitialChecked: boolean = false;
+  isFocused: boolean = false;
+  multiple: boolean = false;
+  editable: boolean = false;
+  forModal: boolean = false;
+
   constructor(public root: RootStore) {
     makeAutoObservable(this);
   }
 
-  callbacks: GoalsSelectionProps['callbacks'] = {};
-
-  checkedGoals: Record<string, boolean> = {};
-  isFocused: boolean = false;
-  multiple: boolean = false;
-
-  get checked() {
-    return Object.keys(this.checkedGoals);
+  isChecked = (id: string) => {
+    return this.checkedGoals.includes(id);
   }
 
-  handleGoalCheck = (index: number | null) => {
-    const goalId =
-      index === null ? null : this.root.resources.goals.getByIndex(index).id;
-
+  handleGoalCheck = (id: string | null) => {
     if (this.multiple) {
-      if (goalId !== null) {
-        if (this.checkedGoals[goalId]) {
-          delete this.checkedGoals[goalId];
+      if (id) {
+        if (this.isChecked(id)) {
+          this.checkedGoals = this.checkedGoals.filter((checkedGoalId) => checkedGoalId !== id);
         } else {
-          this.checkedGoals[goalId] = true;
+          this.checkedGoals = [...this.checkedGoals, id];
         }
       } else {
-        this.checkedGoals = {};
+        this.checkedGoals = [];
       }
     } else {
-      if (goalId !== null) {
-        this.checkedGoals = {
-          [goalId]: true,
-        };
-      } else {
-        this.checkedGoals = {};
-      }
+      this.checkedGoals = [id];
     }
 
-    this.callbacks.onSelect?.(this.checked);
-  };
-
-  uncheckAll = () => {
-    this.checkedGoals = {};
-    this.callbacks.onSelect?.(this.checked);
+    this.callbacks.onSelect?.(this.checkedGoals);
   };
 
   update = (props: GoalsSelectionProps) => {
     this.callbacks = props.callbacks;
     this.multiple = props.multiple;
+    this.editable = props.editable;
+    this.forModal = props.forModal;
+    this.hasInitialChecked = props.hasInitialChecked;
 
     if (props.checked) {
       if (this.multiple) {
-        props.checked.forEach((id) => {
-          this.checkedGoals[id] = true;
-        });
+        this.checkedGoals = props.checked;
       } else {
-        this.checkedGoals = {
-          [props.checked[0]]: true,
-        };
+        this.checkedGoals = [props.checked[0]];
       }
     }
   };

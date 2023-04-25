@@ -88,7 +88,7 @@ export const TaskQuickEditorMainMenu = observer(function TaskQuickEditMenu() {
                   store.modals.openGoalAssignModal();
                 }}
               >
-                Set goal
+                {store.modes.goal.selectedGoalId ? 'Change goal' : 'Set goal'}
               </MenuItem>
             )}
             {!store.disableSpaceChange && (

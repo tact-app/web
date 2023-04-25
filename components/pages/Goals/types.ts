@@ -45,6 +45,7 @@ export enum GoalState {
 }
 
 export type GoalDataCustomFields = {
+  order?: number;
   doneTasks: TaskData[];
   wontDoTasks: TaskData[];
   toDoTasks: TaskData[];

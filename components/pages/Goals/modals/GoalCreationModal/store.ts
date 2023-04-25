@@ -339,8 +339,6 @@ export class GoalCreationModalStore {
       return;
     }
 
-    updatedGoal.updatedDate = new Date().toISOString();
-
     await this.onSave({ goal: updatedGoal, description: this.description });
 
     this.goal = updatedGoal;

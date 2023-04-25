@@ -1,11 +1,8 @@
 import { observer } from 'mobx-react-lite';
-import { Box, chakra, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Box, chakra, Flex, Text } from '@chakra-ui/react';
 import { DatePicker } from "../../../../../shared/DatePicker";
 import {
-  faAlarmClock,
   faBoxArchive,
-  faCalendarCircleExclamation,
-  faCalendarClock,
   faCircleCheck,
   faCircleMinus,
   faClone,
@@ -18,34 +15,17 @@ import {
 } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { GoalDataExtended, GoalState, GoalStatus } from "../../../types";
+import { GoalDataExtended, GoalStatus } from "../../../types";
 import { ActionMenu } from "../../../../../shared/ActionMenu";
 import { EditableTitle } from "../../../../../shared/EditableTitle";
 import { DatePickerHelpers } from "../../../../../shared/DatePicker/helpers";
 import { GoalEmojiSelect } from "../../GoalEmojiSelect";
 import { useGoalListStore } from "../store";
+import { GoalStateIcon, GOAL_STATE_PARAMS } from "../../../../../shared/GoalStateIcon";
 
 type Props = {
   goal: GoalDataExtended
 };
-
-const GOAL_STATE_PARAMS = {
-  [GoalState.IS_COMING]: {
-    color: 'green.400',
-    icon: faAlarmClock,
-    tooltipTitle: 'Is coming soon',
-  },
-  [GoalState.TIME_TO_ACHIEVE]: {
-    color: 'orange.400',
-    icon: faCalendarCircleExclamation,
-    tooltipTitle: <>Time to achieve this goal<br/>is coming to an end</>,
-  },
-  [GoalState.END_DATE_ALREADY_PASSED]: {
-    color: 'red.400',
-    icon: faCalendarClock,
-    tooltipTitle: <>The end date for the goal<br/>has already passed</>,
-  },
-}
 
 export const GoalItem = observer(function GoalItem({ goal }: Props) {
   const store = useGoalListStore();
@@ -240,33 +220,17 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       />
 
       {goal.customFields.state && (
-        <Tooltip
-          label={
-            <chakra.span display='flex' fontSize='xs' fontWeight='normal' textAlign='center'>
-              {GOAL_STATE_PARAMS[goal.customFields.state].tooltipTitle}
-            </chakra.span>
-          }
-          placement='top'
-          offset={[0, 10]}
-          hasArrow
-        >
-          <chakra.div
-            w={6}
-            h={6}
-            bg='white'
-            position='absolute'
-            top={-3}
-            left={-3}
-            color={GOAL_STATE_PARAMS[goal.customFields.state].color}
-            boxShadow='0px 2px 3px rgba(99, 99, 99, 0.09)'
-            borderRadius='full'
-            display='flex'
-            alignItems='center'
-            justifyContent='center'
-          >
-            <FontAwesomeIcon fontSize={14} icon={GOAL_STATE_PARAMS[goal.customFields.state].icon} />
-          </chakra.div>
-        </Tooltip>
+          <GoalStateIcon
+              w={6}
+              h={6}
+              position='absolute'
+              top={-3}
+              left={-3}
+              bg='white'
+              boxShadow='0px 2px 3px rgba(99, 99, 99, 0.09)'
+              borderRadius='full'
+              state={goal.customFields.state}
+          />
       )}
     </Box>
   );

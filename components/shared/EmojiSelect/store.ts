@@ -7,9 +7,21 @@ export class EmojiSelectStore {
   icon: string;
   color: string;
   title: string;
+  disabled: boolean = false;
   callbacks: EmojiSelectCallbacks;
 
   isEmojiPickerOpen = false;
+
+  keymap = {
+    CLOSE: 'escape',
+  };
+
+  hotkeysHandlers = {
+    CLOSE: (e) => {
+      e.stopPropagation();
+      this.closeEmojiPicker();
+    },
+  };
 
   constructor() {
     makeAutoObservable(this);
@@ -29,11 +41,17 @@ export class EmojiSelectStore {
   }
 
   openEmojiPicker = () => {
+    if (this.disabled) {
+      return;
+    }
+
     this.isEmojiPickerOpen = true;
+    this.callbacks?.onToggleOpen?.(true);
   };
 
   closeEmojiPicker = () => {
     this.isEmojiPickerOpen = false;
+    this.callbacks?.onToggleOpen?.(false);
   };
 
   handleEmojiSelect = (emoji: { native: string }) => {
@@ -52,14 +70,16 @@ export class EmojiSelectStore {
     await EmojiStore.loadIfNotLoaded();
   }
 
-  update = ({ icon, color, title, onColorChange, onIconChange }: EmojiSelectProps) => {
+  update = ({ icon, color, title, disabled, onColorChange, onIconChange, onToggleOpen }: EmojiSelectProps) => {
     this.icon = icon;
     this.color = color;
     this.title = title;
+    this.disabled = disabled;
 
     this.callbacks = {
       onColorChange,
       onIconChange,
+      onToggleOpen,
     };
   };
 }

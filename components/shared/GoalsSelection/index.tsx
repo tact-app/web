@@ -7,7 +7,7 @@ export const GoalsSelection = observer(function GoalsSelection(
 ) {
   return (
     <GoalsSelectionStoreProvider {...props}>
-      <GoalsSelectionView {...props} />
+      <GoalsSelectionView />
     </GoalsSelectionStoreProvider>
   );
 });

@@ -2,10 +2,10 @@ import { ApiService } from '../ApiService';
 import { TaskData } from '../../../components/shared/TasksList/types';
 
 const getTasksApi = (apiService: ApiService) => ({
-  list: (id: string) =>
+  list: (id: string, goalId?: string) =>
     apiService.get<{ tasks: Record<string, TaskData>; order: string[] }>(
       `/api/tasks`,
-      { id }
+      { id, goalId }
     ),
   all: () =>
     apiService.get<TaskData[]>(`/api/tasks/all`),
@@ -17,11 +17,12 @@ const getTasksApi = (apiService: ApiService) => ({
       task,
       placement,
     }),
-  createBulk: (listId: string, tasks: TaskData[], order?: string[]) =>
+  createBulk: (listId: string, tasks: TaskData[], order: string[], goalId?: string) =>
     apiService.post<void>(`/api/tasks/create/bulk`, {
       listId,
       tasks,
       order,
+      goalId,
     }),
   delete: (ids: string[], listId?: string) =>
     apiService.delete(`/api/tasks/delete`, { ids, listId }),
@@ -37,7 +38,7 @@ const getTasksApi = (apiService: ApiService) => ({
   }) => apiService.put<TaskData[]>(`/api/tasks/swap`, data),
   update: (data: { id: string; fields: Partial<TaskData> }) =>
     apiService.put<TaskData[]>(`/api/tasks/update`, data),
-  assignGoal: (data: { taskIds: string[]; goalId: string | null }) =>
+  assignGoal: (data: { taskIds: string[]; goalId: string | null, spaceId: string | null }) =>
     apiService.put<TaskData[]>(`/api/tasks/assign-goal`, data),
 });
 

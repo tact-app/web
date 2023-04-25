@@ -1,182 +1,60 @@
 import { observer } from 'mobx-react-lite';
-import { GoalIconData } from '../../pages/Goals/types';
 import {
-  chakra,
   Box,
-  Checkbox,
-  List,
-  ListItem,
   Button,
-  forwardRef,
+  Text,
+  List,
 } from '@chakra-ui/react';
-import { GoalsSelectionProps, useGoalsSelectionStore } from './store';
-import React, { useRef } from 'react';
-import { LargePlusIcon } from '../Icons/LargePlusIcon';
-import { GoalIcon } from '../GoalIcon';
-import { HeavyPlusIcon } from '../Icons/HeavyPlusIcon';
+import { useGoalsSelectionStore } from './store';
+import { GoalsSelectionSpace } from './components/GoalsSelectionSpace';
+import React from 'react';
+import { QuestionWithTooltip } from '../QuestionWithTooltip';
+import { GoalsSelectionAdditionalItems } from "./components/GoalsSelectionAdditionalItems";
 
-type GoalSelectionListItemProps = {
-  id: string | null;
-  index: number | null;
-  title: string;
-  icon?: GoalIconData;
-  checkboxContent?: React.ReactNode;
-};
-
-const GoalSelectionListItem = observer(
-  forwardRef(function GoalSelectionListItem(
-    { id, index, icon, title, checkboxContent }: GoalSelectionListItemProps,
-    ref
-  ) {
-    const store = useGoalsSelectionStore();
-
-    return (
-      <ListItem
-        h={10}
-        display='flex'
-        alignItems='center'
-        borderBottom='1px'
-        borderColor='gray.100'
-        key={id}
-      >
-        <Checkbox
-          ref={ref}
-          isChecked={!!store.checkedGoals[id]}
-          onChange={() => store.handleGoalCheck(index)}
-          size='xl'
-          position='relative'
-          fontWeight='semibold'
-          fontSize='lg'
-          width='100%'
-          icon={checkboxContent ? <></> : undefined}
-          css={{
-            '.chakra-checkbox__label': {
-              width: 'calc(100% - 2rem)',
-            }
-          }}
-        >
-          {checkboxContent ? (
-            <chakra.span
-              position='absolute'
-              left={0}
-              w={6}
-              top={0}
-              bottom={0}
-              display='flex'
-              alignItems='center'
-              justifyContent='center'
-              color={store.checkedGoals[id] ? 'white' : 'gray.400'}
-            >
-              {checkboxContent}
-            </chakra.span>
-          ) : null}
-          <chakra.span
-            display='flex'
-            alignItems='center'
-            fontSize='sm'
-            fontWeight='normal'
-          >
-            {icon ? <GoalIcon icon={icon} /> : null}
-            <chakra.span
-              ml={2}
-              textOverflow='ellipsis'
-              whiteSpace='nowrap'
-              overflow='hidden'
-              width='calc(100% - 2rem)'
-              display='inline-block'
-            >
-              {title}
-            </chakra.span>
-          </chakra.span>
-        </Checkbox>
-      </ListItem>
-    );
-  })
-);
-
-export const GoalsSelectionView = observer(function GoalsSelectionView(
-  props: Partial<GoalsSelectionProps>
-) {
+export const GoalsSelectionView = observer(function GoalsSelectionView() {
   const store = useGoalsSelectionStore();
-  const ref = useRef();
 
-  return store.root.resources.goals.count ? (
-    <List ref={ref} h='100%' overflowY='auto' pl={1} pr={1}>
-      {store.root.resources.goals.list.map(({ id, icon, title }, index) => (
-        <GoalSelectionListItem
-          ref={(el) => props.setRefs(index + 1, el)}
-          key={id}
-          id={id}
-          index={index}
-          title={title}
-          icon={icon}
-          checkboxContent={index < 9 ? index + 1 : null}
-        />
-      ))}
-      {store.root.resources.goals.list?.length < 9 &&
-        <ListItem
-          h={10}
-          display='flex'
-          alignItems='center'
-          borderBottom='1px'
-          borderColor='gray.100'
-          key={'add-space'}
-          cursor='pointer'
-          onClick={store.callbacks.onGoalCreateClick}
-        >
-          <Checkbox
-            ref={(el) => props.setRefs(store.root.resources.goals.list.length + 1, el)}
-            isChecked={false}
-            size='xl'
-            position='relative'
-            width='100%'
-            icon={
-              <chakra.div
-                display='flex'
-                justifyContent='center'
-                alignItems='center'
-              >
-                <HeavyPlusIcon />
-              </chakra.div>}
-            css={{
-              '.chakra-checkbox__label': {
-                width: 'calc(100% - 2rem)',
-              },
-              '.chakra-checkbox__control': {
-                borderRadius: '100%',
-              }
-            }}
-          >
-            <chakra.span
-              fontSize='sm'
-              fontWeight='normal'
-              lineHeight={5}>
-              Create new goal
-            </chakra.span>
-          </Checkbox>
-        </ListItem>
-      }
-    </List>
-  ) : (
-    <Box ref={ref}>
+  if (store.root.resources.goals.haveGoals) {
+    return (
+      <List h='100%' overflowY='auto' pl={1} pr={1}>
+        {store.root.resources.goals.listBySpaces.map(({ space, goals }) => (
+          <GoalsSelectionSpace key={space.id} space={space} goals={goals} />
+        ))}
+        <GoalsSelectionAdditionalItems />
+      </List>
+    );
+  }
+
+  return (
+    <Box
+      display='flex'
+      flexDirection='column'
+      alignItems={store.forModal ? 'center' : 'flex-start'}
+      justifyContent='center'
+      pl={1}
+      pr={1}
+    >
+      <Text fontSize='xs' fontWeight='normal' lineHeight={4} display='flex'>
+        You haven’t created any goal yet
+        {!store.forModal && (
+          <QuestionWithTooltip
+            tooltipLabel='A goal allows you to identify a meaningful destination point, the pursuit of which is essential to you.'
+          />
+        )}
+      </Text>
       <Button
-        ref={(el) => props.setRefs(0, el)}
-        h={36}
-        w='100%'
-        p={6}
-        fontSize='lg'
-        fontWeight='semibold'
-        color='gray.400'
-        display='flex'
-        flexDirection='column'
-        justifyContent='space-between'
-        onClick={store.callbacks.onGoalCreateClick}
-        _focus={{
-          boxShadow: 'var(--chakra-shadows-outline)',
-        }}
+        fontSize='xs'
+        mt={3}
+        ml={store.forModal ? 0 : -2}
+        variant='ghost'
+        size='xs'
+        color='blue.400'
+        fontWeight='normal'
+        _hover={{ bg: 'gray.75' }}
+        ref={(el) => store.callbacks?.setRefs?.(0, el)}
+        onClick={store.callbacks?.onGoalCreateClick}
       >
-        <LargePlusIcon />
-        New goal
+        <Text decoration='underline' mr={1}>Create new</Text> 🎯
       </Button>
     </Box>
   );

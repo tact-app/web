@@ -4,11 +4,14 @@ import { NavigationDirections } from "../TasksList/types";
 
 type Props = {
   value: string;
+  disabled?: boolean;
   titleProps?: TextProps;
   inputProps?: InputProps;
   sharedProps?: TextProps & InputProps;
   widthByTitle?: boolean;
   idEnding?: string;
+  onFocus?(): void;
+  onBlur?(): void;
   onChange?(value: string): void;
   onSave?(value: string): void;
   onNavigate?(direction: NavigationDirections): void;
@@ -18,10 +21,13 @@ export const EDITABLE_TITLE_ID_SLUG = 'editable-title';
 
 export function EditableTitle({
   value: initialValue,
+  disabled,
   titleProps,
   inputProps,
   sharedProps,
   widthByTitle,
+  onFocus,
+  onBlur,
   onChange,
   onSave,
   onNavigate,
@@ -42,7 +48,11 @@ export function EditableTitle({
 
   const handleSave = () => {
     setIsEditMode(false);
-    onSave?.(value);
+
+    const validValue = value.trim();
+    setValue(validValue);
+    onSave?.(validValue);
+    onBlur?.();
   };
 
   useOutsideClick({
@@ -52,6 +62,8 @@ export function EditableTitle({
   });
 
   const handleChange = (e: SyntheticEvent) => {
+    e.stopPropagation();
+
     const updatedValue = (e.target as HTMLInputElement).value;
 
     setValue(updatedValue);
@@ -59,10 +71,13 @@ export function EditableTitle({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+
     switch (e.key) {
       case 'Escape':
         setIsEditMode(false);
         setValue(initialValue);
+        onBlur?.();
         break;
       case 'Enter':
         handleSave();
@@ -87,6 +102,11 @@ export function EditableTitle({
   };
 
   const handleEditModeToggle = (e: SyntheticEvent) => {
+    if (disabled) {
+      return;
+    }
+
+    e.preventDefault();
     e.stopPropagation();
 
     setIsEditMode(true);
@@ -110,6 +130,8 @@ export function EditableTitle({
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onFocus={onFocus}
+        onBlur={onBlur}
         onClick={(e) => e.stopPropagation()}
         ref={ref}
         {...inputProps}

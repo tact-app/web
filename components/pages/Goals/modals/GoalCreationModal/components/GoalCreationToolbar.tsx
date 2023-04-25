@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Button,
@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
 import { ButtonHotkey } from "../../../../../shared/ButtonHotkey";
-import { faBoxArchive, faXmark } from "@fortawesome/pro-light-svg-icons";
+import { faBoxArchive } from "@fortawesome/pro-light-svg-icons";
 import { BackArrowIcon } from '../../../../../shared/Icons/BackArrowIcon';
 import { NextPrevItemController } from "../../../../../shared/NextPrevItemController/NextPrevItemController";
 import { GoalCreationStatusSelect } from "./GoalCreationStatusSelect";
@@ -17,11 +17,10 @@ import { GoalCreationToolbarButton } from "./GoalCreationToolbarButton";
 import { EntityMetadataPopover } from "../../../../../shared/EntityMetadataPopover";
 import { DateHelper } from "../../../../../../helpers/DateHelper";
 import { CommentPopover } from "../../../../../shared/CommentPopover";
+import { CloseButton } from "../../../../../shared/CloseButton";
 
 export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
   const store = useGoalCreationModalStore();
-
-  const [isCommentPopoverOpen, setIsCommentPopoverOpen] = useState(false);
 
   const renderContentForCreate = () => [
     <Button
@@ -51,13 +50,7 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
 
   const renderContentForUpdate = () => [
     <Flex key='left-content' alignItems='center'>
-      <GoalCreationToolbarButton
-        disableTooltip
-        iconFontSize={22}
-        tooltipLabel='Close'
-        icon={faXmark}
-        onClick={store.handleBack}
-      />
+      <CloseButton onClick={store.handleBack} />
       <chakra.div w={0.5} h={4} bg='gray.200' borderRadius={4} mr={1} ml={1} />
       <NextPrevItemController
         hasPreviousItem={store.currentGoalIndex > 0}

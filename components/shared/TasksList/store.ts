@@ -4,10 +4,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { NavigationDirections, TaskData, TaskStatus } from './types';
 import { TaskQuickEditorProps } from '../TaskQuickEditor/store';
-import {
-  DraggableListCallbacks,
-  DraggableListStore,
-} from '../DraggableList/store';
+import { DraggableListCallbacks, DraggableListStore, } from '../DraggableList/store';
 import { TasksModals } from './modals/store';
 import { subscriptions } from '../../../helpers/subscriptions';
 import { TaskProps } from '../Task/store';
@@ -22,6 +19,7 @@ export type TasksListProps = {
   listId?: string;
   tasksReceiverName?: string;
   dnd?: boolean;
+  goalId?: string;
   delayedCreation?: boolean;
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
@@ -59,6 +57,7 @@ export class TasksListStore {
   disableSpaceChange: boolean = false;
   disableGoalChange: boolean = false;
   forcedLoadTasks: boolean = false;
+  goalId: string;
 
   tasksReceiverName: string = '';
 
@@ -311,16 +310,17 @@ export class TasksListStore {
     this.draggableList.focusPrevItem(this.openedTask);
   };
 
-  assignGoal = (taskIds: string[], goalId: string) => {
+  assignGoal = (taskIds: string[], goalId: string, spaceId: string | null) => {
     taskIds.forEach((id) => {
       // TODO:debt find a way to avoid cloning
       //  see https://linear.app/octolab/issue/TACT-115/sync-the-goal-field-after-a-quick-edit-of-a-task
-      this.items[id] = { ...cloneDeep(this.items[id]), goalId };
+      this.items[id] = { ...cloneDeep(this.items[id]), goalId, spaceId: spaceId || this.items[id].spaceId };
     });
 
     if (!this.delayedCreation) {
       this.root.api.tasks.assignGoal({
         goalId,
+        spaceId,
         taskIds: taskIds,
       });
     }
@@ -417,17 +417,20 @@ export class TasksListStore {
     return [...Object.values(this.items), task];
   };
 
-  deleteTasks = (ids: string[]) => {
+  deleteTasks = async (ids: string[]) => {
     this.order = this.order.filter((id) => !ids.includes(id));
 
     if (!this.delayedCreation) {
-      this.root.api.tasks.delete(ids);
+      await this.root.api.tasks.delete(ids);
     }
 
     ids.forEach((id) => {
       delete this.items[id];
     });
 
+    if (!Object.keys(this.items).length) {
+      this.draggableList.resetFocusedItem();
+    }
     if (!this.draggableList.hasFocusableItems) {
       this.callbacks.onEmpty?.();
     }
@@ -458,9 +461,14 @@ export class TasksListStore {
     destination?: number
   ) => {
     if (!this.delayedCreation) {
+      const [from, to] =
+        [fromListId, toListId].some((listId) => [Lists.WEEK, Lists.TODAY].includes(listId as Lists))
+          ? [fromListId, toListId]
+          : [this.goalId, this.goalId];
+
       this.root.api.tasks.swap({
-        fromListId,
-        toListId,
+        fromListId: from,
+        toListId: to,
         taskIds: tasks.map(({ id }) => id),
         destination,
       });
@@ -515,7 +523,7 @@ export class TasksListStore {
 
     if (!this.delayedCreation) {
       this.root.api.tasks.order({
-        listId: this.listId,
+        listId: this.goalId || this.listId,
         taskIds: changedItemIds,
         destination: destinationIndex,
       });
@@ -576,7 +584,7 @@ export class TasksListStore {
 
     this.isLoading = true;
 
-    const { tasks, order } = await this.root.api.tasks.list(this.listId);
+    const { tasks, order } = await this.root.api.tasks.list(this.listId, this.goalId);
 
     runInAction(() => {
       this.items = tasks;
@@ -601,6 +609,7 @@ export class TasksListStore {
 
   update = (props: TasksListProps) => {
     this.callbacks = props.callbacks || {};
+    this.goalId = props.goalId;
     this.checkTaskActivity = props.checkTaskActivity;
     this.highlightActiveTasks = props.highlightActiveTasks;
     this.isForceHotkeysEnabled = props.isHotkeysEnabled ?? true;

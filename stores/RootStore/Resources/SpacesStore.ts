@@ -1,6 +1,7 @@
 import { RootStore } from '../index';
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
-import { OriginData, SpaceData } from '../../../components/pages/Spaces/types';
+import { SpaceData } from '../../../components/pages/Spaces/types';
+import { cloneDeep, set } from "lodash";
 
 export class SpacesStore {
   constructor(public root: RootStore) {
@@ -40,6 +41,20 @@ export class SpacesStore {
       });
     }
   }
+
+  updateProperty = async (id: string, path: string, value: string) => {
+    const spaceIndex = this.list.findIndex((space) => space.id === id);
+
+    if (spaceIndex < 0) {
+      return;
+    }
+
+    const space = set(cloneDeep(this.list[spaceIndex]), path, value);
+
+    await this.update(space);
+
+    this.list[spaceIndex] = space;
+  };
 
   update = (space: Partial<SpaceData> & { id: string }) => {
     const index = this.list.findIndex(({ id }) => id === space.id);

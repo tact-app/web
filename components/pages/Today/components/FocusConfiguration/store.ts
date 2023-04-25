@@ -1,10 +1,7 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { RootStore } from '../../../../../stores/RootStore';
-import {
-  GoalsSelectionProps,
-  GoalsSelectionStore,
-} from '../../../../shared/GoalsSelection/store';
+import { GoalsSelectionProps } from '../../../../shared/GoalsSelection/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
 import { AnimatedBlockParams } from "../../../../shared/AnimatedBlock";
 
@@ -32,57 +29,51 @@ export class FocusConfigurationStore {
     makeAutoObservable(this);
   }
 
-  navigation = new ListNavigation();
-  goalsSelection = new GoalsSelectionStore(this.root);
+  navigation = new ListNavigation({
+    onFocused: () => {
+      this.isBlockFocused = true;
+
+      if (this.isGoalEditing) {
+        this.callbacks.onFocus?.();
+      }
+    }
+  });
 
   keyMap = {
-    FOCUS_GOAL_SELECTION: 'shift+g',
+    FOCUS_GOAL_SELECTION: 'g',
     BLUR: 'right',
     NUMBER: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-    CLEAR: ['shift+backspace', 'shift+delete', 'shift+c'],
-    SHOW_IMPORTANT: 'i',
+    SHOW_IMPORTANT: 'h',
     ESCAPE: 'escape',
   };
 
   hotkeyHandlers = {
-    BLUR: (e) => {
-      if (this.isFocused) {
-        e.stopPropagation();
-        this.isBlockFocused = false;
-        this.navigation.disable();
-        this.callbacks.onBlur?.();
-      }
-    },
+    BLUR: () => this.handleBlur(),
     NUMBER: (e: KeyboardEvent) => {
-      if (this.goalsSelection.isFocused) {
-        const number = parseInt(e.key, 10);
+      if (this.isBlockFocused) {
+        const number = parseInt(e.key, 10) - 1;
 
-        if (number && number <= this.root.resources.goals.count) {
-          this.goalsSelection.handleGoalCheck(number - 1);
+        if (this.navigation.refs[number]) {
+          (this.navigation.refs[number] as HTMLInputElement).checked = true;
         }
       }
-    },
-    CLEAR: () => {
-      this.goalsSelection.uncheckAll();
     },
     SHOW_IMPORTANT: () => {
       this.data.showImportant = !this.data.showImportant;
       this.sendChanges();
     },
     FOCUS_GOAL_SELECTION: () => {
-      !this?.isFocused && this.focus();
+      !this?.isBlockFocused && this.focus();
     },
-    ESCAPE: () => {
-      if (this.isFocused) {
-        this.isBlockFocused = false;
-        this.callbacks.onBlur?.();
-      }
-    },
+    ESCAPE: () => this.handleBlur(),
   };
 
   callbacks: FocusConfigurationProps['callbacks'] = {};
 
   isBlockFocused: boolean = false;
+  openedEmojiPickerMap: Record<string, boolean> = {};
+  editingTitlesMap: Record<string, boolean> = {};
+  isIntroducingClosed: boolean = false;
 
   data: FocusConfigurationData = {
     id: 'default',
@@ -90,12 +81,19 @@ export class FocusConfigurationStore {
     showImportant: false,
   };
 
-  get isFocused() {
-    return this.isBlockFocused;
+  get isGoalEditing() {
+    return Object.values({ ...this.openedEmojiPickerMap, ...this.editingTitlesMap }).includes(true);
   }
 
-  get hasConfiguration() {
-    return this.data.goals.length > 0 || this.data.showImportant;
+  get goalsAndSpacesIndexesMap() {
+    return this.root.resources.goals.listBySpaces.reduce((spacesAcc, item) => ({
+      ...spacesAcc,
+      [item.space.id]: 0,
+      ...item.goals.reduce((acc, goal) => ({
+        ...acc,
+        [goal.id]: goal.customFields.order,
+      }), {} as Record<string, number>),
+    }), {} as Record<string, number>);
   }
 
   focus = () => {
@@ -106,24 +104,25 @@ export class FocusConfigurationStore {
   };
 
   handleBlur = () => {
-    if (!this.isFocused) {
+    if (!this.isBlockFocused || this.isGoalEditing) {
       return;
     }
 
     this.navigation.disable();
     this.isBlockFocused = false;
+    this.callbacks.onBlur?.();
   };
 
-  handleSelectGoal = () => {
+  handleSelectGoal = (goalsIds: string[]) => {
     this.isBlockFocused = true;
-    this.data.goals = this.goalsSelection.checked;
+    this.data.goals = goalsIds;
     this.sendChanges();
   };
 
   handleShowImportantChange = (e) => {
     this.data.showImportant = e.target.checked;
-    this.sendChanges();
     this.navigation.disable();
+    this.sendChanges();
   };
 
   handleGoalCreateClick = () => {
@@ -137,11 +136,6 @@ export class FocusConfigurationStore {
     });
   };
 
-  handleMouseDown = () => {
-    this.isBlockFocused = false;
-    this.callbacks.onBlur?.();
-  };
-
   sendChanges = () => {
     this.root.api.focusConfigurations.update({
       id: this.data.id,
@@ -153,11 +147,15 @@ export class FocusConfigurationStore {
     this.callbacks.onChange?.(this.data);
   };
 
+  closeIntroducing = () => {
+    this.isIntroducingClosed = true;
+  };
+
   update = (props: FocusConfigurationProps) => {
     this.callbacks = props.callbacks;
   };
 
-  init = async (props: FocusConfigurationProps) => {
+  init = async () => {
     const focusConfig = await this.root.api.focusConfigurations.get(
       this.data.id
     );
@@ -171,8 +169,27 @@ export class FocusConfigurationStore {
   };
 
   goalsSelectionCallbacks: GoalsSelectionProps['callbacks'] = {
+    setRefs: this.navigation.setRefs,
     onSelect: this.handleSelectGoal,
     onGoalCreateClick: this.handleGoalCreateClick,
+    onToggleTitleFocus: (id, isFocused) => {
+      if (this.editingTitlesMap[id] !== isFocused) {
+        this.editingTitlesMap[id] = isFocused;
+
+        if (!isFocused) {
+          this.navigation.refs[this.goalsAndSpacesIndexesMap[id]]?.focus();
+        }
+      }
+    },
+    onToggleOpenEmojiPicker: (id, isOpen) => {
+      if (this.openedEmojiPickerMap[id] !== isOpen) {
+        this.openedEmojiPickerMap[id] = isOpen;
+
+        if (!isOpen) {
+          this.navigation.refs[this.goalsAndSpacesIndexesMap[id]]?.focus();
+        }
+      }
+    }
   };
 }
 
