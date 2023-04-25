@@ -46,12 +46,23 @@ export const EmojiSelectComponent = observer(
 
     return (
       <Popover
-        placement='start'
         isOpen={store.isEmojiPickerOpen}
         onOpen={store.openEmojiPicker}
         onClose={store.closeEmojiPicker}
         closeOnEsc={false}
         isLazy
+        modifiers={[
+          {
+            name: 'preventOverflow',
+            options: {
+              tether: false,
+              altAxis: true,
+              padding: 8,
+              boundary: 'clippingParents',
+              rootBoundary: 'viewport'
+            }
+          }
+        ]}
       >
         <PopoverTrigger>
           <Button
