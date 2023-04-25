@@ -29,8 +29,8 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
 
   if (props.highlightActiveTasks) {
     if (!store.isDisabled) {
-      bg = 'blue.75';
-      hoveredBg = 'blue.100';
+      bg = 'blue.25';
+      hoveredBg = 'blue.50';
       focusedBg = 'blue.75';
     }
   } else {
