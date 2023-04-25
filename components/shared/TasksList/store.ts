@@ -429,7 +429,9 @@ export class TasksListStore {
       delete this.items[id];
     });
 
-    console.log(this.items, this.draggableList.hasFocusableItems)
+    if (!Object.keys(this.items).length) {
+      this.draggableList.resetFocusedItem();
+    }
     if (!this.draggableList.hasFocusableItems) {
       this.callbacks.onEmpty?.();
     }
