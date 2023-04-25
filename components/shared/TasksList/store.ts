@@ -429,7 +429,7 @@ export class TasksListStore {
       delete this.items[id];
     });
 
-    console.log(this.draggableList.hasFocusableItems)
+    console.log(this.items, this.draggableList.hasFocusableItems)
     if (!this.draggableList.hasFocusableItems) {
       this.callbacks.onEmpty?.();
     }
