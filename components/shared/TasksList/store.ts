@@ -214,7 +214,7 @@ export class TasksListStore {
     if (this.draggableList.focused.length) {
       console.log(this.draggableList.focused, this.items)
       return this.draggableList.focused.every(
-        (id) => this.items[id]?.status === status
+        (id) => this.items[id].status === status
       );
     }
 
@@ -418,11 +418,11 @@ export class TasksListStore {
     return [...Object.values(this.items), task];
   };
 
-  deleteTasks = (ids: string[]) => {
+  deleteTasks = async (ids: string[]) => {
     this.order = this.order.filter((id) => !ids.includes(id));
 
     if (!this.delayedCreation) {
-      this.root.api.tasks.delete(ids);
+      await this.root.api.tasks.delete(ids);
     }
 
     ids.forEach((id) => {
