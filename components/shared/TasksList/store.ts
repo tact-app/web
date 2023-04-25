@@ -212,8 +212,9 @@ export class TasksListStore {
 
   canUnsetStatus = (status: TaskStatus) => {
     if (this.draggableList.focused.length) {
+      console.log(this.draggableList.focused, this.items)
       return this.draggableList.focused.every(
-        (id) => this.items[id].status === status
+        (id) => this.items[id]?.status === status
       );
     }
 
@@ -428,6 +429,7 @@ export class TasksListStore {
       delete this.items[id];
     });
 
+    console.log(this.draggableList.hasFocusableItems)
     if (!this.draggableList.hasFocusableItems) {
       this.callbacks.onEmpty?.();
     }

@@ -66,6 +66,10 @@ export class TaskItemStore {
     return this.parent.draggableList.focused.length > 1;
   }
 
+  get isOpened() {
+    return this.task.id === this.parent.openedTask;
+  }
+
   get isFocused() {
     return this.parent.draggableList.focused.includes(this.task.id);
   }

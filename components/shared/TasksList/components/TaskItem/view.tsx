@@ -29,9 +29,9 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
 
   if (props.highlightActiveTasks) {
     if (!store.isDisabled) {
-      bg = 'blue.25';
-      hoveredBg = 'blue.50';
-      focusedBg = 'blue.100';
+      bg = 'blue.75';
+      hoveredBg = 'blue.100';
+      focusedBg = 'blue.75';
     }
   } else {
     if (!store.isDragging) {
@@ -75,6 +75,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         flex={1}
         overflow='hidden'
         borderBottom='1px'
+        boxShadow={store.isOpened && props.highlightActiveTasks && 'inset 0px 0px 0px 2px var(--chakra-colors-blue-300)'}
         borderColor={
           props.highlightActiveTasks && !store.isDisabled
             ? 'transparent'
@@ -83,6 +84,7 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
         transition={[
           'border-color 0.2s ease-in-out',
           'background 0.2s ease-in-out',
+          'box-shadow 0.2s ease-in-out',
         ]}
         bg={store.isFocused ? focusedBg : store.isPreFocused ? hoveredBg :bg}
         _groupHover={{

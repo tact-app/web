@@ -166,11 +166,17 @@ const data = {
             return list;
           }),
           
-          ...tasks.map((task) => updateList(db, task.goalId, (list) => {
-            list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
+          ...tasks.map((task) => {
+            if (!task.goalId) {
+              return;
+            }
 
-            return list;
-          }))
+            return updateList(db, task.goalId, (list) => {
+              list.taskIds = list.taskIds.filter((id) => !ids.includes(id));
+
+              return list;
+            })
+          })
         ]);
       } else {
         await updateList(db, listId, (list) => {

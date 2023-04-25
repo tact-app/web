@@ -46,6 +46,7 @@ export const EmojiSelectComponent = observer(
 
     return (
       <Popover
+        placement='start'
         isOpen={store.isEmojiPickerOpen}
         onOpen={store.openEmojiPicker}
         onClose={store.closeEmojiPicker}

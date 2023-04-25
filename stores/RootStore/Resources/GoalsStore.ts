@@ -106,21 +106,8 @@ export class GoalsStore {
     this.map[id] = goal;
   };
 
-  updateColor = (id, color: string) => {
-    const goal = this.map[id];
-    goal.icon.color = color;
-
-    return this.update(goal)
-  }
-
-  updateTitle = (id, title: string) => {
-    const goal = this.map[id];
-    goal.title = title;
-
-    return this.update(goal)
-  }
-
   update = async (goalToUpdate: GoalData) => {
+    const prevGoalData = cloneDeep(this.map[goalToUpdate.id]);
     const goal = {
       ...goalToUpdate,
       wontDoReason: goalToUpdate.status === GoalStatus.WONT_DO ? goalToUpdate.wontDoReason : '',
@@ -129,6 +116,16 @@ export class GoalsStore {
 
     this.map[goal.id] = goal;
     await this.root.api.goals.update({ id: goal.id, fields: goal });
+
+    if (prevGoalData.spaceId !== goal.spaceId) {
+      const taskList = await this.root.api.tasks.all();
+
+      await this.root.api.tasks.assignGoal({
+        taskIds: taskList.filter((task) => task.goalId === goal.id).map((task) => task.id),
+        goalId: goal.id,
+        spaceId: goal.spaceId,
+      })
+    }
   };
 
   add = async ({
