@@ -50,6 +50,7 @@
     "allotment": "^1.18.1",
     "classnames": "^2.3.2",
     "copy-to-clipboard": "^3.3.3",
+    "csstype": "^3.1.2",
     "emoji-mart": "^5.5.2",
     "framer-motion": "^10.12.4",
     "idb": "^7.1.1",
