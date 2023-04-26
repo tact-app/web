@@ -42,7 +42,6 @@ export const TaskItemView = observer(function TaskItem(props: TaskItemProps) {
   }
 
   useOutsideClick({
-    listenContextMenu: true,
     enabled: store.isEditMode || store.quickEdit.isMenuFocused || quickEditStore.suggestionsMenu.isOpen,
     ref: ref,
     handler: quickEditStore.handleClickOutside,
