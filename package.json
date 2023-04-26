@@ -21,7 +21,7 @@
   "dependencies": {
     "@chakra-ui/modal": "^2.2.10",
     "@chakra-ui/radio": "^2.0.22",
-    "@chakra-ui/react": "^2.5.5",
+    "@chakra-ui/react": "^2.6.0",
     "@chakra-ui/react-use-outside-click": "file:forks/chakra-ui/react-use-outside-click",
     "@chakra-ui/system": "^2.5.6",
     "@chakra-ui/textarea": "^2.0.19",
