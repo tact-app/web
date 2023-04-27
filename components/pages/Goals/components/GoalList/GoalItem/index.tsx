@@ -14,7 +14,7 @@ import {
   faCircleMinus as faCircleMinusSolid
 } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { KeyboardEvent, useEffect, useRef } from "react";
 import { GoalDataExtended, GoalStatus } from "../../../types";
 import { ActionMenu } from "../../../../../shared/ActionMenu";
 import { EditableTitle } from "../../../../../shared/EditableTitle";
@@ -22,6 +22,8 @@ import { DatePickerHelpers } from "../../../../../shared/DatePicker/helpers";
 import { GoalEmojiSelect } from "../../GoalEmojiSelect";
 import { useGoalListStore } from "../store";
 import { GoalStateIcon, GOAL_STATE_PARAMS } from "../../../../../shared/GoalStateIcon";
+import { useOutsideClick } from '@chakra-ui/react-use-outside-click';
+import { getBoxShadowAsBorder } from '../../../../../../helpers/baseHelpers';
 
 type Props = {
   goal: GoalDataExtended
@@ -30,8 +32,23 @@ type Props = {
 export const GoalItem = observer(function GoalItem({ goal }: Props) {
   const store = useGoalListStore();
 
+  const ref = useRef<HTMLDivElement>();
+
   const isDone = goal.status === GoalStatus.DONE;
   const isWontDo = goal.status === GoalStatus.WONT_DO;
+  const isFocused = goal.id === store.focusedGoalId;
+
+  useEffect(() => {
+    if (isFocused) {
+      ref.current.focus();
+    }
+  }, [isFocused]);
+
+  useOutsideClick({
+    enabled: isFocused,
+    ref,
+    handler: () => store.setFocusedGoalId(null),
+  });
 
   const actions = [
     {
@@ -110,16 +127,42 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
   const handleColorChange = (color: string) => {
     return store.callbacks?.onUpdateGoal({ ...goal, icon: { ...goal.icon, color } });
   };
+  const handleSetRef = (element: HTMLDivElement) => {
+    ref.current = element;
+    store.setGoalRef(goal.id, element);
+  };
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (['ArrowLeft', 'ArrowRight'].includes(event.key) && store.goalsList.length >= 1) {
+      const currentGoalIndex = store.goalsList.findIndex((goalFromList) => goalFromList.id === goal.id);
+
+      let goalIndexToFocus = 0;
+
+      if (event.key === 'ArrowLeft') {
+        goalIndexToFocus = currentGoalIndex > 0
+            ? currentGoalIndex - 1
+            : store.goalsList.length - 1;
+      } else if (event.key === 'ArrowRight') {
+        goalIndexToFocus = currentGoalIndex < store.goalsList.length - 1
+            ? currentGoalIndex + 1
+            : 0;
+      }
+
+      store.setFocusedGoalId(store.goalsList[goalIndexToFocus].id);
+    } else if (event.code == 'Space') {
+      store.getGoalTitleElement(goal.id).click();
+    }
+  };
 
   return (
     <Box
-      ref={(ref) => store.setGoalRef(goal.id, ref)}
-      borderWidth={1}
+      ref={handleSetRef}
       borderRadius={8}
-      borderColor={
-        goal.customFields.state
-          ? GOAL_STATE_PARAMS[goal.customFields.state].color
-          : 'gray.200'
+      boxShadow={
+        getBoxShadowAsBorder(
+          goal.customFields.state
+            ? GOAL_STATE_PARAMS[goal.customFields.state].color
+            : 'gray.200'
+        )
       }
       p={4}
       w={80}
@@ -129,7 +172,18 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       position='relative'
       cursor='pointer'
       height={124}
+      tabIndex={0}
+      _focus={{
+        borderWidth: 0,
+        boxShadow: getBoxShadowAsBorder('blue.400', 2)
+      }}
+      _focusVisible={{
+        outline: 'none',
+      }}
       onClick={() => store.callbacks?.onOpenGoal(goal.id)}
+      onFocus={() => store.setFocusedGoalId(goal.id)}
+      onKeyDown={handleKeyDown}
+      // onBlur={() => store.setFocusedGoalId(null)}
     >
       <Flex>
         <GoalEmojiSelect

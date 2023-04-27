@@ -11,9 +11,14 @@ export class GoalListStore {
   callbacks: GoalListCallbacks;
 
   goalsRefs: Record<string, HTMLDivElement> = {};
+  focusedGoalId: string | null = null;
 
   constructor(public root: RootStore) {
     makeAutoObservable(this);
+  }
+
+  get goalsList() {
+    return Object.values(this.listBySpaces).flat();
   }
 
   get hasClone() {
@@ -47,6 +52,10 @@ export class GoalListStore {
     return this.root.resources.spaces.update(space);
   }
 
+  setFocusedGoalId = (goalId: string | null) => {
+    this.focusedGoalId = goalId;
+  };
+
   update = ({ listBySpaces, onUpdateGoal, onDeleteGoal, onCloneGoal, onOpenGoal, onWontDo }: GoalListProps) => {
     this.listBySpaces = listBySpaces;
     this.callbacks = {
@@ -56,6 +65,10 @@ export class GoalListStore {
       onOpenGoal,
       onWontDo,
     };
+
+    if (!this.focusedGoalId) {
+      this.setFocusedGoalId(Object.values(listBySpaces).flat()[0]?.id ?? null);
+    }
   };
 }
 
