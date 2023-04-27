@@ -188,6 +188,8 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
       items={store.isMultiSelected ? multiTaskItems(store) : singleTaskItems(store)}
       hidden={!store.isDragging}
       triggerIconFontSize={18}
+      xPosContextMenu={store.xPosContextMenu}
+      isOpenByContextMenu={store.isOpenByContextMenu}
       onToggleMenu={store.toggleMenu}
       triggerButtonProps={() => ({
         color: 'gray.500',

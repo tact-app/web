@@ -16,7 +16,6 @@ export type ActionMenuItem = {
 };
 
 export type ActionMenuViewProps = {
-  isMenuOpen?: boolean;
   hidden?: boolean;
   triggerIconFontSize?: number;
   triggerIcon?: IconDefinition;
@@ -33,4 +32,7 @@ export type ActionMenuCallbacks = {
 
 export type ActionMenuProps =  ActionMenuViewProps & ActionMenuCallbacks & {
   items: ActionMenuItem[];
+  xPosContextMenu?: number;
+  isOpenByContextMenu?: boolean;
+  isMenuOpen?: boolean;
 };
