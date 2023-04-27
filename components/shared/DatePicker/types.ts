@@ -17,6 +17,7 @@ export type DatePickerViewProps = DatePickerContainerProps & {
   startDate?: string;
   endDate?: string;
   showTooltip?: boolean;
+  tabIndex?: number;
   tooltipPlacement?: TooltipProps['placement'];
 }
 

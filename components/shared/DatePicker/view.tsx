@@ -20,6 +20,7 @@ export const DatePickerView = observer(
     endDate,
     minDate,
     showTooltip,
+    tabIndex,
     tooltipPlacement = 'top',
     ...flexProps
   }: DatePickerViewProps) {
@@ -59,6 +60,7 @@ export const DatePickerView = observer(
           selected={store.currentValue}
           onChange={store.handleChange}
           portalId="date-picker-portal"
+          tabIndex={tabIndex}
           placeholderText={!store.currentValue && store.isFocused ? 'DD.MM.YYYY' : ''}
           onFocus={store.handleFocus}
           onBlur={store.handleBlur}

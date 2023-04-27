@@ -8,6 +8,7 @@ import { Filters } from "../../../../shared/Filters";
 import { ManArrowToIcon } from "../../../../images/icons/ManArrowToIcon";
 import { ManArrowOffIcon } from "../../../../images/icons/ManArrowOffIcon";
 import { useGoalListStore } from "./store";
+import { useHotkeysHandler } from '../../../../../helpers/useHotkeysHandler';
 
 const GOALS_LIST_FILTERS = [
   {
@@ -30,11 +31,11 @@ const GOALS_LIST_FILTERS = [
 export const GoalListView = observer(function GoalListView() {
   const store = useGoalListStore();
 
-  const haveGoals = store.root.resources.goals.haveGoals;
+  useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
 
   return (
     <Box p={0}>
-      {haveGoals && <Filters options={GOALS_LIST_FILTERS} value='all' />}
+      {store.root.resources.goals.haveGoals && <Filters options={GOALS_LIST_FILTERS} value='all' />}
       <Flex flexDirection='column' mb={2} mt={8}>
         {Object.entries(store.listBySpaces).map(([spaceId, goals]) => (
           <SpaceItem key={spaceId} spaceId={spaceId} goals={goals} />

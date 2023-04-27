@@ -26,6 +26,7 @@ export const EmojiSelectComponent = observer(
     borderRadius = 'full',
     canRemoveEmoji,
     cursor,
+    tabIndex,
   }: EmojiSelectViewProps) {
     const store = useEmojiSelectStore();
 
@@ -78,6 +79,7 @@ export const EmojiSelectComponent = observer(
             display='flex'
             justifyContent='center'
             alignItems='center'
+            tabIndex={tabIndex}
             cursor={cursor ?? (store.disabled ? 'default' : 'initial')}
             _focus={{ boxShadow: !store.disabled && focusedTriggerBoxShadow }}
             onClick={(e) => !store.disabled && e.stopPropagation()}

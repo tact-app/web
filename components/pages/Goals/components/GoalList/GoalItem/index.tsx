@@ -14,7 +14,7 @@ import {
   faCircleMinus as faCircleMinusSolid
 } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { KeyboardEvent, useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { GoalDataExtended, GoalStatus } from "../../../types";
 import { ActionMenu } from "../../../../../shared/ActionMenu";
 import { EditableTitle } from "../../../../../shared/EditableTitle";
@@ -36,16 +36,9 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
 
   const isDone = goal.status === GoalStatus.DONE;
   const isWontDo = goal.status === GoalStatus.WONT_DO;
-  const isFocused = goal.id === store.focusedGoalId;
-
-  useEffect(() => {
-    if (isFocused) {
-      ref.current.focus();
-    }
-  }, [isFocused]);
 
   useOutsideClick({
-    enabled: isFocused,
+    enabled: goal.id === store.focusedGoalId,
     ref,
     handler: () => store.setFocusedGoalId(null),
   });
@@ -131,25 +124,9 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
     ref.current = element;
     store.setGoalRef(goal.id, element);
   };
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (['ArrowLeft', 'ArrowRight'].includes(event.key) && store.goalsList.length >= 1) {
-      const currentGoalIndex = store.goalsList.findIndex((goalFromList) => goalFromList.id === goal.id);
-
-      let goalIndexToFocus = 0;
-
-      if (event.key === 'ArrowLeft') {
-        goalIndexToFocus = currentGoalIndex > 0
-            ? currentGoalIndex - 1
-            : store.goalsList.length - 1;
-      } else if (event.key === 'ArrowRight') {
-        goalIndexToFocus = currentGoalIndex < store.goalsList.length - 1
-            ? currentGoalIndex + 1
-            : 0;
-      }
-
-      store.setFocusedGoalId(store.goalsList[goalIndexToFocus].id);
-    } else if (event.code == 'Space') {
-      store.getGoalTitleElement(goal.id).click();
+  const handleFocus = () => {
+    if (!store.isFocusedGoalEditing && store.focusedGoalId === goal.id) {
+      store.setFocusedGoalId(goal.id)
     }
   };
 
@@ -173,6 +150,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       cursor='pointer'
       height={124}
       tabIndex={0}
+      role='button'
       _focus={{
         borderWidth: 0,
         boxShadow: getBoxShadowAsBorder('blue.400', 2)
@@ -181,9 +159,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
         outline: 'none',
       }}
       onClick={() => store.callbacks?.onOpenGoal(goal.id)}
-      onFocus={() => store.setFocusedGoalId(goal.id)}
-      onKeyDown={handleKeyDown}
-      // onBlur={() => store.setFocusedGoalId(null)}
+      onFocus={handleFocus}
     >
       <Flex>
         <GoalEmojiSelect
@@ -192,11 +168,12 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
           iconFontSize='3xl'
           statusIconBottom={-0.5}
           statusIconRight={0.5}
+          tabIndex={-1}
           onIconChange={handleChangeIcon}
           onColorChange={handleColorChange}
         />
         <chakra.div ml={2} w='calc(100% - var(--chakra-space-20))'>
-          <EditableTitle value={goal.title} idEnding={goal.id} onSave={handleChangeTitle} />
+          <EditableTitle value={goal.title} idEnding={goal.id} sharedProps={{ tabIndex: -1 }} onSave={handleChangeTitle} />
           <Flex mt={1} fontSize='xs' color='gray.500'>
             <chakra.span>All task: {goal.customFields.allTasks.length}</chakra.span>
             <chakra.span ml={2}>
@@ -222,6 +199,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
               showIconOnlyIfEmpty
               showTooltip
               selectsStart
+              tabIndex={-1}
               value={goal.startDate}
               startDate={goal.startDate}
               endDate={goal.targetDate}
@@ -240,6 +218,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
               showIconOnlyIfEmpty
               showTooltip
               selectsEnd
+              tabIndex={-1}
               value={goal.targetDate}
               startDate={goal.startDate}
               endDate={goal.targetDate}
@@ -254,6 +233,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
         items={actions}
         menuMinWidth={250}
         triggerButtonProps={(isOpen) => ({
+          tabIndex: -1,
           color: isOpen ? 'blue.400' : 'gray.500',
           position: 'absolute',
           top: 3,

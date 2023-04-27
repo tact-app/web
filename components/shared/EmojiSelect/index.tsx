@@ -14,6 +14,7 @@ export const EmojiSelect = observer(function EmojiSelect(
         borderRadius={props.borderRadius}
         canRemoveEmoji={props.canRemoveEmoji}
         cursor={props.cursor}
+        tabIndex={props.tabIndex}
       />
     </EmojiSelectStoreProvider>
   );

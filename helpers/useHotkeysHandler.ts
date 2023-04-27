@@ -1,5 +1,5 @@
 import { Options, useHotkeys } from 'react-hotkeys-hook/src';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, KeyboardEvent } from 'react';
 import {
   HotkeysEvent,
   OptionsOrDependencyArray,
