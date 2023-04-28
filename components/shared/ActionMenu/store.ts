@@ -7,6 +7,8 @@ import { ActionMenuCallbacks, ActionMenuItem, ActionMenuProps } from "./types";
 export class ActionMenuStore {
   items: ActionMenuItem[];
   callbacks: ActionMenuCallbacks;
+  xPosContextMenu?: number;
+  isOpenByContextMenu?: boolean;
 
   isMenuOpen = false;
 
@@ -15,11 +17,6 @@ export class ActionMenuStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
   }
-
-  toggleMenu = () => {
-    this.isMenuOpen = !this.isMenuOpen;
-    this.callbacks?.onToggleMenu?.(this.isMenuOpen);
-  };
 
   openMenu = () => {
     this.isMenuOpen = true;
@@ -31,8 +28,10 @@ export class ActionMenuStore {
     this.callbacks?.onToggleMenu?.(false);
   };
 
-  update({ items, onNavigate, onToggleMenu, isMenuOpen }: ActionMenuProps) {
+  update({ items, xPosContextMenu, onNavigate, onToggleMenu, isMenuOpen, isOpenByContextMenu }: ActionMenuProps) {
     this.items = items;
+    this.xPosContextMenu = xPosContextMenu;
+    this.isOpenByContextMenu = isOpenByContextMenu;
     this.isMenuOpen = Boolean(isMenuOpen);
     this.callbacks = {
       onNavigate,

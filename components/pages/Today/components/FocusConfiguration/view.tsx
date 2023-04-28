@@ -82,7 +82,7 @@ export const FocusConfigurationView = observer(function FocusConfigurationView(
     });
 
     return () => toast.close(toastRef.current)
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <AnimatedBlock

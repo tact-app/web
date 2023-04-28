@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { useListNavigation } from "../../../../helpers/ListNavigation";
 import { Fade, PopoverBody, PopoverContent, Portal } from "@chakra-ui/react";
 import { ActionMenuItems } from "./ActionMenuItems";
+import { PopoverWrapper } from '../../TasksList/components/TaskItemMenu/PopoverWrapper';
 
 type Props = {
   isOpen: boolean;
@@ -39,25 +40,31 @@ export const ActionMenuContent = observer(function ActionMenuContent({
 
   return (
     <Portal>
-      <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
-        <PopoverContent
-          tabIndex={-1}
-          p={0}
-          shadow='lg'
-          overflow='hidden'
-          w='auto'
-          minW={menuMinWidth}
-          onFocus={store.menuNavigation.handleFocus}
-        >
-          <PopoverBody p={0}>
-            <ActionMenuItems
-              refs={store.menuNavigation.setRefs}
-              items={store.items}
-              onClose={store.closeMenu}
-            />
-          </PopoverBody>
-        </PopoverContent>
-      </Fade>
+      <PopoverWrapper
+          isOpen={store.isMenuOpen}
+          positionByMouse={store.isOpenByContextMenu}
+          left={store.xPosContextMenu}
+      >
+        <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
+          <PopoverContent
+              tabIndex={-1}
+              p={0}
+              shadow='lg'
+              overflow='hidden'
+              w='auto'
+              minW={menuMinWidth}
+              onFocus={store.menuNavigation.handleFocus}
+          >
+            <PopoverBody p={0}>
+              <ActionMenuItems
+                  refs={store.menuNavigation.setRefs}
+                  items={store.items}
+                  onClose={store.closeMenu}
+              />
+            </PopoverBody>
+          </PopoverContent>
+        </Fade>
+      </PopoverWrapper>
     </Portal>
   );
 });
