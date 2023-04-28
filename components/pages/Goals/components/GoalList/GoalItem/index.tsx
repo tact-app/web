@@ -24,6 +24,8 @@ import { useGoalListStore } from "../store";
 import { GoalStateIcon, GOAL_STATE_PARAMS } from "../../../../../shared/GoalStateIcon";
 import { useOutsideClick } from '@chakra-ui/react-use-outside-click';
 import { getBoxShadowAsBorder } from '../../../../../../helpers/baseHelpers';
+import { NavigationDirections } from '../../../../../../types/navigation';
+import ReactDatePicker from 'react-datepicker';
 
 type Props = {
   goal: GoalDataExtended
@@ -33,12 +35,16 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
   const store = useGoalListStore();
 
   const ref = useRef<HTMLDivElement>();
+  const startDateRef = useRef<ReactDatePicker>();
+  const targetDateRef = useRef<ReactDatePicker>();
+  const emojiSelectRef = useRef<HTMLButtonElement>();
 
   const isDone = goal.status === GoalStatus.DONE;
   const isWontDo = goal.status === GoalStatus.WONT_DO;
+  const isFocused = goal.id === store.focusedGoalId;
 
   useOutsideClick({
-    enabled: goal.id === store.focusedGoalId,
+    enabled: isFocused,
     ref,
     handler: () => store.setFocusedGoalId(null),
   });
@@ -129,18 +135,37 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       store.setFocusedGoalId(goal.id)
     }
   };
+  const handleNavigate = (direction: NavigationDirections) => {
+    switch (direction) {
+      case NavigationDirections.DOWN:
+        startDateRef.current.setFocus();
+        break;
+      case NavigationDirections.LEFT:
+        emojiSelectRef.current?.focus();
+        break;
+      case NavigationDirections.RIGHT:
+        console.log('RIGHT');
+        break;
+    }
+  };
+  const getBoxShadow = () => {
+    if (store.isFocusedGoalEditing && isFocused) {
+      return getBoxShadowAsBorder('blue.400', 2);
+    }
+
+    return getBoxShadowAsBorder(
+      goal.customFields.state
+          ? GOAL_STATE_PARAMS[goal.customFields.state].color
+          : 'gray.200',
+      1
+    );
+  }
 
   return (
     <Box
       ref={handleSetRef}
       borderRadius={8}
-      boxShadow={
-        getBoxShadowAsBorder(
-          goal.customFields.state
-            ? GOAL_STATE_PARAMS[goal.customFields.state].color
-            : 'gray.200'
-        )
-      }
+      boxShadow={getBoxShadow()}
       p={4}
       w={80}
       mr={6}
@@ -163,6 +188,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
     >
       <Flex>
         <GoalEmojiSelect
+          ref={emojiSelectRef}
           goal={goal}
           size={12}
           iconFontSize='3xl'
@@ -173,7 +199,13 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
           onColorChange={handleColorChange}
         />
         <chakra.div ml={2} w='calc(100% - var(--chakra-space-20))'>
-          <EditableTitle value={goal.title} idEnding={goal.id} sharedProps={{ tabIndex: -1 }} onSave={handleChangeTitle} />
+          <EditableTitle
+              value={goal.title}
+              idEnding={goal.id}
+              sharedProps={{ tabIndex: -1 }}
+              onNavigate={handleNavigate}
+              onSave={handleChangeTitle}
+          />
           <Flex mt={1} fontSize='xs' color='gray.500'>
             <chakra.span>All task: {goal.customFields.allTasks.length}</chakra.span>
             <chakra.span ml={2}>
@@ -194,6 +226,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
           </Text>
           <chakra.div mt={1}>
             <DatePicker
+              ref={startDateRef}
               fontSize='xs'
               iconFontSize={14}
               showIconOnlyIfEmpty
@@ -213,6 +246,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
           </Text>
           <chakra.div mt={1}>
             <DatePicker
+              ref={targetDateRef}
               fontSize='xs'
               iconFontSize={14}
               showIconOnlyIfEmpty

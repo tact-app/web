@@ -70,29 +70,52 @@ export function EditableTitle({
     onChange?.(updatedValue);
   };
 
+  const resetEditMode = () => {
+    setIsEditMode(false);
+    setValue(initialValue);
+    onBlur?.();
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     e.stopPropagation();
 
+    const isCaretPositionInEnd = ref.current.selectionStart === value.length;
+    const isCaretPositionInStart = ref.current.selectionStart === 0;
+
     switch (e.key) {
       case 'Escape':
-        setIsEditMode(false);
-        setValue(initialValue);
-        onBlur?.();
+        resetEditMode();
         break;
       case 'Enter':
         handleSave();
         break;
       case 'ArrowDown':
-        onNavigate?.(NavigationDirections.DOWN);
+        if (isCaretPositionInEnd) {
+          resetEditMode();
+          onNavigate?.(NavigationDirections.DOWN);
+        }
+
         break;
       case 'ArrowUp':
-        onNavigate?.(NavigationDirections.UP);
+        if (isCaretPositionInStart) {
+          resetEditMode();
+          onNavigate?.(NavigationDirections.UP);
+        }
+
         break;
       case 'ArrowLeft':
-        onNavigate?.(NavigationDirections.LEFT);
+        if (isCaretPositionInStart) {
+          resetEditMode();
+          onNavigate?.(NavigationDirections.LEFT);
+        }
+
         break;
       case 'ArrowRight':
-        onNavigate?.(NavigationDirections.RIGHT);
+        if (isCaretPositionInEnd) {
+          resetEditMode();
+          onNavigate?.(NavigationDirections.RIGHT);
+        }
+
         break;
       default:
         break;

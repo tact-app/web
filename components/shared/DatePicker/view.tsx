@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from "mobx-react-lite";
 import ReactDatePicker from 'react-datepicker';
 import { Flex, chakra } from "@chakra-ui/react";
@@ -10,23 +10,38 @@ import { DatePickerHeader } from "./components/DatePickerHeader";
 import { Tooltip } from '../Tooltip';
 import cn from 'classnames';
 
-export const DatePickerView = observer(
-  function DatePickerView({
-    showIconOnlyIfEmpty,
-    iconFontSize = 20,
-    selectsStart,
-    selectsEnd,
-    startDate,
-    endDate,
-    minDate,
-    showTooltip,
-    tabIndex,
-    tooltipPlacement = 'top',
-    ...flexProps
-  }: DatePickerViewProps) {
+export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerViewProps>(
+  function DatePickerView(
+      {
+          showIconOnlyIfEmpty,
+          iconFontSize = 20,
+          selectsStart,
+          selectsEnd,
+          startDate,
+          endDate,
+          minDate,
+          showTooltip,
+          tabIndex,
+          tooltipPlacement = 'top',
+          ...flexProps
+      },
+      forwardedRef,
+  ) {
     const store = useDatePickerStore();
 
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.currentValue && !store.isFocused);
+
+    const setRef = (element: ReactDatePicker) => {
+      store.setRef(element);
+
+      if (forwardedRef) {
+        if (typeof forwardedRef === 'function') {
+          forwardedRef(element)
+        } else {
+          forwardedRef.current = element
+        }
+      }
+    };
 
     return (
       <Flex alignItems='center' {...flexProps} onClick={store.handleAreaEvent}>
@@ -65,7 +80,7 @@ export const DatePickerView = observer(
           onFocus={store.handleFocus}
           onBlur={store.handleBlur}
           onClickOutside={store.handleClickOutside}
-          ref={store.setRef}
+          ref={setRef}
           selectsStart={selectsStart}
           selectsEnd={selectsEnd}
           startDate={store.getDateFromString(startDate)}
@@ -83,4 +98,4 @@ export const DatePickerView = observer(
       </Flex>
     );
   }
-);
+));

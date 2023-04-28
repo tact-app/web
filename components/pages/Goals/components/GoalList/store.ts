@@ -18,6 +18,7 @@ export class GoalListStore {
   keyMap = {
     ON_NAVIGATE: ['up', 'down', 'left', 'right'],
     START_GOAL_EDITING: ['space'],
+    ON_SAVE: ['enter'],
   };
 
   hotkeyHandlers = {
@@ -51,6 +52,13 @@ export class GoalListStore {
 
       this.isFocusedGoalEditing = true;
       this.getGoalTitleElement(this.focusedGoalId).click();
+    },
+    ON_SAVE: () => {
+      if (!this.focusedGoalId || this.isFocusedGoalEditing) {
+        return;
+      }
+
+      this.callbacks?.onOpenGoal(this.focusedGoalId);
     }
   };
 
