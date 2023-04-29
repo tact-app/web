@@ -63,6 +63,7 @@ export const GoalsArchiveView = observer(function GoalsArchiveView() {
             </NextLink>
             <GoalList
               listBySpaces={store.list}
+              disableHotkeys={store.modals.isOpen}
               onDeleteGoal={store.deleteGoal}
               onOpenGoal={store.editGoal}
               onUpdateGoal={store.updateGoal}

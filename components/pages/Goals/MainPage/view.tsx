@@ -70,6 +70,7 @@ export const GoalsView = observer(function GoalsView() {
         {store.hasGoals ? (
           <GoalList
             listBySpaces={store.list}
+            disableHotkeys={store.modals.isOpen}
             onCloneGoal={store.cloneGoal}
             onDeleteGoal={store.deleteGoal}
             onOpenGoal={store.editGoal}

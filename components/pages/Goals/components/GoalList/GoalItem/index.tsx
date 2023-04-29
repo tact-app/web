@@ -60,10 +60,7 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       icon: faCircleCheck,
       title: isDone ? 'Unmark as done' : 'Done',
       command: '⌥D',
-      onClick: () => store.callbacks?.onUpdateGoal({
-        ...goal,
-        status: isDone ? GoalStatus.TODO : GoalStatus.DONE,
-      }),
+      onClick: () => store.doneGoal(goal),
     },
     {
       icon: faCircleMinus,
@@ -82,26 +79,13 @@ export const GoalItem = observer(function GoalItem({ goal }: Props) {
       icon: faBoxArchive,
       title: goal.isArchived ? 'Unarchive' : 'Archive',
       command: '⌥A',
-      onClick: () => store.callbacks?.onUpdateGoal({
-        ...goal,
-        isArchived: !goal.isArchived
-      }),
+      onClick: () => store.archiveGoal(goal),
     },
     {
       icon: faTrashCan,
       title: 'Delete',
       command: '⌫ / ⌥⌫',
-      onClick: async () => {
-        if (
-          await store.root.confirm({
-            title: 'Delete goal',
-            type: 'delete',
-            content: 'Are you sure you would like to delete this goal?'
-          })
-        ) {
-          await store.callbacks?.onDeleteGoal(goal.id);
-        }
-      },
+      onClick: () => store.handleDeleteGoal(goal.id),
     },
   ];
 

@@ -1,14 +1,15 @@
 import { makeAutoObservable, toJS } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { GoalDataExtended } from "../../types";
-import { GoalListProps, GoalListCallbacks } from './types';
+import { GoalDataExtended, GoalStatus } from "../../types";
+import { GoalListCallbacks, GoalListProps } from './types';
 import { EDITABLE_TITLE_ID_SLUG } from "../../../../shared/EditableTitle";
 import { SpaceData } from "../../../Spaces/types";
 import { KeyboardEvent } from 'react';
 
 export class GoalListStore {
   listBySpaces: Record<string, GoalDataExtended[]> = {};
+  isHotkeysDisabled: boolean;
   callbacks: GoalListCallbacks;
 
   goalsRefs: Record<string, HTMLDivElement> = {};
@@ -18,7 +19,12 @@ export class GoalListStore {
   keyMap = {
     ON_NAVIGATE: ['up', 'down', 'left', 'right'],
     START_GOAL_EDITING: ['space'],
-    ON_SAVE: ['enter'],
+    ON_OPEN: ['enter', 'alt+o'],
+    ON_DONE: ['alt+d'],
+    ON_WONT_DO: ['alt+w'],
+    ON_CLONE: ['alt+c'],
+    ON_ARCHIVE: ['alt+a'],
+    ON_DELETE: ['backspace', 'alt+backspace']
   };
 
   hotkeyHandlers = {
@@ -53,17 +59,44 @@ export class GoalListStore {
       this.isFocusedGoalEditing = true;
       this.getGoalTitleElement(this.focusedGoalId).click();
     },
-    ON_SAVE: () => {
-      if (!this.focusedGoalId || this.isFocusedGoalEditing) {
-        return;
+    ON_OPEN: () => {
+      if (this.isGoalFocusedAndNotEditing) {
+        this.callbacks?.onOpenGoal(this.focusedGoalId);
       }
-
-      this.callbacks?.onOpenGoal(this.focusedGoalId);
-    }
+    },
+    ON_DONE: () => {
+      if (this.isGoalFocusedAndNotEditing) {
+        this.doneGoal(this.focusedGoal);
+      }
+    },
+    ON_WONT_DO: () => {
+      if (this.isGoalFocusedAndNotEditing) {
+        this.callbacks?.onWontDo(this.focusedGoal);
+      }
+    },
+    ON_CLONE: () => {
+      if (this.isGoalFocusedAndNotEditing) {
+        this.callbacks?.onCloneGoal(this.focusedGoal);
+      }
+    },
+    ON_ARCHIVE: () => {
+      if (this.isGoalFocusedAndNotEditing) {
+        this.archiveGoal(this.focusedGoal);
+      }
+    },
+    ON_DELETE: () => {
+      if (this.isGoalFocusedAndNotEditing) {
+        this.handleDeleteGoal(this.focusedGoalId);
+      }
+    },
   };
 
   constructor(public root: RootStore) {
     makeAutoObservable(this);
+  }
+
+  get isGoalFocusedAndNotEditing() {
+    return this.focusedGoalId && !this.isFocusedGoalEditing;
   }
 
   get goalsList() {
@@ -72,6 +105,10 @@ export class GoalListStore {
 
   get hasClone() {
     return Boolean(this.callbacks?.onCloneGoal);
+  }
+
+  get focusedGoal() {
+    return this.goalsList.find((goal) => goal.id === this.focusedGoalId);
   }
 
   setGoalRef = (goalId: string, ref: HTMLDivElement) => {
@@ -91,6 +128,32 @@ export class GoalListStore {
 
     const clonedGoal = await this.callbacks.onCloneGoal(goal);
     this.getGoalTitleElement(clonedGoal.id).click();
+  }
+
+  doneGoal = (goal: GoalDataExtended) => {
+    return this.callbacks?.onUpdateGoal({
+      ...goal,
+      status: goal.status === GoalStatus.DONE ? GoalStatus.TODO : GoalStatus.DONE,
+    });
+  }
+
+  archiveGoal = (goal: GoalDataExtended) => {
+    return this.callbacks?.onUpdateGoal({
+      ...goal,
+      isArchived: !goal.isArchived
+    });
+  }
+
+  handleDeleteGoal = async (goalId: string) => {
+    if (
+        await this.root.confirm({
+          title: 'Delete goal',
+          type: 'delete',
+          content: 'Are you sure you would like to delete this goal?'
+        })
+    ) {
+      await this.callbacks?.onDeleteGoal(goalId);
+    }
   }
 
   getSpace = (spaceId: string) => {
@@ -113,8 +176,17 @@ export class GoalListStore {
     this.setFocusedGoalId(this.goalsList[0].id);
   };
 
-  update = ({ listBySpaces, onUpdateGoal, onDeleteGoal, onCloneGoal, onOpenGoal, onWontDo }: GoalListProps) => {
+  update = ({
+    listBySpaces,
+    disableHotkeys,
+    onUpdateGoal,
+    onDeleteGoal,
+    onCloneGoal,
+    onOpenGoal,
+    onWontDo
+  }: GoalListProps) => {
     this.listBySpaces = listBySpaces;
+    this.isHotkeysDisabled = disableHotkeys;
     this.callbacks = {
       onCloneGoal,
       onDeleteGoal,

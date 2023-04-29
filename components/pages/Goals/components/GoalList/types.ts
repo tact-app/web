@@ -9,5 +9,6 @@ export type GoalListCallbacks = {
 };
 
 export type GoalListProps = GoalListCallbacks & {
+  disableHotkeys: boolean;
   listBySpaces: Record<string, GoalDataExtended[]>;
 };
