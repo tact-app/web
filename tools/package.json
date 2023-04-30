@@ -1,7 +1,7 @@
 {
   "private": true,
   "dependencies": {
-    "@sentry/cli": "^2.17.4",
+    "@sentry/cli": "^2.17.5",
     "@withgraphite/graphite-cli": "^0.20.17",
     "depcheck": "^1.4.3",
     "next": "^13.3.2",
