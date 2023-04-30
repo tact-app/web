@@ -4,7 +4,7 @@
     "@sentry/cli": "^2.17.4",
     "@withgraphite/graphite-cli": "^0.20.17",
     "depcheck": "^1.4.3",
-    "next": "^13.3.1",
+    "next": "^13.3.2",
     "nextra": "^2.3.0",
     "nextra-theme-docs": "^2.4.2",
     "react": "^18.2.0",
