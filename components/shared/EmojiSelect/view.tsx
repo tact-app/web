@@ -10,14 +10,14 @@ import {
   PopoverTrigger,
   Text,
   Portal,
-  useOutsideClick,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { useEmojiSelectStore } from './store';
 import { EmojiStore } from '../../../stores/EmojiStore';
 import { EmojiSelectViewProps } from './types';
 import { EMOJI_SELECT_COLORS } from './constants';
-import React, { useRef, forwardRef } from "react";
-import { useHotkeysHandler } from "../../../helpers/useHotkeysHandler";
+import React, { forwardRef } from "react";
+import { useRefWithCallback } from '../../../helpers/useRefWithCallback';
 
 export const EmojiSelectComponent = observer(
     forwardRef<HTMLButtonElement, EmojiSelectViewProps>(
@@ -34,13 +34,12 @@ export const EmojiSelectComponent = observer(
         ) {
           const store = useEmojiSelectStore();
 
-          const ref = useRef();
+          const ref = useRefWithCallback<HTMLButtonElement>(triggerRef, store.setRef)
 
-          useHotkeysHandler(store.keymap, store.hotkeysHandlers, { enabled: store.isEmojiPickerOpen });
-          useOutsideClick({
-            ref,
-            handler: store.closeEmojiPicker,
-            enabled: store.isEmojiPickerOpen,
+          const { isOpen, onClose, onOpen } = useDisclosure({
+            isOpen: store.isEmojiPickerOpen,
+            onClose: store.closeEmojiPicker,
+            onOpen: store.openEmojiPicker,
           });
 
           const focusedTriggerBoxShadow = `inset 0px 0px 0px 2px var(--chakra-colors-${
@@ -50,11 +49,12 @@ export const EmojiSelectComponent = observer(
           })`;
 
           return (
+            <div onFocus={store.preventPropagation}>
               <Popover
-                  isOpen={store.isEmojiPickerOpen}
-                  onOpen={store.openEmojiPicker}
-                  onClose={store.closeEmojiPicker}
-                  closeOnEsc={false}
+                  isOpen={isOpen}
+                  onOpen={onOpen}
+                  onClose={onClose}
+                  returnFocusOnClose={false}
                   isLazy
                   modifiers={[
                     {
@@ -71,7 +71,7 @@ export const EmojiSelectComponent = observer(
               >
                 <PopoverTrigger>
                   <Button
-                      ref={triggerRef}
+                      ref={ref}
                       variant='filled'
                       bg={store.color}
                       color={store.mainColor.color + '.500'}
@@ -85,15 +85,18 @@ export const EmojiSelectComponent = observer(
                       justifyContent='center'
                       alignItems='center'
                       tabIndex={tabIndex}
-                      cursor={cursor ?? (store.disabled ? 'default' : 'initial')}
+                      cursor={cursor ?? (store.disabled ? 'default' : 'pointer')}
                       _focus={{ boxShadow: !store.disabled && focusedTriggerBoxShadow }}
-                      onClick={(e) => !store.disabled && e.stopPropagation()}
+                      onFocus={store.callbacks?.onFocus}
+                      onBlur={store.callbacks?.onBlur}
+                      onKeyDown={store.handleKeyDown}
+                      onClick={(e) => !store.disabled && store.preventPropagation(e)}
                   >
                     <Text fontSize={iconFontSize}>{store.triggerContent}</Text>
                   </Button>
                 </PopoverTrigger>
                 <Portal>
-                  <PopoverContent w='auto' ref={ref} onClick={(e) => e.stopPropagation()}>
+                  <PopoverContent w='auto' onClick={store.preventPropagation}>
                     <PopoverBody p={0}>
                       <Box display='flex' justifyContent='center'>
                         <HStack p={2}>
@@ -141,6 +144,7 @@ export const EmojiSelectComponent = observer(
                   </PopoverContent>
                 </Portal>
               </Popover>
+            </div>
           );
         }
     )

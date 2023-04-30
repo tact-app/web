@@ -31,7 +31,7 @@ export class GoalListStore {
     ON_NAVIGATE: (event: KeyboardEvent) => {
       if (!this.focusedGoalId) {
         this.setFirstGoalAsFocused();
-      } else {
+      } else if (!this.isFocusedGoalEditing) {
         if (['ArrowLeft', 'ArrowRight'].includes(event.key) && this.goalsList.length) {
           const currentGoalIndex = this.goalsList.findIndex((goal) => goal.id === this.focusedGoalId);
 
@@ -166,10 +166,16 @@ export class GoalListStore {
 
   setFocusedGoalId = (goalId: string | null) => {
     this.focusedGoalId = goalId;
+    this.isFocusedGoalEditing = false;
 
     if (goalId) {
       this.goalsRefs[goalId].focus();
     }
+  };
+
+  setEditedGoalId = (goalId: string | null) => {
+    this.focusedGoalId = goalId;
+    this.isFocusedGoalEditing = true;
   };
 
   setFirstGoalAsFocused = () => {

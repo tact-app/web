@@ -4,7 +4,7 @@ import { getProvider } from "../../../helpers/StoreProvider";
 import { DatePickerCallbacks, DatePickerProps } from "./types";
 import ReactDatePicker from "react-datepicker";
 import moment from "moment";
-import { SyntheticEvent } from "react";
+import { SyntheticEvent, KeyboardEvent } from "react";
 
 export const DATE_PICKER_DATE_FORMAT = 'dd.MM.yyyy';
 
@@ -13,6 +13,7 @@ export class DatePickerStore {
   callbacks: DatePickerCallbacks;
 
   datePickerRef: ReactDatePicker;
+  inputRef: HTMLInputElement;
   isFocused = false;
   isClickedOutside = false;
 
@@ -26,19 +27,19 @@ export class DatePickerStore {
 
   getDateFromString(value: string) {
     return value ? moment(value).toDate() : undefined;
-  }
+  };
 
   handleFocus = () => {
     if (!this.isFocused) {
       this.isFocused = true;
-      this.callbacks?.onFocus?.();
+      this.callbacks?.onFocusToggle?.(true);
     }
   };
 
   handleBlur = () => {
     if (this.isFocused) {
       this.isFocused = false
-      this.callbacks?.onBlur?.();
+      this.callbacks?.onFocusToggle?.(false);
     }
   };
 
@@ -47,11 +48,19 @@ export class DatePickerStore {
     this.handleBlur();
   };
 
-  handleAreaEvent = (e: SyntheticEvent) => {
+  handleAreaEvent = (e: SyntheticEvent | KeyboardEvent) => {
     e.stopPropagation();
-  }
+  };
 
-  handleIconClick = (e: SyntheticEvent) => {
+  handleKeyDown = (e: KeyboardEvent) => {
+    this.handleAreaEvent(e);
+
+    if (this.inputRef === document.activeElement) {
+      console.log(e.key, this.inputRef.selectionStart)
+    }
+  };
+
+  handleIconClick = () => {
     if (this.isFocused || this.isClickedOutside) {
       this.datePickerRef?.setBlur();
       this.isClickedOutside = false;
@@ -66,24 +75,24 @@ export class DatePickerStore {
     if (this.isFocused && targetTagName) {
       this.isClickedOutside = true;
     }
-  }
+  };
 
   getWeekDayFormatByDate = (date: Date) => {
     return moment(date).format('ddd').toUpperCase();
-  }
+  };
 
   setRef = (ref: ReactDatePicker) => {
     this.datePickerRef = ref;
-  }
+  };
 
-  update = ({ value, onBlur, onFocus, onChanged }: DatePickerProps) => {
+  setInputRef = (ref: HTMLInputElement) => {
+    this.inputRef = ref;
+  };
+
+  update = ({ value, onFocusToggle, onChanged }: DatePickerProps) => {
     this.value = value;
-    this.callbacks = {
-      onChanged,
-      onFocus,
-      onBlur
-    };
-  }
+    this.callbacks = { onChanged, onFocusToggle };
+  };
 }
 
 export const {

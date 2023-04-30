@@ -1,6 +1,7 @@
-import { Input, Text, TextProps, InputProps, useOutsideClick } from "@chakra-ui/react";
-import React, { SyntheticEvent, useRef, useState, KeyboardEvent, useEffect } from "react";
-import { NavigationDirections } from "../TasksList/types";
+import { Input, InputProps, Text, TextProps, useOutsideClick } from '@chakra-ui/react';
+import React, { KeyboardEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { NavigationHelper } from '../../../helpers/NavigationHelper';
+import { NavigationArrows, NavigationDirections } from '../../../types/navigation';
 
 type Props = {
   value: string;
@@ -10,6 +11,7 @@ type Props = {
   sharedProps?: TextProps & InputProps;
   widthByTitle?: boolean;
   idEnding?: string;
+  navDirectionsToResetEditing?: NavigationArrows[];
   onFocus?(): void;
   onBlur?(): void;
   onChange?(value: string): void;
@@ -32,6 +34,7 @@ export function EditableTitle({
   onSave,
   onNavigate,
   idEnding,
+  navDirectionsToResetEditing,
 }: Props) {
   let setCaretTimeout: NodeJS.Timeout;
 
@@ -46,8 +49,23 @@ export function EditableTitle({
 
   useEffect(() => () => clearTimeout(setCaretTimeout), []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const updateEditMode = (isModeEnabled: boolean) => {
+    setIsEditMode(isModeEnabled);
+
+    if (value) {
+      setCaretTimeout = setTimeout(() => {
+        if (ref.current) {
+          ref.current.focus();
+          ref.current.setSelectionRange(value.length, value.length);
+        }
+      });
+    } else {
+      clearTimeout(setCaretTimeout);
+    }
+  };
+
   const handleSave = () => {
-    setIsEditMode(false);
+    updateEditMode(false);
 
     const validValue = value.trim();
     setValue(validValue);
@@ -71,7 +89,7 @@ export function EditableTitle({
   };
 
   const resetEditMode = () => {
-    setIsEditMode(false);
+    updateEditMode(false);
     setValue(initialValue);
     onBlur?.();
   };
@@ -79,49 +97,24 @@ export function EditableTitle({
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     e.stopPropagation();
 
+    const direction = NavigationHelper.castKeyToDirection(e.key);
     const isCaretPositionInEnd = ref.current.selectionStart === value.length;
     const isCaretPositionInStart = ref.current.selectionStart === 0;
 
-    switch (e.key) {
-      case 'Escape':
+    if (direction === NavigationDirections.INVARIANT) {
+      resetEditMode();
+    } else if (direction === NavigationDirections.ENTER) {
+      handleSave();
+    } else if (
+      ([NavigationDirections.RIGHT, NavigationDirections.DOWN].includes(direction) && isCaretPositionInEnd) ||
+      ([NavigationDirections.UP, NavigationDirections.LEFT].includes(direction) && isCaretPositionInStart)
+    ) {
+      if (!navDirectionsToResetEditing || navDirectionsToResetEditing.includes(direction)) {
         resetEditMode();
-        break;
-      case 'Enter':
-        handleSave();
-        break;
-      case 'ArrowDown':
-        if (isCaretPositionInEnd) {
-          resetEditMode();
-          onNavigate?.(NavigationDirections.DOWN);
-        }
+      }
 
-        break;
-      case 'ArrowUp':
-        if (isCaretPositionInStart) {
-          resetEditMode();
-          onNavigate?.(NavigationDirections.UP);
-        }
-
-        break;
-      case 'ArrowLeft':
-        if (isCaretPositionInStart) {
-          resetEditMode();
-          onNavigate?.(NavigationDirections.LEFT);
-        }
-
-        break;
-      case 'ArrowRight':
-        if (isCaretPositionInEnd) {
-          resetEditMode();
-          onNavigate?.(NavigationDirections.RIGHT);
-        }
-
-        break;
-      default:
-        break;
+      onNavigate?.(direction);
     }
-
-    clearTimeout(setCaretTimeout);
   };
 
   const handleEditModeToggle = (e: SyntheticEvent) => {
@@ -132,14 +125,7 @@ export function EditableTitle({
     e.preventDefault();
     e.stopPropagation();
 
-    setIsEditMode(true);
-
-    setCaretTimeout = setTimeout(() => {
-      if (ref.current) {
-        ref.current.focus();
-        ref.current.setSelectionRange(value.length, value.length);
-      }
-    });
+    updateEditMode(true);
   }
 
   return isEditMode ? (

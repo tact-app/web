@@ -1,7 +1,10 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { EmojiStore } from "../../../stores/EmojiStore";
-import { EmojiSelectCallbacks, EmojiSelectProps } from "./types";
+import { EmojiStore } from '../../../stores/EmojiStore';
+import { EmojiSelectCallbacks, EmojiSelectProps } from './types';
+import { NavigationDirections } from '../TasksList/types';
+import { KeyboardEvent, SyntheticEvent } from 'react';
+import { NavigationHelper } from '../../../helpers/NavigationHelper';
 
 export class EmojiSelectStore {
   icon: string;
@@ -12,13 +15,15 @@ export class EmojiSelectStore {
 
   isEmojiPickerOpen = false;
 
+  triggerRef: HTMLButtonElement;
+
   keymap = {
     CLOSE: 'escape',
   };
 
   hotkeysHandlers = {
-    CLOSE: (e) => {
-      e.stopPropagation();
+    CLOSE: (e: KeyboardEvent) => {
+      this.preventPropagation(e);
       this.closeEmojiPicker();
     },
   };
@@ -38,6 +43,10 @@ export class EmojiSelectStore {
       color,
       modifier: Number(modifier ?? 0),
     };
+  }
+
+  preventPropagation(e: SyntheticEvent | KeyboardEvent) {
+    e.stopPropagation();
   }
 
   openEmojiPicker = () => {
@@ -66,11 +75,44 @@ export class EmojiSelectStore {
     this.callbacks?.onColorChange?.(color);
   };
 
+  handleKeyDown = (e: KeyboardEvent) => {
+    if (this.isEmojiPickerOpen) {
+      return;
+    }
+
+    const direction = NavigationHelper.castKeyToDirection(e.key);
+
+    if (!direction) {
+      return;
+    }
+
+    if (direction === NavigationDirections.INVARIANT) {
+      this.triggerRef.blur();
+    }
+
+    this.callbacks?.onNavigate?.(direction);
+  };
+
+  setRef = (element: HTMLButtonElement) => {
+    this.triggerRef = element;
+  };
+
   init = async () => {
     await EmojiStore.loadIfNotLoaded();
-  }
+  };
 
-  update = ({ icon, color, title, disabled, onColorChange, onIconChange, onToggleOpen }: EmojiSelectProps) => {
+  update = ({
+    icon,
+    color,
+    title,
+    disabled,
+    onColorChange,
+    onIconChange,
+    onToggleOpen,
+    onFocus,
+    onBlur,
+    onNavigate,
+  }: EmojiSelectProps) => {
     this.icon = icon;
     this.color = color;
     this.title = title;
@@ -80,6 +122,9 @@ export class EmojiSelectStore {
       onColorChange,
       onIconChange,
       onToggleOpen,
+      onFocus,
+      onBlur,
+      onNavigate,
     };
   };
 }

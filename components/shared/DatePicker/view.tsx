@@ -9,6 +9,8 @@ import { DATE_PICKER_DATE_FORMAT, useDatePickerStore } from "./store";
 import { DatePickerHeader } from "./components/DatePickerHeader";
 import { Tooltip } from '../Tooltip';
 import cn from 'classnames';
+import { useRefWithCallback } from '../../../helpers/useRefWithCallback';
+import { DatePickerInput } from './components/DatePickerInput';
 
 export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerViewProps>(
   function DatePickerView(
@@ -31,17 +33,7 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
 
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.currentValue && !store.isFocused);
 
-    const setRef = (element: ReactDatePicker) => {
-      store.setRef(element);
-
-      if (forwardedRef) {
-        if (typeof forwardedRef === 'function') {
-          forwardedRef(element)
-        } else {
-          forwardedRef.current = element
-        }
-      }
-    };
+    const ref = useRefWithCallback(forwardedRef, store.setRef)
 
     return (
       <Flex alignItems='center' {...flexProps} onClick={store.handleAreaEvent}>
@@ -68,6 +60,7 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
           </Tooltip>
         )}
         <ReactDatePicker
+          customInput={<DatePickerInput />}
           wrapperClassName={cn({ 'only-icon': showIconOnlyIfEmpty, 'disabled': showIconOnlyIfEmpty && mustShowIcon })}
           renderCustomHeader={DatePickerHeader}
           formatWeekDay={store.getWeekDayFormatByDate}
@@ -79,14 +72,15 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
           placeholderText={!store.currentValue && store.isFocused ? 'DD.MM.YYYY' : ''}
           onFocus={store.handleFocus}
           onBlur={store.handleBlur}
+          onCalendarClose={store.handleBlur}
           onClickOutside={store.handleClickOutside}
-          ref={setRef}
+          ref={ref}
           selectsStart={selectsStart}
           selectsEnd={selectsEnd}
           startDate={store.getDateFromString(startDate)}
           endDate={store.getDateFromString(endDate)}
           minDate={store.getDateFromString(minDate)}
-          onKeyDown={store.handleAreaEvent}
+          onKeyDown={store.handleKeyDown}
           className={store.isFocused ? 'datepicker-focused' : ''}
           renderDayContents={(dayOfMonth) => (
             <>

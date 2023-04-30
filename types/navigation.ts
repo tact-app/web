@@ -6,3 +6,10 @@ export enum NavigationDirections {
   RIGHT = 'right',
   INVARIANT = 'invariant',
 }
+
+export type NavigationArrows = (
+  NavigationDirections.UP |
+  NavigationDirections.DOWN |
+  NavigationDirections.LEFT |
+  NavigationDirections.RIGHT
+);

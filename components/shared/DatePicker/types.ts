@@ -4,8 +4,7 @@ export type DatePickerContainerProps = Omit<FlexProps, 'onChange' | 'onFocus' | 
 
 export type DatePickerCallbacks = {
   onChanged(value: string): void;
-  onFocus?(): void;
-  onBlur?(): void;
+  onFocusToggle?(isFocused: boolean): void;
 };
 
 export type DatePickerViewProps = DatePickerContainerProps & {
