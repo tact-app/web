@@ -12,6 +12,7 @@ export const DATE_PICKER_DATE_FORMAT = 'dd.MM.yyyy';
 
 export class DatePickerStore {
   value: string;
+  initialValue: string;
   callbacks: DatePickerCallbacks;
 
   datePickerRef: ReactDatePicker;
@@ -45,8 +46,17 @@ export class DatePickerStore {
     }
   };
 
+  handleInputClick = () => {
+    this.datePickerRef.setFocus();
+  };
+
   handleChange = (date: Date) => {
-    this.callbacks?.onChanged(date?.toISOString() ?? '');
+    this.value = date?.toISOString() ?? '';
+  };
+
+  handleSave = (value: string = this.value) => {
+    this.value = value;
+    this.callbacks?.onChanged(value);
     this.handleBlur();
   };
 
@@ -57,10 +67,17 @@ export class DatePickerStore {
   handleKeyDown = (e: KeyboardEvent) => {
     this.handleAreaEvent(e);
 
-    if (this.callbacks?.onNavigate && this.inputRef === document.activeElement) {
-      const direction = NavigationHelper.castKeyToDirection(e.key);
+    const direction = NavigationHelper.castKeyToDirection(e.key);
 
-      if (
+    if (direction === NavigationDirections.ENTER) {
+      this.handleSave();
+    } else if (direction === NavigationDirections.INVARIANT) {
+      this.handleSave(this.initialValue);
+      this.callbacks.onNavigate?.(direction);
+    }
+
+    if (
+      this.inputRef === document.activeElement && (
         (
           direction === NavigationDirections.LEFT &&
           this.inputRef.selectionStart === 0
@@ -69,10 +86,9 @@ export class DatePickerStore {
           direction === NavigationDirections.RIGHT &&
           this.inputRef.selectionStart === DATE_PICKER_DATE_FORMAT.length
         )
-      ) {
-        this.datePickerRef.setOpen(false);
-        this.callbacks.onNavigate(direction);
-      }
+      )
+    ) {
+      this.callbacks.onNavigate(direction);
     }
   };
 
@@ -107,6 +123,7 @@ export class DatePickerStore {
 
   update = ({ value, onFocusToggle, onChanged, onNavigate }: DatePickerProps) => {
     this.value = value;
+    this.initialValue = value;
     this.callbacks = { onChanged, onFocusToggle, onNavigate };
   };
 }

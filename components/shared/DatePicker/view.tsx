@@ -1,7 +1,7 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { observer } from "mobx-react-lite";
 import ReactDatePicker from 'react-datepicker';
-import { Flex, chakra } from "@chakra-ui/react";
+import { Flex, chakra, useOutsideClick } from "@chakra-ui/react";
 import { faCalendarCirclePlus } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DatePickerViewProps } from "./types";
@@ -15,17 +15,17 @@ import { DatePickerInput } from './components/DatePickerInput';
 export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerViewProps>(
   function DatePickerView(
       {
-          showIconOnlyIfEmpty,
-          iconFontSize = 20,
-          selectsStart,
-          selectsEnd,
-          startDate,
-          endDate,
-          minDate,
-          showTooltip,
-          tabIndex,
-          tooltipPlacement = 'top',
-          ...flexProps
+        showIconOnlyIfEmpty,
+        iconFontSize = 20,
+        selectsStart,
+        selectsEnd,
+        startDate,
+        endDate,
+        minDate,
+        showTooltip,
+        tabIndex,
+        tooltipPlacement = 'top',
+        ...flexProps
       },
       forwardedRef,
   ) {
@@ -33,10 +33,16 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
 
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.currentValue && !store.isFocused);
 
-    const ref = useRefWithCallback(forwardedRef, store.setRef)
+    const containerRef = useRef<HTMLDivElement>();
+    const ref = useRefWithCallback(forwardedRef, store.setRef);
+
+    useOutsideClick({
+      ref: containerRef,
+      handler: () => store.handleSave(),
+    });
 
     return (
-      <Flex alignItems='center' {...flexProps} onClick={store.handleAreaEvent}>
+      <Flex ref={containerRef} alignItems='center' {...flexProps} onClick={store.handleAreaEvent}>
         {mustShowIcon && (
           <Tooltip
             label='Add date'
@@ -74,6 +80,8 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
           onBlur={store.handleBlur}
           onCalendarClose={store.handleBlur}
           onClickOutside={store.handleClickOutside}
+          onSelect={() => store.handleSave()}
+          onInputClick={store.handleInputClick}
           ref={ref}
           selectsStart={selectsStart}
           selectsEnd={selectsEnd}

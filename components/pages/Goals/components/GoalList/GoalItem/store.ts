@@ -157,11 +157,17 @@ export class GoalItemStore {
     this.parent.setEditedGoalId(this.goal?.id);
   };
 
-  handleFieldFocusToggle = (isFocused: boolean) => {
-    if (isFocused) {
+  handleEmojiPickerToggle = (isOpen: boolean) => {
+    if (isOpen) {
       this.updateEditedGoal();
     } else {
       this.setGoalAsFocused();
+    }
+  };
+
+  handleDatePickerFocus = (isFocused: boolean) => {
+    if (isFocused) {
+      this.updateEditedGoal();
     }
   };
 
@@ -206,10 +212,15 @@ export class GoalItemStore {
 
   handleStartDateNavigate = (direction: NavigationDirections) => {
     switch (direction) {
+      case NavigationDirections.INVARIANT:
+        this.setGoalAsFocused();
+        break;
       case NavigationDirections.LEFT:
+        this.startDateRef?.setOpen(false);
         this.parent.getGoalTitleElement(this.goal.id).click();
         break;
       case NavigationDirections.RIGHT:
+        this.startDateRef?.setOpen(false);
         this.targetDateRef?.setFocus();
         break;
       default:
@@ -219,7 +230,11 @@ export class GoalItemStore {
 
   handleTargetDateNavigate = (direction: NavigationDirections) => {
     switch (direction) {
+      case NavigationDirections.INVARIANT:
+        this.setGoalAsFocused();
+        break;
       case NavigationDirections.LEFT:
+        this.targetDateRef?.setOpen(false);
         this.startDateRef?.setFocus();
         break;
       default:

@@ -66,7 +66,7 @@ export const GoalItemView = observer(function GoalItemView() {
           statusIconBottom={-0.5}
           statusIconRight={0.5}
           tabIndex={-1}
-          onToggleOpen={store.handleFieldFocusToggle}
+          onToggleOpen={store.handleEmojiPickerToggle}
           onNavigate={store.handleIconNavigate}
           onFocus={store.updateEditedGoal}
           onIconChange={store.handleChangeIcon}
@@ -116,7 +116,7 @@ export const GoalItemView = observer(function GoalItemView() {
               startDate={store.goal?.startDate}
               endDate={store.goal?.targetDate}
               onChanged={store.handleChangeStartDate}
-              onFocusToggle={store.handleFieldFocusToggle}
+              onFocusToggle={store.handleDatePickerFocus}
               onNavigate={store.handleStartDateNavigate}
             />
           </chakra.div>
@@ -139,7 +139,7 @@ export const GoalItemView = observer(function GoalItemView() {
               endDate={store.goal?.targetDate}
               minDate={store.goal?.startDate}
               onChanged={store.handleChangeTargetDate}
-              onFocusToggle={store.handleFieldFocusToggle}
+              onFocusToggle={store.handleDatePickerFocus}
               onNavigate={store.handleTargetDateNavigate}
             />
           </chakra.div>
