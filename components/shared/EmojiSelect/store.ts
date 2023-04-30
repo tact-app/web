@@ -75,6 +75,15 @@ export class EmojiSelectStore {
     this.callbacks?.onColorChange?.(color);
   };
 
+  handleContainerKeyDown = (e: KeyboardEvent) => {
+    this.preventPropagation(e);
+
+    if (e.key === 'Escape' && this.isEmojiPickerOpen) {
+      this.closeEmojiPicker();
+      this.triggerRef.focus();
+    }
+  };
+
   handleKeyDown = (e: KeyboardEvent) => {
     if (this.isEmojiPickerOpen) {
       return;

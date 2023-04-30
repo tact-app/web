@@ -49,11 +49,12 @@ export const EmojiSelectView = observer(
           })`;
 
           return (
-            <div onFocus={store.preventPropagation}>
+            <div onFocus={store.preventPropagation} onKeyDown={store.handleContainerKeyDown}>
               <Popover
                   isOpen={isOpen}
                   onOpen={onOpen}
                   onClose={onClose}
+                  closeOnEsc={false}
                   returnFocusOnClose={false}
                   isLazy
                   modifiers={[
