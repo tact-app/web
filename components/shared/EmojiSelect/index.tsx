@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { EmojiSelectComponent } from './view';
+import { EmojiSelectView } from './view';
 import { EmojiSelectStoreProvider } from './store';
 import { EmojiSelectProps } from './types';
 import React, { forwardRef } from 'react';
@@ -11,7 +11,7 @@ export const EmojiSelect = observer(forwardRef<HTMLButtonElement, EmojiSelectPro
     ) {
       return (
         <EmojiSelectStoreProvider {...props}>
-          <EmojiSelectComponent
+          <EmojiSelectView
             size={props.size}
             iconFontSize={props.iconFontSize}
             borderRadius={props.borderRadius}

@@ -1,10 +1,12 @@
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
-import { getProvider } from "../../../helpers/StoreProvider";
-import { DatePickerCallbacks, DatePickerProps } from "./types";
-import ReactDatePicker from "react-datepicker";
-import moment from "moment";
-import { SyntheticEvent, KeyboardEvent } from "react";
+import { getProvider } from '../../../helpers/StoreProvider';
+import { DatePickerCallbacks, DatePickerProps } from './types';
+import ReactDatePicker from 'react-datepicker';
+import moment from 'moment';
+import { KeyboardEvent, SyntheticEvent } from 'react';
+import { NavigationHelper } from '../../../helpers/NavigationHelper';
+import { NavigationDirections } from '../TasksList/types';
 
 export const DATE_PICKER_DATE_FORMAT = 'dd.MM.yyyy';
 
@@ -55,8 +57,22 @@ export class DatePickerStore {
   handleKeyDown = (e: KeyboardEvent) => {
     this.handleAreaEvent(e);
 
-    if (this.inputRef === document.activeElement) {
-      console.log(e.key, this.inputRef.selectionStart)
+    if (this.callbacks?.onNavigate && this.inputRef === document.activeElement) {
+      const direction = NavigationHelper.castKeyToDirection(e.key);
+
+      if (
+        (
+          direction === NavigationDirections.LEFT &&
+          this.inputRef.selectionStart === 0
+        ) ||
+        (
+          direction === NavigationDirections.RIGHT &&
+          this.inputRef.selectionStart === DATE_PICKER_DATE_FORMAT.length
+        )
+      ) {
+        this.datePickerRef.setOpen(false);
+        this.callbacks.onNavigate(direction);
+      }
     }
   };
 
@@ -89,9 +105,9 @@ export class DatePickerStore {
     this.inputRef = ref;
   };
 
-  update = ({ value, onFocusToggle, onChanged }: DatePickerProps) => {
+  update = ({ value, onFocusToggle, onChanged, onNavigate }: DatePickerProps) => {
     this.value = value;
-    this.callbacks = { onChanged, onFocusToggle };
+    this.callbacks = { onChanged, onFocusToggle, onNavigate };
   };
 }
 

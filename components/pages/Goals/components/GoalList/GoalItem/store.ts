@@ -204,6 +204,29 @@ export class GoalItemStore {
     }
   };
 
+  handleStartDateNavigate = (direction: NavigationDirections) => {
+    switch (direction) {
+      case NavigationDirections.LEFT:
+        this.parent.getGoalTitleElement(this.goal.id).click();
+        break;
+      case NavigationDirections.RIGHT:
+        this.targetDateRef?.setFocus();
+        break;
+      default:
+        break;
+    }
+  };
+
+  handleTargetDateNavigate = (direction: NavigationDirections) => {
+    switch (direction) {
+      case NavigationDirections.LEFT:
+        this.startDateRef?.setFocus();
+        break;
+      default:
+        break;
+    }
+  };
+
   update = ({ goal }: GoalItemProps) => {
     this.goal = goal;
   };

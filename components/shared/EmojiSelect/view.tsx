@@ -19,9 +19,9 @@ import { EMOJI_SELECT_COLORS } from './constants';
 import React, { forwardRef } from "react";
 import { useRefWithCallback } from '../../../helpers/useRefWithCallback';
 
-export const EmojiSelectComponent = observer(
+export const EmojiSelectView = observer(
     forwardRef<HTMLButtonElement, EmojiSelectViewProps>(
-        function EmojiSelectComponent(
+        function EmojiSelectView(
           {
             size = 8,
             iconFontSize = 'xl',

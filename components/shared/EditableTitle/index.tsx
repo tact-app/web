@@ -106,14 +106,16 @@ export function EditableTitle({
     } else if (direction === NavigationDirections.ENTER) {
       handleSave();
     } else if (
-      ([NavigationDirections.RIGHT, NavigationDirections.DOWN].includes(direction) && isCaretPositionInEnd) ||
-      ([NavigationDirections.UP, NavigationDirections.LEFT].includes(direction) && isCaretPositionInStart)
+      (onNavigate || navDirectionsToResetEditing?.length) && (
+        ([NavigationDirections.RIGHT, NavigationDirections.DOWN].includes(direction) && isCaretPositionInEnd) ||
+        ([NavigationDirections.UP, NavigationDirections.LEFT].includes(direction) && isCaretPositionInStart)
+      )
     ) {
       if (!navDirectionsToResetEditing || navDirectionsToResetEditing.includes(direction)) {
         resetEditMode();
       }
 
-      onNavigate?.(direction);
+      onNavigate(direction);
     }
   };
 

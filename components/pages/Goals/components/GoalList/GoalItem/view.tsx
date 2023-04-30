@@ -117,6 +117,7 @@ export const GoalItemView = observer(function GoalItemView() {
               endDate={store.goal?.targetDate}
               onChanged={store.handleChangeStartDate}
               onFocusToggle={store.handleFieldFocusToggle}
+              onNavigate={store.handleStartDateNavigate}
             />
           </chakra.div>
         </Flex>
@@ -139,6 +140,7 @@ export const GoalItemView = observer(function GoalItemView() {
               minDate={store.goal?.startDate}
               onChanged={store.handleChangeTargetDate}
               onFocusToggle={store.handleFieldFocusToggle}
+              onNavigate={store.handleTargetDateNavigate}
             />
           </chakra.div>
         </Flex>

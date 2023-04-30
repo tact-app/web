@@ -1,9 +1,11 @@
 import { FlexProps, TooltipProps } from "@chakra-ui/react";
+import { NavigationDirections } from '../../../types/navigation';
 
 export type DatePickerContainerProps = Omit<FlexProps, 'onChange' | 'onFocus' | 'onBlur'>;
 
 export type DatePickerCallbacks = {
   onChanged(value: string): void;
+  onNavigate?(direction: NavigationDirections): void;
   onFocusToggle?(isFocused: boolean): void;
 };
 
