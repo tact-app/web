@@ -28,7 +28,7 @@
     "@chakra-ui/theme-tools": "^2.0.15",
     "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
+    "@emotion/styled": "^11.10.8",
     "@faker-js/faker": "^7.6.0",
     "@fortawesome/fontawesome-pro": "^6.4.0",
     "@fortawesome/pro-light-svg-icons": "^6.4.0",
