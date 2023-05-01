@@ -30,54 +30,49 @@ export const ActionMenuView = observer(
     });
 
     return (
-      <div
-        onFocus={store.preventEventsPropagation}
-        onClick={store.preventEventsPropagation}
-      >
-        <Popover
-          isLazy
-          isOpen={isOpen}
-          strategy='fixed'
-          eventListeners={{
-            resize: true
-          }}
-          modifiers={[
-            {
-              name: 'preventOverflow',
-              options: {
-                tether: false,
-                altAxis: true,
-                padding: 8,
-                boundary: 'clippingParents',
-                rootBoundary: 'viewport'
-              }
+      <Popover
+        isLazy
+        isOpen={isOpen}
+        strategy='fixed'
+        eventListeners={{
+          resize: true
+        }}
+        modifiers={[
+          {
+            name: 'preventOverflow',
+            options: {
+              tether: false,
+              altAxis: true,
+              padding: 8,
+              boundary: 'clippingParents',
+              rootBoundary: 'viewport'
             }
-          ]}
-          placement='bottom-start'
-          onOpen={onOpen}
-          onClose={onClose}
-        >
-          <PopoverTrigger>
-            {customTrigger ? customTrigger(isOpen) : (
-              <Button
-                size='xs'
-                h='100%'
-                minW={5}
-                w={5}
-                p={0}
-                variant='unstyled'
-                borderRadius='none'
-                visibility={hidden ? 'hidden' : 'visible'}
-                onClick={store.preventEventsPropagation}
-                {...triggerButtonProps?.(isOpen)}
-              >
-                <FontAwesomeIcon icon={triggerIcon} fontSize={triggerIconFontSize} fixedWidth />
-              </Button>
-            )}
-          </PopoverTrigger>
-          <ActionMenuContent isOpen={isOpen} menuMinWidth={menuMinWidth} />
-        </Popover>
-      </div>
+          }
+        ]}
+        placement='bottom-start'
+        onOpen={onOpen}
+        onClose={onClose}
+      >
+        <PopoverTrigger>
+          {customTrigger ? customTrigger(isOpen) : (
+            <Button
+              size='xs'
+              h='100%'
+              minW={5}
+              w={5}
+              p={0}
+              variant='unstyled'
+              borderRadius='none'
+              visibility={hidden ? 'hidden' : 'visible'}
+              onClick={store.preventEventsPropagation}
+              {...triggerButtonProps?.(isOpen)}
+            >
+              <FontAwesomeIcon icon={triggerIcon} fontSize={triggerIconFontSize} fixedWidth />
+            </Button>
+          )}
+        </PopoverTrigger>
+        <ActionMenuContent isOpen={isOpen} menuMinWidth={menuMinWidth} />
+      </Popover>
     );
   }
 );
