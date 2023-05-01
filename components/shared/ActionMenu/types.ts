@@ -19,7 +19,6 @@ export type ActionMenuViewProps = {
   hidden?: boolean;
   triggerIconFontSize?: number;
   triggerIcon?: IconDefinition;
-  isOpenByContextMenu?: boolean;
   menuMinWidth?: number;
   triggerButtonProps?(isOpen: boolean): ButtonProps;
   customTrigger?(isOpen: boolean): ReactNode;

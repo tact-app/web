@@ -8,13 +8,11 @@ import { PopoverWrapper } from '../../TasksList/components/TaskItemMenu/PopoverW
 
 type Props = {
   isOpen: boolean;
-  stopAnimation(): void;
   menuMinWidth?: number;
 };
 
 export const ActionMenuContent = observer(function ActionMenuContent({
   isOpen,
-  stopAnimation,
   menuMinWidth = 72
 }: Props) {
   const store = useActionMenuStore();
@@ -45,7 +43,7 @@ export const ActionMenuContent = observer(function ActionMenuContent({
           positionByMouse={store.isOpenByContextMenu}
           left={store.xPosContextMenu}
       >
-        <Fade in={isOpen} unmountOnExit onAnimationComplete={stopAnimation}>
+        <Fade in={isOpen}>
           <PopoverContent
               tabIndex={-1}
               p={0}

@@ -37,6 +37,7 @@ export const SpaceItem = observer(function SpaceItem({ spaceId, goals }: Props) 
           size={8}
           iconFontSize='lg'
           borderRadius={4}
+          tabIndex={0}
           onColorChange={handleSpaceColorChange}
           onIconChange={handleSpaceIconChange}
           canRemoveEmoji
@@ -44,7 +45,7 @@ export const SpaceItem = observer(function SpaceItem({ spaceId, goals }: Props) 
         <chakra.div ml='2' w='calc(100% - var(--chakra-space-10))'>
           <EditableTitle
             widthByTitle
-            sharedProps={{ color: 'gray.700', fontWeight: 400 }}
+            sharedProps={{ color: 'gray.700', fontWeight: 400, tabIndex: 0 }}
             value={space.name}
             onSave={handleSpaceNameChange}
           />

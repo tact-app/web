@@ -24,46 +24,7 @@ export type GoalItemProps = {
 export class GoalItemStore {
   goal: GoalDataExtended = undefined;
 
-  actions = [
-    {
-      icon: faSquareArrowUpRight,
-      title: 'Open',
-      command: '↵/⌥O',
-      onClick: () => this.parent.callbacks?.onOpenGoal(this.goal.id),
-    },
-    {
-      icon: faCircleCheck,
-      title: this.isDone ? 'Unmark as done' : 'Done',
-      command: '⌥D',
-      onClick: () => this.parent.doneGoal(this.goal),
-    },
-    {
-      icon: faCircleMinus,
-      title: this.isWontDo ? "Unmark as won't do" : "Won't do",
-      command: '⌥W',
-      onClick: () => this.parent.callbacks?.onWontDo(this.goal),
-    },
-    {
-      icon: faClone,
-      title: 'Clone',
-      command: '⌥C',
-      hidden: !this.parent.hasClone,
-      onClick: () => this.parent.cloneGoal(this.goal),
-    },
-    {
-      icon: faBoxArchive,
-      title: this.goal?.isArchived ? 'Unarchive' : 'Archive',
-      command: '⌥A',
-      onClick: () => this.parent.archiveGoal(this.goal),
-    },
-    {
-      icon: faTrashCan,
-      title: 'Delete',
-      command: '⌫ / ⌥⌫',
-      onClick: () => this.parent.handleDeleteGoal(this.goal?.id),
-    },
-  ];
-
+  isMenuOpen: boolean = false;
   ref: HTMLDivElement;
   startDateRef: ReactDatePicker;
   targetDateRef: ReactDatePicker;
@@ -74,6 +35,48 @@ export class GoalItemStore {
     public parent: GoalListStore,
   ) {
     makeAutoObservable(this);
+  }
+
+  get actions() {
+    return [
+      {
+        icon: faSquareArrowUpRight,
+        title: 'Open',
+        command: '↵/⌥O',
+        onClick: () => this.parent.callbacks?.onOpenGoal(this.goal.id),
+      },
+      {
+        icon: faCircleCheck,
+        title: this.isDone ? 'Unmark as done' : 'Done',
+        command: '⌥D',
+        onClick: () => this.parent.doneGoal(this.goal),
+      },
+      {
+        icon: faCircleMinus,
+        title: this.isWontDo ? "Unmark as won't do" : "Won't do",
+        command: '⌥W',
+        onClick: () => this.parent.callbacks?.onWontDo(this.goal),
+      },
+      {
+        icon: faClone,
+        title: 'Clone',
+        command: '⌥C',
+        hidden: !this.parent.hasClone,
+        onClick: () => this.parent.cloneGoal(this.goal),
+      },
+      {
+        icon: faBoxArchive,
+        title: this.goal?.isArchived ? 'Unarchive' : 'Archive',
+        command: '⌥A',
+        onClick: () => this.parent.archiveGoal(this.goal),
+      },
+      {
+        icon: faTrashCan,
+        title: 'Delete',
+        command: '⌫ / ⌥⌫',
+        onClick: () => this.parent.handleDeleteGoal(this.goal?.id),
+      },
+    ];
   }
 
   get isDone() {
@@ -89,7 +92,7 @@ export class GoalItemStore {
   }
 
   get boxShadow() {
-    if (this.parent.isFocusedGoalEditing && this.isFocused) {
+    if (this.isFocused) {
       return getBoxShadowAsBorder('blue.400', 2);
     }
 
@@ -172,9 +175,13 @@ export class GoalItemStore {
   };
 
   handleFocus = () => {
-    if (!this.parent.isFocusedGoalEditing && this.parent.focusedGoalId === this.goal?.id) {
+    if (!this.parent.isFocusedGoalEditing && !this.isMenuOpen) {
       this.setGoalAsFocused();
     }
+  };
+
+  handleBlur = () => {
+    this.parent.setFocusedGoalId(null);
   };
 
   handleIconNavigate = (direction: NavigationDirections) => {
@@ -239,6 +246,14 @@ export class GoalItemStore {
         break;
       default:
         break;
+    }
+  };
+
+  handleMenuToggle = (isOpen: boolean) => {
+    this.isMenuOpen = isOpen;
+
+    if (isOpen || document.activeElement !== document.body) {
+      this.setGoalAsFocused();
     }
   };
 
