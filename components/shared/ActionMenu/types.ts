@@ -1,7 +1,8 @@
 import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
 import { NavigationDirections } from "../../../types/navigation";
 import { ButtonProps } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
+import { ActionMenuStore } from './store';
 
 export type ActionMenuItem = {
   onClick(): void;
@@ -34,4 +35,5 @@ export type ActionMenuProps =  ActionMenuViewProps & ActionMenuCallbacks & {
   xPosContextMenu?: number;
   isOpenByContextMenu?: boolean;
   isMenuOpen?: boolean;
+  instance?: ActionMenuStore;
 };

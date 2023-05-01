@@ -23,7 +23,7 @@ export const ActionMenuView = observer(
   }: ActionMenuViewProps) {
     const store = useActionMenuStore();
 
-    const { isOpen, onClose: close, onOpen: open } = useDisclosure({
+    const { isOpen, onClose, onOpen } = useDisclosure({
       isOpen: store.isMenuOpen,
       onOpen: store.openMenu,
       onClose: store.closeMenu,
@@ -54,8 +54,8 @@ export const ActionMenuView = observer(
             }
           ]}
           placement='bottom-start'
-          onOpen={open}
-          onClose={close}
+          onOpen={onOpen}
+          onClose={onClose}
         >
           <PopoverTrigger>
             {customTrigger ? customTrigger(isOpen) : (
@@ -69,7 +69,7 @@ export const ActionMenuView = observer(
                 borderRadius='none'
                 visibility={hidden ? 'hidden' : 'visible'}
                 onClick={store.preventEventsPropagation}
-                {...triggerButtonProps(isOpen)}
+                {...triggerButtonProps?.(isOpen)}
               >
                 <FontAwesomeIcon icon={triggerIcon} fontSize={triggerIconFontSize} fixedWidth />
               </Button>

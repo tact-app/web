@@ -39,11 +39,10 @@ export const ActionMenuContent = observer(function ActionMenuContent({
   return (
     <Portal>
       <PopoverWrapper
-          isOpen={store.isMenuOpen}
           positionByMouse={store.isOpenByContextMenu}
           left={store.xPosContextMenu}
       >
-        <Fade in={isOpen}>
+        <Fade in={isOpen} onAnimationComplete={store.stopAnimation}>
           <PopoverContent
               tabIndex={-1}
               p={0}

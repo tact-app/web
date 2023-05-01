@@ -10,6 +10,7 @@ export class ActionMenuStore {
   callbacks: ActionMenuCallbacks;
   xPosContextMenu?: number;
   isOpenByContextMenu?: boolean;
+  isAnimationStopped?: boolean;
 
   isMenuOpen = false;
 
@@ -39,15 +40,31 @@ export class ActionMenuStore {
     this.menuNavigation.disable();
   };
 
+  stopAnimation = () => {
+    if (!this.isMenuOpen && this.isOpenByContextMenu) {
+      this.xPosContextMenu = undefined;
+      this.isOpenByContextMenu = false;
+    }
+  };
+
   update({ items, xPosContextMenu, onNavigate, onToggleMenu, isMenuOpen, isOpenByContextMenu }: ActionMenuProps) {
     this.items = items;
-    this.xPosContextMenu = xPosContextMenu;
-    this.isOpenByContextMenu = isOpenByContextMenu;
     this.isMenuOpen = Boolean(isMenuOpen ?? this.isMenuOpen);
     this.callbacks = {
       onNavigate,
       onToggleMenu,
     };
+
+    if (isMenuOpen) {
+      this.menuNavigation.enable();
+    } else {
+      this.menuNavigation.disable();
+    }
+
+    if (isMenuOpen && !this.isAnimationStopped) {
+      this.xPosContextMenu = xPosContextMenu;
+      this.isOpenByContextMenu = isOpenByContextMenu;
+    }
   };
 }
 

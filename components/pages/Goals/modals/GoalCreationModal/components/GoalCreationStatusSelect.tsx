@@ -33,6 +33,7 @@ export const GoalCreationStatusSelect = observer(
 
     return (
       <ActionMenu
+        instance={store.selectStatus}
         items={actions}
         menuMinWidth={44}
         customTrigger={(isOpen) => (
