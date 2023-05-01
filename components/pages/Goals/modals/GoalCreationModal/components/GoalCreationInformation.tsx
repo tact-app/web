@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite';
-import { chakra, Box, Table, Tbody, Tr, Td, Text } from '@chakra-ui/react';
+import { Box, chakra, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
-import React, { ReactElement } from "react";
-import { TasksListWithCreator } from "../../../../../shared/TasksListWithCreator";
-import { DraggableListContext } from "../../../../../shared/DraggableList/view";
-import { SpaceSelect } from "../../../../../shared/SpaceSelect";
-import { DatePicker } from "../../../../../shared/DatePicker";
-import { Lists } from "../../../../../shared/TasksList/constants";
+import React, { ReactElement } from 'react';
+import { TasksListWithCreator } from '../../../../../shared/TasksListWithCreator';
+import { DraggableListContext } from '../../../../../shared/DraggableList/view';
+import { SpaceSelect } from '../../../../../shared/SpaceSelect';
+import { DatePicker } from '../../../../../shared/DatePicker';
+import { Lists } from '../../../../../shared/TasksList/constants';
 
 export const GoalCreationInformation = observer(
   function GoalCreationInformation() {
@@ -52,7 +52,7 @@ export const GoalCreationInformation = observer(
                     startDate={store.goal.startDate}
                     endDate={store.goal.targetDate}
                     onChanged={store.handleStartDateChange}
-                    onBlur={store.handleGoalParamBlur}
+                    onFocusToggle={store.handleGoalParamBlur}
                     pl='0.3rem'
                   />
                 )}
@@ -67,7 +67,7 @@ export const GoalCreationInformation = observer(
                     minDate={store.goal.startDate}
                     value={store.goal.targetDate}
                     onChanged={store.handleTargetDateChange}
-                    onBlur={store.handleGoalParamBlur}
+                    onFocusToggle={store.handleGoalParamBlur}
                     pl='0.3rem'
                   />
                 )}

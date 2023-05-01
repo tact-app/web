@@ -56,7 +56,7 @@ export const GoalItemView = observer(function GoalItemView() {
       }}
       onClick={store.handleClick}
       onFocus={store.handleFocus}
-      onBlur={store.handleBlur}
+      onContextMenu={store.handleContextMenu}
     >
       <Flex>
         <GoalEmojiSelect
@@ -151,6 +151,8 @@ export const GoalItemView = observer(function GoalItemView() {
         items={store.actions}
         isMenuOpen={store.isMenuOpen}
         onToggleMenu={store.handleMenuToggle}
+        xPosContextMenu={store.xPosContextMenu}
+        isOpenByContextMenu={store.isMenuOpenByContextMenu}
         menuMinWidth={250}
         triggerButtonProps={(isOpen) => ({
           tabIndex: -1,

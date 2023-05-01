@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { chakra, Box, Center, CircularProgress, Input, Flex, FormControl } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
 import { Editor } from '../../../../../shared/Editor';
-import React from "react";
+import React from 'react';
 import { FormError } from "../../../../../shared/FormError";
 import { GoalEmojiSelect } from "../../../components/GoalEmojiSelect";
 
@@ -30,6 +30,8 @@ export const GoalCreationDescription = observer(
           pr={10}
         >
           <GoalEmojiSelect
+            ref={store.setEmojiSelectRef}
+            onNavigate={store.handleEmojiSelectNavigate}
             goal={store.goal}
             onColorChange={store.handleColorSelect}
             onIconChange={store.handleEmojiSelect}
@@ -37,6 +39,7 @@ export const GoalCreationDescription = observer(
           <chakra.div flex={1} ml={4}>
             <FormControl isInvalid={Boolean(store.error)}>
               <Input
+                ref={store.setTitleInputRef}
                 size='lg'
                 value={store.goal.title}
                 autoFocus
@@ -55,7 +58,7 @@ export const GoalCreationDescription = observer(
                   boxShadow: 'none',
                   borderBottomWidth: 2,
                 }}
-                onKeyDown={(e) => e.stopPropagation()}
+                onKeyDown={store.handleTitleKeyDown}
                 _invalid={{
                   boxShadow: 'none',
                 }}
@@ -72,6 +75,8 @@ export const GoalCreationDescription = observer(
           ) : (
             <Box position='absolute' top={0} left={0} right={0} bottom={0}>
               <Editor
+                editorRef={store.setEditorRef}
+                onLeave={store.handleEditorLeave}
                 content={
                   store.description ? store.description.content : undefined
                 }

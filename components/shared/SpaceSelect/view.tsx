@@ -171,6 +171,7 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
 
       <Tooltip label='Go to space' hotkey='Press G and then S'>
         <Button
+          tabIndex={-1}
           colorScheme='gray'
           variant='outline'
           ml={2}

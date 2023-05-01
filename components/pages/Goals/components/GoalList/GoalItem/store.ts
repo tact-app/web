@@ -25,6 +25,8 @@ export class GoalItemStore {
   goal: GoalDataExtended = undefined;
 
   isMenuOpen: boolean = false;
+  isMenuOpenByContextMenu: boolean = false;
+  xPosContextMenu: number;
   ref: HTMLDivElement;
   startDateRef: ReactDatePicker;
   targetDateRef: ReactDatePicker;
@@ -180,10 +182,6 @@ export class GoalItemStore {
     }
   };
 
-  handleBlur = () => {
-    this.parent.setFocusedGoalId(null);
-  };
-
   handleIconNavigate = (direction: NavigationDirections) => {
     switch (direction) {
       case NavigationDirections.INVARIANT:
@@ -254,6 +252,22 @@ export class GoalItemStore {
 
     if (isOpen || document.activeElement !== document.body) {
       this.setGoalAsFocused();
+    }
+
+    if (!isOpen) {
+      this.isMenuOpenByContextMenu = false;
+      this.xPosContextMenu = undefined;
+    }
+  };
+
+  handleContextMenu = (e) => {
+    e.preventDefault();
+
+    if (!this.isMenuOpen) {
+      this.isMenuOpen = true;
+      this.setGoalAsFocused();
+      this.isMenuOpenByContextMenu = true;
+      this.xPosContextMenu = e.pageX;
     }
   };
 

@@ -17,7 +17,6 @@ export class GoalListStore {
   isFocusedGoalEditing: boolean = false;
 
   keyMap = {
-    // ON_TAB: ['tab'],
     ON_NAVIGATE: ['up', 'down', 'left', 'right'],
     START_GOAL_EDITING: ['space'],
     ON_OPEN: ['enter', 'alt+o'],
@@ -29,9 +28,6 @@ export class GoalListStore {
   };
 
   hotkeyHandlers = {
-    // ON_TAB: () => {
-    //   this.focusedGoalId = null;
-    // },
     ON_NAVIGATE: (event: KeyboardEvent) => {
       if (!this.focusedGoalId) {
         this.setFirstGoalAsFocused();

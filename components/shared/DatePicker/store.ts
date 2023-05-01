@@ -67,27 +67,32 @@ export class DatePickerStore {
   handleKeyDown = (e: KeyboardEvent) => {
     this.handleAreaEvent(e);
 
+    if (e.key === 'Tab') {
+      this.datePickerRef?.setOpen(false);
+    }
+
     const direction = NavigationHelper.castKeyToDirection(e.key);
 
     if (direction === NavigationDirections.ENTER) {
       this.handleSave();
-    } else if (direction === NavigationDirections.INVARIANT) {
-      this.handleSave(this.initialValue);
-      this.callbacks.onNavigate?.(direction);
-    }
-
-    if (
-      this.inputRef === document.activeElement && (
-        (
-          direction === NavigationDirections.LEFT &&
-          this.inputRef.selectionStart === 0
-        ) ||
-        (
-          direction === NavigationDirections.RIGHT &&
-          this.inputRef.selectionStart === DATE_PICKER_DATE_FORMAT.length
+    } else if (
+      this.callbacks.onNavigate && (
+        e.key === 'Tab' ||
+        direction === NavigationDirections.INVARIANT || (
+          this.inputRef === document.activeElement && (
+            (
+              direction === NavigationDirections.LEFT &&
+              this.inputRef.selectionStart === 0
+            ) ||
+            (
+              direction === NavigationDirections.RIGHT &&
+              this.inputRef.selectionStart === DATE_PICKER_DATE_FORMAT.length
+            )
+          )
         )
       )
     ) {
+      this.handleSave(this.initialValue);
       this.callbacks.onNavigate(direction);
     }
   };

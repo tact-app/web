@@ -29,7 +29,7 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
       size='sm'
       pl={1.5}
       pr={1.5}
-      onClick={store.handleBack}
+      onClick={store.handleSimpleClose}
     >
       <BackArrowIcon />
       <Text fontSize='lg' lineHeight={3} color='gray.500' fontWeight='normal' ml={2}>
@@ -50,7 +50,7 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
 
   const renderContentForUpdate = () => [
     <Flex key='left-content' alignItems='center'>
-      <CloseButton onClick={store.handleBack} />
+      <CloseButton onClick={store.handleSimpleClose} />
       <chakra.div w={0.5} h={4} bg='gray.200' borderRadius={4} mr={1} ml={1} />
       <NextPrevItemController
         hasPreviousItem={store.currentGoalIndex > 0}
@@ -81,7 +81,7 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
         tooltipLabel={store.goal.isArchived ? 'Unarchive' : 'Archive'}
         icon={faBoxArchive}
         withMargin
-        onClick={() => store.handleUpdate({ isArchived: !store.goal.isArchived })}
+        onClick={store.handleArchiveGoal}
       />
     </Flex>
   ];
