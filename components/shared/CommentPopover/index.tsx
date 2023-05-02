@@ -10,7 +10,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { ChangeEvent, useEffect, useRef, useState, KeyboardEvent } from 'react';
+import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Tooltip } from '../Tooltip';
 import { faComment } from '@fortawesome/pro-light-svg-icons';
@@ -38,6 +38,7 @@ export function CommentPopover({ isOpen: open = false, onToggleOpen, triggerProp
   const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
   };
+
   const handleToggle = (open: boolean) => {
     setText('');
     setIsPopoverOpen(open);
@@ -54,15 +55,21 @@ export function CommentPopover({ isOpen: open = false, onToggleOpen, triggerProp
     if ([NavigationDirections.DOWN, NavigationDirections.TAB].includes(direction)) {
       event.preventDefault();
       buttonRef.current?.focus();
+    } else if (direction === NavigationDirections.BACK) {
+      handleToggle(false);
     }
   };
 
   const handleButtonKeyDown = (event: KeyboardEvent) => {
+    event.stopPropagation();
+
     const direction = NavigationHelper.castKeyToDirection(event.key, event.shiftKey);
 
     if ([NavigationDirections.UP, NavigationDirections.BACK].includes(direction)) {
       event.preventDefault();
       ref.current?.focus();
+    } else if (direction === NavigationDirections.INVARIANT) {
+      handleToggle(false);
     }
   };
 
@@ -107,6 +114,7 @@ export function CommentPopover({ isOpen: open = false, onToggleOpen, triggerProp
               </Text>
               <Textarea
                 ref={ref}
+                onBlur={(e) => e.stopPropagation()}
                 onChange={handleTextChange}
                 onNavigate={handleTextareaNavigate}
                 value={text}
@@ -129,5 +137,5 @@ export function CommentPopover({ isOpen: open = false, onToggleOpen, triggerProp
         </Fade>
       </Portal>
     </Popover>
-  )
+  );
 }

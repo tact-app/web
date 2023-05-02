@@ -225,8 +225,6 @@ export class GoalItemStore {
       case NavigationDirections.RIGHT:
       case NavigationDirections.TAB:
         event.preventDefault();
-        event.preventDefault();
-        console.log('HERE')
         return this.startDateRef?.setFocus();
       default:
         return;

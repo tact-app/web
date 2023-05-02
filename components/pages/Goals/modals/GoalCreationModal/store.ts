@@ -62,7 +62,6 @@ export class GoalCreationModalStore {
     CHANGE_STATUS: () => {
       if (this.isUpdating && !this.selectStatus.isMenuOpen) {
         this.selectStatus.openMenu();
-        console.log(this.selectStatus.isMenuOpen)
       }
     },
     START_EDITING: () => {
