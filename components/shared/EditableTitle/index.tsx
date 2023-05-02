@@ -16,7 +16,7 @@ type Props = {
   onBlur?(): void;
   onChange?(value: string): void;
   onSave?(value: string): void;
-  onNavigate?(direction: NavigationDirections): void;
+  onNavigate?(direction: NavigationDirections, event: KeyboardEvent): void;
 };
 
 export const EDITABLE_TITLE_ID_SLUG = 'editable-title';
@@ -115,7 +115,7 @@ export function EditableTitle({
         resetEditMode();
       }
 
-      onNavigate(direction);
+      onNavigate(direction, e);
     }
   };
 

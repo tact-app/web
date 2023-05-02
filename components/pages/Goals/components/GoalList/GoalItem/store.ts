@@ -187,24 +187,20 @@ export class GoalItemStore {
   };
 
   handleIconNavigate = (direction: NavigationDirections) => {
-    console.log('icon', direction)
     switch (direction) {
       case NavigationDirections.INVARIANT:
-        this.setGoalAsFocused();
-        break;
+        return this.setGoalAsFocused();
       case NavigationDirections.RIGHT:
-        this.parent.getGoalTitleElement(this.goal.id).click();
-        break;
+      case NavigationDirections.TAB:
+        return this.parent.getGoalTitleElement(this.goal.id).click();
       case NavigationDirections.DOWN:
-        this.startDateRef?.setFocus();
-        break;
+        return this.startDateRef?.setFocus();
       default:
-        break;
+        return;
     }
   };
 
   handleTitleNavigate = (direction: NavigationDirections) => {
-    console.log('title', direction)
     switch (direction) {
       case NavigationDirections.INVARIANT:
         this.setGoalAsFocused();
@@ -214,6 +210,7 @@ export class GoalItemStore {
         break;
       case NavigationDirections.DOWN:
       case NavigationDirections.RIGHT:
+      case NavigationDirections.TAB:
         this.startDateRef?.setFocus();
         break;
       default:
@@ -222,7 +219,6 @@ export class GoalItemStore {
   };
 
   handleStartDateNavigate = (direction: NavigationDirections) => {
-    console.log('start', direction)
     switch (direction) {
       case NavigationDirections.INVARIANT:
         this.setGoalAsFocused();
@@ -232,6 +228,7 @@ export class GoalItemStore {
         this.parent.getGoalTitleElement(this.goal.id).click();
         break;
       case NavigationDirections.RIGHT:
+      case NavigationDirections.TAB:
         this.startDateRef?.setOpen(false);
         this.targetDateRef?.setFocus();
         break;
@@ -241,7 +238,6 @@ export class GoalItemStore {
   };
 
   handleTargetDateNavigate = (direction: NavigationDirections) => {
-    console.log('target', direction)
     switch (direction) {
       case NavigationDirections.INVARIANT:
         this.setGoalAsFocused();

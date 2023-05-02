@@ -93,7 +93,7 @@ export class DatePickerStore {
       )
     ) {
       this.handleSave(this.initialValue);
-      this.callbacks.onNavigate(direction);
+      this.callbacks.onNavigate(direction, e);
     }
   };
 

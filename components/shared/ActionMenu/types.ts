@@ -1,7 +1,7 @@
 import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
 import { NavigationDirections } from "../../../types/navigation";
 import { ButtonProps } from "@chakra-ui/react";
-import { ReactNode } from 'react';
+import { ReactNode, KeyboardEvent } from 'react';
 import { ActionMenuStore } from './store';
 
 export type ActionMenuItem = {
@@ -26,7 +26,7 @@ export type ActionMenuViewProps = {
 };
 
 export type ActionMenuCallbacks = {
-  onNavigate?(direction: NavigationDirections): void;
+  onNavigate?(direction: NavigationDirections, event: KeyboardEvent): void;
   onToggleMenu?(isOpen: boolean): void;
 };
 

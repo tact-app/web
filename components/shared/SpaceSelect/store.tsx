@@ -11,7 +11,7 @@ import { setModifierToColor } from "../../../helpers/baseHelpers";
 
 export type SpaceSelectProps = {
   onChange(spaceId: string): void;
-  onNavigate?(direction: NavigationDirections): void;
+  onNavigate?(direction: NavigationDirections, event: KeyboardEvent): void;
   onNavigateToSpace?(spaceId: string): void;
   selectedId?: string | null;
 }

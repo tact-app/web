@@ -1,23 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { Validator } from "../../../helpers/Validator";
-import { TextareaProps as ChakraTextareaProps } from "@chakra-ui/textarea";
-import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
 import { NavigationDirections } from "../../../types/navigation";
 import { FocusEvent, KeyboardEvent } from "react";
-
-type TextareaParamsToExclude = 'onFocus' | 'onBlur' | 'onKeyDown' | 'maxLength' | 'value';
-type TextareaCallbacks = Pick<ChakraTextareaProps, TextareaParamsToExclude> & {
-  onNavigate?(direction: NavigationDirections): void;
-};
-type TextareaStoreProps = TextareaCallbacks & {
-  error?: string;
-  maxLength?: number;
-};
-type TextareaViewProps = Omit<ChakraTextareaProps, TextareaParamsToExclude> & {
-  icon?: IconDefinition;
-}
-type TextareaProps = TextareaStoreProps & TextareaViewProps;
+import { TextareaCallbacks, TextareaStoreProps } from './types';
 
 export class TextareaStore {
   value: string = '';
@@ -67,13 +53,13 @@ export class TextareaStore {
 
     if (!this.textareaRef.selectionStart && e.key === 'ArrowUp') {
       this.textareaRef.setSelectionRange(currentValueLength, currentValueLength);
-      this.callbacks?.onNavigate?.(NavigationDirections.UP);
+      this.callbacks?.onNavigate?.(NavigationDirections.UP, e);
     } else if (e.key === 'ArrowDown' && (
       !this.textareaRef.selectionStart ||
       this.textareaRef.selectionStart === currentValueLength
     )) {
       this.textareaRef.setSelectionRange(currentValueLength, currentValueLength);
-      this.callbacks?.onNavigate?.(NavigationDirections.DOWN);
+      this.callbacks?.onNavigate?.(NavigationDirections.DOWN, e);
     }
   };
 
