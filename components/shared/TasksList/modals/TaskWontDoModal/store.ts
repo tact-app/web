@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
+import { KeyboardEvent } from 'react';
 
 export type TaskWontDoModalProps = {
   onClose: () => void;

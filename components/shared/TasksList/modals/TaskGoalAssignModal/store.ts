@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
+import { KeyboardEvent } from 'react';
 
 export type TaskGoalAssignModalProps = {
   callbacks: {
