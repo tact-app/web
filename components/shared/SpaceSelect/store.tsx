@@ -83,11 +83,17 @@ export class SpaceSelectStore {
   handleButtonContainerKeyDown(e: KeyboardEvent<HTMLButtonElement>) {
     e.stopPropagation();
 
+    const isEsc = e.key === 'Escape';
+
     if (!this.isMenuOpen) {
+      if (isEsc) {
+        this.buttonContainerRef.blur();
+      }
+
       return;
     }
 
-    if (e.key === 'Escape') {
+    if (isEsc) {
       this.toggleMenu();
     } else if (e.key === 'ArrowDown') {
       this.nextHoveredIndex();

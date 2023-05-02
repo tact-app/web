@@ -163,7 +163,7 @@ export function EditableTitle({
         ref={ref}
         {...inputProps}
         {...sharedProps}
-        ml={Number(inputProps?.ml || sharedProps?.ml || 0) - 1}
+        ml={margin}
         pl={1}
         width={widthByTitle ? `${value.length * 10}px` : '100%'}
         maxWidth='100%'
