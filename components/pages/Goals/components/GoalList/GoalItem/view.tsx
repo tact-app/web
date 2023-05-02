@@ -78,9 +78,7 @@ export const GoalItemView = observer(function GoalItemView() {
             value={store.goal?.title}
             idEnding={store.goal?.id}
             sharedProps={{ tabIndex: -1 }}
-            navDirectionsToResetEditing={
-              [NavigationDirections.DOWN, NavigationDirections.LEFT, NavigationDirections.RIGHT]
-            }
+            navDirectionsToResetEditing={store.directionsForResetTitle}
             onNavigate={store.handleTitleNavigate}
             onSave={store.handleChangeTitle}
             onFocus={store.updateEditedGoal}

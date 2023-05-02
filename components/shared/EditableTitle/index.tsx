@@ -107,6 +107,7 @@ export function EditableTitle({
       handleSave();
     } else if (
       (onNavigate || navDirectionsToResetEditing?.length) && (
+        [NavigationDirections.BACK, NavigationDirections.TAB].includes(direction) ||
         ([NavigationDirections.RIGHT, NavigationDirections.DOWN].includes(direction) && isCaretPositionInEnd) ||
         ([NavigationDirections.UP, NavigationDirections.LEFT].includes(direction) && isCaretPositionInStart)
       )

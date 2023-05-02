@@ -16,6 +16,7 @@ import ReactDatePicker from 'react-datepicker';
 import { NavigationDirections } from '../../../../../../types/navigation';
 import { getBoxShadowAsBorder } from '../../../../../../helpers/baseHelpers';
 import { GOAL_STATE_PARAMS } from '../../../../../shared/GoalStateIcon';
+import { KeyboardEvent } from 'react';
 
 export type GoalItemProps = {
   goal: GoalDataExtended
@@ -31,6 +32,14 @@ export class GoalItemStore {
   startDateRef: ReactDatePicker;
   targetDateRef: ReactDatePicker;
   emojiSelectRef: HTMLButtonElement;
+
+  directionsForResetTitle = [
+    NavigationDirections.DOWN,
+    NavigationDirections.LEFT,
+    NavigationDirections.RIGHT,
+    NavigationDirections.TAB,
+    NavigationDirections.BACK
+  ];
 
   constructor(
     public root: RootStore,
@@ -186,49 +195,58 @@ export class GoalItemStore {
     }
   };
 
-  handleIconNavigate = (direction: NavigationDirections) => {
+  handleIconNavigate = (direction: NavigationDirections, event: KeyboardEvent) => {
     switch (direction) {
       case NavigationDirections.INVARIANT:
         return this.setGoalAsFocused();
       case NavigationDirections.RIGHT:
       case NavigationDirections.TAB:
+        event.preventDefault();
         return this.parent.getGoalTitleElement(this.goal.id).click();
       case NavigationDirections.DOWN:
+        return this.startDateRef?.setFocus();
+      case NavigationDirections.BACK:
+        event.preventDefault();
+        return this.targetDateRef?.setFocus();
+      default:
+        return;
+    }
+  };
+
+  handleTitleNavigate = (direction: NavigationDirections, event: KeyboardEvent) => {
+    switch (direction) {
+      case NavigationDirections.INVARIANT:
+        return this.setGoalAsFocused();
+      case NavigationDirections.BACK:
+      case NavigationDirections.LEFT:
+        event.preventDefault();
+        return this.emojiSelectRef?.focus();
+      case NavigationDirections.DOWN:
+      case NavigationDirections.RIGHT:
+      case NavigationDirections.TAB:
+        event.preventDefault();
+        event.preventDefault();
+        console.log('HERE')
         return this.startDateRef?.setFocus();
       default:
         return;
     }
   };
 
-  handleTitleNavigate = (direction: NavigationDirections) => {
+  handleStartDateNavigate = (direction: NavigationDirections, event: KeyboardEvent) => {
     switch (direction) {
       case NavigationDirections.INVARIANT:
         this.setGoalAsFocused();
         break;
+      case NavigationDirections.BACK:
       case NavigationDirections.LEFT:
-        this.emojiSelectRef?.focus();
-        break;
-      case NavigationDirections.DOWN:
-      case NavigationDirections.RIGHT:
-      case NavigationDirections.TAB:
-        this.startDateRef?.setFocus();
-        break;
-      default:
-        break;
-    }
-  };
-
-  handleStartDateNavigate = (direction: NavigationDirections) => {
-    switch (direction) {
-      case NavigationDirections.INVARIANT:
-        this.setGoalAsFocused();
-        break;
-      case NavigationDirections.LEFT:
+        event.preventDefault();
         this.startDateRef?.setOpen(false);
         this.parent.getGoalTitleElement(this.goal.id).click();
         break;
       case NavigationDirections.RIGHT:
       case NavigationDirections.TAB:
+        event.preventDefault();
         this.startDateRef?.setOpen(false);
         this.targetDateRef?.setFocus();
         break;
@@ -237,17 +255,20 @@ export class GoalItemStore {
     }
   };
 
-  handleTargetDateNavigate = (direction: NavigationDirections) => {
+  handleTargetDateNavigate = (direction: NavigationDirections, event: KeyboardEvent) => {
     switch (direction) {
       case NavigationDirections.INVARIANT:
-        this.setGoalAsFocused();
-        break;
+        return this.setGoalAsFocused();
+      case NavigationDirections.BACK:
       case NavigationDirections.LEFT:
+        event.preventDefault();
         this.targetDateRef?.setOpen(false);
-        this.startDateRef?.setFocus();
-        break;
+        return this.startDateRef?.setFocus();
+      case NavigationDirections.TAB:
+        event.preventDefault();
+        return this.emojiSelectRef?.focus();
       default:
-        break;
+        return;
     }
   };
 
