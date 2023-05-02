@@ -43,6 +43,8 @@ export function EditableTitle({
   const [isEditMode, setIsEditMode] = useState(false);
   const [value, setValue] = useState(initialValue);
 
+  const margin = Number(inputProps?.ml || sharedProps?.ml || 0) - 1;
+
   useEffect(() => {
     setValue(initialValue);
   }, [initialValue]);
@@ -101,22 +103,24 @@ export function EditableTitle({
     const isCaretPositionInEnd = ref.current.selectionStart === value.length;
     const isCaretPositionInStart = ref.current.selectionStart === 0;
 
+    const isTabNavigate = [NavigationDirections.BACK, NavigationDirections.TAB].includes(direction);
+
     if (direction === NavigationDirections.INVARIANT) {
       resetEditMode();
     } else if (direction === NavigationDirections.ENTER) {
       handleSave();
-    } else if (
-      (onNavigate || navDirectionsToResetEditing?.length) && (
-        [NavigationDirections.BACK, NavigationDirections.TAB].includes(direction) ||
-        ([NavigationDirections.RIGHT, NavigationDirections.DOWN].includes(direction) && isCaretPositionInEnd) ||
-        ([NavigationDirections.UP, NavigationDirections.LEFT].includes(direction) && isCaretPositionInStart)
-      )
+    }
+
+    if (
+      isTabNavigate ||
+      ([NavigationDirections.RIGHT, NavigationDirections.DOWN].includes(direction) && isCaretPositionInEnd) ||
+      ([NavigationDirections.UP, NavigationDirections.LEFT].includes(direction) && isCaretPositionInStart)
     ) {
-      if (!navDirectionsToResetEditing || navDirectionsToResetEditing.includes(direction)) {
+      if (navDirectionsToResetEditing?.includes(direction) || isTabNavigate) {
         resetEditMode();
       }
 
-      onNavigate(direction, e);
+      onNavigate?.(direction, e);
     }
   };
 
@@ -129,7 +133,18 @@ export function EditableTitle({
     e.stopPropagation();
 
     updateEditMode(true);
-  }
+  };
+
+  const handleInputBlur = () => {
+    updateEditMode(false);
+    onBlur?.();
+  };
+
+  const handleTextKeyDown = (e: KeyboardEvent) => {
+    if ([' ', 'Enter'].includes(e.key)) {
+      handleEditModeToggle(e);
+    }
+  };
 
   return isEditMode ? (
       <Input
@@ -143,7 +158,7 @@ export function EditableTitle({
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         onFocus={onFocus}
-        onBlur={onBlur}
+        onBlur={handleInputBlur}
         onClick={(e) => e.stopPropagation()}
         ref={ref}
         {...inputProps}
@@ -165,8 +180,17 @@ export function EditableTitle({
         overflow='hidden'
         whiteSpace='nowrap'
         cursor='text'
+        outline='none'
         id={`${EDITABLE_TITLE_ID_SLUG}${idEnding ? `-${idEnding}` : ''}`}
         onClick={handleEditModeToggle}
+        onKeyDown={handleTextKeyDown}
+        _focus={{
+          bg: 'gray.75',
+          mx: margin,
+          pl: 1,
+          pr: 1,
+          borderRadius: 'md',
+        }}
         {...titleProps}
         {...sharedProps}
       >
