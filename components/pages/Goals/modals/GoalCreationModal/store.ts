@@ -45,6 +45,7 @@ export class GoalCreationModalStore {
     CHANGE_STATUS: ['s'],
     START_EDITING: ['space'],
     HANDLE_ARCHIVE: ['alt+a'],
+    OPEN_COMMENT_POPOVER: ['c'],
   };
 
   hotkeyHandlers = {
@@ -69,7 +70,10 @@ export class GoalCreationModalStore {
     },
     HANDLE_ARCHIVE: () => {
       this.handleArchiveGoal();
-    }
+    },
+    OPEN_COMMENT_POPOVER: () => {
+      this.toggleCommentPopover(true);
+    },
   };
 
   resizableConfig: ResizableGroupConfig[] = [
@@ -98,6 +102,7 @@ export class GoalCreationModalStore {
   goals: GoalData[] = [];
   currentGoalIndex: number = 0;
   error: string = '';
+  isCommentPopoverOpened: boolean = false;
 
   goal: GoalData = {
     id: uuidv4(),
@@ -392,7 +397,6 @@ export class GoalCreationModalStore {
 
   handleTitleKeyDown = (event: KeyboardEvent) => {
     event.stopPropagation();
-    event.preventDefault();
 
     const direction = NavigationHelper.castKeyToDirection(event.key, event.shiftKey);
 
@@ -408,6 +412,7 @@ export class GoalCreationModalStore {
         this.titleInputRef.selectionStart === 0
       )
     ) {
+      event.preventDefault();
       this.emojiSelectRef.focus();
     }
   };
@@ -440,6 +445,10 @@ export class GoalCreationModalStore {
     if (direction === NavigationDirections.UP) {
       this.handleTitleFocus();
     }
+  };
+
+  toggleCommentPopover = (isOpen: boolean) => {
+    this.isCommentPopoverOpened = isOpen;
   };
 
   setTitleInputRef = (ref: HTMLInputElement) => {

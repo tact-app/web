@@ -8,29 +8,62 @@ import {
   PopoverTrigger,
   Portal,
   Text,
-} from "@chakra-ui/react";
-import React, { ChangeEvent, useRef, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Tooltip } from "../Tooltip";
-import { faComment } from "@fortawesome/pro-light-svg-icons";
-import { Textarea } from "../Textarea";
+  useDisclosure,
+} from '@chakra-ui/react';
+import React, { ChangeEvent, useEffect, useRef, useState, KeyboardEvent } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Tooltip } from '../Tooltip';
+import { faComment } from '@fortawesome/pro-light-svg-icons';
+import { Textarea } from '../Textarea';
+import { NavigationDirections } from '../../../types/navigation';
+import { NavigationHelper } from '../../../helpers/NavigationHelper';
 
 type Props = {
+  isOpen?: boolean;
+  onToggleOpen?(open: boolean): void;
   triggerProps: ButtonProps;
 };
 
-export function CommentPopover({ triggerProps }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export function CommentPopover({ isOpen: open = false, onToggleOpen, triggerProps }: Props) {
+  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(open);
   const [text, setText] = useState('');
 
-  const ref = useRef();
+  const ref = useRef<HTMLTextAreaElement>();
+  const buttonRef = useRef<HTMLButtonElement>();
+
+  useEffect(() => {
+    setIsPopoverOpen(open);
+  }, [open]);
 
   const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
   };
-  const handleClose = () => {
-    setIsOpen(false);
+  const handleToggle = (open: boolean) => {
     setText('');
+    setIsPopoverOpen(open);
+    onToggleOpen?.(open);
+  };
+
+  const { isOpen, onClose, onOpen } = useDisclosure({
+    isOpen: isPopoverOpen,
+    onClose: () => handleToggle(false),
+    onOpen: () => handleToggle(true),
+  });
+
+  const handleTextareaNavigate = (direction: NavigationDirections, event: KeyboardEvent) => {
+    if ([NavigationDirections.DOWN, NavigationDirections.TAB].includes(direction)) {
+      event.preventDefault();
+      buttonRef.current?.focus();
+    }
+  };
+
+  const handleButtonKeyDown = (event: KeyboardEvent) => {
+    const direction = NavigationHelper.castKeyToDirection(event.key, event.shiftKey);
+
+    if ([NavigationDirections.UP, NavigationDirections.BACK].includes(direction)) {
+      event.preventDefault();
+      ref.current?.focus();
+    }
   };
 
   return (
@@ -40,12 +73,12 @@ export function CommentPopover({ triggerProps }: Props) {
       strategy='fixed'
       placement='bottom'
       initialFocusRef={ref}
-      onOpen={() => setIsOpen(true)}
-      onClose={handleClose}
+      onOpen={onOpen}
+      onClose={onClose}
     >
       <PopoverTrigger>
         <div>
-          <Tooltip label='Comment' hotkey='⌥C'>
+          <Tooltip label='Comment' hotkey='Press C'>
             <Button
               variant='ghost'
               size='xs'
@@ -75,17 +108,19 @@ export function CommentPopover({ triggerProps }: Props) {
               <Textarea
                 ref={ref}
                 onChange={handleTextChange}
-                onKeyDown={(e) => e.stopPropagation()}
+                onNavigate={handleTextareaNavigate}
                 value={text}
                 maxLength={200}
                 placeholder='Write here'
               />
               <Button
+                ref={buttonRef}
                 key='save-button'
                 colorScheme='blue'
                 size='sm'
                 mt={3}
-                onClick={handleClose}
+                onKeyDown={handleButtonKeyDown}
+                onClick={onClose}
               >
                 Send
               </Button>

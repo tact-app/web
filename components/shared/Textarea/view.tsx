@@ -1,21 +1,20 @@
 import {
   Box,
-  forwardRef,
   Text,
   Flex,
-  useMergeRefs,
   FormControl,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignLeft } from "@fortawesome/pro-light-svg-icons";
-import React, { useEffect, useRef } from "react";
+import React, { forwardRef } from "react";
 import { TextareaAutofit } from "../TextareaAutofit";
 import { FormError } from "../FormError";
 import { TextareaViewProps } from "./types";
 import { useTextareaStore } from "./store";
 import { observer } from "mobx-react-lite";
+import { useRefWithCallback } from '../../../helpers/useRefWithCallback';
 
-export const TextareaView = observer(forwardRef<TextareaViewProps, typeof TextareaAutofit>(
+export const TextareaView = observer(forwardRef<HTMLTextAreaElement, TextareaViewProps>(
   function Textarea(
     {
       icon = faAlignLeft,
@@ -23,16 +22,11 @@ export const TextareaView = observer(forwardRef<TextareaViewProps, typeof Textar
       placeholder,
       ...textareaProps
     },
-    ref
+    forwardedRef
   ) {
     const store = useTextareaStore();
 
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const refs = useMergeRefs(textareaRef, ref);
-
-    useEffect(() => {
-      store.textareaRef = textareaRef.current;
-    }, [store]);
+    const ref = useRefWithCallback(forwardedRef, store.setTextareaRef)
 
     return (
       <FormControl isInvalid={Boolean(store.error)}>
@@ -61,11 +55,10 @@ export const TextareaView = observer(forwardRef<TextareaViewProps, typeof Textar
             </Flex>
           )}
           <TextareaAutofit
-            ref={refs}
+            ref={ref}
             maxLength={store.maxLength}
             minHeight={25}
             maxHeight={250}
-            minRows={1}
             resize='none'
             value={store.value}
             fontSize={fontSize}

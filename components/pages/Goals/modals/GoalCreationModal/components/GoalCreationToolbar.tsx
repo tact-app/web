@@ -64,7 +64,11 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
     </Flex>,
     <Flex key='right-content'>
       <GoalCreationStatusSelect />
-      <CommentPopover triggerProps={{ ml: 0.5 }} />
+      <CommentPopover
+        isOpen={store.isCommentPopoverOpened}
+        onToggleOpen={store.toggleCommentPopover}
+        triggerProps={{ ml: 0.5 }}
+      />
       <EntityMetadataPopover
         triggerProps={{ ml: 0.5 }}
         created={{

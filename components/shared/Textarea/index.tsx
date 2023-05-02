@@ -1,11 +1,10 @@
 import { observer } from "mobx-react-lite";
-import React from "react";
-import { forwardRef } from "@chakra-ui/react";
+import React, { forwardRef } from "react";
 import { TextareaProps } from "./types";
 import { TextareaView } from "./view";
 import { TextareaStoreProvider } from './store';
 
-export const Textarea = observer(forwardRef<TextareaProps, typeof TextareaView>(
+export const Textarea = observer(forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(
     {
       maxLength,
