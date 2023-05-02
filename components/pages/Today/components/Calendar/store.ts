@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
-import { NavigationDirections, TaskData, } from '../../../../shared/TasksList/types';
+import { TaskData, } from '../../../../shared/TasksList/types';
+import { NavigationDirections } from '../../../../../types/navigation';
 import { EventData } from './types';
 import { ResizableBlocksDropItemData, ResizableBlocksItemData, ResizableBlocksTypes, } from './ResizableBlocks/types';
 import { ResizableBlocksProps, ResizableBlocksStore, } from './ResizableBlocks/store';

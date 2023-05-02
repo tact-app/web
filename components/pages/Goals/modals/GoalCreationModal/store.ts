@@ -9,7 +9,8 @@ import { DescriptionData } from '../../../../../types/description';
 import { ResizableGroupConfig } from '../../../../shared/ResizableGroup/store';
 import { TasksListWithCreatorStore } from '../../../../shared/TasksListWithCreator/store';
 import { TasksListStore } from '../../../../shared/TasksList/store';
-import { NavigationDirections, TaskData } from '../../../../shared/TasksList/types';
+import { TaskData } from '../../../../shared/TasksList/types';
+import { NavigationDirections } from '../../../../../types/navigation';
 import { EmojiStore } from '../../../../../stores/EmojiStore';
 import { ModalsController } from '../../../../../helpers/ModalsController';
 import { GoalCreationModalProps, GoalCreationModalsTypes } from './types';
@@ -391,14 +392,22 @@ export class GoalCreationModalStore {
 
   handleTitleKeyDown = (event: KeyboardEvent) => {
     event.stopPropagation();
+    event.preventDefault();
 
-    const direction = NavigationHelper.castKeyToDirection(event.key);
+    const direction = NavigationHelper.castKeyToDirection(event.key, event.shiftKey);
 
     if (direction === NavigationDirections.INVARIANT) {
       this.titleInputRef?.blur();
-    } else if ([NavigationDirections.ENTER, NavigationDirections.DOWN].includes(direction)) {
+    } else if (
+      [NavigationDirections.ENTER, NavigationDirections.DOWN, NavigationDirections.TAB].includes(direction)
+    ) {
       this.editorRef?.chain().focus();
-    } else if (direction === NavigationDirections.LEFT && this.titleInputRef.selectionStart === 0) {
+    } else if (
+      direction == NavigationDirections.BACK || (
+        direction === NavigationDirections.LEFT &&
+        this.titleInputRef.selectionStart === 0
+      )
+    ) {
       this.emojiSelectRef.focus();
     }
   };
@@ -414,11 +423,16 @@ export class GoalCreationModalStore {
     });
   };
 
-  handleEmojiSelectNavigate = (direction: NavigationDirections) => {
-    if (direction === NavigationDirections.DOWN) {
-      this.editorRef?.chain().focus();
-    } else if (direction === NavigationDirections.RIGHT) {
-      this.handleTitleFocus();
+  handleEmojiSelectNavigate = (direction: NavigationDirections, event: KeyboardEvent) => {
+    switch (direction) {
+      case NavigationDirections.DOWN:
+        return this.editorRef?.chain().focus();
+      case NavigationDirections.TAB:
+      case NavigationDirections.RIGHT:
+        event.preventDefault();
+        return this.handleTitleFocus();
+      default:
+        return;
     }
   };
 

@@ -93,6 +93,10 @@ export class GoalItemStore {
     return this.goal?.id === this.parent.focusedGoalId;
   }
 
+  get isFocusedAndEditing() {
+    return this.isFocused && this.parent.isFocusedGoalEditing;
+  }
+
   get boxShadow() {
     if (this.isFocused) {
       return getBoxShadowAsBorder('blue.400', 2);
@@ -183,6 +187,7 @@ export class GoalItemStore {
   };
 
   handleIconNavigate = (direction: NavigationDirections) => {
+    console.log('icon', direction)
     switch (direction) {
       case NavigationDirections.INVARIANT:
         this.setGoalAsFocused();
@@ -199,6 +204,7 @@ export class GoalItemStore {
   };
 
   handleTitleNavigate = (direction: NavigationDirections) => {
+    console.log('title', direction)
     switch (direction) {
       case NavigationDirections.INVARIANT:
         this.setGoalAsFocused();
@@ -216,6 +222,7 @@ export class GoalItemStore {
   };
 
   handleStartDateNavigate = (direction: NavigationDirections) => {
+    console.log('start', direction)
     switch (direction) {
       case NavigationDirections.INVARIANT:
         this.setGoalAsFocused();
@@ -234,6 +241,7 @@ export class GoalItemStore {
   };
 
   handleTargetDateNavigate = (direction: NavigationDirections) => {
+    console.log('target', direction)
     switch (direction) {
       case NavigationDirections.INVARIANT:
         this.setGoalAsFocused();

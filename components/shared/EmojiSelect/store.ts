@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { EmojiStore } from '../../../stores/EmojiStore';
 import { EmojiSelectCallbacks, EmojiSelectProps } from './types';
-import { NavigationDirections } from '../TasksList/types';
+import { NavigationDirections } from '../../../types/navigation';
 import { KeyboardEvent, SyntheticEvent } from 'react';
 import { NavigationHelper } from '../../../helpers/NavigationHelper';
 
@@ -84,12 +84,12 @@ export class EmojiSelectStore {
     }
   };
 
-  handleKeyDown = (e: KeyboardEvent) => {
+  handleKeyDown = (event: KeyboardEvent) => {
     if (this.isEmojiPickerOpen) {
       return;
     }
 
-    const direction = NavigationHelper.castKeyToDirection(e.key);
+    const direction = NavigationHelper.castKeyToDirection(event.key, event.shiftKey);
 
     if (!direction) {
       return;
@@ -99,7 +99,7 @@ export class EmojiSelectStore {
       this.triggerRef.blur();
     }
 
-    this.callbacks?.onNavigate?.(direction);
+    this.callbacks?.onNavigate?.(direction, event);
   };
 
   setRef = (element: HTMLButtonElement) => {

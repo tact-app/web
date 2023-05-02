@@ -1,4 +1,5 @@
-import { NavigationDirections, TaskTag } from '../../TasksList/types';
+import { TaskTag } from '../../TasksList/types';
+import { NavigationDirections } from '../../../../types/navigation';
 import React, { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { makeAutoObservable } from 'mobx';

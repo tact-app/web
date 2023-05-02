@@ -6,7 +6,7 @@ import ReactDatePicker from 'react-datepicker';
 import moment from 'moment';
 import { KeyboardEvent, SyntheticEvent } from 'react';
 import { NavigationHelper } from '../../../helpers/NavigationHelper';
-import { NavigationDirections } from '../TasksList/types';
+import { NavigationDirections } from '../../../types/navigation';
 
 export const DATE_PICKER_DATE_FORMAT = 'dd.MM.yyyy';
 
@@ -71,7 +71,7 @@ export class DatePickerStore {
       this.datePickerRef?.setOpen(false);
     }
 
-    const direction = NavigationHelper.castKeyToDirection(e.key);
+    const direction = NavigationHelper.castKeyToDirection(e.key, e.shiftKey);
 
     if (direction === NavigationDirections.ENTER) {
       this.handleSave();

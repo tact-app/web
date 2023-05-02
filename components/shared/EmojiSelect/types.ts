@@ -1,5 +1,6 @@
 import { Property } from "csstype";
 import { NavigationDirections } from '../../../types/navigation';
+import { KeyboardEvent } from 'react';
 
 export type EmojiSelectViewProps = {
   size?: number;
@@ -16,7 +17,7 @@ export type EmojiSelectCallbacks = {
   onIconChange?(icon: string): void;
   onFocus?(): void;
   onBlur?(): void;
-  onNavigate?(direction: NavigationDirections): void;
+  onNavigate?(direction: NavigationDirections, event: KeyboardEvent): void;
 };
 
 export type EmojiSelectProps = EmojiSelectViewProps & EmojiSelectCallbacks & {

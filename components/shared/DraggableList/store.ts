@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { NavigationDirections } from '../TasksList/types';
+import { NavigationDirections } from '../../../types/navigation';
 import React from 'react';
 
 export type DraggableListCallbacks = {

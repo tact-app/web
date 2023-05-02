@@ -1,11 +1,15 @@
-import { NavigationDirections } from '../components/shared/TasksList/types';
+import { NavigationDirections } from '../types/navigation';
 
-function castKeyToDirection(key: string) {
+function castKeyToDirection(key: string, withShift?: boolean) {
   switch (key) {
     case 'ArrowDown':
       return NavigationDirections.DOWN;
     case 'Tab':
-      return NavigationDirections.DOWN;
+      if (withShift) {
+        return NavigationDirections.BACK;
+      }
+
+      return NavigationDirections.TAB;
     case 'ArrowUp':
       return NavigationDirections.UP;
     case 'ArrowLeft':

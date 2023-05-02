@@ -3,7 +3,6 @@ import { KeyboardEvent } from 'react';
 import { makeAutoObservable, reaction, runInAction, toJS } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
 import {
-  NavigationDirections,
   TaskData,
   TaskStatus,
   TaskTag,
@@ -19,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { subscriptions } from '../../../helpers/subscriptions';
 import { AnimatedBlockParams } from "../AnimatedBlock";
 import { cloneDeep, isEqual } from "lodash";
+import { NavigationDirections } from '../../../types/navigation';
 
 export type TaskProps = {
   callbacks: {

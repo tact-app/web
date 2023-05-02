@@ -1,7 +1,7 @@
 import { Input, InputProps, Text, TextProps, useOutsideClick } from '@chakra-ui/react';
 import React, { KeyboardEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { NavigationHelper } from '../../../helpers/NavigationHelper';
-import { NavigationArrows, NavigationDirections } from '../../../types/navigation';
+import { NavigationDirections } from '../../../types/navigation';
 
 type Props = {
   value: string;
@@ -11,7 +11,7 @@ type Props = {
   sharedProps?: TextProps & InputProps;
   widthByTitle?: boolean;
   idEnding?: string;
-  navDirectionsToResetEditing?: NavigationArrows[];
+  navDirectionsToResetEditing?: NavigationDirections[];
   onFocus?(): void;
   onBlur?(): void;
   onChange?(value: string): void;
@@ -97,7 +97,7 @@ export function EditableTitle({
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     e.stopPropagation();
 
-    const direction = NavigationHelper.castKeyToDirection(e.key);
+    const direction = NavigationHelper.castKeyToDirection(e.key, e.shiftKey);
     const isCaretPositionInEnd = ref.current.selectionStart === value.length;
     const isCaretPositionInStart = ref.current.selectionStart === 0;
 

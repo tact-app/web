@@ -9,7 +9,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { FC, MouseEvent as ReactMouseEvent } from 'react';
 import { ResizableBlocksNavigation } from './navigation';
-import { NavigationDirections } from '../../../../../../shared/TasksList/types';
+import { NavigationDirections } from '../../../../../../../types/navigation';
 
 export type ResizableBlocksComponent = FC<{ id: string; data?: any }>;
 
