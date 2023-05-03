@@ -61,6 +61,8 @@ export class RootStore {
   isModalOpen = false;
   router: NextRouter;
 
+  globalCmdEnterCallback?(event: KeyboardEvent): void;
+
   resources = {
     spaces: new SpacesStore(this),
     tags: new TagsStore(this),
@@ -96,6 +98,34 @@ export class RootStore {
       });
     });
   }
+
+  globalEventListenerKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter' && event.metaKey) {
+      this.globalCmdEnterCallback?.(event);
+    }
+  };
+
+  setGlobalCmdEnterCallback = (callback: typeof this.globalCmdEnterCallback) => {
+    const isCallbackNotInitialized = !this.globalCmdEnterCallback;
+    this.globalCmdEnterCallback = callback;
+
+    if (isCallbackNotInitialized) {
+      document.addEventListener('keydown', this.globalEventListenerKeyDown, { capture: true });
+    } else if (!callback) {
+      this.removeGlobalEventListener();
+    }
+  };
+
+  removeGlobalEventListener = () => {
+    document.removeEventListener('keydown', this.globalEventListenerKeyDown, { capture: true });
+  };
+
+  destroy = () => {
+    if (this.globalCmdEnterCallback) {
+      this.removeGlobalEventListener();
+    }
+  };
+
 
   init = async () => {
     await this.user.init();

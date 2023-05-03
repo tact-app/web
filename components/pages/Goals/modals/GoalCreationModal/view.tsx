@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { HStack, Box } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from './store';
@@ -19,6 +19,7 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
   const store = useGoalCreationModalStore();
 
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
+
 
   return (
     <Modal

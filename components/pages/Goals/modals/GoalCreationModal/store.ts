@@ -30,6 +30,15 @@ const GoalsModals = {
 export class GoalCreationModalStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
+
+    root.setGlobalCmdEnterCallback(() => {
+      if (this.isUpdating) {
+        (document.activeElement as HTMLInputElement).blur();
+        this.handleSimpleClose();
+      } else {
+        this.handleSave();
+      }
+    })
   }
 
   listWithCreator = new TasksListWithCreatorStore(this.root);
@@ -40,12 +49,13 @@ export class GoalCreationModalStore {
   selectStatus = new ActionMenuStore(this.root);
 
   keyMap = {
-    CREATE: ['meta+enter', 'meta+s', 'ctrl+enter'],
+    CREATE: ['meta+s', 'ctrl+enter'],
     CANCEL: ['escape'],
     CHANGE_STATUS: ['s'],
     START_EDITING: ['space'],
     HANDLE_ARCHIVE: ['alt+a'],
     OPEN_COMMENT_POPOVER: ['c'],
+    OPEN_INFO_POPOVER: ['alt+i'],
   };
 
   hotkeyHandlers = {
@@ -72,6 +82,9 @@ export class GoalCreationModalStore {
     },
     OPEN_COMMENT_POPOVER: () => {
       this.toggleCommentPopover(true);
+    },
+    OPEN_INFO_POPOVER: () => {
+      this.toggleInfoPopover(true);
     },
   };
 
@@ -102,6 +115,7 @@ export class GoalCreationModalStore {
   currentGoalIndex: number = 0;
   error: string = '';
   isCommentPopoverOpened: boolean = false;
+  isInfoPopoverOpened: boolean = false;
 
   goal: GoalData = {
     id: uuidv4(),
@@ -447,7 +461,13 @@ export class GoalCreationModalStore {
   };
 
   toggleCommentPopover = (isOpen: boolean) => {
+    this.isInfoPopoverOpened = false;
     this.isCommentPopoverOpened = isOpen;
+  };
+
+  toggleInfoPopover = (isOpen: boolean) => {
+    this.isCommentPopoverOpened = false;
+    this.isInfoPopoverOpened = isOpen;
   };
 
   setTitleInputRef = (ref: HTMLInputElement) => {

@@ -55,7 +55,7 @@ export function CommentPopover({ isOpen: open = false, onToggleOpen, triggerProp
     if ([NavigationDirections.DOWN, NavigationDirections.TAB].includes(direction)) {
       event.preventDefault();
       buttonRef.current?.focus();
-    } else if (direction === NavigationDirections.BACK) {
+    } else if ([NavigationDirections.BACK, NavigationDirections.INVARIANT].includes(direction)) {
       handleToggle(false);
     }
   };

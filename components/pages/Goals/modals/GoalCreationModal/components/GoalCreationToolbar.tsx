@@ -70,6 +70,8 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
         triggerProps={{ ml: 0.5 }}
       />
       <EntityMetadataPopover
+        isOpen={store.isInfoPopoverOpened}
+        onToggleOpen={store.toggleInfoPopover}
         triggerProps={{ ml: 0.5 }}
         created={{
           date: DateHelper.getFormattedDate(store.goal.createdDate),

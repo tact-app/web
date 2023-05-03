@@ -15,8 +15,9 @@ import {
   Tr,
   Avatar,
   Flex,
-} from "@chakra-ui/react";
-import React, { ReactNode, useState } from "react";
+  useDisclosure,
+} from '@chakra-ui/react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tooltip } from "../Tooltip";
 import { faSquareInfo, faXmark } from "@fortawesome/pro-light-svg-icons";
@@ -28,13 +29,30 @@ type Metadata = {
 };
 
 type Props = {
+  isOpen?: boolean;
+  onToggleOpen?(open: boolean): void;
   triggerProps: ButtonProps;
   created?: Metadata;
   updated?: Metadata;
 };
 
-export function EntityMetadataPopover({ triggerProps, created, updated }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export function EntityMetadataPopover({ isOpen: open, onToggleOpen, triggerProps, created, updated }: Props) {
+  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(open);
+
+  useEffect(() => {
+    setIsPopoverOpen(open);
+  }, [open]);
+
+  const handleToggle = (open: boolean) => {
+    setIsPopoverOpen(open);
+    onToggleOpen?.(open);
+  };
+
+  const { isOpen, onClose, onOpen } = useDisclosure({
+    isOpen: isPopoverOpen,
+    onClose: () => handleToggle(false),
+    onOpen: () => handleToggle(true),
+  });
 
   const renderUser = (user?: UserData) => {
     if (!user) {
@@ -66,8 +84,8 @@ export function EntityMetadataPopover({ triggerProps, created, updated }: Props)
       isOpen={isOpen}
       strategy='fixed'
       placement='bottom'
-      onOpen={() => setIsOpen(true)}
-      onClose={() => setIsOpen(false)}
+      onOpen={onOpen}
+      onClose={onClose}
     >
       <PopoverTrigger>
         <div>
@@ -124,7 +142,7 @@ export function EntityMetadataPopover({ triggerProps, created, updated }: Props)
                 position='absolute'
                 right={6}
                 top={6}
-                onClick={() => setIsOpen(false)}
+                onClick={onClose}
               >
                 <FontAwesomeIcon
                   fontSize={22}
