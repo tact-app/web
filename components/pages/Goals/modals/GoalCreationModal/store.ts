@@ -49,6 +49,8 @@ export class GoalCreationModalStore {
     HANDLE_ARCHIVE: ['alt+a'],
     OPEN_COMMENT_POPOVER: ['c'],
     OPEN_INFO_POPOVER: ['alt+i'],
+    NEXT_GOAL: ['alt+down'],
+    PREV_GOAL: ['alt+up'],
   };
 
   hotkeyHandlers = {
@@ -78,6 +80,12 @@ export class GoalCreationModalStore {
     },
     OPEN_INFO_POPOVER: () => {
       this.toggleInfoPopover(true);
+    },
+    NEXT_GOAL: () => {
+      this.handleNextGoal();
+    },
+    PREV_GOAL: () => {
+      this.handlePrevGoal();
     },
   };
 
