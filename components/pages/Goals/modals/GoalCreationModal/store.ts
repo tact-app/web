@@ -31,14 +31,7 @@ export class GoalCreationModalStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
 
-    root.setGlobalCmdEnterCallback(() => {
-      if (this.isUpdating) {
-        (document.activeElement as HTMLInputElement).blur();
-        this.handleSimpleClose();
-      } else {
-        this.handleSave();
-      }
-    })
+    this.handleSetGlobalCmd();
   }
 
   listWithCreator = new TasksListWithCreatorStore(this.root);
@@ -190,6 +183,17 @@ export class GoalCreationModalStore {
     return this.goal.status !== GoalStatus.TODO || this.goal.isArchived;
   }
 
+  handleSetGlobalCmd = () => {
+    this.root.setGlobalCmdEnterCallback(() => {
+      if (this.isUpdating) {
+        (document.activeElement as HTMLInputElement).blur();
+        this.handleSimpleClose();
+      } else {
+        this.handleSave();
+      }
+    });
+  };
+
   handleCloseTask = () => {
     this.resizableConfig[0].size = 3;
     this.resizableConfig[2].size = 0;
@@ -236,10 +240,14 @@ export class GoalCreationModalStore {
     this.goal.title = (e.target as HTMLInputElement).value;
   };
 
-  handleSpaceChange = (value: string) => {
+  handleSpaceChange = (value: string, isNew: boolean) => {
     this.goal.spaceId = value;
 
     this.handleUpdate({ spaceId: value });
+
+    if (isNew) {
+      this.handleSetGlobalCmd();
+    }
   }
 
   handleStartDateChange = (value: string) => {

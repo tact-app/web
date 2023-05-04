@@ -31,7 +31,7 @@ import { EmojiSelect } from "../../../../shared/EmojiSelect";
 import { isMac } from '../../../../../helpers/os';
 
 const keyMap = {
-  CREATE: ['meta+enter', 'meta+s', 'ctrl+enter'],
+  CREATE: ['meta+s', 'ctrl+enter'],
   CANCEL: ['escape'],
 };
 

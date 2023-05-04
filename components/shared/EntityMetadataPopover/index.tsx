@@ -17,7 +17,7 @@ import {
   Flex,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState, KeyboardEvent } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tooltip } from "../Tooltip";
 import { faSquareInfo, faXmark } from "@fortawesome/pro-light-svg-icons";
@@ -78,82 +78,92 @@ export function EntityMetadataPopover({ isOpen: open, onToggleOpen, triggerProps
     </Tr>
   );
 
-  return (
-    <Popover
-      isLazy
-      isOpen={isOpen}
-      strategy='fixed'
-      placement='bottom'
-      onOpen={onOpen}
-      onClose={onClose}
-    >
-      <PopoverTrigger>
-        <div>
-          <Tooltip label='Info' hotkey='⌥I'>
-            <Button
-              variant='ghost'
-              size='xs'
-              color='gray.500'
-              pl={0.5}
-              pr={0.5}
-              h={7}
-              aria-label='Info'
-              {...triggerProps}
-            >
-              <FontAwesomeIcon
-                fontSize={20}
-                icon={faSquareInfo}
-                fixedWidth
-              />
-            </Button>
-          </Tooltip>
-        </div>
-      </PopoverTrigger>
-      <Portal>
-        <Fade in={isOpen} unmountOnExit>
-          <PopoverContent borderRadius='12' borderColor='gray.200'>
-            <PopoverBody p={6} position='relative'>
-              <Text fontWeight='semibold' fontSize='md' color='gray.700'>Information</Text>
-              {Boolean(created) && (
-                <Table variant='simple' size='sm' width='auto' mt={4}>
-                  <Tbody>
-                    {renderTableRow('Created at', created.date)}
-                    {renderTableRow('Created by', renderUser(created.user))}
-                  </Tbody>
-                </Table>
-              )}
-              {Boolean(updated) && updated.date && [
-                <chakra.p key='separator' borderBottomWidth={1} borderColor='gray.200' width='100%' mt={4} />,
-                <Table key='update-table' variant='simple' size='sm' width='auto' mt={4}>
-                  <Tbody>
-                    {renderTableRow('Updated at', updated.date)}
-                    {renderTableRow('Updated by', renderUser(updated.user))}
-                  </Tbody>
-                </Table>
-              ]}
+  const handleContainerKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      handleToggle(false);
+    }
+  };
 
+  return (
+    <div onKeyDown={handleContainerKeyDown}>
+      <Popover
+        isLazy
+        closeOnEsc={false}
+        isOpen={isOpen}
+        strategy='fixed'
+        placement='bottom'
+        onOpen={onOpen}
+        onClose={onClose}
+      >
+        <PopoverTrigger>
+          <div>
+            <Tooltip label='Info' hotkey='⌥I'>
               <Button
                 variant='ghost'
                 size='xs'
                 color='gray.500'
-                minW='auto'
-                h='auto'
-                p={1}
-                position='absolute'
-                right={6}
-                top={6}
-                onClick={onClose}
+                pl={0.5}
+                pr={0.5}
+                h={7}
+                aria-label='Info'
+                {...triggerProps}
               >
                 <FontAwesomeIcon
-                  fontSize={22}
-                  icon={faXmark}
+                  fontSize={20}
+                  icon={faSquareInfo}
                   fixedWidth
                 />
               </Button>
-            </PopoverBody>
-          </PopoverContent>
-        </Fade>
-      </Portal>
-    </Popover>
+            </Tooltip>
+          </div>
+        </PopoverTrigger>
+        <Portal>
+          <Fade in={isOpen} unmountOnExit>
+            <PopoverContent borderRadius='12' borderColor='gray.200'>
+              <PopoverBody p={6} position='relative'>
+                <Text fontWeight='semibold' fontSize='md' color='gray.700'>Information</Text>
+                {Boolean(created) && (
+                  <Table variant='simple' size='sm' width='auto' mt={4}>
+                    <Tbody>
+                      {renderTableRow('Created at', created.date)}
+                      {renderTableRow('Created by', renderUser(created.user))}
+                    </Tbody>
+                  </Table>
+                )}
+                {Boolean(updated) && updated.date && [
+                  <chakra.p key='separator' borderBottomWidth={1} borderColor='gray.200' width='100%' mt={4} />,
+                  <Table key='update-table' variant='simple' size='sm' width='auto' mt={4}>
+                    <Tbody>
+                      {renderTableRow('Updated at', updated.date)}
+                      {renderTableRow('Updated by', renderUser(updated.user))}
+                    </Tbody>
+                  </Table>
+                ]}
+
+                <Button
+                  variant='ghost'
+                  size='xs'
+                  color='gray.500'
+                  minW='auto'
+                  h='auto'
+                  p={1}
+                  position='absolute'
+                  right={6}
+                  top={6}
+                  onClick={onClose}
+                >
+                  <FontAwesomeIcon
+                    fontSize={22}
+                    icon={faXmark}
+                    fixedWidth
+                  />
+                </Button>
+              </PopoverBody>
+            </PopoverContent>
+          </Fade>
+        </Portal>
+      </Popover>
+    </div>
   )
 }

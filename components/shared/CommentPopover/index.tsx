@@ -73,69 +73,79 @@ export function CommentPopover({ isOpen: open = false, onToggleOpen, triggerProp
     }
   };
 
+  const handleContainerKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      handleToggle(false);
+    }
+  };
+
   return (
-    <Popover
-      isLazy
-      isOpen={isOpen}
-      strategy='fixed'
-      placement='bottom'
-      initialFocusRef={ref}
-      onOpen={onOpen}
-      onClose={onClose}
-    >
-      <PopoverTrigger>
-        <div>
-          <Tooltip label='Comment' hotkey='Press C'>
-            <Button
-              variant='ghost'
-              size='xs'
-              color='gray.500'
-              pl={0.5}
-              pr={0.5}
-              h={7}
-              aria-label='Comment'
-              {...triggerProps}
-            >
-              <FontAwesomeIcon
-                fontSize={20}
-                icon={faComment}
-                fixedWidth
-              />
-            </Button>
-          </Tooltip>
-        </div>
-      </PopoverTrigger>
-      <Portal>
-        <Fade in={isOpen} unmountOnExit>
-          <PopoverContent borderRadius='12' borderColor='gray.200'>
-            <PopoverBody p={6} position='relative'>
-              <Text color='gray.700' mb={3}>
-                The notification center is under development. Could you please describe how you will plan to use it?
-              </Text>
-              <Textarea
-                ref={ref}
-                onBlur={(e) => e.stopPropagation()}
-                onChange={handleTextChange}
-                onNavigate={handleTextareaNavigate}
-                value={text}
-                maxLength={200}
-                placeholder='Write here'
-              />
+    <div onKeyDown={handleContainerKeyDown}>
+      <Popover
+        isLazy
+        closeOnEsc={false}
+        isOpen={isOpen}
+        strategy='fixed'
+        placement='bottom'
+        initialFocusRef={ref}
+        onOpen={onOpen}
+        onClose={onClose}
+      >
+        <PopoverTrigger>
+          <div>
+            <Tooltip label='Comment' hotkey='Press C'>
               <Button
-                ref={buttonRef}
-                key='save-button'
-                colorScheme='blue'
-                size='sm'
-                mt={3}
-                onKeyDown={handleButtonKeyDown}
-                onClick={onClose}
+                variant='ghost'
+                size='xs'
+                color='gray.500'
+                pl={0.5}
+                pr={0.5}
+                h={7}
+                aria-label='Comment'
+                {...triggerProps}
               >
-                Send
+                <FontAwesomeIcon
+                  fontSize={20}
+                  icon={faComment}
+                  fixedWidth
+                />
               </Button>
-            </PopoverBody>
-          </PopoverContent>
-        </Fade>
-      </Portal>
-    </Popover>
+            </Tooltip>
+          </div>
+        </PopoverTrigger>
+        <Portal>
+          <Fade in={isOpen} unmountOnExit>
+            <PopoverContent borderRadius='12' borderColor='gray.200'>
+              <PopoverBody p={6} position='relative'>
+                <Text color='gray.700' mb={3}>
+                  The notification center is under development. Could you please describe how you will plan to use it?
+                </Text>
+                <Textarea
+                  ref={ref}
+                  onBlur={(e) => e.stopPropagation()}
+                  onChange={handleTextChange}
+                  onNavigate={handleTextareaNavigate}
+                  value={text}
+                  maxLength={200}
+                  placeholder='Write here'
+                />
+                <Button
+                  ref={buttonRef}
+                  key='save-button'
+                  colorScheme='blue'
+                  size='sm'
+                  mt={3}
+                  onKeyDown={handleButtonKeyDown}
+                  onClick={onClose}
+                >
+                  Send
+                </Button>
+              </PopoverBody>
+            </PopoverContent>
+          </Fade>
+        </Portal>
+      </Popover>
+    </div>
   );
 }

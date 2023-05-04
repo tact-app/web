@@ -21,6 +21,8 @@ export type SpaceCreationModalProps = {
 export class SpaceCreationModalStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
+
+    this.root.setGlobalCmdEnterCallback(this.handleSave);
   }
 
   hotkeyHandlers = {
