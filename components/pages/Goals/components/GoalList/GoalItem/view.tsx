@@ -13,7 +13,6 @@ import { GoalEmojiSelect } from '../../GoalEmojiSelect';
 import { GoalStateIcon } from '../../../../../shared/GoalStateIcon';
 import { useOutsideClick } from '@chakra-ui/react-use-outside-click';
 import { getBoxShadowAsBorder } from '../../../../../../helpers/baseHelpers';
-import { NavigationDirections } from '../../../../../../types/navigation';
 import { useGoalItemStore } from './store';
 
 export const GoalItemView = observer(function GoalItemView() {
@@ -22,7 +21,7 @@ export const GoalItemView = observer(function GoalItemView() {
   const ref = useRef<HTMLDivElement>();
 
   useOutsideClick({
-    enabled: store.isFocused,
+    enabled: store.isFocused && !store.parent.isMenuOpenedForFocusedGoal,
     ref,
     handler: () => store.parent.setFocusedGoalId(null),
   });
@@ -147,10 +146,10 @@ export const GoalItemView = observer(function GoalItemView() {
 
       <ActionMenu
         items={store.actions}
-        isMenuOpen={store.isMenuOpen}
+        isMenuOpen={store.parent.focusedGoalId === store.goal?.id && store.parent.isMenuOpenedForFocusedGoal}
         onToggleMenu={store.handleMenuToggle}
-        xPosContextMenu={store.xPosContextMenu}
-        isOpenByContextMenu={store.isMenuOpenByContextMenu}
+        xPosContextMenu={store.parent.xPosContextMenu}
+        isOpenByContextMenu={store.parent.isMenuOpenByContextMenu}
         menuMinWidth={250}
         triggerButtonProps={(isOpen) => ({
           tabIndex: -1,

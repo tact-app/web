@@ -106,13 +106,9 @@ export class RootStore {
   };
 
   setGlobalCmdEnterCallback = (callback: typeof this.globalCmdEnterCallback) => {
-    const isCallbackNotInitialized = !this.globalCmdEnterCallback;
-    this.globalCmdEnterCallback = callback;
-
-    if (isCallbackNotInitialized) {
+    if (!this.globalCmdEnterCallback) {
+      this.globalCmdEnterCallback = callback;
       document.addEventListener('keydown', this.globalEventListenerKeyDown, { capture: true });
-    } else if (!callback) {
-      this.removeGlobalEventListener();
     }
   };
 

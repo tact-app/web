@@ -15,6 +15,9 @@ export class GoalListStore {
   goalsRefs: Record<string, HTMLDivElement> = {};
   focusedGoalId: string | null = null;
   isFocusedGoalEditing: boolean = false;
+  isMenuOpenedForFocusedGoal: boolean = false;
+  isMenuOpenByContextMenu: boolean = false;
+  xPosContextMenu: number;
 
   keyMap = {
     ON_RESET_FOCUSED_GOAL: ['tab', 'shift+tab'],
@@ -25,7 +28,8 @@ export class GoalListStore {
     ON_WONT_DO: ['alt+w'],
     ON_CLONE: ['alt+c'],
     ON_ARCHIVE: ['alt+a'],
-    ON_DELETE: ['backspace', 'alt+backspace']
+    ON_DELETE: ['backspace', 'alt+backspace'],
+    OPEN_GOAL_MENU: ['alt'],
   };
 
   hotkeyHandlers = {
@@ -91,6 +95,11 @@ export class GoalListStore {
     ON_DELETE: () => {
       if (this.isGoalFocusedAndNotEditing) {
         this.handleDeleteGoal(this.focusedGoalId);
+      }
+    },
+    OPEN_GOAL_MENU: () => {
+      if (this.isGoalFocusedAndNotEditing) {
+        this.toggleActionMenuForGoal(this.focusedGoalId, !this.isMenuOpenedForFocusedGoal)
       }
     },
   };
@@ -171,9 +180,30 @@ export class GoalListStore {
   setFocusedGoalId = (goalId: string | null) => {
     this.focusedGoalId = goalId;
     this.isFocusedGoalEditing = false;
+    this.isMenuOpenedForFocusedGoal = false;
 
     if (goalId) {
       this.goalsRefs[goalId].focus();
+    }
+  };
+
+  toggleActionMenuForGoal = (goalId: string | null, isOpen: boolean, xPosContextMenu?: number) => {
+    this.isMenuOpenedForFocusedGoal = isOpen;
+
+    if (isOpen) {
+      this.focusedGoalId = goalId;
+      this.isFocusedGoalEditing = false;
+    } else if (document.activeElement === document.body) {
+      this.focusedGoalId = null;
+      this.isFocusedGoalEditing = false;
+    }
+
+    if (isOpen && xPosContextMenu) {
+      this.isMenuOpenByContextMenu = true;
+      this.xPosContextMenu = xPosContextMenu;
+    } else {
+      this.isMenuOpenByContextMenu = false;
+      this.xPosContextMenu = undefined;
     }
   };
 

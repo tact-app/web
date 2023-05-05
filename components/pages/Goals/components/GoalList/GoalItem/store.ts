@@ -16,7 +16,7 @@ import ReactDatePicker from 'react-datepicker';
 import { NavigationDirections } from '../../../../../../types/navigation';
 import { getBoxShadowAsBorder } from '../../../../../../helpers/baseHelpers';
 import { GOAL_STATE_PARAMS } from '../../../../../shared/GoalStateIcon';
-import { KeyboardEvent } from 'react';
+import { KeyboardEvent, MouseEvent } from 'react';
 
 export type GoalItemProps = {
   goal: GoalDataExtended
@@ -25,9 +25,6 @@ export type GoalItemProps = {
 export class GoalItemStore {
   goal: GoalDataExtended = undefined;
 
-  isMenuOpen: boolean = false;
-  isMenuOpenByContextMenu: boolean = false;
-  xPosContextMenu: number;
   ref: HTMLDivElement;
   startDateRef: ReactDatePicker;
   targetDateRef: ReactDatePicker;
@@ -100,10 +97,6 @@ export class GoalItemStore {
 
   get isFocused() {
     return this.goal?.id === this.parent.focusedGoalId;
-  }
-
-  get isFocusedAndEditing() {
-    return this.isFocused && this.parent.isFocusedGoalEditing;
   }
 
   get boxShadow() {
@@ -190,7 +183,7 @@ export class GoalItemStore {
   };
 
   handleFocus = () => {
-    if (!this.parent.isFocusedGoalEditing && !this.isMenuOpen) {
+    if (!this.parent.isFocusedGoalEditing && !this.parent.isMenuOpenedForFocusedGoal) {
       this.setGoalAsFocused();
     }
   };
@@ -271,27 +264,13 @@ export class GoalItemStore {
   };
 
   handleMenuToggle = (isOpen: boolean) => {
-    this.isMenuOpen = isOpen;
-
-    if (isOpen || document.activeElement !== document.body) {
-      this.setGoalAsFocused();
-    }
-
-    if (!isOpen) {
-      this.isMenuOpenByContextMenu = false;
-      this.xPosContextMenu = undefined;
-    }
+    this.parent.toggleActionMenuForGoal(this.goal.id, isOpen);
   };
 
-  handleContextMenu = (e) => {
+  handleContextMenu = (e: MouseEvent) => {
     e.preventDefault();
 
-    if (!this.isMenuOpen) {
-      this.isMenuOpen = true;
-      this.setGoalAsFocused();
-      this.isMenuOpenByContextMenu = true;
-      this.xPosContextMenu = e.pageX;
-    }
+    this.parent.toggleActionMenuForGoal(this.goal.id, this.isFocused ? !this.parent.isMenuOpenedForFocusedGoal : true, e.pageX);
   };
 
   update = ({ goal }: GoalItemProps) => {

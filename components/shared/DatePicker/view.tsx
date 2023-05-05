@@ -42,7 +42,13 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
     });
 
     return (
-      <Flex ref={containerRef} alignItems='center' {...flexProps} onClick={store.handleAreaEvent}>
+      <Flex
+        ref={containerRef}
+        alignItems='center'
+        {...flexProps}
+        onClick={store.handleAreaEvent}
+        onContextMenu={store.handleAreaEvent}
+      >
         {mustShowIcon && (
           <Tooltip
             label='Add date'
