@@ -6,12 +6,14 @@ import { GoalListCallbacks, GoalListProps } from './types';
 import { EDITABLE_TITLE_ID_SLUG } from "../../../../shared/EditableTitle";
 import { SpaceData } from "../../../Spaces/types";
 import { KeyboardEvent } from 'react';
+import { chunk } from 'lodash';
 
 export class GoalListStore {
   listBySpaces: Record<string, GoalDataExtended[]> = {};
   isHotkeysDisabled: boolean;
   callbacks: GoalListCallbacks;
 
+  containerRef: HTMLDivElement | null = null;
   goalsRefs: Record<string, HTMLDivElement> = {};
   focusedGoalId: string | null = null;
   isFocusedGoalEditing: boolean = false;
@@ -40,22 +42,32 @@ export class GoalListStore {
       if (!this.focusedGoalId) {
         this.setFirstGoalAsFocused();
       } else if (!this.isFocusedGoalEditing) {
-        if (['ArrowLeft', 'ArrowRight'].includes(event.key) && this.goalsList.length) {
-          const currentGoalIndex = this.goalsList.findIndex((goal) => goal.id === this.focusedGoalId);
+        const currentRowIndex = this.arrayByColumns
+          .findIndex((row) => row.includes(this.focusedGoalId));
+        const currentColumnIndex = this.arrayByColumns[currentRowIndex]
+          .findIndex((goalId) => goalId === this.focusedGoalId);
 
-          let goalIndexToFocus = 0;
+        let nextGoalRowIndex = null;
+        let nextGoalColumnIndex = null;
 
-          if (event.key === 'ArrowLeft') {
-            goalIndexToFocus = currentGoalIndex > 0
-                ? currentGoalIndex - 1
-                : this.goalsList.length - 1;
-          } else if (event.key === 'ArrowRight') {
-            goalIndexToFocus = currentGoalIndex < this.goalsList.length - 1
-                ? currentGoalIndex + 1
-                : 0;
-          }
+        if (event.key === 'ArrowDown') {
+          nextGoalRowIndex = currentRowIndex + 1;
+          nextGoalColumnIndex = currentColumnIndex;
+        } else if (event.key === 'ArrowUp') {
+          nextGoalRowIndex = currentRowIndex - 1;
+          nextGoalColumnIndex = currentColumnIndex;
+        } else if (event.key === 'ArrowRight') {
+          nextGoalRowIndex = currentRowIndex;
+          nextGoalColumnIndex = currentColumnIndex + 1;
+        } else if (event.key === 'ArrowLeft') {
+          nextGoalRowIndex = currentRowIndex;
+          nextGoalColumnIndex = currentColumnIndex - 1;
+        }
 
-          this.setFocusedGoalId(this.goalsList[goalIndexToFocus].id);
+        const nextGoalId = this.arrayByColumns[nextGoalRowIndex]?.[nextGoalColumnIndex];
+
+        if (nextGoalId) {
+          this.setFocusedGoalId(nextGoalId);
         }
       }
     },
@@ -123,6 +135,23 @@ export class GoalListStore {
   get focusedGoal() {
     return this.goalsList.find((goal) => goal.id === this.focusedGoalId);
   }
+
+  get goalCardsColumnCount() {
+    return Math.floor(this.containerRef?.clientWidth / 330);
+  }
+
+  get arrayByColumns() {
+    return Object.entries(this.listBySpaces).reduce((acc, [spaceId, goals]) => {
+      return [
+        ...acc,
+        ...chunk(goals.map((goal) => goal.id), this.goalCardsColumnCount),
+      ];
+    }, [] as string[][]);
+  }
+
+  setContainerRef = (ref: HTMLDivElement) => {
+    this.containerRef = ref;
+  };
 
   setGoalRef = (goalId: string, ref: HTMLDivElement) => {
     this.goalsRefs[goalId] = ref;
@@ -213,7 +242,7 @@ export class GoalListStore {
   };
 
   setFirstGoalAsFocused = () => {
-    this.setFocusedGoalId(this.goalsList[0].id);
+    this.setFocusedGoalId(this.goalsList[0]?.id ?? null);
   };
 
   init = () => {
