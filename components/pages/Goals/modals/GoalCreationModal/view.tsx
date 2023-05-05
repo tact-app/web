@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { HStack, Box } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from './store';
@@ -14,12 +14,13 @@ import { GoalCreationInformation } from "./components/GoalCreationInformation";
 import { Task } from "../../../../shared/Task";
 import { ModalsSwitcher } from "../../../../../helpers/ModalsController";
 import { GoalCreationToolbar } from "./components/GoalCreationToolbar";
+import { useGlobalHook } from '../../../../../helpers/GlobalHooksHelper';
 
 export const GoalCreationModalView = observer(function GoalCreationModal() {
   const store = useGoalCreationModalStore();
 
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
-
+  useGlobalHook(store.globalHooks, { updateWhenRemoved: true });
 
   return (
     <Modal

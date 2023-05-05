@@ -5,6 +5,7 @@ import { SpaceData } from '../../types';
 import { SyntheticEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { EMOJI_SELECT_COLORS } from "../../../../shared/EmojiSelect/constants";
+import { GlobalHooks } from '../../../../../helpers/GlobalHooksHelper';
 
 export type SpaceCreationModalProps = {
   callbacks: {
@@ -21,8 +22,6 @@ export type SpaceCreationModalProps = {
 export class SpaceCreationModalStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
-
-    this.root.setGlobalCmdEnterCallback(this.handleSave);
   }
 
   hotkeyHandlers = {
@@ -36,6 +35,12 @@ export class SpaceCreationModalStore {
     CANCEL: () => {
       this.handleClose();
     },
+  };
+
+  globalHook = {
+    [GlobalHooks.MetaEnter]: () => {
+      this.handleSave();
+    }
   };
 
   callbacks: SpaceCreationModalProps['callbacks'] = {};

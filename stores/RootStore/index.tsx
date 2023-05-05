@@ -61,8 +61,6 @@ export class RootStore {
   isModalOpen = false;
   router: NextRouter;
 
-  globalCmdEnterCallback?(event: KeyboardEvent): void;
-
   resources = {
     spaces: new SpacesStore(this),
     tags: new TagsStore(this),
@@ -78,7 +76,7 @@ export class RootStore {
 
   toggleModal = (isOpen: boolean) => {
     this.isModalOpen = isOpen
-  }
+  };
 
   confirm = (props: Omit<ConfirmDialogProps, 'onClose' | 'onSubmit'>) => {
     return new Promise((resolve) => {
@@ -97,31 +95,7 @@ export class RootStore {
         },
       });
     });
-  }
-
-  globalEventListenerKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Enter' && event.metaKey) {
-      this.globalCmdEnterCallback?.(event);
-    }
   };
-
-  setGlobalCmdEnterCallback = (callback: typeof this.globalCmdEnterCallback) => {
-    if (!this.globalCmdEnterCallback) {
-      this.globalCmdEnterCallback = callback;
-      document.addEventListener('keydown', this.globalEventListenerKeyDown, { capture: true });
-    }
-  };
-
-  removeGlobalEventListener = () => {
-    document.removeEventListener('keydown', this.globalEventListenerKeyDown, { capture: true });
-  };
-
-  destroy = () => {
-    if (this.globalCmdEnterCallback) {
-      this.removeGlobalEventListener();
-    }
-  };
-
 
   init = async () => {
     await this.user.init();

@@ -21,6 +21,7 @@ import { GoalWontDoSubmitModal } from '../GoalWontDoSubmitModal';
 import { EMOJI_SELECT_COLORS } from '../../../../shared/EmojiSelect/constants';
 import { NavigationHelper } from '../../../../../helpers/NavigationHelper';
 import { ActionMenuStore } from '../../../../shared/ActionMenu/store';
+import { GlobalHooks } from '../../../../../helpers/GlobalHooksHelper';
 
 const GoalsModals = {
   [GoalCreationModalsTypes.CLOSE_SUBMIT]: GoalCreationCloseSubmitModal,
@@ -30,8 +31,6 @@ const GoalsModals = {
 export class GoalCreationModalStore {
   constructor(public root: RootStore) {
     makeAutoObservable(this);
-
-    this.handleSetGlobalCmd();
   }
 
   listWithCreator = new TasksListWithCreatorStore(this.root);
@@ -87,6 +86,17 @@ export class GoalCreationModalStore {
     PREV_GOAL: () => {
       this.handlePrevGoal();
     },
+  };
+
+  globalHooks = {
+    [GlobalHooks.MetaEnter]: () => {
+      if (this.isUpdating) {
+        (document.activeElement as HTMLInputElement).blur();
+        this.handleSimpleClose();
+      } else {
+        this.handleSave();
+      }
+    }
   };
 
   resizableConfig: ResizableGroupConfig[] = [
@@ -191,17 +201,6 @@ export class GoalCreationModalStore {
     return this.goal.status !== GoalStatus.TODO || this.goal.isArchived;
   }
 
-  handleSetGlobalCmd = () => {
-    this.root.setGlobalCmdEnterCallback(() => {
-      if (this.isUpdating) {
-        (document.activeElement as HTMLInputElement).blur();
-        this.handleSimpleClose();
-      } else {
-        this.handleSave();
-      }
-    });
-  };
-
   handleCloseTask = () => {
     this.resizableConfig[0].size = 3;
     this.resizableConfig[2].size = 0;
@@ -248,14 +247,10 @@ export class GoalCreationModalStore {
     this.goal.title = (e.target as HTMLInputElement).value;
   };
 
-  handleSpaceChange = (value: string, isNew: boolean) => {
+  handleSpaceChange = (value: string) => {
     this.goal.spaceId = value;
 
     this.handleUpdate({ spaceId: value });
-
-    if (isNew) {
-      this.handleSetGlobalCmd();
-    }
   }
 
   handleStartDateChange = async (value: string) => {

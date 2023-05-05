@@ -29,6 +29,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAlignLeft, faTrashCan } from '@fortawesome/pro-light-svg-icons';
 import { EmojiSelect } from "../../../../shared/EmojiSelect";
 import { isMac } from '../../../../../helpers/os';
+import { useGlobalHook } from '../../../../../helpers/GlobalHooksHelper';
 
 const keyMap = {
   CREATE: ['meta+s', 'ctrl+enter'],
@@ -39,6 +40,7 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
   const store = useSpaceCreationModalStore();
 
   useHotkeysHandler(keyMap, store.hotkeyHandlers);
+  useGlobalHook(store.globalHook);
 
   return (
     <Modal
