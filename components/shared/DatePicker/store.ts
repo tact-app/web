@@ -60,6 +60,11 @@ export class DatePickerStore {
     this.handleBlur();
   };
 
+  handleSelect = (date: Date) => {
+    this.handleChange(date);
+    this.handleSave();
+  };
+
   handleAreaEvent = (e: SyntheticEvent | KeyboardEvent) => {
     e.stopPropagation();
   };

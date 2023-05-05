@@ -52,7 +52,6 @@ export const GoalCreationInformation = observer(
                     startDate={store.goal.startDate}
                     endDate={store.goal.targetDate}
                     onChanged={store.handleStartDateChange}
-                    onFocusToggle={store.handleGoalParamBlur}
                     pl='0.3rem'
                   />
                 )}
@@ -67,7 +66,6 @@ export const GoalCreationInformation = observer(
                     minDate={store.goal.startDate}
                     value={store.goal.targetDate}
                     onChanged={store.handleTargetDateChange}
-                    onFocusToggle={store.handleGoalParamBlur}
                     pl='0.3rem'
                   />
                 )}

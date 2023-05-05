@@ -33,17 +33,10 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
 
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.currentValue && !store.isFocused);
 
-    const containerRef = useRef<HTMLDivElement>();
     const ref = useRefWithCallback(forwardedRef, store.setRef);
-
-    useOutsideClick({
-      ref: containerRef,
-      handler: () => store.handleSave(),
-    });
 
     return (
       <Flex
-        ref={containerRef}
         alignItems='center'
         {...flexProps}
         onClick={store.handleAreaEvent}
@@ -86,7 +79,7 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
           onBlur={store.handleBlur}
           onCalendarClose={store.handleBlur}
           onClickOutside={store.handleClickOutside}
-          onSelect={() => store.handleSave()}
+          onSelect={store.handleSelect}
           onInputClick={store.handleInputClick}
           ref={ref}
           selectsStart={selectsStart}

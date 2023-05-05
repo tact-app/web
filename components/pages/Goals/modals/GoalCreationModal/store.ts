@@ -258,16 +258,20 @@ export class GoalCreationModalStore {
     }
   }
 
-  handleStartDateChange = (value: string) => {
+  handleStartDateChange = async (value: string) => {
     this.goal.startDate = value;
 
     if (DatePickerHelpers.isStartDateAfterEndDate(value, this.goal.targetDate)) {
       this.goal.targetDate = '';
     }
+
+    await this.handleUpdate();
   }
 
   handleTargetDateChange = (value: string) => {
     this.goal.targetDate = value;
+    console.log('TARGET DATE CHANGE', value, this.goal.targetDate)
+    return this.handleUpdate({ ...this.goal, targetDate: value });
   }
 
   handleDescriptionChange = (value: JSONContent) => {
@@ -397,31 +401,9 @@ export class GoalCreationModalStore {
 
     await this.onSave({ goal: updatedGoal, description: this.description });
 
+    console.log('UPDATED FULL', this.goal.targetDate, updatedGoal.targetDate)
     this.goal = updatedGoal;
     this.goals[this.currentGoalIndex] = updatedGoal;
-  };
-
-  get sensors() {
-    return [
-      (api) => {
-        this.listWithCreator.list.draggableList.setDnDApi(api);
-        this.finishedList.draggableList.setDnDApi(api);
-      },
-    ];
-  }
-
-  handleDragStart = (result) => {
-    this.listWithCreator.list.draggableList.startDragging();
-    this.finishedList.draggableList.startDragging();
-
-    this.draggingTask = this.listWithCreator.list.items[result.draggableId];
-  };
-
-  handleDragEnd = () => {
-    this.listWithCreator.list.draggableList.endDragging();
-    this.finishedList.draggableList.endDragging();
-
-    this.draggingTask = null;
   };
 
   handleTitleKeyDown = (event: KeyboardEvent) => {
@@ -554,6 +536,7 @@ export class GoalCreationModalStore {
     const goal = { ...this.goal, ...goals[goalIndex] };
 
     this.currentGoalIndex = goalIndex;
+    console.log('UPDATE')
     this.goal = goal;
     this.initialGoal = cloneDeep(goal);
 
