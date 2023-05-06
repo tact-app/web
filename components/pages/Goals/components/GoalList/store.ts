@@ -30,7 +30,8 @@ export class GoalListStore {
     ON_WONT_DO: ['alt+w'],
     ON_CLONE: ['alt+c'],
     ON_ARCHIVE: ['alt+a'],
-    ON_DELETE: ['backspace', 'alt+backspace'],
+    ON_DELETE: ['backspace'],
+    QUICK_DELETE: ['alt+backspace'],
     OPEN_GOAL_MENU: ['alt'],
   };
 
@@ -41,11 +42,8 @@ export class GoalListStore {
     ON_NAVIGATE: (event: KeyboardEvent) => {
       if (!this.focusedGoalId) {
         this.setFirstGoalAsFocused();
-      } else if (!this.isFocusedGoalEditing) {
-        const currentRowIndex = this.arrayByColumns
-          .findIndex((row) => row.includes(this.focusedGoalId));
-        const currentColumnIndex = this.arrayByColumns[currentRowIndex]
-          .findIndex((goalId) => goalId === this.focusedGoalId);
+      } else if (!this.isFocusedGoalEditing && !this.isMenuOpenedForFocusedGoal) {
+        const { currentRowIndex, currentColumnIndex } = this.getCurrentRowColIndexes();
 
         let nextGoalRowIndex = null;
         let nextGoalColumnIndex = null;
@@ -79,8 +77,8 @@ export class GoalListStore {
       this.isFocusedGoalEditing = true;
       this.getGoalTitleElement(this.focusedGoalId).click();
     },
-    ON_OPEN: () => {
-      if (this.isGoalFocusedAndNotEditing) {
+    ON_OPEN: (e: KeyboardEvent) => {
+      if (this.isGoalFocusedAndNotEditing && (e.key !== 'Enter' || !this.isMenuOpenedForFocusedGoal)) {
         this.callbacks?.onOpenGoal(this.focusedGoalId);
       }
     },
@@ -107,6 +105,11 @@ export class GoalListStore {
     ON_DELETE: () => {
       if (this.isGoalFocusedAndNotEditing) {
         this.handleDeleteGoal(this.focusedGoalId);
+      }
+    },
+    QUICK_DELETE: async () => {
+      if (this.isGoalFocusedAndNotEditing) {
+        await this.deleteGoal(this.focusedGoalId);
       }
     },
     OPEN_GOAL_MENU: () => {
@@ -149,6 +152,18 @@ export class GoalListStore {
     }, [] as string[][]);
   }
 
+  getCurrentRowColIndexes = (goalId: string = this.focusedGoalId) => {
+    const currentRowIndex = this.arrayByColumns
+      .findIndex((row) => row.includes(goalId));
+    const currentColumnIndex = this.arrayByColumns[currentRowIndex]
+      .findIndex((goalInColId) => goalInColId === goalId);
+
+    return {
+      currentColumnIndex,
+      currentRowIndex
+    };
+  }
+
   setContainerRef = (ref: HTMLDivElement) => {
     this.containerRef = ref;
   };
@@ -186,6 +201,22 @@ export class GoalListStore {
     });
   }
 
+  deleteGoal = async (goalId: string) => {
+    const { currentRowIndex, currentColumnIndex } = this.getCurrentRowColIndexes(goalId);
+
+    const nextItemInRow = this.arrayByColumns[currentRowIndex]?.[currentColumnIndex + 1];
+    const prevItemInRow = this.arrayByColumns[currentRowIndex]?.[currentColumnIndex - 1];
+    const nextItemInCol = this.arrayByColumns[currentRowIndex + 1]?.[currentColumnIndex];
+    const prevItemInCol = this.arrayByColumns[currentRowIndex - 1]?.[currentColumnIndex];
+
+    let nextGoalToFocus = nextItemInRow || prevItemInRow || nextItemInCol || prevItemInCol || this.goalsList[0]?.id;
+
+    console.log('NEXTGOALTOFOCUS', this.goalsList, nextGoalToFocus)
+
+    await this.callbacks?.onDeleteGoal(goalId);
+    this.setFocusedGoalId(nextItemInRow || prevItemInRow || nextItemInCol || prevItemInCol || this.goalsList[0]?.id);
+  };
+
   handleDeleteGoal = async (goalId: string) => {
     if (
         await this.root.confirm({
@@ -194,7 +225,7 @@ export class GoalListStore {
           content: 'Are you sure you would like to delete this goal?'
         })
     ) {
-      await this.callbacks?.onDeleteGoal(goalId);
+      await this.deleteGoal(goalId);
     }
   }
 
@@ -212,6 +243,7 @@ export class GoalListStore {
     this.isMenuOpenedForFocusedGoal = false;
 
     if (goalId) {
+      console.log(this.goalsRefs[goalId])
       this.goalsRefs[goalId].focus();
     }
   };

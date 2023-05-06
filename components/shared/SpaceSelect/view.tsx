@@ -2,9 +2,9 @@ import {
   Button,
   Popover,
   PopoverTrigger,
-  chakra,
+  chakra, useOutsideClick,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useSpaceSelectStore } from './store';
 import { SpacesSmallIcon } from "../../pages/Spaces/components/SpacesIcons/SpacesSmallIcon";
@@ -17,8 +17,16 @@ import { SpaceSelectContent } from './components/SpaceSelectContent';
 export const SpaceSelectView = observer(function SpaceSelectView() {
   const store = useSpaceSelectStore();
 
+  const ref = useRef<HTMLDivElement>();
+
+  useOutsideClick({
+    ref,
+    enabled: store.isMenuOpen,
+    handler: store.closeMenu,
+  });
+
   return (
-    <chakra.div display='flex' role='group' onKeyDown={store.handleContainerKeyDown}>
+    <chakra.div ref={ref} display='flex' role='group' onKeyDown={store.handleContainerKeyDown}>
       <Popover
         isLazy
         strategy='fixed'

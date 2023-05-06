@@ -96,12 +96,14 @@ export class SpaceSelectStore {
   openMenu() {
     this.isMenuOpen = true;
 
+    this.menuNavigation.reset();
     this.menuNavigation.enable();
   };
 
   closeMenu() {
     this.isMenuOpen = false;
 
+    this.menuNavigation.reset();
     this.menuNavigation.disable();
   };
 

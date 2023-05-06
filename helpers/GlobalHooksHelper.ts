@@ -26,7 +26,7 @@ class GlobalHooksStoreClass {
   setGlobalHooks = (hooksWithCallbacks: GlobalHooksCallbacks) => {
     this.globalHooksCallbacks = hooksWithCallbacks;
 
-    if (Object.keys(this.globalHooksCallbacks).length) {
+    if (Object.keys(this.globalHooksCallbacks).length && !this.isEventListenerCreated) {
       this.isEventListenerCreated = true;
       document.addEventListener('keydown', this.globalKeyDownEventListener, { capture: true });
     }

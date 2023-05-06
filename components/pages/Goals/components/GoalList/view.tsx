@@ -31,7 +31,11 @@ const GOALS_LIST_FILTERS = [
 export const GoalListView = observer(function GoalListView() {
   const store = useGoalListStore();
 
-  useHotkeysHandler(store.keyMap, store.hotkeyHandlers, { enabled: !store.isHotkeysDisabled });
+  useHotkeysHandler(
+    store.keyMap,
+    store.hotkeyHandlers,
+    { enabled: !store.isHotkeysDisabled && !store.root.globalModals.isOpen }
+  );
 
   return (
     <Box p={0} ref={store.setContainerRef}>

@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "@chakra-ui/modal";
 import { Button, Flex, Text } from "@chakra-ui/react";
 import { ButtonHotkey } from "../ButtonHotkey";
+import { GlobalHooks, useGlobalHook } from '../../../helpers/GlobalHooksHelper';
 
 export type ConfirmDialogProps = {
   onClose(): void;
@@ -13,6 +14,10 @@ export type ConfirmDialogProps = {
 
 export function ConfirmDialog({ onClose, onSubmit, content, title, type }: ConfirmDialogProps) {
   const initialRef = useRef();
+
+  useGlobalHook({
+    [GlobalHooks.MetaEnter]: onSubmit,
+  });
 
   const getTitleByType = () => {
     switch (type) {
