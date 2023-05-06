@@ -1,10 +1,4 @@
-import {
-  PopoverBody,
-  PopoverContent,
-  Portal,
-  Fade,
-  chakra,
-} from '@chakra-ui/react';
+import { PopoverContent, Portal, Fade } from '@chakra-ui/react';
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useSpaceSelectStore } from '../../store';
@@ -31,14 +25,10 @@ export const SpaceSelectContent = observer(function SpaceSelectContent() {
           overflow='auto'
           onFocus={store.menuNavigation.handleFocus}
         >
-          {/*<PopoverBody p={0}>*/}
-          {/*  <div>*/}
-            {store.spaces.map((space, index) => (
-              <SpaceSelectItem key={space.id} space={space} index={index} />
-            ))}
-            <SpaceSelectCreateItem />
-            {/*</div>*/}
-          {/*</PopoverBody>*/}
+          {store.spaces.map((space, index) => (
+            <SpaceSelectItem key={space.id} space={space} index={index} />
+          ))}
+          <SpaceSelectCreateItem />
         </PopoverContent>
       </Fade>
     </Portal>

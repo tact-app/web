@@ -7,7 +7,6 @@ import { faCheck } from "@fortawesome/pro-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SpaceData } from "../../../../pages/Spaces/types";
 import { SpaceSelectItemContainer } from '../SpaceSelectItemContainer';
-import { toJS } from 'mobx';
 
 type Props = {
   space: SpaceData;

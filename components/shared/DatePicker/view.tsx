@@ -1,7 +1,7 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from "mobx-react-lite";
 import ReactDatePicker from 'react-datepicker';
-import { Flex, chakra, useOutsideClick } from "@chakra-ui/react";
+import { Flex, chakra } from "@chakra-ui/react";
 import { faCalendarCirclePlus } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DatePickerViewProps } from "./types";
