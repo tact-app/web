@@ -15,11 +15,12 @@ export type SpaceSelectProps = {
   onChange(spaceId: string, isNew?: boolean): void;
   onNavigate?(direction: NavigationDirections, event: KeyboardEvent): void;
   onNavigateToSpace?(spaceId: string): void;
+  onCreateModalOpened?(isOpened: boolean): void;
   selectedId?: string | null;
 };
 
 export class SpaceSelectStore {
-  callbacks: Pick<SpaceSelectProps, 'onChange' | 'onNavigate' | 'onNavigateToSpace'>;
+  callbacks: Pick<SpaceSelectProps, 'onChange' | 'onNavigate' | 'onNavigateToSpace' | 'onCreateModalOpened'>;
 
   triggerRef: HTMLButtonElement | null = null;
   goToSpaceButtonRef: HTMLButtonElement | null = null;
@@ -30,6 +31,8 @@ export class SpaceSelectStore {
   selectedSpaceId: string | null = null;
 
   menuNavigation = new ListNavigation();
+
+  setTriggerFocusTimeout: NodeJS.Timeout;
 
   controller = new ModalsController({
     [ModalsTypes.SPACE_CREATION]: SpaceCreationModal,
@@ -65,16 +68,25 @@ export class SpaceSelectStore {
     this.triggerRef.focus();
   };
 
+  setTriggerFocus = () => {
+    this.setTriggerFocusTimeout = setTimeout(() => {
+      this.triggerRef.focus();
+    });
+  };
+
   handleCloseCreateModal = () => {
     this.controller.close();
     this.menuNavigation.enable();
     this.isCreateModalOpened = false;
+    this.callbacks?.onCreateModalOpened?.(false);
+    this.setTriggerFocus();
   };
 
   handleCreate() {
     this.closeMenu();
     this.menuNavigation.disable();
     this.isCreateModalOpened = true;
+    this.callbacks?.onCreateModalOpened?.(true);
 
     this.controller.open({
       type: ModalsTypes.SPACE_CREATION,
@@ -191,8 +203,12 @@ export class SpaceSelectStore {
     }
   };
 
-  update({ onChange, onNavigate, onNavigateToSpace, selectedId }: SpaceSelectProps) {
-    this.callbacks = { onChange, onNavigate, onNavigateToSpace };
+  destroy = () => {
+    clearTimeout(this.setTriggerFocusTimeout);
+  };
+
+  update({ onChange, onNavigate, onNavigateToSpace, onCreateModalOpened, selectedId }: SpaceSelectProps) {
+    this.callbacks = { onChange, onNavigate, onNavigateToSpace, onCreateModalOpened };
     this.selectedSpaceId = selectedId;
 
     if (!this.selectedSpaceId) {

@@ -81,7 +81,7 @@ export class GoalItemStore {
       {
         icon: faTrashCan,
         title: 'Delete',
-        command: '⌫ / ⌥⌫',
+        command: '⌫ / ⌘⌫',
         onClick: () => this.parent.handleDeleteGoal(this.goal?.id),
       },
     ];
@@ -113,6 +113,12 @@ export class GoalItemStore {
   }
 
   handleClick = () => {
+    if (this.isFocused) {
+      this.handleOpenGoal();
+    }
+  };
+
+  handleOpenGoal = () => {
     this.parent.callbacks?.onOpenGoal(this.goal?.id)
   };
 

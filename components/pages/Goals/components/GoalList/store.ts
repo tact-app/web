@@ -31,8 +31,9 @@ export class GoalListStore {
     ON_CLONE: ['alt+c'],
     ON_ARCHIVE: ['alt+a'],
     ON_DELETE: ['backspace'],
-    QUICK_DELETE: ['alt+backspace'],
+    QUICK_DELETE: ['meta+backspace'],
     OPEN_GOAL_MENU: ['alt'],
+    UNFOCUS_GOAL: ['escape'],
   };
 
   hotkeyHandlers = {
@@ -51,15 +52,37 @@ export class GoalListStore {
         if (event.key === 'ArrowDown') {
           nextGoalRowIndex = currentRowIndex + 1;
           nextGoalColumnIndex = currentColumnIndex;
+
+          if (this.arrayByColumns[nextGoalRowIndex] && !this.arrayByColumns[nextGoalRowIndex][nextGoalColumnIndex]) {
+            nextGoalColumnIndex = 0;
+          } else if (!this.arrayByColumns[nextGoalRowIndex]) {
+            nextGoalRowIndex = 0;
+          }
         } else if (event.key === 'ArrowUp') {
           nextGoalRowIndex = currentRowIndex - 1;
           nextGoalColumnIndex = currentColumnIndex;
+
+          if (this.arrayByColumns[nextGoalRowIndex] && !this.arrayByColumns[nextGoalRowIndex][nextGoalColumnIndex]) {
+            nextGoalColumnIndex = 0;
+          } else if (!this.arrayByColumns[nextGoalRowIndex]) {
+            nextGoalRowIndex = this.arrayByColumns.length - 1;
+          }
         } else if (event.key === 'ArrowRight') {
           nextGoalRowIndex = currentRowIndex;
           nextGoalColumnIndex = currentColumnIndex + 1;
+
+          if (!this.arrayByColumns[nextGoalRowIndex]?.[nextGoalColumnIndex]) {
+            nextGoalRowIndex += 1;
+            nextGoalColumnIndex = 0;
+          }
         } else if (event.key === 'ArrowLeft') {
           nextGoalRowIndex = currentRowIndex;
           nextGoalColumnIndex = currentColumnIndex - 1;
+
+          if (!this.arrayByColumns[nextGoalRowIndex]?.[nextGoalColumnIndex]) {
+            nextGoalRowIndex -= 1;
+            nextGoalColumnIndex = this.arrayByColumns[nextGoalRowIndex]?.length - 1;
+          }
         }
 
         const nextGoalId = this.arrayByColumns[nextGoalRowIndex]?.[nextGoalColumnIndex];
@@ -115,6 +138,11 @@ export class GoalListStore {
     OPEN_GOAL_MENU: () => {
       if (this.isGoalFocusedAndNotEditing) {
         this.toggleActionMenuForGoal(this.focusedGoalId, !this.isMenuOpenedForFocusedGoal)
+      }
+    },
+    UNFOCUS_GOAL: () => {
+      if (this.isGoalFocusedAndNotEditing && !this.isMenuOpenedForFocusedGoal) {
+        this.setFocusedGoalId(null);
       }
     },
   };
@@ -211,8 +239,6 @@ export class GoalListStore {
 
     let nextGoalToFocus = nextItemInRow || prevItemInRow || nextItemInCol || prevItemInCol || this.goalsList[0]?.id;
 
-    console.log('NEXTGOALTOFOCUS', this.goalsList, nextGoalToFocus)
-
     await this.callbacks?.onDeleteGoal(goalId);
     this.setFocusedGoalId(nextItemInRow || prevItemInRow || nextItemInCol || prevItemInCol || this.goalsList[0]?.id);
   };
@@ -238,13 +264,16 @@ export class GoalListStore {
   }
 
   setFocusedGoalId = (goalId: string | null) => {
+    const lastFocusedGoal = this.focusedGoalId;
+
     this.focusedGoalId = goalId;
     this.isFocusedGoalEditing = false;
     this.isMenuOpenedForFocusedGoal = false;
 
     if (goalId) {
-      console.log(this.goalsRefs[goalId])
       this.goalsRefs[goalId].focus();
+    } else if (lastFocusedGoal) {
+      this.goalsRefs[lastFocusedGoal].blur();
     }
   };
 

@@ -94,7 +94,7 @@ export function CommentPopover({ isOpen: open = false, onToggleOpen, triggerProp
       >
         <PopoverTrigger>
           <div>
-            <Tooltip label='Comment' hotkey='Press C'>
+            <Tooltip label='Comments' hotkey='Press C'>
               <Button
                 variant='ghost'
                 size='xs'

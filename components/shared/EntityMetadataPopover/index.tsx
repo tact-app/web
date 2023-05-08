@@ -98,7 +98,7 @@ export function EntityMetadataPopover({ isOpen: open, onToggleOpen, triggerProps
       >
         <PopoverTrigger>
           <div>
-            <Tooltip label='Info' hotkey='⌥I'>
+            <Tooltip label='Information' hotkey='⌥I'>
               <Button
                 variant='ghost'
                 size='xs'

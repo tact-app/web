@@ -23,7 +23,11 @@ export const SpaceSelectItem = observer(function SpaceSelectItem({ space, index 
   };
 
   return (
-    <SpaceSelectItemContainer index={index} onClick={handleClick}>
+    <SpaceSelectItemContainer
+      index={index}
+      onMouseDown={handleClick}
+      onClick={handleClick}
+    >
       <Flex alignItems='center'>
         <SpacesSmallIcon space={space} size={7} borderRadius={4} bgOpacity='100' />
         <chakra.span color={isSelected ? 'blue.400' : 'gray.700'} ml={2} mr={2} overflow='hidden' textOverflow='ellipsis'>

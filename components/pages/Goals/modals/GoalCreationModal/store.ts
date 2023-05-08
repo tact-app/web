@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { DescriptionData } from '../../../../../types/description';
 import { ResizableGroupConfig } from '../../../../shared/ResizableGroup/store';
 import { TasksListWithCreatorStore } from '../../../../shared/TasksListWithCreator/store';
-import { TasksListStore } from '../../../../shared/TasksList/store';
 import { TaskData } from '../../../../shared/TasksList/types';
 import { NavigationDirections } from '../../../../../types/navigation';
 import { EmojiStore } from '../../../../../stores/EmojiStore';
@@ -22,6 +21,7 @@ import { EMOJI_SELECT_COLORS } from '../../../../shared/EmojiSelect/constants';
 import { NavigationHelper } from '../../../../../helpers/NavigationHelper';
 import { ActionMenuStore } from '../../../../shared/ActionMenu/store';
 import { GlobalHooks } from '../../../../../helpers/GlobalHooksHelper';
+import { GOALS_STATUSES_HOTKEYS } from './constants';
 
 const GoalsModals = {
   [GoalCreationModalsTypes.CLOSE_SUBMIT]: GoalCreationCloseSubmitModal,
@@ -34,7 +34,6 @@ export class GoalCreationModalStore {
   }
 
   listWithCreator = new TasksListWithCreatorStore(this.root);
-  finishedList = new TasksListStore(this.root);
 
   modals = new ModalsController(GoalsModals);
 
@@ -50,13 +49,16 @@ export class GoalCreationModalStore {
     OPEN_INFO_POPOVER: ['alt+i'],
     NEXT_GOAL: ['alt+down'],
     PREV_GOAL: ['alt+up'],
+    CHANGE_STATUS_TO_TODO: [GOALS_STATUSES_HOTKEYS[GoalStatus.TODO]],
+    CHANGE_STATUS_TO_DONE: [GOALS_STATUSES_HOTKEYS[GoalStatus.DONE]],
+    CHANGE_STATUS_TO_WONT_DO: [GOALS_STATUSES_HOTKEYS[GoalStatus.WONT_DO]],
   };
 
   hotkeyHandlers = {
     CREATE: (e: KeyboardEvent) => {
       e.preventDefault();
 
-      if (!this.isUpdating) {
+      if (!this.isUpdating && !this.modals.isOpen && !this.isSpaceCreateModalOpened) {
         this.handleSave();
       }
     },
@@ -85,6 +87,15 @@ export class GoalCreationModalStore {
     },
     PREV_GOAL: () => {
       this.handlePrevGoal();
+    },
+    CHANGE_STATUS_TO_TODO: () => {
+      this.handleUpdateStatus(GoalStatus.TODO);
+    },
+    CHANGE_STATUS_TO_DONE: () => {
+      this.handleUpdateStatus(GoalStatus.DONE);
+    },
+    CHANGE_STATUS_TO_WONT_DO: () => {
+      this.handleUpdateStatus(GoalStatus.WONT_DO);
     },
   };
 
@@ -118,7 +129,6 @@ export class GoalCreationModalStore {
   isOpen = true;
   isUpdating: boolean = false;
   isTaskExpanded = false;
-  isEmojiPickerOpen = false;
   isDescriptionLoading: boolean = true;
   isGoalCreatingOrUpdating: boolean = false;
   draggingTask: TaskData | null = null;
@@ -127,6 +137,7 @@ export class GoalCreationModalStore {
   error: string = '';
   isCommentPopoverOpened: boolean = false;
   isInfoPopoverOpened: boolean = false;
+  isSpaceCreateModalOpened: boolean = false;
 
   goal: GoalData = {
     id: uuidv4(),
@@ -152,8 +163,10 @@ export class GoalCreationModalStore {
   titleInputRef: HTMLInputElement;
   editorRef: Editor;
   emojiSelectRef: HTMLButtonElement;
+  statusSelectTriggerRef: HTMLButtonElement;
 
   setTitleFocusTimeout: NodeJS.Timeout;
+  setStatusSelectFocusTimeout: NodeJS.Timeout;
 
   get taskProps() {
     return {
@@ -223,12 +236,8 @@ export class GoalCreationModalStore {
     this.resizableConfig[2].size = 1;
   };
 
-  openEmojiPicker = () => {
-    this.isEmojiPickerOpen = true;
-  };
-
-  closeEmojiPicker = () => {
-    this.isEmojiPickerOpen = false;
+  handleOpenSpaceCreateModal = (isOpen: boolean) => {
+    this.isSpaceCreateModalOpened = isOpen;
   };
 
   handleEmojiSelect = (emoji: string) => {
@@ -265,7 +274,6 @@ export class GoalCreationModalStore {
 
   handleTargetDateChange = (value: string) => {
     this.goal.targetDate = value;
-    console.log('TARGET DATE CHANGE', value, this.goal.targetDate)
     return this.handleUpdate({ ...this.goal, targetDate: value });
   }
 
@@ -361,6 +369,12 @@ export class GoalCreationModalStore {
     }
   };
 
+  setFocusToStatusSelect = () => {
+    this.setStatusSelectFocusTimeout = setTimeout(() => {
+      this.statusSelectTriggerRef.focus();
+    }, 0);
+  };
+
   handleUpdateStatus = (status: GoalStatus) => {
     if (this.goal.status !== status) {
       if (status === GoalStatus.WONT_DO) {
@@ -370,8 +384,12 @@ export class GoalCreationModalStore {
             onSubmit: async (wontDoReason) => {
               await this.handleUpdate({ status, wontDoReason });
               this.modals.close();
+              this.setFocusToStatusSelect();
             },
-            onClose: this.modals.close,
+            onClose: () => {
+              this.modals.close();
+              this.setFocusToStatusSelect();
+            },
           },
         });
       } else {
@@ -396,7 +414,6 @@ export class GoalCreationModalStore {
 
     await this.onSave({ goal: updatedGoal, description: this.description });
 
-    console.log('UPDATED FULL', this.goal.targetDate, updatedGoal.targetDate)
     this.goal = updatedGoal;
     this.goals[this.currentGoalIndex] = updatedGoal;
   };
@@ -475,6 +492,10 @@ export class GoalCreationModalStore {
     this.emojiSelectRef = element;
   };
 
+  setStatusSelectTriggerRef = (element: HTMLButtonElement) => {
+    this.statusSelectTriggerRef = element;
+  };
+
   loadDescription = async (goal: GoalData) => {
     if (goal.descriptionId) {
       this.isDescriptionLoading = true;
@@ -520,6 +541,7 @@ export class GoalCreationModalStore {
 
   destroy = () => {
     clearTimeout(this.setTitleFocusTimeout);
+    clearTimeout(this.setStatusSelectFocusTimeout);
   };
 
   update = async ({ onClose, onSave, goals = [], goalId }: GoalCreationModalProps) => {
@@ -531,7 +553,6 @@ export class GoalCreationModalStore {
     const goal = { ...this.goal, ...goals[goalIndex] };
 
     this.currentGoalIndex = goalIndex;
-    console.log('UPDATE')
     this.goal = goal;
     this.initialGoal = cloneDeep(goal);
 

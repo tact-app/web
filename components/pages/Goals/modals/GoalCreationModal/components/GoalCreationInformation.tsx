@@ -40,6 +40,7 @@ export const GoalCreationInformation = observer(
                     selectedId={store.goal.spaceId}
                     onChange={store.handleSpaceChange}
                     onNavigateToSpace={store.handleNavigateToSpace}
+                    onCreateModalOpened={store.handleOpenSpaceCreateModal}
                   />
                 )}
                 {renderInformationItem(

@@ -53,7 +53,8 @@ export const GoalItemView = observer(function GoalItemView() {
       _focusVisible={{
         outline: 'none',
       }}
-      onClick={store.handleClick}
+      onDoubleClick={store.handleOpenGoal}
+      onMouseDown={store.handleClick}
       onFocus={store.handleFocus}
       onContextMenu={store.handleContextMenu}
     >

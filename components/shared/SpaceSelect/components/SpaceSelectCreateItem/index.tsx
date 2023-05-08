@@ -10,7 +10,11 @@ export const SpaceSelectCreateItem = observer(function SpaceSelectCreateItem() {
   const store = useSpaceSelectStore();
 
   return (
-    <SpaceSelectItemContainer index={store.spaces.length} onClick={store.handleCreate}>
+    <SpaceSelectItemContainer
+      index={store.spaces.length}
+      onClick={store.handleCreate}
+      onMouseDown={store.handleCreate}
+    >
       <Flex alignItems='center'>
         <Flex
           w={7}
