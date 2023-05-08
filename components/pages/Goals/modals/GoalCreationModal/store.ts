@@ -63,7 +63,9 @@ export class GoalCreationModalStore {
       }
     },
     CANCEL: () => {
-      this.handleSimpleClose();
+      if (!this.listWithCreator.list.openedTask) {
+        this.handleSimpleClose();
+      }
     },
     CHANGE_STATUS: () => {
       if (this.isUpdating && !this.selectStatus.isMenuOpen) {

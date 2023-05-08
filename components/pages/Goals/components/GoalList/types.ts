@@ -1,7 +1,7 @@
 import { GoalData, GoalDataExtended } from "../../types";
 
 export type GoalListCallbacks = {
-  onOpenGoal(goalId: string): void;
+  onOpenGoal(goalId: string, goals: Record<string, GoalDataExtended[]>): void;
   onDeleteGoal(goalId: string): Promise<void>;
   onUpdateGoal(goal: GoalDataExtended): void;
   onWontDo(goal: GoalDataExtended): void;

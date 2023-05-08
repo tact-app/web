@@ -38,6 +38,8 @@ export class GoalItemStore {
     NavigationDirections.BACK
   ];
 
+  prevIsFocused: boolean = false;
+
   constructor(
     public root: RootStore,
     public parent: GoalListStore,
@@ -51,7 +53,7 @@ export class GoalItemStore {
         icon: faSquareArrowUpRight,
         title: 'Open',
         command: '↵/⌥O',
-        onClick: () => this.parent.callbacks?.onOpenGoal(this.goal.id),
+        onClick: () => this.parent.callbacks?.onOpenGoal(this.goal.id, this.parent.listBySpaces),
       },
       {
         icon: faCircleCheck,
@@ -113,13 +115,17 @@ export class GoalItemStore {
   }
 
   handleClick = () => {
-    if (this.isFocused) {
+    if (this.prevIsFocused) {
       this.handleOpenGoal();
     }
   };
 
+  handleMouseDown = () => {
+    this.prevIsFocused = this.isFocused;
+  };
+
   handleOpenGoal = () => {
-    this.parent.callbacks?.onOpenGoal(this.goal?.id)
+    this.parent.callbacks?.onOpenGoal(this.goal?.id, this.parent.listBySpaces)
   };
 
   setEmojiSelectRef = (element: HTMLButtonElement) => {

@@ -102,36 +102,42 @@ export class GoalListStore {
     },
     ON_OPEN: (e: KeyboardEvent) => {
       if (this.isGoalFocusedAndNotEditing && (e.key !== 'Enter' || !this.isMenuOpenedForFocusedGoal)) {
-        this.callbacks?.onOpenGoal(this.focusedGoalId);
+        this.callbacks?.onOpenGoal(this.focusedGoalId, this.listBySpaces);
       }
     },
     ON_DONE: () => {
       if (this.isGoalFocusedAndNotEditing) {
+        this.isMenuOpenedForFocusedGoal = false;
         this.doneGoal(this.focusedGoal);
       }
     },
     ON_WONT_DO: () => {
       if (this.isGoalFocusedAndNotEditing) {
+        this.isMenuOpenedForFocusedGoal = false;
         this.callbacks?.onWontDo(this.focusedGoal);
       }
     },
     ON_CLONE: () => {
       if (this.isGoalFocusedAndNotEditing) {
-        this.callbacks?.onCloneGoal(this.focusedGoal);
+        this.isMenuOpenedForFocusedGoal = false;
+        this.cloneGoal(this.focusedGoal);
       }
     },
     ON_ARCHIVE: () => {
       if (this.isGoalFocusedAndNotEditing) {
+        this.isMenuOpenedForFocusedGoal = false;
         this.archiveGoal(this.focusedGoal);
       }
     },
     ON_DELETE: () => {
       if (this.isGoalFocusedAndNotEditing) {
+        this.isMenuOpenedForFocusedGoal = false;
         this.handleDeleteGoal(this.focusedGoalId);
       }
     },
     QUICK_DELETE: async () => {
       if (this.isGoalFocusedAndNotEditing) {
+        this.isMenuOpenedForFocusedGoal = false;
         await this.deleteGoal(this.focusedGoalId);
       }
     },
@@ -212,6 +218,8 @@ export class GoalListStore {
     }
 
     const clonedGoal = await this.callbacks.onCloneGoal(goal);
+
+    this.setFocusedGoalId(clonedGoal.id);
     this.getGoalTitleElement(clonedGoal.id).click();
   }
 
@@ -222,14 +230,18 @@ export class GoalListStore {
     });
   }
 
-  archiveGoal = (goal: GoalDataExtended) => {
-    return this.callbacks?.onUpdateGoal({
+  archiveGoal = async (goal: GoalDataExtended) => {
+    const nextGoalToFocus = this.getNextGoalToFocus(goal.id);
+
+    await this.callbacks?.onUpdateGoal({
       ...goal,
       isArchived: !goal.isArchived
     });
+
+    this.setFocusedGoalId(nextGoalToFocus);
   }
 
-  deleteGoal = async (goalId: string) => {
+  getNextGoalToFocus = (goalId: string) => {
     const { currentRowIndex, currentColumnIndex } = this.getCurrentRowColIndexes(goalId);
 
     const nextItemInRow = this.arrayByColumns[currentRowIndex]?.[currentColumnIndex + 1];
@@ -237,10 +249,14 @@ export class GoalListStore {
     const nextItemInCol = this.arrayByColumns[currentRowIndex + 1]?.[currentColumnIndex];
     const prevItemInCol = this.arrayByColumns[currentRowIndex - 1]?.[currentColumnIndex];
 
-    let nextGoalToFocus = nextItemInRow || prevItemInRow || nextItemInCol || prevItemInCol || this.goalsList[0]?.id;
+    return nextItemInRow || prevItemInRow || nextItemInCol || prevItemInCol || this.goalsList[0]?.id;
+  };
+
+  deleteGoal = async (goalId: string) => {
+    const nextGoalToFocus = this.getNextGoalToFocus(goalId);
 
     await this.callbacks?.onDeleteGoal(goalId);
-    this.setFocusedGoalId(nextItemInRow || prevItemInRow || nextItemInCol || prevItemInCol || this.goalsList[0]?.id);
+    this.setFocusedGoalId(nextGoalToFocus);
   };
 
   handleDeleteGoal = async (goalId: string) => {
