@@ -3,7 +3,7 @@ export default {
     link: 'https://github.com/tact-app/web',
   },
 
-  docsRepositoryBase: 'https://github.com/tact-app/web/blob/main/tools',
+  docsRepositoryBase: 'https://github.com/tact-app/web/blob/main/docs',
   feedback: {
     useLink() {
       return 'https://github.com/tact-app/web/discussions/new/choose'
@@ -43,7 +43,7 @@ export default {
   logo: (
     <>
       <img width={24} height={24}
-           src="https://raw.githubusercontent.com/octomation/.github/main/.static/octolab.png"
+           src="https://raw.githubusercontent.com/tact-app/.github/main/assets/geek/octolab.png"
            alt="OctoLab"
       />
       <span>Tact.app</span>

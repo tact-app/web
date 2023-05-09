@@ -175,4 +175,4 @@ See [CLA][] to see the full text.
 [CLA assistant]:      https://cla-assistant.io/tact-app/web
 [CLA assistant.src]:  https://github.com/cla-assistant/cla-assistant
 
-<p align="right">made with ❤️ for everyone</p>
+<p align="right">made with ❤️ for everyone by OctoLab</p>
