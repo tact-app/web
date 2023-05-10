@@ -91,6 +91,7 @@ export const SpaceCreationModalView = observer(function SpaceCreationModal() {
                 </chakra.div>
                 <Box flex={1}>
                   <Input
+                    ref={store.setInputRef}
                     size='lg'
                     value={store.name}
                     autoFocus

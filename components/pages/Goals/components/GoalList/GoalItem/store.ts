@@ -191,6 +191,8 @@ export class GoalItemStore {
   handleDatePickerFocus = (isFocused: boolean) => {
     if (isFocused) {
       this.updateEditedGoal();
+    } else {
+      this.setGoalAsFocused();
     }
   };
 

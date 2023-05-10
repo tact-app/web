@@ -33,7 +33,6 @@ export class GoalListStore {
     ON_DELETE: ['backspace'],
     QUICK_DELETE: ['meta+backspace'],
     OPEN_GOAL_MENU: ['alt'],
-    UNFOCUS_GOAL: ['escape'],
   };
 
   hotkeyHandlers = {
@@ -146,11 +145,6 @@ export class GoalListStore {
         this.toggleActionMenuForGoal(this.focusedGoalId, !this.isMenuOpenedForFocusedGoal)
       }
     },
-    UNFOCUS_GOAL: () => {
-      if (this.isGoalFocusedAndNotEditing && !this.isMenuOpenedForFocusedGoal) {
-        this.setFocusedGoalId(null);
-      }
-    },
   };
 
   constructor(public root: RootStore) {
@@ -196,6 +190,13 @@ export class GoalListStore {
       currentColumnIndex,
       currentRowIndex
     };
+  }
+
+  handleContainerKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && this.isGoalFocusedAndNotEditing && !this.isMenuOpenedForFocusedGoal) {
+      e.stopPropagation();
+      this.setFocusedGoalId(null);
+    }
   }
 
   setContainerRef = (ref: HTMLDivElement) => {

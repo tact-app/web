@@ -54,6 +54,8 @@ export const GoalCreationStatusSelect = observer(
                   pl={1}
                   pr={2}
                   h={7}
+                  _focus={{ boxShadow: 'var(--chakra-shadows-outline)' }}
+                  _active={{ boxShadow: 'none' }}
                   bg={isOpen ? 'gray.75' : 'initial'}
                 >
                   <FontAwesomeIcon

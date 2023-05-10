@@ -35,13 +35,15 @@ export class DatePickerStore {
   handleFocus = () => {
     if (!this.isFocused) {
       this.isFocused = true;
+      console.log('FOCUS')
       this.callbacks?.onFocusToggle?.(true);
     }
   };
 
   handleBlur = () => {
     if (this.isFocused) {
-      this.isFocused = false
+      this.isFocused = false;
+      console.log('UNFOCUS')
       this.callbacks?.onFocusToggle?.(false);
     }
   };
@@ -87,11 +89,14 @@ export class DatePickerStore {
           this.inputRef === document.activeElement && (
             (
               direction === NavigationDirections.LEFT &&
-              this.inputRef.selectionStart === 0
+              !this.inputRef.selectionStart
             ) ||
             (
               direction === NavigationDirections.RIGHT &&
-              this.inputRef.selectionStart === DATE_PICKER_DATE_FORMAT.length
+              (
+                (this.inputRef.selectionStart === DATE_PICKER_DATE_FORMAT.length) ||
+                (!this.inputRef.selectionStart && !this.value.length)
+              )
             )
           )
         )

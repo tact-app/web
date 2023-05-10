@@ -38,7 +38,7 @@ export const GoalListView = observer(function GoalListView() {
   );
 
   return (
-    <Box p={0} ref={store.setContainerRef}>
+    <Box p={0} ref={store.setContainerRef} onKeyDown={store.handleContainerKeyDown}>
       {store.root.resources.goals.haveGoals && <Filters options={GOALS_LIST_FILTERS} value='all' />}
       <Flex flexDirection='column' mb={2} mt={8}>
         {Object.entries(store.listBySpaces).map(([spaceId, goals]) => (

@@ -38,7 +38,7 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
       >
         <PopoverTrigger>
           <div onKeyDown={store.handleTriggerButtonKeyDown}>
-            <Tooltip label='Change space' isDisabled={store.isMenuOpen || store.isCreateModalOpened}>
+            <Tooltip label='Change space' isDisabled={store.isMenuOpen || store.isCreateModalOpened || store.isTriggerFocused}>
               <Button
                 ref={store.setTriggerRef}
                 p={.5}

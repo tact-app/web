@@ -56,6 +56,10 @@ export class GoalsStore extends BaseGoalsStore {
     return this.root.resources.goals.cloneGoal(goal);
   }
 
+  goToArchivePage = () => {
+    return this.root.router.push('/goals/archive')
+  };
+
   startGoalCreation = () => {
     this.modals.open({
       type: GoalsModalsTypes.CREATE_OR_UPDATE_GOAL,

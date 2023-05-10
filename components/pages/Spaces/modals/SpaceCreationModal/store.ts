@@ -61,6 +61,9 @@ export class SpaceCreationModalStore {
   description: string = '';
   isDeleteConfirmationOpen: boolean = false;
 
+  inputElement: HTMLInputElement;
+  setInputFocusTimeout: NodeJS.Timeout;
+
   get isReadyForSave() {
     return !!this.name;
   }
@@ -163,6 +166,20 @@ export class SpaceCreationModalStore {
         }
       }
     }
+  };
+
+  setInputRef = (element: HTMLInputElement) => {
+    this.inputElement = element;
+  };
+
+  init = () => {
+    this.setInputFocusTimeout = setTimeout(() => {
+      this.inputElement?.focus();
+    });
+  };
+
+  destroy = () => {
+    clearTimeout(this.setInputFocusTimeout);
   };
 
   handelConnect = () => {

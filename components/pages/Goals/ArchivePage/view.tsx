@@ -9,6 +9,7 @@ import NextLink from "next/link";
 import { faAngleLeft } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
+import { useHotkeysHandler } from '../../../../helpers/useHotkeysHandler';
 
 export const GoalsArchiveView = observer(function GoalsArchiveView() {
   const { push } = useRouter();
@@ -19,6 +20,10 @@ export const GoalsArchiveView = observer(function GoalsArchiveView() {
       push('/goals');
     }
   }, [store.hasGoals, push]);
+
+  useHotkeysHandler(store.keymap, store.hotkeysHandlers, {
+    enabled: !store.modals.isOpen,
+  });
 
   return (
     <>
