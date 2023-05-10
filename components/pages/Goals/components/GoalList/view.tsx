@@ -34,13 +34,13 @@ export const GoalListView = observer(function GoalListView() {
   useHotkeysHandler(
     store.keyMap,
     store.hotkeyHandlers,
-    { enabled: !store.isHotkeysDisabled && !store.root.globalModals.isOpen }
+    { enabled: store.isGlobalHotkeysEnabled }
   );
 
   useHotkeysHandler(
     store.additionalKeyMap,
     store.additionalHotkeyHandlers,
-    { enabled: !store.isHotkeysDisabled && !store.root.globalModals.isOpen, keyup: true }
+    { enabled: store.isGlobalHotkeysEnabled, keyup: true }
   );
 
   return (

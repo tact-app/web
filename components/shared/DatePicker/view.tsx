@@ -76,8 +76,8 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
           tabIndex={tabIndex}
           placeholderText={!store.currentValue && store.isFocused ? 'DD.MM.YYYY' : ''}
           onFocus={store.handleFocus}
-          onBlur={store.handleBlur}
-          onCalendarClose={store.handleBlur}
+          onBlur={() => store.handleBlur(false)}
+          onCalendarClose={() => store.handleBlur(false)}
           onClickOutside={store.handleClickOutside}
           onSelect={store.handleSelect}
           onInputClick={store.handleInputClick}

@@ -183,8 +183,6 @@ export class GoalItemStore {
   handleEmojiPickerToggle = (isOpen: boolean) => {
     if (isOpen) {
       this.updateEditedGoal();
-    } else {
-      this.setGoalAsFocused();
     }
   };
 
@@ -194,6 +192,18 @@ export class GoalItemStore {
     } else {
       this.setGoalAsFocused();
     }
+
+    console.log(this.parent.isFocusedGoalEditing)
+  };
+
+  handleTargetDatePickerFocus = (isFocused: boolean) => {
+    if (isFocused) {
+      this.updateEditedGoal();
+    } else {
+      this.setGoalAsFocused();
+    }
+
+    console.log(this.parent.isFocusedGoalEditing)
   };
 
   handleFocus = () => {

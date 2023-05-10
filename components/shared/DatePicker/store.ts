@@ -40,11 +40,14 @@ export class DatePickerStore {
     }
   };
 
-  handleBlur = () => {
+  handleBlur = (toggleFocus: boolean = true) => {
     if (this.isFocused) {
       this.isFocused = false;
       console.log('UNFOCUS')
-      this.callbacks?.onFocusToggle?.(false);
+
+      if (toggleFocus) {
+        this.callbacks?.onFocusToggle?.(false);
+      }
     }
   };
 
@@ -56,10 +59,13 @@ export class DatePickerStore {
     this.value = date?.toISOString() ?? '';
   };
 
-  handleSave = (value: string = this.value) => {
+  handleSave = (value: string = this.value, toggleFocus: boolean = true) => {
     this.value = value;
     this.callbacks?.onChanged(value);
-    this.handleBlur();
+
+    if (toggleFocus) {
+      this.handleBlur(toggleFocus);
+    }
   };
 
   handleSelect = (date: Date) => {
@@ -102,7 +108,7 @@ export class DatePickerStore {
         )
       )
     ) {
-      this.handleSave(this.initialValue);
+      this.handleSave(this.initialValue, false);
       this.callbacks.onNavigate(direction, e);
     }
   };

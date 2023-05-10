@@ -139,7 +139,7 @@ export const GoalItemView = observer(function GoalItemView() {
               endDate={store.goal?.targetDate}
               minDate={store.goal?.startDate}
               onChanged={store.handleChangeTargetDate}
-              onFocusToggle={store.handleDatePickerFocus}
+              onFocusToggle={store.handleTargetDatePickerFocus}
               onNavigate={store.handleTargetDateNavigate}
             />
           </chakra.div>

@@ -166,6 +166,10 @@ export class GoalListStore {
     makeAutoObservable(this);
   }
 
+  get isGlobalHotkeysEnabled() {
+    return !this.isHotkeysDisabled && !this.root.globalModals.isOpen;
+  }
+
   get isGoalFocusedAndNotEditing() {
     return this.focusedGoalId && !this.isFocusedGoalEditing;
   }
