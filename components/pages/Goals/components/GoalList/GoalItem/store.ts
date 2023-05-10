@@ -192,8 +192,6 @@ export class GoalItemStore {
     } else {
       this.setGoalAsFocused();
     }
-
-    console.log(this.parent.isFocusedGoalEditing)
   };
 
   handleTargetDatePickerFocus = (isFocused: boolean) => {
@@ -202,8 +200,6 @@ export class GoalItemStore {
     } else {
       this.setGoalAsFocused();
     }
-
-    console.log(this.parent.isFocusedGoalEditing)
   };
 
   handleFocus = () => {

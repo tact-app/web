@@ -35,7 +35,6 @@ export class DatePickerStore {
   handleFocus = () => {
     if (!this.isFocused) {
       this.isFocused = true;
-      console.log('FOCUS')
       this.callbacks?.onFocusToggle?.(true);
     }
   };
@@ -43,7 +42,6 @@ export class DatePickerStore {
   handleBlur = (toggleFocus: boolean = true) => {
     if (this.isFocused) {
       this.isFocused = false;
-      console.log('UNFOCUS')
 
       if (toggleFocus) {
         this.callbacks?.onFocusToggle?.(false);
