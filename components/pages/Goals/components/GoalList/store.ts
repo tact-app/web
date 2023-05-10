@@ -20,6 +20,7 @@ export class GoalListStore {
   isMenuOpenedForFocusedGoal: boolean = false;
   isMenuOpenByContextMenu: boolean = false;
   xPosContextMenu: number;
+  isCommandWithAltPressed: boolean = false;
 
   keyMap = {
     ON_RESET_FOCUSED_GOAL: ['tab', 'shift+tab'],
@@ -32,7 +33,6 @@ export class GoalListStore {
     ON_ARCHIVE: ['alt+a'],
     ON_DELETE: ['backspace'],
     QUICK_DELETE: ['meta+backspace'],
-    OPEN_GOAL_MENU: ['alt'],
   };
 
   hotkeyHandlers = {
@@ -54,8 +54,6 @@ export class GoalListStore {
 
           if (this.arrayByColumns[nextGoalRowIndex] && !this.arrayByColumns[nextGoalRowIndex][nextGoalColumnIndex]) {
             nextGoalColumnIndex = 0;
-          } else if (!this.arrayByColumns[nextGoalRowIndex]) {
-            nextGoalRowIndex = 0;
           }
         } else if (event.key === 'ArrowUp') {
           nextGoalRowIndex = currentRowIndex - 1;
@@ -63,8 +61,6 @@ export class GoalListStore {
 
           if (this.arrayByColumns[nextGoalRowIndex] && !this.arrayByColumns[nextGoalRowIndex][nextGoalColumnIndex]) {
             nextGoalColumnIndex = 0;
-          } else if (!this.arrayByColumns[nextGoalRowIndex]) {
-            nextGoalRowIndex = this.arrayByColumns.length - 1;
           }
         } else if (event.key === 'ArrowRight') {
           nextGoalRowIndex = currentRowIndex;
@@ -101,36 +97,42 @@ export class GoalListStore {
     },
     ON_OPEN: (e: KeyboardEvent) => {
       if (this.isGoalFocusedAndNotEditing && (e.key !== 'Enter' || !this.isMenuOpenedForFocusedGoal)) {
+        this.isCommandWithAltPressed = true;
         this.callbacks?.onOpenGoal(this.focusedGoalId, this.listBySpaces);
       }
     },
     ON_DONE: () => {
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
+        this.isCommandWithAltPressed = true;
         this.doneGoal(this.focusedGoal);
       }
     },
     ON_WONT_DO: () => {
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
+        this.isCommandWithAltPressed = true;
         this.callbacks?.onWontDo(this.focusedGoal);
       }
     },
     ON_CLONE: () => {
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
+        this.isCommandWithAltPressed = true;
         this.cloneGoal(this.focusedGoal);
       }
     },
     ON_ARCHIVE: () => {
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
+        this.isCommandWithAltPressed = true;
         this.archiveGoal(this.focusedGoal);
       }
     },
     ON_DELETE: () => {
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
+        this.isCommandWithAltPressed = true;
         this.handleDeleteGoal(this.focusedGoalId);
       }
     },
@@ -140,12 +142,25 @@ export class GoalListStore {
         await this.deleteGoal(this.focusedGoalId);
       }
     },
-    OPEN_GOAL_MENU: () => {
-      if (this.isGoalFocusedAndNotEditing) {
+  };
+
+  additionalKeyMap = {
+    OPEN_GOAL_MENU: ['alt'],
+  };
+
+  additionalHotkeyHandlers = {
+    OPEN_GOAL_MENU: (e: KeyboardEvent) => {
+      const isAlt = e.key === 'Alt';
+
+      if (!this.isCommandWithAltPressed && this.isGoalFocusedAndNotEditing && isAlt) {
         this.toggleActionMenuForGoal(this.focusedGoalId, !this.isMenuOpenedForFocusedGoal)
       }
+
+      if (isAlt && this.isCommandWithAltPressed) {
+        this.isCommandWithAltPressed = false;
+      }
     },
-  };
+  }
 
   constructor(public root: RootStore) {
     makeAutoObservable(this);

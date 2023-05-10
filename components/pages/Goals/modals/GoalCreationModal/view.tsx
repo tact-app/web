@@ -34,7 +34,7 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
       isCentered
     >
       <ModalContent>
-        <ResizableGroup>
+        <ResizableGroup disabled>
           <ResizableGroupChild
             index={0}
             config={store.resizableConfig[0]}

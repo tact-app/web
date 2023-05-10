@@ -4,7 +4,7 @@ import { getProvider } from '../../../helpers/StoreProvider';
 import { subscriptions } from '../../../helpers/subscriptions';
 import { MouseEvent } from 'react';
 
-export type ResizableGroupProps = PropsWithChildren;
+export type ResizableGroupProps = PropsWithChildren<{ disabled?: boolean; }>;
 
 export type ResizableGroupConfig = {
   size: number;
@@ -38,6 +38,7 @@ export class ResizableGroupStore {
   isFirstRender: boolean = true;
   isAnimationActive: boolean = false;
   enterAnimation = {};
+  isDisabled: boolean = false;
 
   get width() {
     if (this.containerWidth) {
@@ -98,6 +99,10 @@ export class ResizableGroupStore {
   };
 
   hasResizableHandler = (index: number) => {
+    if (this.isDisabled) {
+      return false;
+    }
+
     if (this.isFixed(index) && index === this.configs.length - 1) {
       return false;
     }
@@ -308,7 +313,9 @@ export class ResizableGroupStore {
       )
     );
 
-  update = () => { };
+  update = ({ disabled = false }: ResizableGroupProps) => {
+    this.isDisabled = disabled;
+  };
 }
 
 export const {

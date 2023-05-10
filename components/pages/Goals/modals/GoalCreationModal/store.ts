@@ -183,6 +183,12 @@ export class GoalCreationModalStore {
       disableReferenceChange: true,
       callbacks: {
         ...this.listWithCreator.list.taskCallbacks,
+        onClose: () => {
+          this.isTaskExpanded = false;
+          this.resizableConfig[0].size = 3;
+          this.resizableConfig[1].width = 400;
+          this.resizableConfig[2].size = 0;
+        },
         onCollapse: () => {
           this.isTaskExpanded = false;
           this.resizableConfig[0].size = 2;
