@@ -112,20 +112,28 @@ refresh() {
     git pull --force --rebase
   fi
 
-  if ! @deps verify package-lock.json; then
-    install --from-scratch
-    md5sum package-lock.json >node_modules/package.lock
-  fi
-
-  if ! @deps verify tools/package-lock.json; then
-    tools npm ci
-    md5sum tools/package-lock.json >tools/node_modules/package.lock
-  fi
+  @deps install
+  @deps tools
 }
 
 @deps() {
   case "${1}" in
   check) depcheck --ignores=pre-commit,prettier,@fortawesome/fontawesome-pro,@types/node ;;
+
+  install)
+    if ! @deps verify package-lock.json; then
+      install --from-scratch
+      md5sum package-lock.json >node_modules/package.lock
+    fi
+  ;;
+
+  tools)
+    if ! @deps verify tools/package-lock.json; then
+      tools npm ci
+      md5sum tools/package-lock.json >tools/node_modules/package.lock
+    fi
+  ;;
+
   verify)
     local file="${2:-package-lock.json}" lock
     lock=$(dirname "${file}")/node_modules/package.lock
@@ -157,7 +165,7 @@ isolated() {
     -v "$(pwd)":/app \
     -w /app \
     --entrypoint=/bin/bash \
-    node:16
+    node:18
 }
 
 # Example: run install --from-scratch
@@ -219,7 +227,7 @@ npm() { @node "npm ${*}"; }
     -w /app \
     "${@:2}" \
     --entrypoint=/bin/sh \
-    node:16-alpine -c "${1}"
+    node:18-alpine -c "${1}"
 }
 
 # Example: run tools npm i vercel@latest

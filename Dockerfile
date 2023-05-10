@@ -1,4 +1,4 @@
-FROM node:16-alpine AS build
+FROM node:18-alpine AS build
 
 ARG token
 ENV FONTAWESOME_TOKEN=${token}
@@ -9,7 +9,7 @@ COPY . .
 RUN npm ci --ignore-scripts --include=dev && npm run build
 
 
-FROM node:16-alpine AS prod
+FROM node:18-alpine AS prod
 LABEL author="Tact team <tact@octolab.net>"
 
 WORKDIR /app
