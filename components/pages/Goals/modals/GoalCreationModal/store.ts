@@ -165,10 +165,9 @@ export class GoalCreationModalStore {
   titleInputRef: HTMLInputElement;
   editorRef: Editor;
   emojiSelectRef: HTMLButtonElement;
-  statusSelectTriggerRef: HTMLButtonElement;
 
   setTitleFocusTimeout: NodeJS.Timeout;
-  setStatusSelectFocusTimeout: NodeJS.Timeout;
+  resetActiveElementFocusTimeout: NodeJS.Timeout;
 
   get taskProps() {
     return {
@@ -377,9 +376,9 @@ export class GoalCreationModalStore {
     }
   };
 
-  setFocusToStatusSelect = () => {
-    this.setStatusSelectFocusTimeout = setTimeout(() => {
-      this.statusSelectTriggerRef.focus();
+  resetActiveElementFocus = () => {
+    this.resetActiveElementFocusTimeout = setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
     }, 0);
   };
 
@@ -392,11 +391,11 @@ export class GoalCreationModalStore {
             onSubmit: async (wontDoReason) => {
               await this.handleUpdate({ status, wontDoReason });
               this.modals.close();
-              this.setFocusToStatusSelect();
+              this.resetActiveElementFocus();
             },
             onClose: () => {
               this.modals.close();
-              this.setFocusToStatusSelect();
+              this.resetActiveElementFocus();
             },
           },
         });
@@ -500,10 +499,6 @@ export class GoalCreationModalStore {
     this.emojiSelectRef = element;
   };
 
-  setStatusSelectTriggerRef = (element: HTMLButtonElement) => {
-    this.statusSelectTriggerRef = element;
-  };
-
   loadDescription = async (goal: GoalData) => {
     if (goal.descriptionId) {
       this.isDescriptionLoading = true;
@@ -549,7 +544,7 @@ export class GoalCreationModalStore {
 
   destroy = () => {
     clearTimeout(this.setTitleFocusTimeout);
-    clearTimeout(this.setStatusSelectFocusTimeout);
+    clearTimeout(this.resetActiveElementFocusTimeout);
   };
 
   update = async ({ onClose, onSave, goals = [], goalId }: GoalCreationModalProps) => {

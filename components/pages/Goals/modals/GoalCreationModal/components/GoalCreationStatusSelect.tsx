@@ -47,7 +47,6 @@ export const GoalCreationStatusSelect = observer(
             <div>
               <Tooltip label='Change status' hotkey='S' isDisabled={isOpen}>
                 <Button
-                  ref={store.setStatusSelectTriggerRef}
                   variant='ghost'
                   size='xs'
                   color={GOALS_STATUSES_COLORS[store.goal.status]}
