@@ -70,6 +70,7 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
           renderCustomHeader={DatePickerHeader}
           formatWeekDay={store.getWeekDayFormatByDate}
           dateFormat={DATE_PICKER_DATE_FORMAT}
+          calendarClassName={store.isCalendarFocused && 'focused'}
           selected={store.currentValue}
           onChange={store.handleChange}
           portalId="date-picker-portal"

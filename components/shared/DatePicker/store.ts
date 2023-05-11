@@ -18,6 +18,7 @@ export class DatePickerStore {
   datePickerRef: ReactDatePicker;
   inputRef: HTMLInputElement;
   isFocused = false;
+  isCalendarFocused = false;
   isClickedOutside = false;
 
   constructor(public root: RootStore) {
@@ -42,6 +43,7 @@ export class DatePickerStore {
   handleBlur = (toggleFocus: boolean = true) => {
     if (this.isFocused) {
       this.isFocused = false;
+      this.isCalendarFocused = false;
 
       if (toggleFocus) {
         this.callbacks?.onFocusToggle?.(false);
@@ -51,6 +53,7 @@ export class DatePickerStore {
 
   handleInputClick = () => {
     this.datePickerRef.setFocus();
+    this.isCalendarFocused = false;
   };
 
   handleChange = (date: Date) => {
@@ -59,6 +62,7 @@ export class DatePickerStore {
 
   handleSave = (value: string = this.value, toggleFocus: boolean = true) => {
     this.value = value;
+    this.isCalendarFocused = false;
     this.callbacks?.onChanged(value);
 
     if (toggleFocus) {
@@ -79,6 +83,7 @@ export class DatePickerStore {
     this.handleAreaEvent(e);
 
     if (e.key === 'Tab') {
+      this.isCalendarFocused = false;
       this.datePickerRef?.setOpen(false);
     }
 
@@ -108,6 +113,8 @@ export class DatePickerStore {
     ) {
       this.handleSave(this.initialValue, false);
       this.callbacks.onNavigate(direction, e);
+    } else if ([NavigationDirections.DOWN, NavigationDirections.UP].includes(direction)) {
+      this.isCalendarFocused = true;
     }
   };
 
@@ -115,6 +122,7 @@ export class DatePickerStore {
     if (this.isFocused || this.isClickedOutside) {
       this.datePickerRef?.setBlur();
       this.isClickedOutside = false;
+      this.isCalendarFocused = false;
     } else {
       this.datePickerRef?.setFocus();
     }
