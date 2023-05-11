@@ -5,4 +5,6 @@ export enum NavigationDirections {
   LEFT = 'left',
   RIGHT = 'right',
   INVARIANT = 'invariant',
+  TAB = 'tab',
+  BACK = 'back',
 }

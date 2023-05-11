@@ -15,7 +15,7 @@ import { TaskList } from '@tiptap/extension-task-list';
 import { TaskItem } from '@tiptap/extension-task-item';
 import { MetricExtension } from './extensions/MetricExtension';
 import { BlockTypesOptions } from './slashCommands';
-import { NavigationDirections } from '../TasksList/types';
+import { NavigationDirections } from '../../../types/navigation';
 import { TrailingNode } from './extensions/TrailingNode';
 import { KeyboardEvent, SyntheticEvent } from 'react';
 import { ChakraProps } from "@chakra-ui/system/dist/system.types";

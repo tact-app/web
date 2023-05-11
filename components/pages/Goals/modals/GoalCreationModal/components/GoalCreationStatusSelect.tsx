@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { chakra, Button } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
-import React from "react";
+import React, { KeyboardEvent } from "react";
 import { GoalStatus } from "../../../types";
 import {
   GOALS_STATUSES_COMMANDS,
@@ -31,40 +31,51 @@ export const GoalCreationStatusSelect = observer(
       iconColor: GOALS_STATUSES_COLORS[status],
     }));
 
+    const handleContainerKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+      }
+    };
+
     return (
-      <ActionMenu
-        items={actions}
-        menuMinWidth={44}
-        customTrigger={(isOpen) => (
-          <div>
-            <Tooltip label='Change status' hotkey='S' isDisabled={isOpen}>
-              <Button
-                variant='ghost'
-                size='xs'
-                color={GOALS_STATUSES_COLORS[store.goal.status]}
-                pl={1}
-                pr={2}
-                h={7}
-                bg={isOpen ? 'gray.75' : 'initial'}
-              >
-                <FontAwesomeIcon
-                  fontSize={14}
-                  icon={GOALS_STATUSES_ICONS[store.goal.status]}
-                  fixedWidth
-                />
-                <chakra.span
-                  color='gray.500'
-                  fontSize='sm'
-                  fontWeight='normal'
-                  ml={1}
+      <div onKeyDown={handleContainerKeyDown}>
+        <ActionMenu
+          instance={store.selectStatus}
+          items={actions}
+          menuMinWidth={44}
+          customTrigger={(isOpen) => (
+            <div>
+              <Tooltip label='Change status' hotkey='S' isDisabled={isOpen}>
+                <Button
+                  variant='ghost'
+                  size='xs'
+                  color={GOALS_STATUSES_COLORS[store.goal.status]}
+                  pl={1}
+                  pr={2}
+                  h={7}
+                  _focus={{ boxShadow: 'var(--chakra-shadows-outline)' }}
+                  _active={{ boxShadow: 'none' }}
+                  bg={isOpen ? 'gray.75' : 'initial'}
                 >
-                  {GOALS_STATUSES_TITLES[store.goal.status]}
-                </chakra.span>
-              </Button>
-            </Tooltip>
-          </div>
-        )}
-      />
+                  <FontAwesomeIcon
+                    fontSize={14}
+                    icon={GOALS_STATUSES_ICONS[store.goal.status]}
+                    fixedWidth
+                  />
+                  <chakra.span
+                    color='gray.500'
+                    fontSize='sm'
+                    fontWeight='normal'
+                    ml={1}
+                  >
+                    {GOALS_STATUSES_TITLES[store.goal.status]}
+                  </chakra.span>
+                </Button>
+              </Tooltip>
+            </div>
+          )}
+        />
+      </div>
     );
   }
 );

@@ -5,6 +5,16 @@ import { BaseGoalsStore } from "../stores/BaseGoalsStore";
 import { GoalDataExtended } from "../types";
 
 export class GoalsArchiveStore extends BaseGoalsStore {
+  keymap = {
+    NAVIGATE_TO_ACTIVE_GOALS_PAGE: ['escape'],
+  };
+
+  hotkeysHandlers = {
+    NAVIGATE_TO_ACTIVE_GOALS_PAGE: () => {
+      return this.root.router.push('/goals');
+    },
+  };
+
   constructor(public root: RootStore) {
     super(root);
 

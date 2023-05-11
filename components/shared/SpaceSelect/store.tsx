@@ -1,31 +1,38 @@
 import { KeyboardEvent, SyntheticEvent } from 'react';
 import { makeAutoObservable } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
-import { getProvider } from "../../../helpers/StoreProvider";
-import { ModalsController } from "../../../helpers/ModalsController";
-import { SpaceCreationModal } from "../../pages/Spaces/modals/SpaceCreationModal";
-import { ModalsTypes } from "../TasksList/modals/store";
-import { SpaceData } from "../../pages/Spaces/types";
-import { NavigationDirections } from "../../../types/navigation";
-import { setModifierToColor } from "../../../helpers/baseHelpers";
+import { getProvider } from '../../../helpers/StoreProvider';
+import { ModalsController } from '../../../helpers/ModalsController';
+import { SpaceCreationModal } from '../../pages/Spaces/modals/SpaceCreationModal';
+import { ModalsTypes } from '../TasksList/modals/store';
+import { SpaceData } from '../../pages/Spaces/types';
+import { NavigationDirections } from '../../../types/navigation';
+import { setModifierToColor } from '../../../helpers/baseHelpers';
+import { ListNavigation } from '../../../helpers/ListNavigation';
+import { NavigationHelper } from '../../../helpers/NavigationHelper';
 
 export type SpaceSelectProps = {
-  onChange(spaceId: string): void;
-  onNavigate?(direction: NavigationDirections): void;
+  onChange(spaceId: string, isNew?: boolean): void;
+  onNavigate?(direction: NavigationDirections, event: KeyboardEvent): void;
   onNavigateToSpace?(spaceId: string): void;
+  onCreateModalOpened?(isOpened: boolean): void;
   selectedId?: string | null;
-}
+};
 
 export class SpaceSelectStore {
-  callbacks: Pick<SpaceSelectProps, 'onChange' | 'onNavigate' | 'onNavigateToSpace'>;
+  callbacks: Pick<SpaceSelectProps, 'onChange' | 'onNavigate' | 'onNavigateToSpace' | 'onCreateModalOpened'>;
 
-  buttonContainerRef: HTMLButtonElement | null = null;
-  menuRef: HTMLDivElement | null = null;
-  scrollTimeout: NodeJS.Timeout;
-  isMenuOpen = false;
-  isCreateModalOpened = false;
+  triggerRef: HTMLButtonElement | null = null;
+  goToSpaceButtonRef: HTMLButtonElement | null = null;
+  isTriggerFocused: boolean = false;
+  isGoToSpaceButtonFocused: boolean = false;
+  isMenuOpen: boolean = false;
+  isCreateModalOpened: boolean = false;
   selectedSpaceId: string | null = null;
-  hoveredIndex: number = 0;
+
+  menuNavigation = new ListNavigation();
+
+  setTriggerFocusTimeout: NodeJS.Timeout;
 
   controller = new ModalsController({
     [ModalsTypes.SPACE_CREATION]: SpaceCreationModal,
@@ -33,6 +40,8 @@ export class SpaceSelectStore {
 
   constructor(public root: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
+
+    this.menuNavigation.disable();
   }
 
   get spaces() {
@@ -50,8 +59,156 @@ export class SpaceSelectStore {
     };
   }
 
-  update({ onChange, onNavigate, onNavigateToSpace, selectedId }: SpaceSelectProps) {
-    this.callbacks = { onChange, onNavigate, onNavigateToSpace };
+  handleSuggestionSelect(id: string) {
+    this.selectedSpaceId = id;
+
+    this.callbacks.onChange(id);
+
+    this.closeMenu();
+    this.triggerRef.focus();
+  };
+
+  setTriggerFocus = () => {
+    this.setTriggerFocusTimeout = setTimeout(() => {
+      this.triggerRef.focus();
+    });
+  };
+
+  handleCloseCreateModal = () => {
+    this.controller.close();
+    this.menuNavigation.enable();
+    this.isCreateModalOpened = false;
+    this.callbacks?.onCreateModalOpened?.(false);
+    this.setTriggerFocus();
+  };
+
+  handleCreate() {
+    this.closeMenu();
+    this.menuNavigation.disable();
+    this.isCreateModalOpened = true;
+    this.callbacks?.onCreateModalOpened?.(true);
+
+    this.controller.open({
+      type: ModalsTypes.SPACE_CREATION,
+      props: {
+        callbacks: {
+          onSave: (space: SpaceData) => {
+            this.root.api.spaces.add(space);
+            this.selectedSpaceId = space.id;
+            this.callbacks.onChange(space.id, true);
+
+            this.handleCloseCreateModal();
+          },
+          onClose: this.handleCloseCreateModal,
+        },
+      },
+    });
+  };
+
+  openMenu() {
+    this.isMenuOpen = true;
+
+    this.menuNavigation.reset();
+    this.menuNavigation.enable();
+  };
+
+  closeMenu() {
+    this.isMenuOpen = false;
+
+    this.menuNavigation.reset();
+    this.menuNavigation.disable();
+  };
+
+  setTriggerRef(el: HTMLButtonElement) {
+    this.triggerRef = el;
+  };
+
+  setGoToSpaceButtonRef(el: HTMLButtonElement) {
+    this.goToSpaceButtonRef = el;
+  };
+
+  goToSpace(e: SyntheticEvent) {
+    e.stopPropagation();
+
+    if (this.callbacks.onNavigateToSpace) {
+      this.callbacks.onNavigateToSpace(this.selectedSpaceId);
+    } else {
+      this.root.router.push(`/inbox/${this.selectedSpaceId}`);
+    }
+  };
+
+  handleTriggerFocus = () => {
+    this.isTriggerFocused = true;
+  };
+
+  handleTriggerBlur = () => {
+    this.isTriggerFocused = false;
+  };
+
+  handleGoToSpaceButtonFocus = () => {
+    this.isGoToSpaceButtonFocused = true;
+  };
+
+  handleGoToSpaceButtonBlur = () => {
+    this.isGoToSpaceButtonFocused = false;
+  };
+
+  handleTriggerButtonKeyDown = (event: KeyboardEvent) => {
+    const direction = NavigationHelper.castKeyToDirection(event.key, event.shiftKey);
+
+    if (direction === NavigationDirections.ENTER && this.isGoToSpaceButtonFocused) {
+      this.goToSpaceButtonRef?.click();
+    } else if (direction === NavigationDirections.INVARIANT) {
+      this.closeMenu();
+
+      if (!this.isMenuOpen) {
+        this.triggerRef?.focus();
+      } else {
+        this.triggerRef?.blur();
+      }
+
+      this.callbacks?.onNavigate?.(direction, event);
+    } else if (!this.isMenuOpen) {
+      if (direction === NavigationDirections.RIGHT && !this.isGoToSpaceButtonFocused) {
+        this.goToSpaceButtonRef?.focus();
+      } else {
+        this.callbacks?.onNavigate?.(direction, event)
+      }
+    }
+  };
+
+  handleGoToSpaceButtonKeyDown = (event: KeyboardEvent) => {
+    const direction = NavigationHelper.castKeyToDirection(event.key, event.shiftKey);
+
+    if (direction === NavigationDirections.INVARIANT) {
+      this.goToSpaceButtonRef?.blur();
+    } else if (direction === NavigationDirections.LEFT && !this.isTriggerFocused) {
+      this.triggerRef?.focus();
+    } else {
+      this.callbacks?.onNavigate?.(direction, event);
+    }
+  };
+
+  handleContainerKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      event.stopPropagation();
+
+      if (this.isMenuOpen) {
+        this.triggerRef?.focus();
+      } else {
+        this.triggerRef?.blur();
+      }
+
+      this.closeMenu();
+    }
+  };
+
+  destroy = () => {
+    clearTimeout(this.setTriggerFocusTimeout);
+  };
+
+  update({ onChange, onNavigate, onNavigateToSpace, onCreateModalOpened, selectedId }: SpaceSelectProps) {
+    this.callbacks = { onChange, onNavigate, onNavigateToSpace, onCreateModalOpened };
     this.selectedSpaceId = selectedId;
 
     if (!this.selectedSpaceId) {
@@ -62,113 +219,6 @@ export class SpaceSelectStore {
       this.callbacks.onChange(defaultSpace.id);
     }
   };
-
-  destroy() {
-    clearTimeout(this.scrollTimeout);
-  }
-
-  handleSuggestionSelect(id: string) {
-    this.selectedSpaceId = id;
-
-    this.callbacks.onChange(id);
-    this.toggleMenu();
-  };
-
-  handleClickOutside() {
-    if (this.isMenuOpen) {
-      this.toggleMenu();
-    }
-  }
-
-  handleButtonContainerKeyDown(e: KeyboardEvent<HTMLButtonElement>) {
-    e.stopPropagation();
-
-    if (!this.isMenuOpen) {
-      return;
-    }
-
-    if (e.key === 'Escape') {
-      this.toggleMenu();
-    } else if (e.key === 'ArrowDown') {
-      this.nextHoveredIndex();
-    } else if (e.key === 'ArrowUp') {
-      this.prevHoveredIndex();
-    }
-  }
-
-  setIndex(index: number) {
-    this.hoveredIndex = index;
-
-    this.scrollTimeout = setTimeout(() => {
-      this.menuRef.children[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
-  }
-
-  nextHoveredIndex() {
-    if (this.hoveredIndex < this.spaces.length - 1) {
-      this.setIndex(this.hoveredIndex + 1);
-    } else {
-      this.setIndex(0);
-    }
-  };
-
-  prevHoveredIndex() {
-    if (this.hoveredIndex > 0) {
-      this.setIndex(this.hoveredIndex - 1);
-    } else {
-      this.setIndex(this.spaces.length - 1);
-    }
-  };
-
-  handleCreate() {
-    this.toggleMenu();
-    this.isCreateModalOpened = true;
-
-    this.controller.open({
-      type: ModalsTypes.SPACE_CREATION,
-      props: {
-        callbacks: {
-          onSave: (space: SpaceData) => {
-            this.root.api.spaces.add(space);
-            this.controller.close();
-            this.selectedSpaceId = space.id;
-            this.callbacks.onChange(space.id);
-            this.isCreateModalOpened = false;
-          },
-          onClose: () => {
-            this.controller.close();
-            this.isCreateModalOpened = false;
-          },
-        },
-      },
-    });
-  }
-
-  focus() {
-    this.buttonContainerRef?.focus();
-  };
-
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
-
-  setButtonContainerRef(el: HTMLButtonElement) {
-    this.buttonContainerRef = el;
-  }
-
-  setMenuRef(el: HTMLDivElement) {
-    this.menuRef = el;
-  }
-
-  goToSpace(e: SyntheticEvent) {
-    e.stopPropagation();
-
-    if (this.callbacks.onNavigateToSpace) {
-      this.callbacks.onNavigateToSpace(this.selectedSpaceId);
-    } else {
-      this.root.router.push(`/inbox/${this.selectedSpaceId}`);
-    }
-  }
 }
 
 export const {

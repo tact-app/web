@@ -6,7 +6,7 @@ import {
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
 import { TasksListProps, TasksListStore } from '../TasksList/store';
-import { NavigationDirections } from '../TasksList/types';
+import { NavigationDirections } from '../../../types/navigation';
 import { Lists, referenceToList } from '../TasksList/constants';
 import { SpacesInboxItemData } from '../../pages/Spaces/types';
 import { BoxProps } from "@chakra-ui/react";

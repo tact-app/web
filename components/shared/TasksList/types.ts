@@ -62,12 +62,3 @@ export type TaskData = {
 };
 
 export type TaskTag = { title: string; id: string };
-
-export enum NavigationDirections {
-  UP = 'up',
-  DOWN = 'down',
-  ENTER = 'enter',
-  LEFT = 'left',
-  RIGHT = 'right',
-  INVARIANT = 'invariant',
-}

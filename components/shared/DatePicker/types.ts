@@ -1,11 +1,13 @@
 import { FlexProps, TooltipProps } from "@chakra-ui/react";
+import { NavigationDirections } from '../../../types/navigation';
+import { KeyboardEvent } from 'react';
 
 export type DatePickerContainerProps = Omit<FlexProps, 'onChange' | 'onFocus' | 'onBlur'>;
 
 export type DatePickerCallbacks = {
   onChanged(value: string): void;
-  onFocus?(): void;
-  onBlur?(): void;
+  onNavigate?(direction: NavigationDirections, event: KeyboardEvent): void;
+  onFocusToggle?(isFocused: boolean): void;
 };
 
 export type DatePickerViewProps = DatePickerContainerProps & {
@@ -17,6 +19,7 @@ export type DatePickerViewProps = DatePickerContainerProps & {
   startDate?: string;
   endDate?: string;
   showTooltip?: boolean;
+  tabIndex?: number;
   tooltipPlacement?: TooltipProps['placement'];
 }
 

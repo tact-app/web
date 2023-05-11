@@ -4,16 +4,15 @@ import { Box } from '@chakra-ui/react';
 interface PopoverWrapperProps {
     positionByMouse: boolean;
     children: ReactNode;
-    isOpen: boolean;
     left: number;
 }
 
-export const PopoverWrapper: FC<PopoverWrapperProps> = ({ positionByMouse, children, isOpen, left }) => {
+export const PopoverWrapper: FC<PopoverWrapperProps> = ({ positionByMouse, children, left }) => {
     const boxRef = useRef<HTMLDivElement>(null)
     const [css, setCss] = useState({})
 
     useEffect(() => {
-        if (positionByMouse && isOpen) {
+        if (positionByMouse) {
             const style = window.getComputedStyle(boxRef.current.querySelector('.chakra-popover__popper'));
             const { m41 } = new WebKitCSSMatrix(style.transform);
             const absM41 = Math.abs(m41)
@@ -34,7 +33,7 @@ export const PopoverWrapper: FC<PopoverWrapperProps> = ({ positionByMouse, child
                 opacity: 1
             })
         }
-    }, [isOpen, positionByMouse, left])
+    }, [positionByMouse, left])
 
     return (
         <Box

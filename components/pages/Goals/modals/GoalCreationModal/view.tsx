@@ -14,11 +14,13 @@ import { GoalCreationInformation } from "./components/GoalCreationInformation";
 import { Task } from "../../../../shared/Task";
 import { ModalsSwitcher } from "../../../../../helpers/ModalsController";
 import { GoalCreationToolbar } from "./components/GoalCreationToolbar";
+import { useGlobalHook } from '../../../../../helpers/GlobalHooksHelper';
 
 export const GoalCreationModalView = observer(function GoalCreationModal() {
   const store = useGoalCreationModalStore();
 
   useHotkeysHandler(store.keyMap, store.hotkeyHandlers);
+  useGlobalHook(store.globalHooks, { updateWhenRemoved: true });
 
   return (
     <Modal
@@ -26,13 +28,13 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
       onClose={store.handleClose}
       onCloseComplete={store.handleCloseComplete}
       closeOnEsc={false}
-      onEsc={store.handleBack}
+      onEsc={store.handleClose}
       blockScrollOnMount={false}
       size='full'
       isCentered
     >
       <ModalContent>
-        <ResizableGroup>
+        <ResizableGroup disabled>
           <ResizableGroupChild
             index={0}
             config={store.resizableConfig[0]}

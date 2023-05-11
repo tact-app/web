@@ -18,7 +18,7 @@ import {
 import { TaskProps } from '../../shared/Task/store';
 import { getStubItems } from './modals/SpaceCreationModal/stubs';
 import { getNewConnect } from './modals/SpaceConnectAppsModal/stubs';
-import { NavigationDirections } from '../../shared/TasksList/types';
+import { NavigationDirections } from '../../../types/navigation';
 
 export type SpacesProps = {};
 

@@ -76,7 +76,7 @@ export class RootStore {
 
   toggleModal = (isOpen: boolean) => {
     this.isModalOpen = isOpen
-  }
+  };
 
   confirm = (props: Omit<ConfirmDialogProps, 'onClose' | 'onSubmit'>) => {
     return new Promise((resolve) => {
@@ -95,7 +95,7 @@ export class RootStore {
         },
       });
     });
-  }
+  };
 
   init = async () => {
     await this.user.init();

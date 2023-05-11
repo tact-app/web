@@ -4,7 +4,7 @@ import {
   PopoverTrigger,
   useDisclosure
 } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import { ActionMenuViewProps } from "./types";
 import { useActionMenuStore } from './store';
@@ -15,7 +15,6 @@ import { faEllipsis } from "@fortawesome/pro-regular-svg-icons";
 export const ActionMenuView = observer(
   function ActionMenu({
     hidden,
-    isOpenByContextMenu,
     triggerButtonProps,
     triggerIconFontSize,
     customTrigger,
@@ -26,29 +25,14 @@ export const ActionMenuView = observer(
 
     const { isOpen, onClose, onOpen } = useDisclosure({
       isOpen: store.isMenuOpen,
+      onOpen: store.openMenu,
+      onClose: store.closeMenu,
     });
-    const [isAnimationInProcess, setIsAnimationInProcess] = useState(false);
-
-    const stopAnimation = useCallback(() => {
-      setIsAnimationInProcess(false);
-    }, [setIsAnimationInProcess]);
-
-    const close = useCallback(() => {
-      !isOpenByContextMenu && setIsAnimationInProcess(true);
-      onClose();
-      store.closeMenu();
-    }, [isOpenByContextMenu, onClose, store]);
-
-    const open = useCallback(() => {
-      setIsAnimationInProcess(true);
-      onOpen();
-      store.openMenu();
-    }, [onOpen, store]);
 
     return (
       <Popover
         isLazy
-        isOpen={isOpen || isAnimationInProcess}
+        isOpen={isOpen}
         strategy='fixed'
         eventListeners={{
           resize: true
@@ -66,30 +50,28 @@ export const ActionMenuView = observer(
           }
         ]}
         placement='bottom-start'
-        onOpen={open}
-        onClose={close}
+        onOpen={onOpen}
+        onClose={onClose}
       >
         <PopoverTrigger>
           {customTrigger ? customTrigger(isOpen) : (
             <Button
               size='xs'
-              h='auto'
+              h='100%'
               minW={5}
               w={5}
               p={0}
               variant='unstyled'
               borderRadius='none'
               visibility={hidden ? 'hidden' : 'visible'}
-              onClick={(e) => e.stopPropagation()}
-              {...triggerButtonProps(isOpen)}
+              onClick={store.preventEventsPropagation}
+              {...triggerButtonProps?.(isOpen)}
             >
               <FontAwesomeIcon icon={triggerIcon} fontSize={triggerIconFontSize} fixedWidth />
             </Button>
           )}
         </PopoverTrigger>
-        {(isOpen || isAnimationInProcess) && (
-          <ActionMenuContent isOpen={isOpen} stopAnimation={stopAnimation} menuMinWidth={menuMinWidth} />
-        )}
+        <ActionMenuContent isOpen={isOpen} menuMinWidth={menuMinWidth} />
       </Popover>
     );
   }

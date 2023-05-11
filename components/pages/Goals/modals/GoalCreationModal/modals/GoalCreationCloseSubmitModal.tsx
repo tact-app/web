@@ -11,6 +11,7 @@ import {
 import { Button } from "@chakra-ui/react";
 import { ButtonHotkey } from "../../../../../shared/ButtonHotkey";
 import { useHotkeysHandler } from "../../../../../../helpers/useHotkeysHandler";
+import { GlobalHooks, useGlobalHook } from '../../../../../../helpers/GlobalHooksHelper';
 
 export type GoalCreationCloseSubmitModalProps = {
   onClose(): void;
@@ -21,7 +22,10 @@ export const GoalCreationCloseSubmitModal = observer(
   function GoalCreationCloseSubmitModal({ onClose, onSubmit }: GoalCreationCloseSubmitModalProps) {
     const initialRef = useRef(null);
 
-    useHotkeysHandler({ STAY: ['meta+enter', 'ctrl+enter'] }, { STAY: onClose });
+    useHotkeysHandler({ STAY: ['ctrl+enter'] }, { STAY: onClose });
+    useGlobalHook({
+      [GlobalHooks.MetaEnter]: onClose,
+    });
 
     return (
       <Modal

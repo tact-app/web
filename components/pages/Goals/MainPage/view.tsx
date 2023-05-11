@@ -10,7 +10,6 @@ import { GoalCreateNewButton } from "../components/GoalCreateNewButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/pro-regular-svg-icons";
 import { EmptyGoalListMessage } from "../components/EmptyGoalListMessage/EmptyGoalListMessage";
-import NextLink from 'next/link';
 import { faBoxArchive } from "@fortawesome/pro-light-svg-icons";
 import { Tooltip } from "../../../shared/Tooltip";
 
@@ -19,7 +18,6 @@ export const GoalsView = observer(function GoalsView() {
 
   useHotkeysHandler(store.keymap, store.hotkeysHandlers, {
     enabled: !store.modals.isOpen,
-    keyup: true,
   });
 
   return (
@@ -41,35 +39,34 @@ export const GoalsView = observer(function GoalsView() {
         </Heading>
 
         {store.hasArchivedGoals && (
-          <NextLink href='/goals/archive' passHref>
-            <Tooltip label='Archive' hotkey='G then A'>
-              <Button
-                as='a'
-                variant='ghost'
-                size='sm'
-                pl={1.5}
-                pr={1.5}
-                position='absolute'
-                top={4}
-                right={32}
-                color='gray.500'
-              >
-                <FontAwesomeIcon
-                  fontSize={20}
-                  icon={faBoxArchive}
-                  fixedWidth
-                />
-                <Text fontSize='sm' lineHeight={3} fontWeight='normal' ml={1}>
-                  Archive
-                </Text>
-              </Button>
-            </Tooltip>
-          </NextLink>
+          <Tooltip label='Archive' hotkey='G then A'>
+            <Button
+              variant='ghost'
+              size='sm'
+              pl={1.5}
+              pr={1.5}
+              position='absolute'
+              top={4}
+              right={32}
+              color='gray.500'
+              onClick={store.goToArchivePage}
+            >
+              <FontAwesomeIcon
+                fontSize={20}
+                icon={faBoxArchive}
+                fixedWidth
+              />
+              <Text fontSize='sm' lineHeight={3} fontWeight='normal' ml={1}>
+                Archive
+              </Text>
+            </Button>
+          </Tooltip>
         )}
 
         {store.hasGoals ? (
           <GoalList
             listBySpaces={store.list}
+            disableHotkeys={store.modals.isOpen}
             onCloneGoal={store.cloneGoal}
             onDeleteGoal={store.deleteGoal}
             onOpenGoal={store.editGoal}

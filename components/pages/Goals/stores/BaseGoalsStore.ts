@@ -114,7 +114,7 @@ export class BaseGoalsStore {
     });
   };
 
-  editGoal = (goalId: string) => {
+  editGoal = (goalId: string, goals: Record<string, GoalDataExtended[]>) => {
     this.modals.open({
       type: GoalsModalsTypes.CREATE_OR_UPDATE_GOAL,
       props: {
@@ -131,7 +131,7 @@ export class BaseGoalsStore {
           this.modals.close();
           this.loadTaskList();
         },
-        goals: Object.values(this.extendedGoals).flat(),
+        goals: Object.values(goals).flat(),
         goalId,
       },
     });

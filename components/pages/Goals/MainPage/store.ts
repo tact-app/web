@@ -4,6 +4,7 @@ import { getProvider } from '../../../../helpers/StoreProvider';
 import { BaseGoalsStore, GoalsModalsTypes } from "../stores/BaseGoalsStore";
 import { GoalDataExtended } from "../types";
 import { CreateGoalParams } from "../../../../stores/RootStore/Resources/GoalsStore";
+import { KeyboardEvent } from 'react';
 
 export class GoalsStore extends BaseGoalsStore {
   keymap = {
@@ -11,7 +12,8 @@ export class GoalsStore extends BaseGoalsStore {
   };
 
   hotkeysHandlers = {
-    CREATE_GOAL: () => {
+    CREATE_GOAL: (e: KeyboardEvent) => {
+      e.preventDefault();
       this.startGoalCreation();
     },
   };
@@ -55,6 +57,10 @@ export class GoalsStore extends BaseGoalsStore {
   cloneGoal = ({ customFields, ...goal }: GoalDataExtended) => {
     return this.root.resources.goals.cloneGoal(goal);
   }
+
+  goToArchivePage = () => {
+    return this.root.router.push('/goals/archive')
+  };
 
   startGoalCreation = () => {
     this.modals.open({

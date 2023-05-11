@@ -8,11 +8,13 @@ import { Button } from "@chakra-ui/react";
 import { ButtonHotkey } from "../../../../shared/ButtonHotkey";
 import { useGoalWontDoSubmitModalStore } from "./store";
 import { OTHER_REASON_MAX_LENGTH, WONT_DO_OTHER_REASON } from "./constants";
+import { useGlobalHook } from '../../../../../helpers/GlobalHooksHelper';
 
 export const GoalWontDoSubmitModalView = observer(function GoalWontDoSubmitModalView() {
   const store = useGoalWontDoSubmitModalStore();
 
   useHotkeysHandler(store.keymap, store.hotkeysHandlers);
+  useGlobalHook(store.globalHooks);
 
   return (
     <Modal

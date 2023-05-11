@@ -5,6 +5,7 @@ import { WONT_DO_OTHER_REASON, WONT_DO_REASONS } from "./constants";
 import { ChangeEvent } from "react";
 import { NavigationDirections } from "../../../../../types/navigation";
 import { ErrorTypes, Validator } from "../../../../../helpers/Validator";
+import { GlobalHooks } from '../../../../../helpers/GlobalHooksHelper';
 
 export type GoalWontDoSubmitModalProps = {
   onClose(): void;
@@ -31,7 +32,14 @@ export class GoalWontDoSubmitModalStore {
 
   callbacks: Pick<GoalWontDoSubmitModalProps, 'onClose' | 'onSubmit'>;
   keymap = {
-    SAVE: ['meta+enter', 'ctrl+enter']
+    SAVE: ['ctrl+enter']
+  };
+
+  globalHooks = {
+    [GlobalHooks.MetaEnter]: () => {
+      this.textareaRef?.blur();
+      this.handleSubmit();
+    }
   };
 
   constructor() {

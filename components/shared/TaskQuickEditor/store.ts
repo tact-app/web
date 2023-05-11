@@ -3,7 +3,7 @@ import { SyntheticEvent } from 'react';
 import { makeAutoObservable, toJS } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { NavigationDirections, TaskData, TaskStatus } from '../TasksList/types';
+import { TaskData, TaskStatus } from '../TasksList/types';
 import { v4 as uuidv4 } from 'uuid';
 import { TaskQuickEditorSuggestionsMenu } from './suggestionsMenuStore';
 import { PriorityModeStore } from './modes/PriorityModeStore';
@@ -15,6 +15,7 @@ import { GoalModeStore } from './modes/GoalModeStore';
 import { ReferenceModeStore } from './modes/ReferenceModeStore';
 import { SpacesInboxItemData } from '../../pages/Spaces/types';
 import { TasksEditorModals } from './modals/store';
+import { NavigationDirections } from '../../../types/navigation';
 
 export type TaskQuickEditorProps = {
   callbacks: {

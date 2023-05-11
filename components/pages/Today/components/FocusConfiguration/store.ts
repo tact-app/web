@@ -4,6 +4,7 @@ import { RootStore } from '../../../../../stores/RootStore';
 import { GoalsSelectionProps } from '../../../../shared/GoalsSelection/store';
 import { ListNavigation } from '../../../../../helpers/ListNavigation';
 import { AnimatedBlockParams } from "../../../../shared/AnimatedBlock";
+import { KeyboardEvent } from 'react';
 
 export type FocusConfigurationData = {
   id: string;

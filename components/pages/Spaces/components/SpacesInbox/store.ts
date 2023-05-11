@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { RootStore } from '../../../../../stores/RootStore';
 import { SpaceData, SpacesInboxItemData } from '../../types';
-import { NavigationDirections } from '../../../../shared/TasksList/types';
+import { NavigationDirections } from '../../../../../types/navigation';
 
 export type SpacesInboxProps = {
   space: SpaceData;

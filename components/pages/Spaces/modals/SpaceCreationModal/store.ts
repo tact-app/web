@@ -5,6 +5,7 @@ import { SpaceData } from '../../types';
 import { SyntheticEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { EMOJI_SELECT_COLORS } from "../../../../shared/EmojiSelect/constants";
+import { GlobalHooks } from '../../../../../helpers/GlobalHooksHelper';
 
 export type SpaceCreationModalProps = {
   callbacks: {
@@ -36,6 +37,12 @@ export class SpaceCreationModalStore {
     },
   };
 
+  globalHook = {
+    [GlobalHooks.MetaEnter]: () => {
+      this.handleSave();
+    }
+  };
+
   callbacks: SpaceCreationModalProps['callbacks'] = {};
 
   isOpen: boolean = true;
@@ -53,6 +60,9 @@ export class SpaceCreationModalStore {
   name: string = '';
   description: string = '';
   isDeleteConfirmationOpen: boolean = false;
+
+  inputElement: HTMLInputElement;
+  setInputFocusTimeout: NodeJS.Timeout;
 
   get isReadyForSave() {
     return !!this.name;
@@ -156,6 +166,20 @@ export class SpaceCreationModalStore {
         }
       }
     }
+  };
+
+  setInputRef = (element: HTMLInputElement) => {
+    this.inputElement = element;
+  };
+
+  init = () => {
+    this.setInputFocusTimeout = setTimeout(() => {
+      this.inputElement?.focus();
+    });
+  };
+
+  destroy = () => {
+    clearTimeout(this.setInputFocusTimeout);
   };
 
   handelConnect = () => {

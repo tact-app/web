@@ -1,23 +1,10 @@
 import { makeAutoObservable } from 'mobx';
 import { getProvider } from '../../../helpers/StoreProvider';
-import { Validator } from "../../../helpers/Validator";
-import { TextareaProps as ChakraTextareaProps } from "@chakra-ui/textarea";
-import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
-import { NavigationDirections } from "../../../types/navigation";
-import { FocusEvent, KeyboardEvent } from "react";
-
-type TextareaParamsToExclude = 'onFocus' | 'onBlur' | 'onKeyDown' | 'maxLength' | 'value';
-type TextareaCallbacks = Pick<ChakraTextareaProps, TextareaParamsToExclude> & {
-  onNavigate?(direction: NavigationDirections): void;
-};
-type TextareaStoreProps = TextareaCallbacks & {
-  error?: string;
-  maxLength?: number;
-};
-type TextareaViewProps = Omit<ChakraTextareaProps, TextareaParamsToExclude> & {
-  icon?: IconDefinition;
-}
-type TextareaProps = TextareaStoreProps & TextareaViewProps;
+import { Validator } from '../../../helpers/Validator';
+import { NavigationDirections } from '../../../types/navigation';
+import { FocusEvent, KeyboardEvent } from 'react';
+import { TextareaCallbacks, TextareaStoreProps } from './types';
+import { NavigationHelper } from '../../../helpers/NavigationHelper';
 
 export class TextareaStore {
   value: string = '';
@@ -46,6 +33,10 @@ export class TextareaStore {
     return 'gray.200';
   }
 
+  setTextareaRef = (el: HTMLTextAreaElement) => {
+    this.textareaRef = el;
+  };
+
   handleFocus = () => {
     this.textareaRef?.focus();
   };
@@ -61,19 +52,31 @@ export class TextareaStore {
   };
 
   handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    e.stopPropagation();
+
     this.callbacks?.onKeyDown?.(e);
 
     const currentValueLength = this.value.length;
 
-    if (!this.textareaRef.selectionStart && e.key === 'ArrowUp') {
+    const direction = NavigationHelper.castKeyToDirection(e.key, e.shiftKey);
+
+    if ([NavigationDirections.INVARIANT, NavigationDirections.TAB, NavigationDirections.BACK].includes(direction)) {
+      this.textareaRef?.blur();
+      this.callbacks?.onNavigate?.(direction, e);
+    } else if (
+      (
+        [NavigationDirections.RIGHT, NavigationDirections.DOWN].includes(direction) && (
+          !this.textareaRef.selectionStart ||
+          this.textareaRef.selectionStart === currentValueLength
+        )
+      ) ||
+      (
+        [NavigationDirections.UP, NavigationDirections.LEFT].includes(direction) &&
+        !this.textareaRef.selectionStart
+      )
+    ) {
       this.textareaRef.setSelectionRange(currentValueLength, currentValueLength);
-      this.callbacks?.onNavigate?.(NavigationDirections.UP);
-    } else if (e.key === 'ArrowDown' && (
-      !this.textareaRef.selectionStart ||
-      this.textareaRef.selectionStart === currentValueLength
-    )) {
-      this.textareaRef.setSelectionRange(currentValueLength, currentValueLength);
-      this.callbacks?.onNavigate?.(NavigationDirections.DOWN);
+      this.callbacks?.onNavigate?.(direction, e);
     }
   };
 

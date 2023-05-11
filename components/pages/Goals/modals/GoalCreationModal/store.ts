@@ -2,22 +2,26 @@ import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { RootStore } from '../../../../../stores/RootStore';
 import { getProvider } from '../../../../../helpers/StoreProvider';
 import { GoalData, GoalIconVariants, GoalStatus } from '../../types';
-import { SyntheticEvent } from 'react';
-import { JSONContent } from '@tiptap/core';
+import { KeyboardEvent, SyntheticEvent } from 'react';
+import { Editor, JSONContent } from '@tiptap/core';
 import { v4 as uuidv4 } from 'uuid';
 import { DescriptionData } from '../../../../../types/description';
-import { ResizableGroupConfig } from "../../../../shared/ResizableGroup/store";
-import { TasksListWithCreatorStore } from "../../../../shared/TasksListWithCreator/store";
-import { TasksListStore } from "../../../../shared/TasksList/store";
-import { TaskData } from "../../../../shared/TasksList/types";
-import { EmojiStore } from "../../../../../stores/EmojiStore";
-import { ModalsController } from "../../../../../helpers/ModalsController";
-import { GoalCreationModalProps, GoalCreationModalsTypes } from "./types";
-import { GoalCreationCloseSubmitModal } from "./modals/GoalCreationCloseSubmitModal";
-import { DatePickerHelpers } from "../../../../shared/DatePicker/helpers";
-import { cloneDeep, isEqual } from "lodash";
-import { GoalWontDoSubmitModal } from "../GoalWontDoSubmitModal";
-import { EMOJI_SELECT_COLORS } from "../../../../shared/EmojiSelect/constants";
+import { ResizableGroupConfig } from '../../../../shared/ResizableGroup/store';
+import { TasksListWithCreatorStore } from '../../../../shared/TasksListWithCreator/store';
+import { TaskData } from '../../../../shared/TasksList/types';
+import { NavigationDirections } from '../../../../../types/navigation';
+import { EmojiStore } from '../../../../../stores/EmojiStore';
+import { ModalsController } from '../../../../../helpers/ModalsController';
+import { GoalCreationModalProps, GoalCreationModalsTypes } from './types';
+import { GoalCreationCloseSubmitModal } from './modals/GoalCreationCloseSubmitModal';
+import { DatePickerHelpers } from '../../../../shared/DatePicker/helpers';
+import { cloneDeep, isEqual } from 'lodash';
+import { GoalWontDoSubmitModal } from '../GoalWontDoSubmitModal';
+import { EMOJI_SELECT_COLORS } from '../../../../shared/EmojiSelect/constants';
+import { NavigationHelper } from '../../../../../helpers/NavigationHelper';
+import { ActionMenuStore } from '../../../../shared/ActionMenu/store';
+import { GlobalHooks } from '../../../../../helpers/GlobalHooksHelper';
+import { GOALS_STATUSES_HOTKEYS } from './constants';
 
 const GoalsModals = {
   [GoalCreationModalsTypes.CLOSE_SUBMIT]: GoalCreationCloseSubmitModal,
@@ -30,26 +34,82 @@ export class GoalCreationModalStore {
   }
 
   listWithCreator = new TasksListWithCreatorStore(this.root);
-  finishedList = new TasksListStore(this.root);
 
   modals = new ModalsController(GoalsModals);
 
+  selectStatus = new ActionMenuStore(this.root);
+
   keyMap = {
-    CREATE: ['meta+enter', 'meta+s', 'ctrl+enter'],
+    CREATE: ['meta+s', 'ctrl+enter'],
     CANCEL: ['escape'],
+    CHANGE_STATUS: ['s'],
+    START_EDITING: ['space'],
+    HANDLE_ARCHIVE: ['alt+a'],
+    OPEN_COMMENT_POPOVER: ['c'],
+    OPEN_INFO_POPOVER: ['alt+i'],
+    NEXT_GOAL: ['alt+down'],
+    PREV_GOAL: ['alt+up'],
+    CHANGE_STATUS_TO_TODO: [GOALS_STATUSES_HOTKEYS[GoalStatus.TODO]],
+    CHANGE_STATUS_TO_DONE: [GOALS_STATUSES_HOTKEYS[GoalStatus.DONE]],
+    CHANGE_STATUS_TO_WONT_DO: [GOALS_STATUSES_HOTKEYS[GoalStatus.WONT_DO]],
   };
 
   hotkeyHandlers = {
-    CREATE: (e) => {
+    CREATE: (e: KeyboardEvent) => {
       e.preventDefault();
-      this.handleSave();
-    },
-    BACK: () => {
-      this.handleBack();
+
+      if (!this.isUpdating && !this.modals.isOpen && !this.isSpaceCreateModalOpened) {
+        this.handleSave();
+      }
     },
     CANCEL: () => {
-      this.handleClose();
+      if (!this.listWithCreator.list.openedTask) {
+        this.handleSimpleClose();
+      }
     },
+    CHANGE_STATUS: () => {
+      if (this.isUpdating && !this.selectStatus.isMenuOpen) {
+        this.selectStatus.openMenu();
+      }
+    },
+    START_EDITING: () => {
+      this.handleTitleFocus();
+    },
+    HANDLE_ARCHIVE: () => {
+      this.handleArchiveGoal();
+    },
+    OPEN_COMMENT_POPOVER: () => {
+      this.toggleCommentPopover(true);
+    },
+    OPEN_INFO_POPOVER: () => {
+      this.toggleInfoPopover(true);
+    },
+    NEXT_GOAL: () => {
+      this.handleNextGoal();
+    },
+    PREV_GOAL: () => {
+      this.handlePrevGoal();
+    },
+    CHANGE_STATUS_TO_TODO: () => {
+      this.handleUpdateStatus(GoalStatus.TODO);
+    },
+    CHANGE_STATUS_TO_DONE: () => {
+      this.handleUpdateStatus(GoalStatus.DONE);
+    },
+    CHANGE_STATUS_TO_WONT_DO: () => {
+      this.handleUpdateStatus(GoalStatus.WONT_DO);
+    },
+  };
+
+  globalHooks = {
+    [GlobalHooks.MetaEnter]: () => {
+      if (this.isUpdating) {
+        (document.activeElement as HTMLInputElement).blur();
+        this.handleSimpleClose();
+      } else {
+        this.handleSave();
+      }
+    }
   };
 
   resizableConfig: ResizableGroupConfig[] = [
@@ -71,13 +131,15 @@ export class GoalCreationModalStore {
   isOpen = true;
   isUpdating: boolean = false;
   isTaskExpanded = false;
-  isEmojiPickerOpen = false;
   isDescriptionLoading: boolean = true;
   isGoalCreatingOrUpdating: boolean = false;
   draggingTask: TaskData | null = null;
   goals: GoalData[] = [];
   currentGoalIndex: number = 0;
   error: string = '';
+  isCommentPopoverOpened: boolean = false;
+  isInfoPopoverOpened: boolean = false;
+  isSpaceCreateModalOpened: boolean = false;
 
   goal: GoalData = {
     id: uuidv4(),
@@ -100,6 +162,13 @@ export class GoalCreationModalStore {
   initialDescription: DescriptionData = cloneDeep(this.description);
   tasksDescriptions: Record<string, DescriptionData> = {};
 
+  titleInputRef: HTMLInputElement;
+  editorRef: Editor;
+  emojiSelectRef: HTMLButtonElement;
+
+  setTitleFocusTimeout: NodeJS.Timeout;
+  resetActiveElementFocusTimeout: NodeJS.Timeout;
+
   get taskProps() {
     return {
       task: this.listWithCreator.list.openedTaskData,
@@ -113,6 +182,12 @@ export class GoalCreationModalStore {
       disableReferenceChange: true,
       callbacks: {
         ...this.listWithCreator.list.taskCallbacks,
+        onClose: () => {
+          this.isTaskExpanded = false;
+          this.resizableConfig[0].size = 3;
+          this.resizableConfig[1].width = 400;
+          this.resizableConfig[2].size = 0;
+        },
         onCollapse: () => {
           this.isTaskExpanded = false;
           this.resizableConfig[0].size = 2;
@@ -168,12 +243,8 @@ export class GoalCreationModalStore {
     this.resizableConfig[2].size = 1;
   };
 
-  openEmojiPicker = () => {
-    this.isEmojiPickerOpen = true;
-  };
-
-  closeEmojiPicker = () => {
-    this.isEmojiPickerOpen = false;
+  handleOpenSpaceCreateModal = (isOpen: boolean) => {
+    this.isSpaceCreateModalOpened = isOpen;
   };
 
   handleEmojiSelect = (emoji: string) => {
@@ -198,16 +269,19 @@ export class GoalCreationModalStore {
     this.handleUpdate({ spaceId: value });
   }
 
-  handleStartDateChange = (value: string) => {
+  handleStartDateChange = async (value: string) => {
     this.goal.startDate = value;
 
     if (DatePickerHelpers.isStartDateAfterEndDate(value, this.goal.targetDate)) {
       this.goal.targetDate = '';
     }
+
+    await this.handleUpdate();
   }
 
   handleTargetDateChange = (value: string) => {
     this.goal.targetDate = value;
+    return this.handleUpdate({ ...this.goal, targetDate: value });
   }
 
   handleDescriptionChange = (value: JSONContent) => {
@@ -218,14 +292,6 @@ export class GoalCreationModalStore {
 
   handleNavigateToSpace = (spaceId: string) => {
     this.handleClose(() => this.root.router.push(`/inbox/${spaceId}`));
-  };
-
-  handleBack = () => {
-    if (!this.isEmojiPickerOpen) {
-      this.handleClose();
-    } else {
-      this.closeEmojiPicker();
-    }
   };
 
   handleNextGoal = () => {
@@ -245,25 +311,25 @@ export class GoalCreationModalStore {
     await this.loadDescription(goal);
   };
 
+  handleSimpleClose = () => {
+    this.handleClose();
+  };
+
   handleClose = (submitCb?: () => void) => {
-    if (!this.isEmojiPickerOpen) {
-      if (!this.isUpdating && this.isGoalParamsChanged) {
-        this.modals.open({
-          type: GoalCreationModalsTypes.CLOSE_SUBMIT,
-          props: {
-            onSubmit: () => {
-              this.isOpen = false;
-              submitCb?.();
-            },
-            onClose: this.modals.close,
+    if (!this.isUpdating && this.isGoalParamsChanged) {
+      this.modals.open({
+        type: GoalCreationModalsTypes.CLOSE_SUBMIT,
+        props: {
+          onSubmit: () => {
+            this.isOpen = false;
+            submitCb?.();
           },
-        });
-      } else {
-        this.isOpen = false;
-        submitCb?.();
-      }
+          onClose: this.modals.close,
+        },
+      });
     } else {
-      this.closeEmojiPicker();
+      this.isOpen = false;
+      submitCb?.();
     }
   };
 
@@ -310,6 +376,12 @@ export class GoalCreationModalStore {
     }
   };
 
+  resetActiveElementFocus = () => {
+    this.resetActiveElementFocusTimeout = setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  };
+
   handleUpdateStatus = (status: GoalStatus) => {
     if (this.goal.status !== status) {
       if (status === GoalStatus.WONT_DO) {
@@ -319,14 +391,22 @@ export class GoalCreationModalStore {
             onSubmit: async (wontDoReason) => {
               await this.handleUpdate({ status, wontDoReason });
               this.modals.close();
+              this.resetActiveElementFocus();
             },
-            onClose: this.modals.close,
+            onClose: () => {
+              this.modals.close();
+              this.resetActiveElementFocus();
+            },
           },
         });
       } else {
         this.handleUpdate({ status });
       }
     }
+  };
+
+  handleArchiveGoal = () => {
+    return this.handleUpdate({ isArchived: !this.goal.isArchived })
   };
 
   handleUpdate = async (data?: Partial<GoalData>) => {
@@ -345,27 +425,78 @@ export class GoalCreationModalStore {
     this.goals[this.currentGoalIndex] = updatedGoal;
   };
 
-  get sensors() {
-    return [
-      (api) => {
-        this.listWithCreator.list.draggableList.setDnDApi(api);
-        this.finishedList.draggableList.setDnDApi(api);
-      },
-    ];
-  }
+  handleTitleKeyDown = (event: KeyboardEvent) => {
+    event.stopPropagation();
 
-  handleDragStart = (result) => {
-    this.listWithCreator.list.draggableList.startDragging();
-    this.finishedList.draggableList.startDragging();
+    const direction = NavigationHelper.castKeyToDirection(event.key, event.shiftKey);
 
-    this.draggingTask = this.listWithCreator.list.items[result.draggableId];
+    if (direction === NavigationDirections.INVARIANT) {
+      this.titleInputRef?.blur();
+    } else if (
+      [NavigationDirections.ENTER, NavigationDirections.DOWN, NavigationDirections.TAB].includes(direction)
+    ) {
+      this.editorRef?.chain().focus();
+    } else if (
+      direction == NavigationDirections.BACK || (
+        direction === NavigationDirections.LEFT &&
+        this.titleInputRef.selectionStart === 0
+      )
+    ) {
+      event.preventDefault();
+      this.emojiSelectRef.focus();
+    }
   };
 
-  handleDragEnd = () => {
-    this.listWithCreator.list.draggableList.endDragging();
-    this.finishedList.draggableList.endDragging();
+  handleTitleFocus = () => {
+    this.titleInputRef?.focus();
 
-    this.draggingTask = null;
+    this.setTitleFocusTimeout = setTimeout(() => {
+      this.titleInputRef.setSelectionRange(
+        this.goal.title.length,
+        this.goal.title.length
+      );
+    });
+  };
+
+  handleEmojiSelectNavigate = (direction: NavigationDirections, event: KeyboardEvent) => {
+    switch (direction) {
+      case NavigationDirections.DOWN:
+        return this.editorRef?.chain().focus();
+      case NavigationDirections.TAB:
+      case NavigationDirections.RIGHT:
+        event.preventDefault();
+        return this.handleTitleFocus();
+      default:
+        return;
+    }
+  };
+
+  handleEditorLeave = (direction: NavigationDirections) => {
+    if (direction === NavigationDirections.UP) {
+      this.handleTitleFocus();
+    }
+  };
+
+  toggleCommentPopover = (isOpen: boolean) => {
+    this.isInfoPopoverOpened = false;
+    this.isCommentPopoverOpened = isOpen;
+  };
+
+  toggleInfoPopover = (isOpen: boolean) => {
+    this.isCommentPopoverOpened = false;
+    this.isInfoPopoverOpened = isOpen;
+  };
+
+  setTitleInputRef = (ref: HTMLInputElement) => {
+    this.titleInputRef = ref;
+  };
+
+  setEditorRef = (ref: Editor) => {
+    this.editorRef = ref;
+  };
+
+  setEmojiSelectRef = (element: HTMLButtonElement) => {
+    this.emojiSelectRef = element;
   };
 
   loadDescription = async (goal: GoalData) => {
@@ -409,6 +540,11 @@ export class GoalCreationModalStore {
 
       this.initialGoal = cloneDeep(this.goal);
     }
+  };
+
+  destroy = () => {
+    clearTimeout(this.setTitleFocusTimeout);
+    clearTimeout(this.resetActiveElementFocusTimeout);
   };
 
   update = async ({ onClose, onSave, goals = [], goalId }: GoalCreationModalProps) => {

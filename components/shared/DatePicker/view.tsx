@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from "mobx-react-lite";
 import ReactDatePicker from 'react-datepicker';
 import { Flex, chakra } from "@chakra-ui/react";
@@ -9,26 +9,39 @@ import { DATE_PICKER_DATE_FORMAT, useDatePickerStore } from "./store";
 import { DatePickerHeader } from "./components/DatePickerHeader";
 import { Tooltip } from '../Tooltip';
 import cn from 'classnames';
+import { useRefWithCallback } from '../../../helpers/useRefWithCallback';
+import { DatePickerInput } from './components/DatePickerInput';
 
-export const DatePickerView = observer(
-  function DatePickerView({
-    showIconOnlyIfEmpty,
-    iconFontSize = 20,
-    selectsStart,
-    selectsEnd,
-    startDate,
-    endDate,
-    minDate,
-    showTooltip,
-    tooltipPlacement = 'top',
-    ...flexProps
-  }: DatePickerViewProps) {
+export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerViewProps>(
+  function DatePickerView(
+      {
+        showIconOnlyIfEmpty,
+        iconFontSize = 20,
+        selectsStart,
+        selectsEnd,
+        startDate,
+        endDate,
+        minDate,
+        showTooltip,
+        tabIndex,
+        tooltipPlacement = 'top',
+        ...flexProps
+      },
+      forwardedRef,
+  ) {
     const store = useDatePickerStore();
 
     const mustShowIcon = !showIconOnlyIfEmpty || (!store.currentValue && !store.isFocused);
 
+    const ref = useRefWithCallback(forwardedRef, store.setRef);
+
     return (
-      <Flex alignItems='center' {...flexProps} onClick={store.handleAreaEvent}>
+      <Flex
+        alignItems='center'
+        {...flexProps}
+        onClick={store.handleAreaEvent}
+        onContextMenu={store.handleAreaEvent}
+      >
         {mustShowIcon && (
           <Tooltip
             label='Add date'
@@ -52,6 +65,7 @@ export const DatePickerView = observer(
           </Tooltip>
         )}
         <ReactDatePicker
+          customInput={<DatePickerInput />}
           wrapperClassName={cn({ 'only-icon': showIconOnlyIfEmpty, 'disabled': showIconOnlyIfEmpty && mustShowIcon })}
           renderCustomHeader={DatePickerHeader}
           formatWeekDay={store.getWeekDayFormatByDate}
@@ -59,17 +73,21 @@ export const DatePickerView = observer(
           selected={store.currentValue}
           onChange={store.handleChange}
           portalId="date-picker-portal"
+          tabIndex={tabIndex}
           placeholderText={!store.currentValue && store.isFocused ? 'DD.MM.YYYY' : ''}
           onFocus={store.handleFocus}
-          onBlur={store.handleBlur}
+          onBlur={() => store.handleBlur(false)}
+          onCalendarClose={() => store.handleBlur(false)}
           onClickOutside={store.handleClickOutside}
-          ref={store.setRef}
+          onSelect={store.handleSelect}
+          onInputClick={store.handleInputClick}
+          ref={ref}
           selectsStart={selectsStart}
           selectsEnd={selectsEnd}
           startDate={store.getDateFromString(startDate)}
           endDate={store.getDateFromString(endDate)}
           minDate={store.getDateFromString(minDate)}
-          onKeyDown={store.handleAreaEvent}
+          onKeyDown={store.handleKeyDown}
           className={store.isFocused ? 'datepicker-focused' : ''}
           renderDayContents={(dayOfMonth) => (
             <>
@@ -81,4 +99,4 @@ export const DatePickerView = observer(
       </Flex>
     );
   }
-);
+));

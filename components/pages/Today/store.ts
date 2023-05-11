@@ -7,11 +7,11 @@ import {
   FocusConfigurationStore,
 } from './components/FocusConfiguration/store';
 import {
-  NavigationDirections,
   TaskData,
   TaskPriority,
   TaskStatus,
 } from '../../shared/TasksList/types';
+import { NavigationDirections } from '../../../types/navigation';
 import { TasksListProps, TasksListStore } from '../../shared/TasksList/store';
 import { ResizableGroupConfig } from '../../shared/ResizableGroup/store';
 import {

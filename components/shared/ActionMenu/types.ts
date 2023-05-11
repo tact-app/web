@@ -1,7 +1,8 @@
 import { IconDefinition } from "@fortawesome/pro-solid-svg-icons";
 import { NavigationDirections } from "../../../types/navigation";
 import { ButtonProps } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import { ReactNode, KeyboardEvent } from 'react';
+import { ActionMenuStore } from './store';
 
 export type ActionMenuItem = {
   onClick(): void;
@@ -19,14 +20,13 @@ export type ActionMenuViewProps = {
   hidden?: boolean;
   triggerIconFontSize?: number;
   triggerIcon?: IconDefinition;
-  isOpenByContextMenu?: boolean;
   menuMinWidth?: number;
   triggerButtonProps?(isOpen: boolean): ButtonProps;
   customTrigger?(isOpen: boolean): ReactNode;
 };
 
 export type ActionMenuCallbacks = {
-  onNavigate?(direction: NavigationDirections): void;
+  onNavigate?(direction: NavigationDirections, event: KeyboardEvent): void;
   onToggleMenu?(isOpen: boolean): void;
 };
 
@@ -35,4 +35,5 @@ export type ActionMenuProps =  ActionMenuViewProps & ActionMenuCallbacks & {
   xPosContextMenu?: number;
   isOpenByContextMenu?: boolean;
   isMenuOpen?: boolean;
+  instance?: ActionMenuStore;
 };

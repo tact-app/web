@@ -1,7 +1,7 @@
 import { ResizableBlocksStore } from './index';
 import { makeAutoObservable } from 'mobx';
 import { ResizableBlocksItemPosData } from '../types';
-import { NavigationDirections } from '../../../../../../shared/TasksList/types';
+import { NavigationDirections } from '../../../../../../../types/navigation';
 
 export class ResizableBlocksNavigation {
   constructor(public parent: ResizableBlocksStore) {
