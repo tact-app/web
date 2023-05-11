@@ -36,10 +36,12 @@ export class GoalListStore {
   };
 
   hotkeyHandlers = {
-    ON_RESET_FOCUSED_GOAL: () => {
+    ON_RESET_FOCUSED_GOAL: (event) => {
+      event.preventDefault();
       this.setFocusedGoalId(null);
     },
     ON_NAVIGATE: (event: KeyboardEvent) => {
+      event.preventDefault();
       if (!this.focusedGoalId) {
         this.setFirstGoalAsFocused();
       } else if (!this.isFocusedGoalEditing && !this.isMenuOpenedForFocusedGoal) {
@@ -87,56 +89,64 @@ export class GoalListStore {
         }
       }
     },
-    START_GOAL_EDITING: () => {
+    START_GOAL_EDITING: (event) => {
       if (!this.focusedGoalId) {
         return;
       }
 
+      event.preventDefault();
       this.isFocusedGoalEditing = true;
       this.getGoalTitleElement(this.focusedGoalId).click();
     },
-    ON_OPEN: (e: KeyboardEvent) => {
-      if (this.isGoalFocusedAndNotEditing && (e.key !== 'Enter' || !this.isMenuOpenedForFocusedGoal)) {
+    ON_OPEN: (event: KeyboardEvent) => {
+      event.preventDefault();
+      if (this.isGoalFocusedAndNotEditing && (event.key !== 'Enter' || !this.isMenuOpenedForFocusedGoal)) {
         this.isCommandWithAltPressed = true;
         this.callbacks?.onOpenGoal(this.focusedGoalId, this.listBySpaces);
       }
     },
-    ON_DONE: () => {
+    ON_DONE: (event) => {
+      event.preventDefault();
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
         this.isCommandWithAltPressed = true;
         this.doneGoal(this.focusedGoal);
       }
     },
-    ON_WONT_DO: () => {
+    ON_WONT_DO: (event) => {
+      event.preventDefault();
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
         this.isCommandWithAltPressed = true;
         this.callbacks?.onWontDo(this.focusedGoal);
       }
     },
-    ON_CLONE: () => {
+    ON_CLONE: (event) => {
+      event.preventDefault();
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
         this.isCommandWithAltPressed = true;
         this.cloneGoal(this.focusedGoal);
       }
     },
-    ON_ARCHIVE: () => {
+    ON_ARCHIVE: (event) => {
+      event.preventDefault();
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
         this.isCommandWithAltPressed = true;
         this.archiveGoal(this.focusedGoal);
       }
     },
-    ON_DELETE: () => {
+    ON_DELETE: (event) => {
+      event.preventDefault();
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
         this.isCommandWithAltPressed = true;
         this.handleDeleteGoal(this.focusedGoalId);
       }
     },
-    QUICK_DELETE: async () => {
+    QUICK_DELETE: async (event) => {
+      event.preventDefault();
       if (this.isGoalFocusedAndNotEditing) {
         this.isMenuOpenedForFocusedGoal = false;
         await this.deleteGoal(this.focusedGoalId);
@@ -150,6 +160,7 @@ export class GoalListStore {
 
   additionalHotkeyHandlers = {
     OPEN_GOAL_MENU: (e: KeyboardEvent) => {
+      e.preventDefault();
       const isAlt = e.key === 'Alt';
 
       if (!this.isCommandWithAltPressed && this.isGoalFocusedAndNotEditing && isAlt) {
