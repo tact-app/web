@@ -88,12 +88,24 @@ export class GoalCreationModalStore {
       this.handlePrevGoal();
     },
     CHANGE_STATUS_TO_TODO: () => {
+      if (this.isHotkeysForTasksAvailable) {
+        return;
+      }
+
       this.handleUpdateStatus(GoalStatus.TODO);
     },
     CHANGE_STATUS_TO_DONE: () => {
+      if (this.isHotkeysForTasksAvailable) {
+        return;
+      }
+
       this.handleUpdateStatus(GoalStatus.DONE);
     },
     CHANGE_STATUS_TO_WONT_DO: () => {
+      if (this.isHotkeysForTasksAvailable) {
+        return;
+      }
+
       this.handleUpdateStatus(GoalStatus.WONT_DO);
     },
   };
@@ -239,24 +251,10 @@ export class GoalCreationModalStore {
   tasksListCallbacks: TasksListWithCreatorStore['tasksListCallbacks'] = {
     onOpenTask: this.handleOpenTask,
     onCloseTask: this.handleCloseTask,
-    onFocusChange: (ids) => {
-      if (ids.length) {
-        this.isHotkeysForTasksAvailable = true;
-      }
-    }
   };
 
-  taskCreatorCallbacks: TasksListWithCreatorStore['taskCreatorCallbacks'] = {
-    onFocus: () => {
-      this.isHotkeysForTasksAvailable = true;
-    },
-    onNavigate: (direction) => {
-      if (direction === NavigationDirections.BACK) {
-        this.disableHotkeysForTasks();
-      }
-
-      return true;
-    },
+  enableHotkeysForTasks = () => {
+    this.isHotkeysForTasksAvailable = true;
   };
 
   disableHotkeysForTasks = () => {

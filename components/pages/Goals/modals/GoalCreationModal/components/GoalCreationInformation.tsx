@@ -13,10 +13,6 @@ export const GoalCreationInformation = observer(
   function GoalCreationInformation() {
     const store = useGoalCreationModalStore();
 
-    const ref = useRef<HTMLDivElement>();
-
-    useOnClickOutside(ref.current, store.disableHotkeysForTasks);
-
     const renderInformationItem = (title: string, content: ReactElement) => (
       <Tr border={0}>
         <Td pb={0} pl={0} border={0} pt={3}>
@@ -79,7 +75,15 @@ export const GoalCreationInformation = observer(
             </Table>
           </chakra.div>
         </Box>
-        <Box ref={ref} p={1} pt={4} w='100%' overflow='hidden' flex='1 0 0'>
+        <Box
+          p={1}
+          pt={4}
+          w='100%'
+          overflow='hidden'
+          flex='1 0 0'
+          onFocus={store.enableHotkeysForTasks}
+          onBlur={store.disableHotkeysForTasks}
+        >
           <Text fontWeight='semibold' mb={2} pl={5}>Task list</Text>
           <DraggableListContext
             onDragStart={store.listWithCreator.list.draggableList.startDragging}
@@ -100,7 +104,6 @@ export const GoalCreationInformation = observer(
               disableReferenceChange
               displayCreatorHelpAsTooltip
               isHotkeysEnabled={store.isHotkeysForTasksAvailable}
-              taskCreatorCallbacks={store.taskCreatorCallbacks}
               taskListWrapperProps={{
                 maxH: 'calc(100% - var(--chakra-space-20))',
                 overflowY: 'auto',
