@@ -233,6 +233,11 @@ export class GoalCreationModalStore {
   tasksListCallbacks: TasksListWithCreatorStore['tasksListCallbacks'] = {
     onOpenTask: this.handleOpenTask,
     onCloseTask: this.handleCloseTask,
+    onFocusChange: (ids) => {
+      if (ids.length) {
+        this.isHotkeysForTasksAvailable = true;
+      }
+    }
   };
 
   taskCreatorCallbacks: TasksListWithCreatorStore['taskCreatorCallbacks'] = {

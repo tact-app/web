@@ -47,8 +47,18 @@ export class TasksModals {
           this.parent.deleteTasks(ids);
           this.controller.close();
           done?.();
+
+          setTimeout(() => {
+            (document.activeElement as HTMLElement).blur();
+          }, 0);
         },
-        onClose: this.controller.close,
+        onClose: () => {
+          this.controller.close();
+
+          setTimeout(() => {
+            (document.activeElement as HTMLElement).blur();
+          }, 0);
+        },
       },
     });
   };

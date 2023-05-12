@@ -434,7 +434,6 @@ export class TaskQuickEditorStore {
         index
       );
       this.suggestionsMenu.closeForMode();
-      this.saveTask();
       this.setFocus(true);
     }
   };

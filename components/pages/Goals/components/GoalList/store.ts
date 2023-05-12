@@ -36,9 +36,7 @@ export class GoalListStore {
   };
 
   hotkeyHandlers = {
-    ON_RESET_FOCUSED_GOAL: (event: KeyboardEvent) => {
-      event.preventDefault();
-
+    ON_RESET_FOCUSED_GOAL: () => {
       this.setFocusedGoalId(null);
     },
     ON_NAVIGATE: (event: KeyboardEvent) => {
