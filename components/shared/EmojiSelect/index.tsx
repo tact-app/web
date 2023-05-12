@@ -18,6 +18,7 @@ export const EmojiSelect = observer(forwardRef<HTMLButtonElement, EmojiSelectPro
             canRemoveEmoji={props.canRemoveEmoji}
             cursor={props.cursor}
             tabIndex={props.tabIndex}
+            preventOnFocus={props.preventOnFocus}
             ref={ref}
           />
         </EmojiSelectStoreProvider>
