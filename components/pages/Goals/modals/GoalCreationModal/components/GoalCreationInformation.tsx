@@ -74,7 +74,15 @@ export const GoalCreationInformation = observer(
             </Table>
           </chakra.div>
         </Box>
-        <Box p={1} pt={4} w='100%' overflow='hidden' flex='1 0 0'>
+        <Box
+          p={1}
+          pt={4}
+          w='100%'
+          overflow='hidden'
+          flex='1 0 0'
+          onFocus={store.enableHotkeysForTasks}
+          onBlur={store.disableHotkeysForTasks}
+        >
           <Text fontWeight='semibold' mb={2} pl={5}>Task list</Text>
           <DraggableListContext
             onDragStart={store.listWithCreator.list.draggableList.startDragging}
@@ -94,6 +102,8 @@ export const GoalCreationInformation = observer(
               defaultGoalId={store.goal.id}
               disableReferenceChange
               displayCreatorHelpAsTooltip
+              unfocusWhenClickOutside
+              isHotkeysEnabled={store.isHotkeysForTasksAvailable}
               taskListWrapperProps={{
                 maxH: 'calc(100% - var(--chakra-space-20))',
                 overflowY: 'auto',

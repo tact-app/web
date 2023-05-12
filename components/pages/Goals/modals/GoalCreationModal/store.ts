@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { DescriptionData } from '../../../../../types/description';
 import { ResizableGroupConfig } from '../../../../shared/ResizableGroup/store';
 import { TasksListWithCreatorStore } from '../../../../shared/TasksListWithCreator/store';
-import { TaskData } from '../../../../shared/TasksList/types';
 import { NavigationDirections } from '../../../../../types/navigation';
 import { EmojiStore } from '../../../../../stores/EmojiStore';
 import { ModalsController } from '../../../../../helpers/ModalsController';
@@ -63,9 +62,7 @@ export class GoalCreationModalStore {
       }
     },
     CANCEL: () => {
-      if (!this.listWithCreator.list.openedTask) {
-        this.handleSimpleClose();
-      }
+      this.handleCloseModal();
     },
     CHANGE_STATUS: () => {
       if (this.isUpdating && !this.selectStatus.isMenuOpen) {
@@ -91,12 +88,24 @@ export class GoalCreationModalStore {
       this.handlePrevGoal();
     },
     CHANGE_STATUS_TO_TODO: () => {
+      if (this.isHotkeysForTasksAvailable) {
+        return;
+      }
+
       this.handleUpdateStatus(GoalStatus.TODO);
     },
     CHANGE_STATUS_TO_DONE: () => {
+      if (this.isHotkeysForTasksAvailable) {
+        return;
+      }
+
       this.handleUpdateStatus(GoalStatus.DONE);
     },
     CHANGE_STATUS_TO_WONT_DO: () => {
+      if (this.isHotkeysForTasksAvailable) {
+        return;
+      }
+
       this.handleUpdateStatus(GoalStatus.WONT_DO);
     },
   };
@@ -133,13 +142,13 @@ export class GoalCreationModalStore {
   isTaskExpanded = false;
   isDescriptionLoading: boolean = true;
   isGoalCreatingOrUpdating: boolean = false;
-  draggingTask: TaskData | null = null;
   goals: GoalData[] = [];
   currentGoalIndex: number = 0;
   error: string = '';
   isCommentPopoverOpened: boolean = false;
   isInfoPopoverOpened: boolean = false;
   isSpaceCreateModalOpened: boolean = false;
+  isHotkeysForTasksAvailable: boolean = false;
 
   goal: GoalData = {
     id: uuidv4(),
@@ -221,6 +230,17 @@ export class GoalCreationModalStore {
     return this.goal.status !== GoalStatus.TODO || this.goal.isArchived;
   }
 
+  handleCloseModal = () => {
+    if (this.listWithCreator.list.openedTask) {
+      this.listWithCreator.list.closeTask();
+    } else if (this.isHotkeysForTasksAvailable) {
+      this.isHotkeysForTasksAvailable = false;
+      this.listWithCreator.list.removeFocus();
+    } else {
+      this.handleSimpleClose();
+    }
+  };
+
   handleCloseTask = () => {
     this.resizableConfig[0].size = 3;
     this.resizableConfig[2].size = 0;
@@ -234,6 +254,14 @@ export class GoalCreationModalStore {
   tasksListCallbacks: TasksListWithCreatorStore['tasksListCallbacks'] = {
     onOpenTask: this.handleOpenTask,
     onCloseTask: this.handleCloseTask,
+  };
+
+  enableHotkeysForTasks = () => {
+    this.isHotkeysForTasksAvailable = true;
+  };
+
+  disableHotkeysForTasks = () => {
+    this.isHotkeysForTasksAvailable = false;
   };
 
   handleExpandTask = () => {
@@ -323,8 +351,12 @@ export class GoalCreationModalStore {
           onSubmit: () => {
             this.isOpen = false;
             submitCb?.();
+            this.resetActiveElementFocus();
           },
-          onClose: this.modals.close,
+          onClose: () => {
+            this.modals.close();
+            this.resetActiveElementFocus();
+          },
         },
       });
     } else {

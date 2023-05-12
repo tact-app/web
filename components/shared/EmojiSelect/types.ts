@@ -9,6 +9,7 @@ export type EmojiSelectViewProps = {
   canRemoveEmoji?: boolean;
   cursor?: Property.Cursor;
   tabIndex?: number;
+  preventOnFocus?: boolean;
 };
 
 export type EmojiSelectCallbacks = {

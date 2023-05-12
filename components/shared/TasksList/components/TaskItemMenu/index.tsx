@@ -193,6 +193,7 @@ export const TaskItemMenu = observer(function TaskItemMenu() {
       onToggleMenu={store.toggleMenu}
       triggerButtonProps={() => ({
         color: 'gray.500',
+        h: 'auto',
 
         _groupHover: {
           visibility: !isMouseSelection && 'visible',

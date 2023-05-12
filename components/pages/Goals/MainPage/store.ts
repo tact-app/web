@@ -5,6 +5,7 @@ import { BaseGoalsStore, GoalsModalsTypes } from "../stores/BaseGoalsStore";
 import { GoalDataExtended } from "../types";
 import { CreateGoalParams } from "../../../../stores/RootStore/Resources/GoalsStore";
 import { KeyboardEvent } from 'react';
+import { AnimationsStore } from '../../../../stores/AnimationsStore';
 
 export class GoalsStore extends BaseGoalsStore {
   keymap = {
@@ -73,6 +74,8 @@ export class GoalsStore extends BaseGoalsStore {
           await this.root.resources.goals.add({ goal, ...otherParams });
           await this.loadTaskList();
           this.modals.close();
+
+          AnimationsStore.displayFireworks();
         },
         onClose: this.modals.close,
       },

@@ -232,6 +232,22 @@ const theme = extendTheme({
           borderRadius: 16,
           borderColor: 'gray.200',
 
+          _hover: {
+            '.container-overlay': {
+              zIndex: -1,
+            }
+          },
+
+          '.container-overlay': {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'white',
+            zIndex: 99,
+            opacity: 0.3,
+          },
           '.react-datepicker__triangle': {
             display: 'none',
           },
@@ -496,6 +512,12 @@ const theme = extendTheme({
                 borderRadius: '50%',
               }
             },
+          },
+
+          '&.focused': {
+            '.container-overlay': {
+              zIndex: -1,
+            }
           }
         },
         '.react-datepicker-popper': {

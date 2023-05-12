@@ -18,7 +18,7 @@ export class GoalWontDoSubmitModalStore {
   otherReason: string = '';
   textareaRef: HTMLTextAreaElement = null;
 
-  navigation = new ListNavigation();
+  navigation = new ListNavigation(undefined, true);
   validator = new Validator({
     fieldsErrorsToCheck: () => ({
       reason: [ErrorTypes.REQUIRED],
