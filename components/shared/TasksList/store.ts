@@ -25,6 +25,7 @@ export type TasksListProps = {
   disableSpaceChange?: boolean;
   disableGoalChange?: boolean;
   forcedLoadTasks?: boolean;
+  unfocusWhenClickOutside?: boolean;
   wrapperProps?: BoxProps;
   callbacks?: {
     onFocusLeave?: (direction: NavigationDirections) => boolean;

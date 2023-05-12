@@ -1,13 +1,12 @@
 import { observer } from 'mobx-react-lite';
 import { Box, chakra, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
-import React, { ReactElement, useRef } from 'react';
+import React, { ReactElement } from 'react';
 import { TasksListWithCreator } from '../../../../../shared/TasksListWithCreator';
 import { DraggableListContext } from '../../../../../shared/DraggableList/view';
 import { SpaceSelect } from '../../../../../shared/SpaceSelect';
 import { DatePicker } from '../../../../../shared/DatePicker';
 import { Lists } from '../../../../../shared/TasksList/constants';
-import { useOnClickOutside } from 'next/dist/client/components/react-dev-overlay/internal/hooks/use-on-click-outside';
 
 export const GoalCreationInformation = observer(
   function GoalCreationInformation() {
@@ -103,6 +102,7 @@ export const GoalCreationInformation = observer(
               defaultGoalId={store.goal.id}
               disableReferenceChange
               displayCreatorHelpAsTooltip
+              unfocusWhenClickOutside
               isHotkeysEnabled={store.isHotkeysForTasksAvailable}
               taskListWrapperProps={{
                 maxH: 'calc(100% - var(--chakra-space-20))',
