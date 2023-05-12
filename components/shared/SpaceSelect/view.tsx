@@ -53,7 +53,7 @@ export const SpaceSelectView = observer(function SpaceSelectView() {
               >
                 <chakra.div display='flex' w='100%' h='100%' alignItems='center'>
                   <SpacesSmallIcon space={store.selectedSpace} size={6} borderRadius={4} bgOpacity='100' />
-                  <chakra.span ml={1} mr={1.5} fontWeight='normal' fontSize='sm' overflow='hidden' textOverflow='ellipsis'>
+                  <chakra.span ml={1} mr={1.5} maxW='100' fontWeight='normal' fontSize='sm' overflow='hidden' textOverflow='ellipsis'>
                     {store.selectedSpace.name}
                   </chakra.span>
                 </chakra.div>

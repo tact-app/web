@@ -8,15 +8,15 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
-  Text,
   Portal,
   useDisclosure,
+  useOutsideClick,
 } from '@chakra-ui/react';
 import { useEmojiSelectStore } from './store';
 import { EmojiStore } from '../../../stores/EmojiStore';
 import { EmojiSelectViewProps } from './types';
 import { EMOJI_SELECT_COLORS } from './constants';
-import React, { forwardRef } from "react";
+import React, { forwardRef, useRef } from 'react';
 import { useRefWithCallback } from '../../../helpers/useRefWithCallback';
 
 export const EmojiSelectView = observer(
@@ -34,7 +34,17 @@ export const EmojiSelectView = observer(
         ) {
           const store = useEmojiSelectStore();
 
-          const ref = useRefWithCallback<HTMLButtonElement>(triggerRef, store.setRef)
+          const ref = useRefWithCallback<HTMLButtonElement>(triggerRef, store.setRef);
+          const contentRef = useRef<HTMLDivElement>();
+
+          useOutsideClick({
+            ref: contentRef,
+            handler: (e) => {
+              if ((e.target as HTMLElement) !== store.triggerRef) {
+                store.closeEmojiPicker();
+              }
+            },
+          });
 
           const { isOpen, onClose, onOpen } = useDisclosure({
             isOpen: store.isEmojiPickerOpen,
@@ -86,6 +96,7 @@ export const EmojiSelectView = observer(
                       justifyContent='center'
                       alignItems='center'
                       tabIndex={tabIndex}
+                      fontSize={iconFontSize}
                       cursor={cursor ?? (store.disabled ? 'default' : 'pointer')}
                       _focus={{ boxShadow: !store.disabled && focusedTriggerBoxShadow }}
                       onFocus={store.callbacks?.onFocus}
@@ -93,11 +104,11 @@ export const EmojiSelectView = observer(
                       onKeyDown={store.handleKeyDown}
                       onClick={(e) => !store.disabled && store.preventPropagation(e)}
                   >
-                    <Text fontSize={iconFontSize}>{store.triggerContent}</Text>
+                    {store.triggerContent}
                   </Button>
                 </PopoverTrigger>
                 <Portal>
-                  <PopoverContent w='auto' onClick={store.preventPropagation}>
+                  <PopoverContent ref={contentRef} w='auto' onClick={store.preventPropagation}>
                     <PopoverBody p={0}>
                       <Box display='flex' justifyContent='center'>
                         <HStack p={2}>

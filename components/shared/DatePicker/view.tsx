@@ -66,6 +66,12 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
         )}
         <ReactDatePicker
           customInput={<DatePickerInput />}
+          calendarContainer={(props) => (
+            <div className={props.className}>
+              <div className='container-overlay' />
+              {props.children}
+            </div>
+          )}
           wrapperClassName={cn({ 'only-icon': showIconOnlyIfEmpty, 'disabled': showIconOnlyIfEmpty && mustShowIcon })}
           renderCustomHeader={DatePickerHeader}
           formatWeekDay={store.getWeekDayFormatByDate}

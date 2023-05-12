@@ -133,7 +133,6 @@ export class GoalCreationModalStore {
   isTaskExpanded = false;
   isDescriptionLoading: boolean = true;
   isGoalCreatingOrUpdating: boolean = false;
-  draggingTask: TaskData | null = null;
   goals: GoalData[] = [];
   currentGoalIndex: number = 0;
   error: string = '';
@@ -323,8 +322,12 @@ export class GoalCreationModalStore {
           onSubmit: () => {
             this.isOpen = false;
             submitCb?.();
+            this.resetActiveElementFocus();
           },
-          onClose: this.modals.close,
+          onClose: () => {
+            this.modals.close();
+            this.resetActiveElementFocus();
+          },
         },
       });
     } else {

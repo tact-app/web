@@ -161,13 +161,13 @@ export function EditableTitle({
         onBlur={handleInputBlur}
         onClick={(e) => e.stopPropagation()}
         ref={ref}
-        {...inputProps}
-        {...sharedProps}
         ml={margin}
         pl={1}
         width={widthByTitle ? `${value.length * 10}px` : '100%'}
         maxWidth='100%'
         minWidth='80px'
+        {...inputProps}
+        {...sharedProps}
       />
     ) : (
       <Text
