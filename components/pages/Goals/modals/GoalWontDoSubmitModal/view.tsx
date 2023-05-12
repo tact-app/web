@@ -41,7 +41,6 @@ export const GoalWontDoSubmitModalView = observer(function GoalWontDoSubmitModal
             <Textarea
               ref={store.setTextareaRef}
               onChange={store.handleOtherReasonChange}
-              onKeyDown={(e) => e.stopPropagation()}
               onNavigate={store.handleTextareaNavigate}
               value={store.otherReason}
               maxLength={OTHER_REASON_MAX_LENGTH}

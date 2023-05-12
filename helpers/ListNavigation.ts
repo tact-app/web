@@ -32,7 +32,10 @@ export const useListNavigation = (listNavigation: ListNavigation,
 };
 
 export class ListNavigation {
-  constructor(public callbacks: NavigationCallbacks = defaultCallbacks) {
+  constructor(
+    public callbacks: NavigationCallbacks = defaultCallbacks,
+    public withTabs: boolean = false
+  ) {
     makeAutoObservable(this);
   }
 
@@ -41,6 +44,8 @@ export class ListNavigation {
   focusedIndex: number | null = 0;
 
   keyMap = {
+    TAB: ['tab'],
+    SHIFT_TAB: ['shift+tab'],
     UP: ['up', 'j'],
     DOWN: ['down', 'k'],
     ENTER: ['enter'],
@@ -51,6 +56,16 @@ export class ListNavigation {
   };
 
   hotkeyHandlers = {
+    TAB: (e) => {
+      if (this.withTabs) {
+        this.hotkeyHandlers.DOWN(e);
+      }
+    },
+    SHIFT_TAB: (e) => {
+      if (this.withTabs) {
+        this.hotkeyHandlers.UP(e);
+      }
+    },
     UP: (e) => {
       e.preventDefault();
 
