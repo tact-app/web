@@ -28,7 +28,7 @@ export const GoalCreationModalView = observer(function GoalCreationModal() {
       onClose={store.handleClose}
       onCloseComplete={store.handleCloseComplete}
       closeOnEsc={false}
-      onEsc={store.handleClose}
+      onEsc={store.handleCloseModal}
       blockScrollOnMount={false}
       size='full'
       isCentered

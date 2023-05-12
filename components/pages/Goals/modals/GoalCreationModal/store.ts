@@ -62,9 +62,7 @@ export class GoalCreationModalStore {
       }
     },
     CANCEL: () => {
-      if (!this.listWithCreator.list.openedTask) {
-        this.handleSimpleClose();
-      }
+      this.handleCloseModal();
     },
     CHANGE_STATUS: () => {
       if (this.isUpdating && !this.selectStatus.isMenuOpen) {
@@ -219,6 +217,14 @@ export class GoalCreationModalStore {
   get isGoalFinished() {
     return this.goal.status !== GoalStatus.TODO || this.goal.isArchived;
   }
+
+  handleCloseModal = () => {
+    if (this.listWithCreator.list.openedTask) {
+      this.listWithCreator.list.closeTask();
+    } else {
+      this.handleSimpleClose();
+    }
+  };
 
   handleCloseTask = () => {
     this.resizableConfig[0].size = 3;
