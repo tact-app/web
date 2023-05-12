@@ -784,6 +784,7 @@ export class TaskQuickEditorStore {
         }
       }
     } else if (e.key === 'Tab' && e.shiftKey) {
+      this.callbacks.onNavigate(NavigationDirections.BACK);
       this.leave();
     } else if (e.key === 'ArrowRight') {
       e.stopPropagation();

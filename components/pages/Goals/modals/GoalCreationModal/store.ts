@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { DescriptionData } from '../../../../../types/description';
 import { ResizableGroupConfig } from '../../../../shared/ResizableGroup/store';
 import { TasksListWithCreatorStore } from '../../../../shared/TasksListWithCreator/store';
-import { TaskData } from '../../../../shared/TasksList/types';
 import { NavigationDirections } from '../../../../../types/navigation';
 import { EmojiStore } from '../../../../../stores/EmojiStore';
 import { ModalsController } from '../../../../../helpers/ModalsController';
@@ -139,6 +138,7 @@ export class GoalCreationModalStore {
   isCommentPopoverOpened: boolean = false;
   isInfoPopoverOpened: boolean = false;
   isSpaceCreateModalOpened: boolean = false;
+  isHotkeysForTasksAvailable: boolean = false;
 
   goal: GoalData = {
     id: uuidv4(),
@@ -233,6 +233,23 @@ export class GoalCreationModalStore {
   tasksListCallbacks: TasksListWithCreatorStore['tasksListCallbacks'] = {
     onOpenTask: this.handleOpenTask,
     onCloseTask: this.handleCloseTask,
+  };
+
+  taskCreatorCallbacks: TasksListWithCreatorStore['taskCreatorCallbacks'] = {
+    onFocus: () => {
+      this.isHotkeysForTasksAvailable = true;
+    },
+    onNavigate: (direction) => {
+      if (direction === NavigationDirections.BACK) {
+        this.disableHotkeysForTasks();
+      }
+
+      return true;
+    },
+  };
+
+  disableHotkeysForTasks = () => {
+    this.isHotkeysForTasksAvailable = false;
   };
 
   handleExpandTask = () => {

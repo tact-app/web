@@ -1,16 +1,21 @@
 import { observer } from 'mobx-react-lite';
 import { Box, chakra, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
 import { useGoalCreationModalStore } from '../store';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { TasksListWithCreator } from '../../../../../shared/TasksListWithCreator';
 import { DraggableListContext } from '../../../../../shared/DraggableList/view';
 import { SpaceSelect } from '../../../../../shared/SpaceSelect';
 import { DatePicker } from '../../../../../shared/DatePicker';
 import { Lists } from '../../../../../shared/TasksList/constants';
+import { useOnClickOutside } from 'next/dist/client/components/react-dev-overlay/internal/hooks/use-on-click-outside';
 
 export const GoalCreationInformation = observer(
   function GoalCreationInformation() {
     const store = useGoalCreationModalStore();
+
+    const ref = useRef<HTMLDivElement>();
+
+    useOnClickOutside(ref.current, store.disableHotkeysForTasks);
 
     const renderInformationItem = (title: string, content: ReactElement) => (
       <Tr border={0}>
@@ -74,7 +79,7 @@ export const GoalCreationInformation = observer(
             </Table>
           </chakra.div>
         </Box>
-        <Box p={1} pt={4} w='100%' overflow='hidden' flex='1 0 0'>
+        <Box ref={ref} p={1} pt={4} w='100%' overflow='hidden' flex='1 0 0'>
           <Text fontWeight='semibold' mb={2} pl={5}>Task list</Text>
           <DraggableListContext
             onDragStart={store.listWithCreator.list.draggableList.startDragging}
@@ -94,6 +99,8 @@ export const GoalCreationInformation = observer(
               defaultGoalId={store.goal.id}
               disableReferenceChange
               displayCreatorHelpAsTooltip
+              isHotkeysEnabled={store.isHotkeysForTasksAvailable}
+              taskCreatorCallbacks={store.taskCreatorCallbacks}
               taskListWrapperProps={{
                 maxH: 'calc(100% - var(--chakra-space-20))',
                 overflowY: 'auto',
