@@ -68,6 +68,7 @@ export const GoalItemView = observer(function GoalItemView() {
           statusIconBottom={-0.5}
           statusIconRight={0.5}
           tabIndex={-1}
+          preventOnFocus
           onToggleOpen={store.handleEmojiPickerToggle}
           onNavigate={store.handleIconNavigate}
           onFocus={store.updateEditedGoal}

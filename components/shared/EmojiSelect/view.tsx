@@ -29,6 +29,7 @@ export const EmojiSelectView = observer(
             canRemoveEmoji,
             cursor,
             tabIndex,
+            preventOnFocus = false,
           },
           triggerRef
         ) {
@@ -59,7 +60,7 @@ export const EmojiSelectView = observer(
           })`;
 
           return (
-            <div onFocus={store.preventPropagation} onKeyDown={store.handleContainerKeyDown}>
+            <div onFocus={preventOnFocus ? store.preventPropagation : undefined} onKeyDown={store.handleContainerKeyDown}>
               <Popover
                   isOpen={isOpen}
                   onOpen={onOpen}
