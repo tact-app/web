@@ -2,7 +2,7 @@
   "private": true,
   "dependencies": {
     "@sentry/cli": "^2.17.5",
-    "@withgraphite/graphite-cli": "^0.20.18",
+    "@withgraphite/graphite-cli": "^0.20.19",
     "depcheck": "^1.4.3",
     "vercel": "^29.3.0"
   }
