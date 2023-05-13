@@ -1,3 +1,11 @@
+# Checklist
+
+- [ ] Create a release page.
+- [ ] Update `_meta.json`.
+- For stable version
+  - [ ] Add it to `changelog.md`,
+  - [ ] Add it to `theme.config.js`, "banner" section.
+
 # Release notes, v0.0.1
 
 ## Features

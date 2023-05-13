@@ -1,3 +1,125 @@
+# Release notes, v0.3.0
+
+## Improvements
+
+- [TACT-305](https://linear.app/tact/issue/TACT-305/separate-input-shortcuts-and-context-menu-and-keyboard-shortcuts): Separate input shortcuts and context menu, and keyboard shortcuts (#717)
+- [TACT-111](https://linear.app/tact/issue/TACT-111/goal-setting-rework): Goal setting rework (#575)
+- [TACT-332](https://linear.app/tact/issue/TACT-332/goal-setting-rework-toolbar-actions-filters): Goal setting rework: Toolbar, Actions, Filters (#685)
+- [TACT-347](https://linear.app/tact/issue/TACT-347/goal-setting-rework-archived-goals-page): Goal setting rework: Archived Goals Page (#711)
+- [TACT-333](https://linear.app/tact/issue/TACT-333/goal-setting-rework-task-list): Goal setting rework: Task list (#738)
+- [TACT-346](https://linear.app/tact/issue/TACT-346/goal-setting-rework-additional-improvements): Goal setting rework: Additional improvements, part I (#795)
+- [TACT-348](https://linear.app/tact/issue/TACT-348/goal-setting-rework-keyboard-navigation): Goal setting rework: Keyboard Navigation (#769)
+
+## Fixes
+
+- Fixed action menu display (#749)
+- fix #620: fix cache keys, sync Cache invalidation workflow
+- Reverted mobx-react-lite version (#661)
+- Revert "feat(deps): bump react-datepicker from 4.10.0 to 4.10.1 (#715)"
+
+## Dependencies
+
+### Production
+
+- feat(deps): bump @chakra-ui/modal from 2.2.9 to 2.2.10 (#606)
+- feat(deps): bump @chakra-ui/react from 2.5.2 to 2.6.1 (#608, #622, #746, #774)
+- feat(deps): bump @chakra-ui/system from 2.5.3 to 2.5.4 (#621, #744)
+- feat(deps): bump @emotion/react from 11.10.6 to 11.10.8 (#754, #784)
+- feat(deps): bump @emotion/styled from 11.10.6 to 11.10.8 (#757, #783)
+- feat(deps): bump @fortawesome/fontawesome-pro from 6.3.0 to 6.4.0 (#627)
+- feat(deps): bump @fortawesome/pro-light-svg-icons from 6.2.1 to 6.4.0 (#627)
+- feat(deps): bump @fortawesome/pro-regular-svg-icons from 6.2.1 to 6.4.0 (#627)
+- feat(deps): bump @fortawesome/pro-solid-svg-icons from 6.2.1 to 6.4.0 (#627)
+- feat(deps): bump @sentry/nextjs from 7.43.0 to 7.51.2 (#596, #600, #616, #677, #708, #727, #750, #778, #791)
+- feat(deps): bump @tiptap/core from 2.0.0 to 2.0.3 (#652, #639, #668, #699)
+- feat(deps): bump @tiptap/extension-highlight from 2.0.0 to 2.0.3 (#658, #642, #672, #700)
+- feat(deps): bump @tiptap/extension-link from 2.0.0 to 2.0.3 (#659, #645, #673, #707)
+- feat(deps): bump @tiptap/extension-placeholder from 2.0.0 to 2.0.3 (#648, #634, #666, #703)
+- feat(deps): bump @tiptap/extension-task-item from 2.0.0 to 2.0.3 (#660, #644, #674, #705)
+- feat(deps): bump @tiptap/extension-task-list from 2.0.0 to 2.0.3 (#649, #643, #665, #698)
+- feat(deps): bump @tiptap/extension-underline from 2.0.0 to 2.0.3 (#651, #638, #670, #706)
+- feat(deps): bump @tiptap/react from 2.0.0 to 2.0.3 (#655, #641, #671, #701)
+- feat(deps): bump @tiptap/starter-kit from 2.0.0 to 2.0.3 (#654, #635, #667, #702)
+- feat(deps): bump @tiptap/suggestion from 2.0.0 to 2.0.3 (#657, #640, #669, #704)
+- feat(deps): bump allotment from 1.18.1 to 1.19.0 (#748)
+- feat(deps): bump framer-motion from 10.6.0 to 10.12.8 (#598, #602, #603, #615, #678, #687, #690, #693, #710, #720, #766, #771, #790)
+- feat(deps): bump mobx from 6.8.0 to 6.9.0 (#617)
+- feat(deps): bump mobx-react-lite from 3.4.3 to 4.0.2 (#619)
+- feat(deps): bump next from 13.2.4 to 13.4.1 (#680, #731, #760, #768, #780, #785)
+- feat(deps): bump react-datepicker from 4.10.0 to 4.11.0 (#715, #663, #697)
+- feat(deps): bump react-hotkeys-hook from 4.3.8 to 4.4.0 (#709)
+
+### Development
+
+- chore(deps-dev): bump @babel/core from 7.21.3 to 7.21.8 (#662, #761, #770)
+- chore(deps-dev): bump @types/node from 18.15.3 to 20.1.1 (#597, #609, #614, #618, #633, #723, #726, #736, #745, #752, #762, #792)
+- chore(deps-dev): bump @types/react from 18.0.28 to 18.2.6 (#611, #623, #632, #664, #675, #686, #691, #719, #728, #747, #772, #782)
+- chore(deps-dev): bump eslint from 8.36.0 to 8.40.0 (#631, #682, #732, #786)
+- chore(deps-dev): bump eslint-config-next from 13.2.4 to 13.4.1 (#679, #730, #758, #765, #776, #788)
+- chore(deps-dev): bump eslint-config-prettier from 8.7.0 to 8.8.0 (#599)
+- chore(deps-dev): bump prettier from 2.8.5 to 2.8.8 (#601, #613, #739)
+- chore(deps-dev): bump typescript from 4.9.5 to 5.0.4 (#647, #683)
+- docs(deps): bump nextra-theme-docs from 2.5.0 to 2.5.1 in /docs (#793)
+- tools(deps): bump @sentry/cli from 2.15.2 to 2.17.5 in /tools (#612, #630, #676, #688, #692, #721, #725, #756)
+- tools(deps): bump @withgraphite/graphite-cli from 0.20.14 to 0.20.18 in /tools (#605, #740, #755)
+- tools(deps): bump next from 13.3.0 to 13.4.1 in /tools (#729, #753, #767, #777, #789)
+- tools(deps): bump nextra-theme-docs from 2.3.0 to 2.5.0 in /tools (#712, #734, #741, #779)
+- tools(deps): bump vercel from 28.17.0 to 29.2.1 in /tools (#604, #610, #624, #684, #689, #722, #724, #751, #759, #764, #773, #794)
+- tools(deps): bump vm2 from 3.9.14 to 3.9.16 in /tools (#681, #696)
+
+## Miscellaneous
+
+- chore(deps): fix depcheck issues
+- chore(deps): update transitive deps
+- chore: dev: customize listening port
+- chore: dev: improve refresh command to work with forks
+- chore: fix hidden dependencies
+- chore: minor downgrade node version for vercel
+- chore: update settings and refactor Taskfile
+- ci/cd: add Dependabot at weekends experimental workflow
+- ci/cd: add Documentation delivery workflow boilerplate
+- ci/cd: add Workflow invalidation, refactor Continuous integration, rename Continuous delivery
+- ci/cd: add name for cron job
+- ci/cd: dependabot: reorg config
+- ci/cd: experiments with caching
+- ci/cd: optimize Continuous integration workflow
+- ci/cd: refactor Continuous delivery (Docker) workflow
+- ci/cd: refactor Continuous delivery (Vercel) workflow
+- ci/cd: refactor workflows
+- ci/cd: refactor workflows and adopt scripts for new docs structure
+- ci/cd: replace stale bot by github action based on actions/stale
+- ci/cd: run Workflow invalidation by cron
+- ci/cd: try to fix notify action
+- ci/cd: try to fix warning in Documentation delivery workflow
+- docs: add redirects
+- docs: add social previews
+- docs: build local artifacts
+- docs: changelog: split changelog by versions and move it to /docs
+- docs: publish notes about v0.3.0-rc.3 release
+- docs: remove static artifacts
+- docs: rename Tact.app to Tact.web
+- docs: reorg structure
+- feat: switch to node v18
+- fix #694: docs: integrate Nextra for docs publishing
+- fix #695: ci/cd: configure GitHub Pages for docs
+- fix #716: ci/cd: notify action has a problem
+- fix #733: deps: remove hack for chakra-ui/react-use-outside-click
+- fix #735: ci/cd: notification has wrong status
+- issue #695: prepare content
+- issue #735: experiments with Documentation delivery workflow to check notifications
+
+## Active contributors
+
+Special thanks to the following contributors for their contributions to this release:
+- @kamilsk, Lead
+- @al-petrushin, Dev
+- @DimovyM, Dev
+- @Tatiana683, QA
+
+## Full changelog
+
+Compare view [v0.2.0...v0.3.0](https://github.com/tact-app/web/compare/v0.2.0...v0.3.0).
+
 # Release notes, v0.2.0
 
 ## Improvements

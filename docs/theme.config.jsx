@@ -50,8 +50,8 @@ export default {
     </>
   ),
   banner: {
-    text: <a href="https://github.com/tact-app/web/releases/tag/v0.3.0-pre.3" target="_blank">
-      🎉 Release v0.3.0-pre.3 is out. Read more →
+    text: <a href="https://github.com/tact-app/web/releases/tag/v0.3.0" target="_blank">
+      🎉 Release v0.3.0 is out. Read more →
     </a>,
   },
   footer: {
