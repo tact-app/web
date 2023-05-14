@@ -1,3 +1,7 @@
+---
+title: Changelog
+---
+
 # Release notes, v0.3.0
 
 ## Improvements
@@ -119,6 +123,8 @@ Special thanks to the following contributors for their contributions to this rel
 ## Full changelog
 
 Compare view [v0.2.0...v0.3.0](https://github.com/tact-app/web/compare/v0.2.0...v0.3.0).
+
+---
 
 # Release notes, v0.2.0
 

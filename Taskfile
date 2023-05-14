@@ -332,6 +332,10 @@ function docs() {
       fi
       ;;
 
+    dev)
+      npx --no-install next dev
+      ;;
+
     build)
       npx --no-install next build
       ;;
