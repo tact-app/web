@@ -18,6 +18,7 @@ import { EmojiSelectViewProps } from './types';
 import { EMOJI_SELECT_COLORS } from './constants';
 import React, { forwardRef, useRef } from 'react';
 import { useRefWithCallback } from '../../../helpers/useRefWithCallback';
+import { getBoxShadowAsBorder } from '../../../helpers/baseHelpers';
 
 export const EmojiSelectView = observer(
     forwardRef<HTMLButtonElement, EmojiSelectViewProps>(
@@ -53,11 +54,7 @@ export const EmojiSelectView = observer(
             onOpen: store.openEmojiPicker,
           });
 
-          const focusedTriggerBoxShadow = `inset 0px 0px 0px 2px var(--chakra-colors-${
-              store.mainColor.color
-          }-${
-              store.mainColor.modifier + 100
-          })`;
+          const focusedTriggerBoxShadow = getBoxShadowAsBorder(`${store.color}.300`, 2);
 
           return (
             <div onFocus={preventOnFocus ? store.preventPropagation : undefined} onKeyDown={store.handleContainerKeyDown}>
@@ -85,8 +82,8 @@ export const EmojiSelectView = observer(
                   <Button
                       ref={ref}
                       variant='filled'
-                      bg={store.color}
-                      color={store.mainColor.color + '.500'}
+                      bg={`${store.color}.200`}
+                      color={`${store.color}.500`}
                       borderRadius={borderRadius}
                       boxShadow={store.isEmojiPickerOpen && !store.disabled && focusedTriggerBoxShadow}
                       p={0}
@@ -119,12 +116,12 @@ export const EmojiSelectView = observer(
                                   key={color}
                                   borderColor={
                                     color === store.color
-                                        ? `${store.mainColor.color}.400`
+                                        ? `${store.color}.400`
                                         : 'transparent'
                                   }
                                   borderWidth={4}
                                   variant='filled'
-                                  bg={color}
+                                  bg={`${color}.200`}
                                   borderRadius='full'
                                   size='sm'
                                   p={0}
@@ -136,6 +133,7 @@ export const EmojiSelectView = observer(
                         <Picker
                             autoFocus
                             theme='light'
+                            dynamicWidth
                             data={EmojiStore.emojiData}
                             onEmojiSelect={store.handleEmojiSelect}
                         />

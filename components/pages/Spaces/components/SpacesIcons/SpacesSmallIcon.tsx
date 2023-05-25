@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { chakra } from '@chakra-ui/react';
 import { SpaceData } from '../../types';
-import { setModifierToColor } from "../../../../../helpers/baseHelpers";
 
 export const SpacesSmallIcon = observer(function SpacesSmallIcon({
   space,
@@ -24,9 +23,9 @@ export const SpacesSmallIcon = observer(function SpacesSmallIcon({
       minW={size}
       h={size}
       fontWeight={600}
-      bg={setModifierToColor(space.color, bgOpacity)}
+      bg={`${space.color}.${bgOpacity}`}
       fontSize={size > 6 ? 'lg' : 'sm'}
-      color={setModifierToColor(space.color, 500)}
+      color={`${space.color}.500`}
     >
       {space.icon || space.name[0]}
     </chakra.div>

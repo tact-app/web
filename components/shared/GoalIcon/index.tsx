@@ -20,7 +20,7 @@ export const GoalIcon = observer(function GoalIcon({
       display='inline-flex'
       justifyContent='center'
       flexDirection='column'
-      bg={icon.color}
+      bg={`${icon.color}.200`}
     >
       {icon && icon.type === GoalIconVariants.EMOJI ? (
         <Text fontSize={fontSize} textAlign='center'>

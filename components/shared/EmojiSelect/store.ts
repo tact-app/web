@@ -36,15 +36,6 @@ export class EmojiSelectStore {
     return this.icon || this.title?.[0];
   }
 
-  get mainColor() {
-    const [color, modifier] = this.color.split('.');
-
-    return {
-      color,
-      modifier: Number(modifier ?? 0),
-    };
-  }
-
   preventPropagation(e: SyntheticEvent | KeyboardEvent) {
     e.stopPropagation();
   }
