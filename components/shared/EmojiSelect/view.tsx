@@ -54,7 +54,8 @@ export const EmojiSelectView = observer(
             onOpen: store.openEmojiPicker,
           });
 
-          const focusedTriggerBoxShadow = getBoxShadowAsBorder(`${store.color}.300`, 2);
+          const hoverBg = `${store.color}.300`;
+          const focusedTriggerBoxShadow = getBoxShadowAsBorder(hoverBg, 2);
 
           return (
             <div onFocus={preventOnFocus ? store.preventPropagation : undefined} onKeyDown={store.handleContainerKeyDown}>
@@ -75,7 +76,13 @@ export const EmojiSelectView = observer(
                         boundary: 'clippingParents',
                         rootBoundary: 'viewport'
                       }
-                    }
+                    },
+                    {
+                      name: 'flip',
+                      options: {
+                        fallbackPlacements: ['top', 'bottom', 'right'],
+                      },
+                    },
                   ]}
               >
                 <PopoverTrigger>
@@ -96,6 +103,7 @@ export const EmojiSelectView = observer(
                       tabIndex={tabIndex}
                       fontSize={iconFontSize}
                       cursor={cursor ?? (store.disabled ? 'default' : 'pointer')}
+                      _hover={{ bg: hoverBg }}
                       _focus={{ boxShadow: !store.disabled && focusedTriggerBoxShadow }}
                       onFocus={store.callbacks?.onFocus}
                       onBlur={store.callbacks?.onBlur}
