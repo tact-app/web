@@ -225,7 +225,6 @@ export class TasksListStore {
   removeFocus = () => {
     this.draggableList.resetFocusedItem();
     this.setEditingTask(null);
-    this.closeTask();
   };
 
   handleNavigation = (direction: NavigationDirections) => {
@@ -344,7 +343,6 @@ export class TasksListStore {
     },
     onFocusedItemsChange: (ids: string[]) => {
       if (!ids.length) {
-        this.closeTask();
         this.setEditingTask(null);
       } else {
         if (ids.length > 1 || this.editingTaskId !== ids[0]) {
