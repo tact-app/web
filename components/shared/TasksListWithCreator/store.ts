@@ -78,6 +78,8 @@ export class TasksListWithCreatorStore {
   }
 
   get taskCreatorCallbacks(): TaskQuickEditorProps['callbacks'] {
+    const { onFocus, ...additionalCallbacks } = this.taskCreatorAdditions;
+
     return {
       onSave: this.defaultSave
         ? (task, withShift, referenceId) => {
@@ -101,9 +103,9 @@ export class TasksListWithCreatorStore {
       onNavigate: this.list.handleNavigation,
       onFocus: () => {
         this.list.removeFocus();
-        this.taskCreatorAdditions.onFocus?.();
+        onFocus?.();
       },
-      ...this.taskCreatorAdditions,
+      ...additionalCallbacks,
     };
   }
 
