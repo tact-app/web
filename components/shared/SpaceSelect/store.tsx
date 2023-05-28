@@ -7,7 +7,6 @@ import { SpaceCreationModal } from '../../pages/Spaces/modals/SpaceCreationModal
 import { ModalsTypes } from '../TasksList/modals/store';
 import { SpaceData } from '../../pages/Spaces/types';
 import { NavigationDirections } from '../../../types/navigation';
-import { setModifierToColor } from '../../../helpers/baseHelpers';
 import { ListNavigation } from '../../../helpers/ListNavigation';
 import { NavigationHelper } from '../../../helpers/NavigationHelper';
 
@@ -55,7 +54,7 @@ export class SpaceSelectStore {
 
     return {
       ...space,
-      hoverColor: setModifierToColor(space.color, 75)
+      hoverColor: `${space.color}.100`,
     };
   }
 

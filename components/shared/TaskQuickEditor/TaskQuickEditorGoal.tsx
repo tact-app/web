@@ -45,7 +45,7 @@ export const TaskQuickEditorGoal = observer(function TaskQuickEditorGoal({
       _focus={{
         outline: 'none',
         boxShadow: 'none',
-        bg: goal.icon.color.replace('.200', '.100'),
+        bg: `${goal.icon.color}.100`,
       }}
       {...rest}
     >

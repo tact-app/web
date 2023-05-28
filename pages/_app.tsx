@@ -16,6 +16,12 @@ const theme = extendTheme({
       },
       body: {
         '--toast-z-index': 1200,
+        'em-emoji-picker': {
+          '--border-radius': 0,
+          '--sidebar-width': 0,
+          '--shadow': 0,
+          width: '100%',
+        },
         '.clear': {
           clear: 'both',
         },

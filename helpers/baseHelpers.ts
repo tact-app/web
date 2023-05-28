@@ -1,11 +1,3 @@
-export function setModifierToColor(
-  color: string,
-  modifier: string | number,
-  separator: string = '.'
-) {
-  return color.split('.')[0] + `${separator}${modifier}`;
-}
-
 export function colorToCssVariable(color: string) {
   return `var(--chakra-colors-${color.split('.').join('-')})`;
 }

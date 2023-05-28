@@ -4,7 +4,6 @@ import { Modes, useTaskQuickEditorStore } from './store';
 import { Box, Button, ButtonProps, chakra } from '@chakra-ui/react';
 import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
 import { ModalsSwitcher } from '../../../helpers/ModalsController';
-import { setModifierToColor } from "../../../helpers/baseHelpers";
 
 export const TaskQuickEditorSpace = observer(function TaskQuickEditorSpace({
   withTitle,
@@ -35,14 +34,14 @@ export const TaskQuickEditorSpace = observer(function TaskQuickEditorSpace({
       w={6}
       p={0}
       minW={6}
-      bg={setModifierToColor(space.color, 100)}
+      bg={`${space.color}.100`}
       _hover={{
-        bg: setModifierToColor(space.color, 75),
+        bg: `${space.color}.75`,
       }}
       _focus={{
         outline: 'none',
         boxShadow: 'none',
-        bg: setModifierToColor(space.color, 200),
+        bg: `${space.color}.200`,
       }}
       {...rest}
     >
@@ -59,7 +58,7 @@ export const TaskQuickEditorSpace = observer(function TaskQuickEditorSpace({
           h={iconSize}
           fontWeight={600}
           fontSize={iconSize > 6 ? 'lg' : 'sm'}
-          color={setModifierToColor(space.color, 500)}>
+          color={`${space.color}.500`}>
           {space.icon || space.name[0]}
         </chakra.div>
       </Box>
