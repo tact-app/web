@@ -17,6 +17,13 @@ for path in "${paths[@]}"; do
   fi
 done
 
+# use bin/lib instead
+if ! command -v md5sum >/dev/null; then
+  md5sum() {
+    openssl md5 "${@}"
+  }
+fi
+
 
 
 declare -A config
