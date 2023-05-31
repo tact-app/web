@@ -136,8 +136,8 @@ export class DatePickerStore {
     }
   };
 
-  getWeekDayFormatByDate = (date: Date) => {
-    return moment(date).format('ddd').toUpperCase();
+  getWeekDayFormatByDate = (weekday: string) => {
+    return weekday.substring(0, 3).toUpperCase();
   };
 
   setRef = (ref: ReactDatePicker) => {
