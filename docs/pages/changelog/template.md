@@ -1,3 +1,8 @@
+---
+title: Template
+display: hidden
+---
+
 # Checklist
 
 - [ ] Create a release page.
@@ -27,8 +32,6 @@
 Special thanks to the following contributors for their contributions to this release:
 - @kamilsk, Lead
 - @al-petrushin, Dev
-- @DimovyM, Dev
-- @Tatiana683, QA
 
 ## Full changelog
 
