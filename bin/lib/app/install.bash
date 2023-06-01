@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# shellcheck source=node.bash
+
+install() {
+  local cmd=install
+  if [ -f package-lock.json ]; then
+    cmd=ci
+  fi
+
+  [ "${1:-}" == '--from-scratch' ] && rm -rf node_modules
+  @node npm "${cmd}" --ignore-scripts --include=dev
+}

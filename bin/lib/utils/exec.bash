@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# TODO:dirty inject it
 declare -A config
 config['dryrun']=false
 
