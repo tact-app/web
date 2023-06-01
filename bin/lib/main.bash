@@ -18,16 +18,24 @@ for path in "${paths[@]}"; do
   fi
 done
 
-# TODO:refactor inject config into the scripts
-declare -A config
-config['dryrun']=false
-config['port']=3000
-
 # TODO:refactor make path relative
 for script in "$(pwd)"/bin/lib/*/*.bash; do
   # shellcheck source=utils/md5sum.bash
   source "${script}"
 done
+
+# TODO:refactor inject config into the scripts
+declare -A config
+config['dryrun']=false
+config['port']=3000
+
+@usage() {
+  cat - <<EOF
+Usage: $0 <task> <args>
+Tasks:
+EOF
+  compgen -A function | grep -Ev '^(@|_|-|\+)' | sort | cat -n
+}
 
 function @main() {
   local arg
