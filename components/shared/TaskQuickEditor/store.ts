@@ -549,10 +549,10 @@ export class TaskQuickEditorStore {
         }
       }
 
-      return this.handleSuggestionMenuNavigation(e as KeyboardEvent<HTMLInputElement>);
+      return this.handleSuggestionMenuNavigation(e);
     };
 
-  handleSuggestionMenuNavigation = (e: KeyboardEvent<HTMLInputElement>) => {
+  handleSuggestionMenuNavigation = (e: KeyboardEvent<HTMLInputElement | HTMLButtonElement>) => {
     if (e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey)) {
       e.stopPropagation();
       e.preventDefault();
