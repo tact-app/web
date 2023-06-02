@@ -7,3 +7,5 @@ Tasks:
 EOF
   compgen -A function | grep -Ev '^(@|_|-|\+)' | sort | cat -n
 }
+
+help() { @usage; }

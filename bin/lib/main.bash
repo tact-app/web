@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck source=core/config.bash
+# shellcheck source=core/usage.bash
 
 set -euo pipefail
 
@@ -7,45 +9,16 @@ set -euo pipefail
   exit 1
 }
 
-# TODO:refactor inject while code generation
-paths=(
-  "$(pwd)/node_modules/.bin"
-  "$(pwd)/tools/node_modules/.bin"
-)
-for path in "${paths[@]}"; do
-  if [[ ":${PATH}:" != *":${path}:"* ]]; then
-    export PATH="${path}:${PATH}"
-  fi
-done
-
-# TODO:refactor replace it by injection while code generation
 for script in "$(pwd)"/bin/lib/*/*.bash; do
-  # shellcheck source=core/usage.bash
+  # shellcheck source=core/config.bash
   source "${script}"
 done
 
-# TODO:dirty inject config into the scripts
-declare -A config
-config['dryrun']=false
-config['port']=3000
-
 function @main() {
-  local arg
-  for arg in "${@}"; do
-    case "${arg}" in
-    -d | --dry-run)
-      config['dryrun']=true
-      shift
-      ;;
-    -p | --port)
-      config['port']="${2}"
-      shift 2
-      ;;
-    *) break ;;
-    esac
-  done
+  local args=()
+  IFS=' ' read -r -a args < <(@handle "${@}")
 
-  "${@:-@usage}"
+  "${args[@]:-@usage}"
 }
 
 @main "${@}"

@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-
-# TODO:dirty inject it
-declare -A config
-config['dryrun']=false
+# shellcheck source=../core/config.bash
 
 @() {
   ${config['dryrun']} && echo "${@}"
