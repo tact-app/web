@@ -64,7 +64,7 @@ jobs:
         if: steps.tools.outputs.cache-hit != 'true'
 
       - name: Check application dependencies
-        run: 'source bin/activate && [ "$(./Taskfile @deps check)" == "No depcheck issue" ]'
+        run: '[ "$(./Taskfile @deps check)" == "No depcheck issue" ]'
       - name: Build the application
         run: npm run build
 

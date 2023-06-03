@@ -107,9 +107,9 @@ refresh() {
     ;;
 
   docs)
-    if ! @deps verify docs/package-lock.json; then
-      docs install
-      md5sum docs/package-lock.json >docs/node_modules/package.lock
+    if ! @deps verify "$(pwd)"/docs/package-lock.json; then
+      docs install # TODO:hack cwd has been changed
+      md5sum "$(pwd)"/package-lock.json >"$(pwd)"/node_modules/package.lock
     fi
     ;;
 

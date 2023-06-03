@@ -5,6 +5,8 @@
 # Example: run docs
 # Example: run docs build publish
 docs() {
+  unset npm # TODO:hack temporary solution for GitHub Actions
+
   pushd docs || return 1
   trap popd EXIT
 

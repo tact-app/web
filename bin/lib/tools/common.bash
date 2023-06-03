@@ -3,6 +3,8 @@
 # Example: run tools npm i vercel@latest
 # Example: run tools npm ci
 tools() {
+  unset npm # TODO:hack temporary solution for GitHub Actions
+
   (cd tools && "${@}")
 }
 
