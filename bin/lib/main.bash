@@ -14,7 +14,7 @@ for script in "$(pwd)"/bin/lib/*/*.bash; do
   source "${script}"
 done
 
-function @main() {
+@main() {
   local args=()
   IFS=' ' read -r -a args < <(@handle "${@}")
 
