@@ -477,7 +477,7 @@ export class TaskQuickEditorStore {
   };
 
   handleKeyDownModeButton =
-    (modeType: Modes) => (e: KeyboardEvent<HTMLInputElement>) => {
+    (modeType: Modes) => (e: KeyboardEvent<HTMLButtonElement>) => {
       if (this.root.isModalOpen) {
         return
       }
@@ -552,7 +552,7 @@ export class TaskQuickEditorStore {
       return this.handleSuggestionMenuNavigation(e);
     };
 
-  handleSuggestionMenuNavigation = (e: KeyboardEvent<HTMLInputElement>) => {
+  handleSuggestionMenuNavigation = (e: KeyboardEvent<HTMLInputElement | HTMLButtonElement>) => {
     if (e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey)) {
       e.stopPropagation();
       e.preventDefault();
