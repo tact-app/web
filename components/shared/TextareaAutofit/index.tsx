@@ -1,15 +1,14 @@
 import { observer } from 'mobx-react-lite';
 import {
-  forwardRef,
   Textarea,
   TextareaProps,
   useMergeRefs,
 } from '@chakra-ui/react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, forwardRef } from 'react';
 import useResizeObserver from 'use-resize-observer';
 
 export const TextareaAutofit = observer(
-  forwardRef(function TextareaAutofit(props: TextareaProps, ref) {
+  forwardRef<HTMLTextAreaElement, TextareaProps>(function TextareaAutofit(props, ref) {
     const internalRef = useRef<HTMLTextAreaElement>(null);
     const refs = useMergeRefs(internalRef, ref);
     const fitHeight = useCallback(() => {

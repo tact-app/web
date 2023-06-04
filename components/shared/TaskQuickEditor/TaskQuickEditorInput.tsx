@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useTaskQuickEditorStore } from './store';
-import { Box, chakra, Input, InputProps } from '@chakra-ui/react';
+import { Box, chakra, Input, InputProps, TextareaProps } from '@chakra-ui/react';
 import React from 'react';
 import { TaskQuickEditorMenu } from './TaskQuickEditorMenu';
 import { TextareaAutofit } from '../TextareaAutofit';
@@ -12,7 +12,7 @@ export const TaskQuickEditorInput = observer(function TaskQuickEditInput({
 }: {
   placeholder?: string;
   multiline?: boolean;
-} & InputProps) {
+} & InputProps & TextareaProps) {
   const store = useTaskQuickEditorStore();
   const items = store.activeMode ? store.activeMode.suggestions : [];
 

@@ -1,5 +1,4 @@
-import type { KeyboardEvent } from 'react';
-import { SyntheticEvent } from 'react';
+import { ChangeEvent, KeyboardEvent, SyntheticEvent } from 'react';
 import { makeAutoObservable, toJS } from 'mobx';
 import { RootStore } from '../../../stores/RootStore';
 import { getProvider } from '../../../helpers/StoreProvider';
@@ -123,7 +122,7 @@ export class TaskQuickEditorStore {
       }, 100);
     }
   };
-  input: HTMLInputElement | null = null;
+  input: HTMLInputElement | HTMLTextAreaElement | null = null;
 
   savedCaretPosition: number = this.task ? this.task.title.length : 0;
 
@@ -214,7 +213,7 @@ export class TaskQuickEditorStore {
     this.input?.focus();
   };
 
-  enterMode = (modeType: Modes, e: KeyboardEvent<HTMLInputElement>) => {
+  enterMode = (modeType: Modes, e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     this.activeModeType = modeType;
     this.activeMode.activate();
     this.suggestionsMenu.open();
@@ -255,7 +254,7 @@ export class TaskQuickEditorStore {
     this.isMenuOpen = false;
   };
 
-  inputRef = (input: HTMLInputElement) => {
+  inputRef = (input: HTMLInputElement | HTMLTextAreaElement) => {
     this.input = input;
   };
 
@@ -340,7 +339,7 @@ export class TaskQuickEditorStore {
     }
   };
 
-  handleSelect = (e: SyntheticEvent) => {
+  handleSelect = (e: SyntheticEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     this.savedCaretPosition = (e.target as HTMLInputElement).selectionStart;
   };
 
@@ -399,7 +398,7 @@ export class TaskQuickEditorStore {
     return false;
   };
 
-  handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  handleKeyDown = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (e.key === 'e' && e.metaKey) {
       return;
     } else {
@@ -438,7 +437,7 @@ export class TaskQuickEditorStore {
     }
   };
 
-  handleChange = (e: SyntheticEvent) => {
+  handleChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     const { value } = target;
 
@@ -552,7 +551,7 @@ export class TaskQuickEditorStore {
       return this.handleSuggestionMenuNavigation(e);
     };
 
-  handleSuggestionMenuNavigation = (e: KeyboardEvent<HTMLInputElement | HTMLButtonElement>) => {
+  handleSuggestionMenuNavigation = (e: KeyboardEvent<HTMLInputElement | HTMLButtonElement | HTMLTextAreaElement>) => {
     if (e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey)) {
       e.stopPropagation();
       e.preventDefault();
@@ -583,7 +582,7 @@ export class TaskQuickEditorStore {
     }
   }
 
-  handleKeyDownWithActiveMode = (e: KeyboardEvent<HTMLInputElement>) => {
+  handleKeyDownWithActiveMode = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (this.handleSuggestionMenuNavigation(e)) {
       return true;
     }
@@ -745,7 +744,7 @@ export class TaskQuickEditorStore {
     }
   };
 
-  handleKeyDownInStdMode = (e: KeyboardEvent<HTMLInputElement>) => {
+  handleKeyDownInStdMode = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const mode = this.getMatchMode(e.key);
     const target = e.target as HTMLInputElement;
 
