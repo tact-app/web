@@ -5,6 +5,7 @@ import { Editor } from '../../../../../shared/Editor';
 import React from 'react';
 import { FormError } from "../../../../../shared/FormError";
 import { GoalEmojiSelect } from "../../../components/GoalEmojiSelect";
+import { GOAL_TITLE_MAX_LENGTH } from '../constants';
 
 export const GoalCreationDescription = observer(
   function GoalCreationDescription() {
@@ -58,6 +59,7 @@ export const GoalCreationDescription = observer(
                   boxShadow: 'none',
                   borderBottomWidth: 2,
                 }}
+                maxLength={GOAL_TITLE_MAX_LENGTH}
                 onKeyDown={store.handleTitleKeyDown}
                 _invalid={{
                   boxShadow: 'none',

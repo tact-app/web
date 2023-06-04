@@ -333,6 +333,23 @@ const theme = extendTheme({
               }
             }
           },
+          [
+            '.react-datepicker__day--in-selecting-range.react-datepicker__day--today, ' +
+            '.react-datepicker__day--in-selecting-range.react-datepicker__day--today, ' +
+            '.react-datepicker__day--in-selecting-range.react-datepicker__day--selecting-range-start.react-datepicker__day--today, ' +
+            '.react-datepicker__day--in-selecting-range.react-datepicker__day--selecting-range-end.react-datepicker__day--today, ' +
+            '.react-datepicker__day--in-range:not(.react-datepicker__day--in-selecting-range).react-datepicker__day--today'
+          ]: {
+            '.day': {
+              bg: 'purple.300',
+              color: 'white',
+              borderRadius: '50%',
+
+              _hover: {
+                bg: 'purple.400',
+              }
+            }
+          },
           '.react-datepicker__day--disabled': {
             '.day': {
               color: 'gray.400',
@@ -359,11 +376,6 @@ const theme = extendTheme({
               _hover: {
                 bg: 'purple.400',
               }
-            }
-          },
-          '.react-datepicker__day--in-selecting-range.react-datepicker__day--today, .react-datepicker__day--in-range.react-datepicker__day--today': {
-            '.day': {
-              color: 'gray.700',
             }
           },
           '.react-datepicker__day--in-range': {

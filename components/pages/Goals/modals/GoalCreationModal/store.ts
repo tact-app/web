@@ -309,6 +309,11 @@ export class GoalCreationModalStore {
 
   handleTargetDateChange = (value: string) => {
     this.goal.targetDate = value;
+
+    if (DatePickerHelpers.isStartDateAfterEndDate(this.goal?.startDate, value)) {
+      this.goal.startDate = '';
+    }
+
     return this.handleUpdate({ ...this.goal, targetDate: value });
   }
 
