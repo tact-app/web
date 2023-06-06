@@ -3,9 +3,10 @@
 # Example: run tools npm i vercel@latest
 # Example: run tools npm ci
 tools() {
-  unset npm # TODO:hack temporary solution for GitHub Actions
-
-  (cd tools && "${@}")
+  pushd tools >/dev/null || exit 1
+  trap 'popd >/dev/null' ERR
+  "${@}"
+  popd >/dev/null || exit 1
 }
 
 # TODO:refactor make it dynamic, based on available tools
