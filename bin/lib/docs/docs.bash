@@ -5,8 +5,7 @@
 # Example: run docs npm i nextra@latest
 # Example: run docs npm ci
 #
-# Example: run docs build
-# Example: run docs publish
+# Example: run docs dev|build|start|publish
 # TODO:feat run docs -- build start
 docs() {
   pushd "$(@root)/docs" >/dev/null || exit 1

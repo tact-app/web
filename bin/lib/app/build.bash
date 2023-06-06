@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck source=install.bash     # install
+# shellcheck source=node.bash        # @node
 # shellcheck source=../core/env.bash # @token
 
 # Example: run build [--from-scratch]

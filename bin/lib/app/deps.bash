@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# shellcheck source=../docs/docs.bash   # docs
-# shellcheck source=../tools/tools.bash # tools {depcheck}
-# shellcheck source=../utils/stale.bash # @consistent @lock
-# shellcheck source=install.bash        # install
+# shellcheck source=../docs/docs.bash    # docs
+# shellcheck source=../tools/tools.bash  # tools {depcheck}
+# shellcheck source=../utils/vendor.bash # @consistent @lock
+# shellcheck source=install.bash         # install
 
 @deps() {
   case "${1}" in

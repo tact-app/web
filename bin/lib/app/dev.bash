@@ -1,13 +1,34 @@
 #!/usr/bin/env bash
+# shellcheck source=config.bash      # $config
+# shellcheck source=node.bash        # @node
+# shellcheck source=../core/git.bash # @root
 
-dev() { @node -p 3000:3000 -- npm run dev; }
+dev() { @node -p "127.0.0.1:${config['port']}":3000 -- npm run dev; }
 
-# TODO:refactor see node.bash
 isolated() {
-  docker run --rm -it \
-    --env-file .env \
-    -v "$(pwd)":/app \
-    -w /app \
-    --entrypoint=/bin/bash \
-    node:18
+  local real root
+  real=$(pwd)
+  root=$(@root)
+
+  local args=(
+    --rm
+    -it
+    -v "${root}":/app
+    -w /app"${real#"${root}"}"
+    --entrypoint=/app/bin/lib/entrypoint.sh
+    --env-file "${root}/.env"
+  )
+
+  if [[ " ${*} " =~ ' -- ' ]]; then
+    local arg
+    for arg in "${@}"; do
+      shift
+      case "${arg}" in
+      --) break ;;
+      *) args+=("${arg}") ;;
+      esac
+    done
+  fi
+
+  docker run "${args[@]}" "node:${config['node']}" "${@}"
 }

@@ -7,14 +7,13 @@ set_vercel_token() { @token store Vercel 24; }
 _vercel=$(which vercel || true)
 
 vercel() {
-  [ -z "${_vercel}" ] && echo Please setup environment first. && return 1
+  [ -z "${_vercel}" ] && @fatal Please setup environment first
 
   if [ ! -f .vercel/project.json ]; then
     $_vercel -t "$(@token get vercel)" link
   fi
 
   local args=("${@}")
-  # TODO:deprecated use better way to cleanup the env https://github.com/tact-app/web/issues/763
   if [ "${1:-}" == 'clean' ]; then
     args=(rm --yes)
     if [ "${2:-}" == 'all' ]; then
@@ -24,7 +23,7 @@ vercel() {
         found=true
       done < <(vercel ls 2>&1 | grep https | awk '{print $2}')
       if ! $found; then
-        echo No deployments found.
+        echo No deployments found
         return
       fi
     else
@@ -32,6 +31,5 @@ vercel() {
     fi
   fi
 
-  # TODO:generate inject _ while code generation
-  _ "${_vercel}" -t "$(@token get vercel)" "${args[@]}"
+  "${_vercel}" -t "$(@token get vercel)" "${args[@]}" #@decorator:_
 }

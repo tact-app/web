@@ -26,7 +26,7 @@
     done
   fi
 
-  docker run "${args[@]}" node:18-alpine "${@}"
+  docker run "${args[@]}" "node:${config['node']}-alpine" "${@}"
 }
 
 @npm() { @node npm run "${@}"; }

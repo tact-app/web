@@ -13,10 +13,9 @@ EOF
 _sentry=$(which sentry-cli || true)
 
 sentry() {
-  [ -z "${_sentry}" ] && echo Please setup environment first. && return 1
+  [ -z "${_sentry}" ] && @fatal Please setup environment first
 
   local args=("${@}")
 
-  # TODO:generate inject _ while code generation
-  _ "${_sentry}" --auth-token="$(@token get sentry)" "${args[@]}"
+  "${_sentry}" --auth-token="$(@token get sentry)" "${args[@]}" #@decorator:_
 }
