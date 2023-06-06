@@ -2,6 +2,7 @@
 
 declare -A config
 config['dryrun']=false
+config['node']=18
 config['port']=3000
 
 @handle() {

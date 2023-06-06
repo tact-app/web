@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 # shellcheck source=app/config.bash # @handle
-# shellcheck source=core/usage.bash # @usage
+
+help() { @usage; }
+
+@usage() {
+  cat - <<EOF
+Usage: $0 <task> <args>
+Tasks:
+EOF
+  compgen -A function | grep -Ev '^(@|_|-|\+)' | sort | cat -n
+}
 
 @main() {
   local args=()

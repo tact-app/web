@@ -16,7 +16,7 @@
       return 1
     fi
 
-    grep "${key}" .env | cut -d '=' -f 2
+    grep "^${key}=" .env | cut -d '=' -f 2
     ;;
 
   set)
@@ -31,7 +31,7 @@
     fi
 
     # bsd vs gnu
-    sed -i '' "s/${key}=.*/${key}=${value}/g" .env
+    sed -i '' "s/^${key}=.*/${key}=${value}/g" .env
     ;;
 
   *)
