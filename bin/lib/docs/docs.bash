@@ -7,7 +7,14 @@
 docs() {
   pushd "$(@root)/docs" >/dev/null || exit 1
   trap 'popd >/dev/null' ERR
-  "${@}"
+
+  if [ "${1:-}" == 'publish' ]; then
+    rm -rf dist/
+    TARGET=static npx --no-install next build
+  else
+    "${@}"
+  fi
+
   popd >/dev/null || exit 1
 }
 
@@ -16,6 +23,3 @@ docs() {
 #npx --no-install next build # build
 #
 #npx --no-install next start # start
-#
-#rm -rf dist/
-#TARGET=static npx --no-install next build # publish

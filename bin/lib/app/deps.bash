@@ -8,7 +8,7 @@
   case "${1}" in
   check) [ "$(depcheck)" == 'No depcheck issue' ] ;;
   install) if ! @consistent; then install && @lock; fi ;;
-  docs) if ! @consistent docs; then docs install && @lock docs; fi ;;
-  tools) if ! @consistent tools; then tools install && @lock tools; fi ;;
+  docs) if ! @consistent docs; then docs npm ci && @lock docs; fi ;;
+  tools) if ! @consistent tools; then tools npm ci && @lock tools; fi ;;
   esac
 }
