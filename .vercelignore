@@ -8,6 +8,7 @@
 /node_modules/
 /tools/
 
+.depcheckrc
 .dockerignore
 .env
 .gitignore

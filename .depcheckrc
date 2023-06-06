@@ -1,0 +1,1 @@
+ignores: ["pre-commit", "prettier", "@fortawesome/fontawesome-pro", "@types/node"]

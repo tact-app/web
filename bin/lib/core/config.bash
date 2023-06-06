@@ -6,6 +6,7 @@ _arch=$(uname -m | tr '[:upper:]' '[:lower:]')
 # TODO:refactor inject while code generation
 paths=(
   "$(pwd)/node_modules/.bin"
+  "$(pwd)/docs/node_modules/.bin"
   "$(pwd)/tools/node_modules/.bin"
 )
 for path in "${paths[@]}"; do
