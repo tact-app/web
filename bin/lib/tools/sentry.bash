@@ -17,5 +17,5 @@ sentry() {
   local args=("${@}")
 
   # TODO:generate inject _ while code generation
-  _ "${_sentry}" --auth-token="$(git config sentry.token)" "${args[@]}"
+  _ "${_sentry}" --auth-token="$(@token get sentry)" "${args[@]}"
 }

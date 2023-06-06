@@ -21,10 +21,13 @@ Requirements:
 
 ```bash
 $ alias run='./Taskfile'
-$ alias activate='source bin/activate'
-$ activate && run setup
+$ run setup
 
 $ $(sleep 3; open http://localhost:3000) &; run start
+```
+
+```bash
+$ run debug
 ```
 
 ## Manage secrets
@@ -94,7 +97,6 @@ $ run refresh
 
 ```bash
 $ run tools npm ci
-$ run whoami
 ```
 
 ### Graphite CLI

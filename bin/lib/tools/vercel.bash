@@ -9,7 +9,7 @@ vercel() {
   [ -z "${_vercel}" ] && echo Please setup environment first. && return 1
 
   if [ ! -f .vercel/project.json ]; then
-    $_vercel -t "$(git config vercel.token)" link
+    $_vercel -t "$(@token get vercel)" link
   fi
 
   local args=("${@}")
@@ -32,7 +32,7 @@ vercel() {
   fi
 
   # TODO:generate inject _ while code generation
-  _ "${_vercel}" -t "$(git config vercel.token)" "${args[@]}"
+  _ "${_vercel}" -t "$(@token get vercel)" "${args[@]}"
 }
 
 deploy() {

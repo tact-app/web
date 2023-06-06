@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# shellcheck source=install.bash # install
+# shellcheck source=install.bash     # install
+# shellcheck source=../core/env.bash # @token
 
 # Example: run build [--from-scratch]
 # Example: run build docker [--from-scratch]
@@ -10,7 +11,7 @@ build() {
       docker rmi tact-app/web:local || true
     fi
     docker build \
-      --build-arg token="$(git config fontawesome.token)" \
+      --build-arg token="$(@token get fontawesome)" \
       -f Dockerfile \
       -t tact-app/web:local .
     return

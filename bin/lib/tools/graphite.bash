@@ -9,7 +9,7 @@ gt() {
   [ -z "${_gt}" ] && echo Please setup environment first. && return 1
 
   local token
-  token=$(git config graphite.token)
+  token=$(@token get graphite)
 
   if [ ! -f ~/.graphite_user_config ]; then
     $_gt auth --token "${token}"
