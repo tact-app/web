@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck source=../core/config.bash
+# shellcheck source=../app/config.bash # $config
 
 @() {
   ${config['dryrun']} && echo "${@}"

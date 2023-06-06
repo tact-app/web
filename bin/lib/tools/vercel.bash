@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck source=../core/env.bash # @token
+# shellcheck source=tools.bash       # $path
 
 set_vercel_token() { @token store Vercel 24; }
 
@@ -33,17 +34,4 @@ vercel() {
 
   # TODO:generate inject _ while code generation
   _ "${_vercel}" -t "$(@token get vercel)" "${args[@]}"
-}
-
-deploy() {
-  if [ "${1:-}" == 'prod' ]; then
-    vercel pull --yes --environment=production
-    vercel build --yes --prod
-    vercel deploy --yes --prebuilt --prod
-    return
-  fi
-
-  vercel pull --yes --environment=preview
-  vercel build --yes
-  vercel deploy --yes --prebuilt
 }

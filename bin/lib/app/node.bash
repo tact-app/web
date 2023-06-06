@@ -29,5 +29,4 @@
   docker run "${args[@]}" node:18-alpine "${@}"
 }
 
-# run npm lint -> run npm run lint
-@npm() { @node npm "${@}"; }
+@npm() { @node npm run "${@}"; }

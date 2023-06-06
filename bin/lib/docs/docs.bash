@@ -4,22 +4,21 @@
 # Example: run docs install
 # Example: run docs npm i nextra@latest
 # Example: run docs npm ci
+#
+# Example: run docs build
+# Example: run docs publish
+# TODO:feat run docs -- build start
 docs() {
   pushd "$(@root)/docs" >/dev/null || exit 1
   trap 'popd >/dev/null' ERR
 
-  if [ "${1:-}" == 'publish' ]; then
-    rm -rf dist/
-    TARGET=static npx --no-install next build
-  else
-    "${@}"
-  fi
+  case "${1:-}" in
+  dev) npx --no-install next dev ;;
+  build) npx --no-install next build ;;
+  start) npx --no-install next start ;;
+  publish) rm -rf dist/ && TARGET=static npx --no-install next build ;;
+  *) "${@}" ;;
+  esac
 
   popd >/dev/null || exit 1
 }
-
-#npx --no-install next dev # dev
-#
-#npx --no-install next build # build
-#
-#npx --no-install next start # start

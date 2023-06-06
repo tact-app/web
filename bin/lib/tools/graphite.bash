@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck source=../core/env.bash # @token
+# shellcheck source=tools.bash       # $path
 
 set_graphite_token() { @token store Graphite 60; }
 
