@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Example: run tools install
 # Example: run tools npm i vercel@latest
 # Example: run tools npm ci
 tools() {

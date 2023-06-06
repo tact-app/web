@@ -6,8 +6,8 @@ refresh() {
   @pull
 
   @deps install
-#  @deps docs
-#  @deps tools
+  @deps docs
+  @deps tools
 
   #  build --from-scratch
 }
