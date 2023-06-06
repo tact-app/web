@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
+# shellcheck source=../core/env.bash # @token
+
+set_sentry_token() {
+  @token store Sentry 64
+  cat <<EOF >.sentryclirc
+[auth]
+token=$(@token get Sentry)
+EOF
+}
 
 _sentry=$(which sentry-cli || true)
 

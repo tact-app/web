@@ -11,5 +11,3 @@ isolated() {
     --entrypoint=/bin/bash \
     node:18
 }
-
-npm() { @node npm "${@}"; }

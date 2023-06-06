@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# shellcheck source=core/config.bash
-# shellcheck source=core/usage.bash
+# shellcheck source=core/config.bash # @handle
+# shellcheck source=core/usage.bash  # @usage
 
 set -euo pipefail
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# shellcheck source=../core/env.bash # @token
+
+set_vercel_token() { @token store Vercel 24; }
 
 _vercel=$(which vercel || true)
 
@@ -10,6 +13,7 @@ vercel() {
   fi
 
   local args=("${@}")
+  # TODO:deprecated use better way to cleanup the env https://github.com/tact-app/web/issues/763
   if [ "${1:-}" == 'clean' ]; then
     args=(rm --yes)
     if [ "${2:-}" == 'all' ]; then
