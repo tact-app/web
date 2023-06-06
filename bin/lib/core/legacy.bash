@@ -1,17 +1,5 @@
 #!/usr/bin/env bash
 
-setup() {
-  set_fontawesome_token || @fatal the token is required
-  set_graphite_token || true
-  set_sentry_token || true
-  set_vercel_token || true
-
-  #  tools npm ci
-  #  build --from-scratch
-}
-
-set_fontawesome_token() { @token store 'Font Awesome' 36; }
-
 refresh() {
   local remote
   for remote in $(git remote | grep -v origin); do
