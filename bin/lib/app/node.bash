@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
+# shellcheck source=../core/git.bash # @root
 
 @node() {
-  local root dir
-  root=$(git rev-parse --show-toplevel)
-  dir=$(pwd)
+  local real root
+  real=$(pwd)
+  root=$(@root)
 
   local args=(
     --rm
     -it
     -v "${root}":/app
-    -w /app"${dir#"${root}"}"
+    -w /app"${real#"${root}"}"
     --entrypoint=/app/bin/lib/entrypoint.sh
-    --env-file "$(git rev-parse --show-toplevel)/.env"
+    --env-file "${root}/.env"
   )
 
   if [[ " ${*} " =~ ' -- ' ]]; then

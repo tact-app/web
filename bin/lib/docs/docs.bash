@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
+# shellcheck source=../core/git.bash # @root
 
 # Example: run docs install
+# Example: run docs npm i nextra@latest
+# Example: run docs npm ci
 docs() {
-  pushd docs >/dev/null || exit 1
+  pushd "$(@root)/docs" >/dev/null || exit 1
   trap 'popd >/dev/null' ERR
   "${@}"
   popd >/dev/null || exit 1

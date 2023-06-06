@@ -45,7 +45,7 @@ jobs:
           path: ./docs/node_modules
           key: docs-${{ hashFiles('docs/package-lock.json') }}
       - name: Install documentation dependencies if needed
-        run: ./Taskfile docs install
+        run: ./Taskfile docs npm ci
         if: steps.docs.outputs.cache-hit != 'true'
 
       - name: Build static HTML with Next.js

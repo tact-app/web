@@ -20,3 +20,5 @@
     git pull --force --rebase
   fi
 }
+
+@root() { git rev-parse --show-toplevel; }
