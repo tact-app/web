@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
-# shellcheck source=node.bash
-# shellcheck source=install.bash
+# shellcheck source=install.bash # install
 
 # Example: run build [--from-scratch]
 # Example: run build docker [--from-scratch]
 build() {
-  # TODO:improve add docker autocompletion
   # docker way
   if [ "${1:-}" == 'docker' ]; then
     if [ "${2:-}" == '--from-scratch' ]; then

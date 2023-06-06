@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck source=node.bash
+# shellcheck source=node.bash # @node
 
 install() {
   local cmd=install
