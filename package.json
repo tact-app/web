@@ -27,7 +27,7 @@
     "@chakra-ui/textarea": "^2.0.19",
     "@chakra-ui/theme-tools": "^2.0.18",
     "@emoji-mart/react": "^1.1.1",
-    "@emotion/react": "^11.11.0",
+    "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@faker-js/faker": "^8.0.2",
     "@fortawesome/fontawesome-pro": "^6.4.0",
