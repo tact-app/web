@@ -25,7 +25,7 @@ export const DatePickerInput = observer(
           <chakra.input
             ref={ref}
             {...props}
-            value={props.value || store.intermediateValue}
+            value={props.value || (store.isFocused ? store.intermediateValue : '')}
             onChange={undefined}
             onInput={store.handleInputValueChange}
             onMouseUp={store.onInputClick}

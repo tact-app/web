@@ -10,6 +10,7 @@ import { NavigationDirections } from '../../../types/navigation';
 import { DATE_FORMAT } from '../../../helpers/DateHelper';
 
 export const DATE_PICKER_DATE_FORMAT = 'dd.MM.yyyy';
+export const DATE_PICKER_DATE_FORMAT_REGEX = /(\d|D){1,2}\.(\d|M){1,2}\.(\d|Y){1,4}/;
 
 export enum EditablePosition {
   DAY = 'day',
@@ -24,7 +25,7 @@ export type InputParams = Record<EditablePosition, {
 
 export class DatePickerStore {
   value: string;
-  intermediateValue: string = 'DD.MM.YYYY';
+  intermediateValue: string = DATE_PICKER_DATE_FORMAT.toUpperCase();
   initialValue: string;
   callbacks: DatePickerCallbacks;
 
@@ -79,6 +80,10 @@ export class DatePickerStore {
     if (!this.isFocused) {
       this.isFocused = true;
       this.callbacks?.onFocusToggle?.(true);
+
+      if (!this.value) {
+        this.setSelection(EditablePosition.DAY);
+      }
     }
   };
 
@@ -86,6 +91,10 @@ export class DatePickerStore {
     if (this.isFocused) {
       this.isFocused = false;
       this.isCalendarFocused = false;
+
+      if (!this.value && moment(this.intermediateValue).isValid()) {
+        this.value = this.intermediateValue;
+      }
 
       this.updateInputParams({
         [EditablePosition.DAY]: {
@@ -104,6 +113,7 @@ export class DatePickerStore {
       this.editablePosition = EditablePosition.DAY;
       this.nextEditablePosition = EditablePosition.MONTH;
       this.prevEditablePosition = EditablePosition.YEAR;
+      this.intermediateValue = DATE_PICKER_DATE_FORMAT.toUpperCase();
 
       if (toggleFocus) {
         this.callbacks?.onFocusToggle?.(false);
@@ -219,15 +229,18 @@ export class DatePickerStore {
   };
 
   updateSelection = (currPosition: number) => {
-    if (currPosition <= 2) {
+    const [, endDayPosition] = this.selectionPositionsMap[EditablePosition.DAY];
+    const [, endMonthPosition] = this.selectionPositionsMap[EditablePosition.MONTH];
+
+    if (currPosition <= endDayPosition) {
       this.editablePosition = EditablePosition.DAY;
       this.nextEditablePosition = EditablePosition.MONTH;
       this.prevEditablePosition = EditablePosition.YEAR;
-    } else if (currPosition > 2 && currPosition <= 5) {
+    } else if (currPosition > endDayPosition && currPosition <= endMonthPosition) {
       this.editablePosition = EditablePosition.MONTH;
       this.nextEditablePosition = EditablePosition.YEAR;
       this.prevEditablePosition = EditablePosition.DAY;
-    } else if (currPosition > 5) {
+    } else if (currPosition > endMonthPosition) {
       this.editablePosition = EditablePosition.YEAR;
       this.nextEditablePosition = EditablePosition.DAY;
       this.prevEditablePosition = EditablePosition.MONTH;
@@ -274,17 +287,26 @@ export class DatePickerStore {
     this.updateSelection(input.selectionStart);
     this.setSelection();
 
-    if (this.value && !/(\d|D){1,2}\.(\d|M){1,2}\.(\d|Y){1,4}/.test(input.value)) {
+    if (this.value && !DATE_PICKER_DATE_FORMAT_REGEX.test(input.value)) {
       return;
     }
 
     let shouldMoveToNextPosition = false;
     const valuesMap = this.getValuesMap(input.value);
 
+
+    if (
+      valuesMap[this.editablePosition].inputValue
+        .split('')
+        .filter((valuePart) => !Number.isInteger(Number(valuePart))).length
+    ) {
+      return;
+    }
+
     const additionalZeros = this.editablePosition === EditablePosition.YEAR ? '0000' : '00';
     const currentValue =
-      this.inputParams[this.editablePosition].edited &&
-      !this.inputParams[this.editablePosition].filled
+      this.editablePosition === EditablePosition.YEAR ||
+      (this.inputParams[this.editablePosition].edited && !this.inputParams[this.editablePosition].filled)
         ? `${additionalZeros}${valuesMap[this.editablePosition].storedValue}`.slice(-additionalZeros.length)
         : additionalZeros;
 
@@ -299,7 +321,7 @@ export class DatePickerStore {
         ? moment(`${correctYear}-${correctMonth}`, 'YYYY-MM').daysInMonth()
         : 31;
 
-      const formattedDay = Number(formattedValue) ? formattedValue : '1';
+      const formattedDay = Number(formattedValue) ? formattedValue : '00';
       correctDay = Number(formattedDay) <= daysInMonth ? formattedDay : daysInMonth.toString();
 
       if ((correctDay[0] !== '0' || Number(formattedDay) > Number(daysInMonth.toString()[0])) && correctDay.length === 2) {
@@ -307,14 +329,21 @@ export class DatePickerStore {
       }
     } else {
       if (this.editablePosition === EditablePosition.MONTH) {
-        const formattedMonth = Number(formattedValue) ? formattedValue : '1';
-        correctMonth = Number(formattedMonth) <= 12 ? formattedMonth : `0${formattedValue[1]}`;
+        const formattedMonth = Number(formattedValue) ? formattedValue : '00';
+        correctMonth = Number(formattedMonth) <= 12 ? formattedMonth : '12';
 
         if ((correctMonth[0] !== '0' && correctMonth.length === 2) || Number(correctMonth) > 1) {
           shouldMoveToNextPosition = true;
         }
       } else if (this.editablePosition === EditablePosition.YEAR) {
-        correctYear = formattedValue;
+        if (correctMonth === '00') {
+          correctMonth = '01';
+        }
+        if (correctDay === '00') {
+          correctDay = '01';
+        }
+
+        correctYear = formattedValue.replaceAll('Y', '0');
       }
 
       const daysInMonth = correctMonth !== 'MM' && correctYear !== 'YYYY'
@@ -332,11 +361,10 @@ export class DatePickerStore {
 
     const finalValue = `${correctDay}.${correctMonth}.${correctYear}`;
 
-    if (!this.value) {
+    if (!this.value || [correctDay, correctMonth, correctYear].includes('00')) {
       this.intermediateValue = finalValue;
-    }
-
-    if (this.value || !/[a-zA-Z]/.test(finalValue)) {
+      this.value = '';
+    } else if (this.value || !/[a-zA-Z]/.test(finalValue)) {
       this.handleChange(moment(finalValue, DATE_FORMAT).toDate());
       this.intermediateValue = 'DD.MM.YYYY';
     }

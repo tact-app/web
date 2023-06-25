@@ -233,6 +233,10 @@ export class GoalCreationModalStore {
   handleCloseModal = () => {
     if (this.listWithCreator.list.openedTask) {
       this.listWithCreator.list.closeTask();
+      this.resizableConfig[0].size = 3;
+      this.resizableConfig[1].width = 400;
+      this.resizableConfig[2].size = 0;
+      this.isTaskExpanded = false;
     } else if (this.isHotkeysForTasksAvailable) {
       this.isHotkeysForTasksAvailable = false;
       this.listWithCreator.list.removeFocus();
