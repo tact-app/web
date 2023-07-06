@@ -11,7 +11,7 @@ export const DatePickerInput = observer(
       const ref = useRefWithCallback(inputRef, store.setInputRef);
 
       useEffect(() => {
-        if (store.editablePosition) {
+        if (store.editablePosition && store.isFocused) {
           store.setSelection();
         }
       }, [store.editablePosition, store]);
