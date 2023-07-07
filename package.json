@@ -78,7 +78,7 @@
     "@types/react": "^18.2.14",
     "@types/react-datepicker": "^4.11.2",
     "babel-plugin-inline-react-svg": "^2.0.2",
-    "eslint": "^8.43.0",
+    "eslint": "^8.44.0",
     "eslint-config-next": "^13.4.7",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-unused-imports": "^2.0.0",
