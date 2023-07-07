@@ -151,7 +151,13 @@ export class GoalItemStore {
   };
 
   handleChangeTargetDate = (date: string) => {
-    return this.parent.callbacks?.onUpdateGoal({ ...this.goal, targetDate: date });
+    return this.parent.callbacks?.onUpdateGoal({
+      ...this.goal,
+      startDate: DatePickerHelpers.isStartDateAfterEndDate(this.goal?.startDate, date)
+        ? ''
+        : this.goal?.startDate,
+      targetDate: date
+    });
   };
 
   handleChangeTitle = (title: string) => {

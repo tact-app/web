@@ -1,5 +1,7 @@
 import { GoalStatus } from "../../types";
 
+export const GOAL_TITLE_MAX_LENGTH = 50;
+
 export const GOALS_STATUSES_TITLES = {
   [GoalStatus.TODO]: 'Todo',
   [GoalStatus.WONT_DO]: 'Won\'t do',

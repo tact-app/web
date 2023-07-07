@@ -1,6 +1,6 @@
 import moment from "moment";
 
-const DATE_FORMAT = 'DD.MM.yyyy';
+export const DATE_FORMAT = 'DD.MM.yyyy';
 
 function getFormattedDate(date?: string) {
   if (!date) {

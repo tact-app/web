@@ -247,7 +247,7 @@ const data = {
 
         await db.put('tasks', existedTask);
 
-        if (lastGoalId !== data.fields.goalId) {
+        if (data.fields.goalId && lastGoalId !== data.fields.goalId) {
           if (lastGoalId) {
             await updateList(db, lastGoalId, (list) => {
               list.taskIds = list.taskIds.filter((taskId) => taskId !== existedTask.id);

@@ -11,6 +11,7 @@ import { Tooltip } from '../Tooltip';
 import cn from 'classnames';
 import { useRefWithCallback } from '../../../helpers/useRefWithCallback';
 import { DatePickerInput } from './components/DatePickerInput';
+import { DATE_FORMAT } from '../../../helpers/DateHelper';
 
 export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerViewProps>(
   function DatePickerView(
@@ -81,7 +82,7 @@ export const DatePickerView = observer(forwardRef<ReactDatePicker, DatePickerVie
           onChange={store.handleChange}
           portalId="date-picker-portal"
           tabIndex={tabIndex}
-          placeholderText={!store.currentValue && store.isFocused ? 'DD.MM.YYYY' : ''}
+          placeholderText={!store.currentValue && store.isFocused ? DATE_FORMAT : ''}
           onFocus={store.handleFocus}
           onBlur={() => store.handleBlur(false)}
           onCalendarClose={() => store.handleBlur(false)}
