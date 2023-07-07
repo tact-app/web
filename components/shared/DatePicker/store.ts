@@ -92,8 +92,8 @@ export class DatePickerStore {
       this.isFocused = false;
       this.isCalendarFocused = false;
 
-      if (!this.value && moment(this.intermediateValue).isValid()) {
-        this.value = this.intermediateValue;
+      if (!this.value && moment(this.intermediateValue, DATE_FORMAT).isValid()) {
+        this.value = moment(this.intermediateValue, DATE_FORMAT).toISOString();
       }
 
       this.updateInputParams({
@@ -131,6 +131,7 @@ export class DatePickerStore {
   };
 
   handleSave = (value: string = this.value, toggleFocus: boolean = true) => {
+    console.log('SAVE', value)
     this.value = value;
     this.isCalendarFocused = false;
     this.callbacks?.onChanged(value);
@@ -156,6 +157,8 @@ export class DatePickerStore {
 
   handleKeyDown = (e: KeyboardEvent) => {
     this.handleAreaEvent(e);
+
+    console.log(this.inputRef.selectionStart)
 
     if (e.key === 'Tab') {
       this.isCalendarFocused = false;
@@ -392,7 +395,7 @@ export class DatePickerStore {
       this.setSelection(this.prevEditablePosition);
     } else if (event.key === 'Enter') {
       this.preventEvent(event);
-      this.handleSave(this.value);
+      this.handleSave(this.value || (this.intermediateValue ? moment(this.intermediateValue, DATE_FORMAT).toISOString() : ''));
       this.datePickerRef.setOpen(false);
     } else {
       onKeyDown?.(event);
