@@ -52,7 +52,6 @@ export class SpaceCreationModalStore {
   isEditMode: boolean = false;
 
   descriptionLimit: number = 200;
-  selectedAccountId: string = this.root.user.data.accounts[0].id;
   existedSpace: SpaceData | null = null;
   newSpace: SpaceData | null = null;
   icon: string = '';

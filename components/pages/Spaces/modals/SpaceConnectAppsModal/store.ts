@@ -20,7 +20,6 @@ export class SpaceConnectAppsModalStore {
 
     isOpen: boolean = true;
 
-    selectedAccountId: string = this.root.user.data.accounts[0].id;
     existedSpace: SpaceData | null = null;
 
     handleClose = () => {

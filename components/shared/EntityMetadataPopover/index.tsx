@@ -21,11 +21,11 @@ import React, { ReactNode, useEffect, useState, KeyboardEvent } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tooltip } from "../Tooltip";
 import { faSquareInfo, faXmark } from "@fortawesome/pro-light-svg-icons";
-import { UserData } from "../../../stores/RootStore/UserStore";
+import { UserProfile } from '@auth0/nextjs-auth0/client';
 
 type Metadata = {
   date?: string;
-  user?: UserData;
+  user?: UserProfile;
 };
 
 type Props = {
@@ -54,15 +54,19 @@ export function EntityMetadataPopover({ isOpen: open, onToggleOpen, triggerProps
     onOpen: () => handleToggle(true),
   });
 
-  const renderUser = (user?: UserData) => {
+  const renderUser = (user?: UserProfile) => {
     if (!user) {
       return null;
     }
 
+    const name = user.given_name && user.family_name
+      ? `${user.given_name} ${user.family_name}`
+      : (user.name || user.nickname);
+
     return (
       <Flex alignItems='center'>
-        <Avatar size='sm' src={user.avatar} title={user.name} />
-        <Text ml={1}>{user.name}</Text>
+        <Avatar size='sm' src={user.picture} title={name} />
+        <Text ml={1}>{name}</Text>
       </Flex>
     );
   };
