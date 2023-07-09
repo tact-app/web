@@ -1,7 +1,6 @@
 import { makeObservable, observable, runInAction } from 'mobx';
 import { enableStaticRendering } from 'mobx-react-lite';
 import { createContext, PropsWithChildren, useContext } from 'react';
-import UserStore from './UserStore';
 import { isClient } from '../../utils';
 import { getAPI } from '../../services/api';
 import { IDBService } from '../../services/api/Database/IDBService';
@@ -67,7 +66,6 @@ export class RootStore {
     goals: new GoalsStore(this),
   };
   menu = new MenuStore(this);
-  user = new UserStore(this);
   api = getAPI(new IDBService()); // new ApiService()
 
   setRouter = (router: NextRouter) => {
@@ -98,7 +96,6 @@ export class RootStore {
   };
 
   init = async () => {
-    await this.user.init();
     await Promise.all([
       this.resources.spaces.init(),
       this.resources.tags.init(),
