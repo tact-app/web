@@ -1,14 +1,13 @@
-import { Avatar, Center, useColorMode } from '@chakra-ui/react';
+import { Avatar, Center } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../../../stores/RootStore';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 const UserMenu = observer(function UserNavbar() {
-  const { colorMode, toggleColorMode } = useColorMode();
-  const store = useRootStore();
+  const { user } = useUser();
 
   return (
     <Center>
-      <Avatar size='sm' src={store.user.data?.avatar} />
+      <Avatar size='sm' src={user?.picture} />
     </Center>
   );
 });

@@ -1,10 +1,10 @@
 import { IconDefinition } from '@fortawesome/pro-solid-svg-icons';
 
-export interface NavItem {
+export interface MainMenuItemParams {
   label: string;
   icon?: IconDefinition;
   subLabel?: string;
-  children?: Array<NavItem>;
-  hotkey: () => string;
+  children?: Array<MainMenuItemParams>;
+  hotkey?: () => string;
   href?: string;
 }
