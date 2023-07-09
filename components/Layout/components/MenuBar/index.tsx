@@ -18,6 +18,7 @@ const LOGOUT_MENU_ITEM: MainMenuItemParams = {
   label: 'Logout',
   icon: faArrowRightFromBracket,
   href: routes.LOGOUT,
+  element: 'a',
 };
 
 const NAV_ITEMS: MainMenuItemParams[] = [

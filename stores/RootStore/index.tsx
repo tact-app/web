@@ -11,6 +11,8 @@ import { TagsStore } from './Resources/TagsStore';
 import { GoalsStore } from './Resources/GoalsStore';
 import { ModalsController } from "../../helpers/ModalsController";
 import { ConfirmDialog, ConfirmDialogProps } from "../../components/shared/ConfirmDialog";
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { UserStore } from '../UserStore';
 
 enableStaticRendering(typeof window === 'undefined');
 
@@ -123,8 +125,10 @@ export function RootStoreProvider({
   router,
 }: PropsWithChildren<{ router: NextRouter }>) {
   const store = new RootStore();
+  const { user } = useUser();
 
-  if (isClient) {
+  if (isClient && user) {
+    UserStore.setUser(user);
     store.init();
   }
 

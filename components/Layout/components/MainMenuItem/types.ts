@@ -6,5 +6,6 @@ export interface MainMenuItemParams {
   subLabel?: string;
   children?: Array<MainMenuItemParams>;
   hotkey?: () => string;
+  element?: 'a' | 'next-link';
   href?: string;
 }

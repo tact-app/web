@@ -8,6 +8,31 @@ type Props = {
 };
 
 export function MainMenuItem({ item }: Props) {
+  const renderContent = (isActive?: boolean) => (
+    <chakra.span
+      w={10}
+      h={10}
+      fontWeight={400}
+      bg={isActive ? 'gray.300' : 'transparent'}
+      borderRadius='lg'
+      display='flex'
+      justifyContent='center'
+      alignItems='center'
+      _hover={{
+        bg: isActive ? 'gray.300' : 'gray.200',
+      }}
+    >
+      <chakra.span h={5}>
+        <FontAwesomeIcon
+          fixedWidth
+          icon={item.icon}
+          fontSize={20}
+          height={20}
+        />
+      </chakra.span>
+    </chakra.span>
+  );
+
   return (
     <Tooltip
       label={
@@ -23,32 +48,13 @@ export function MainMenuItem({ item }: Props) {
       hasArrow
     >
       <Box>
-        <NavLink href={item.href}>
-          {({ isActive }) => (
-            <chakra.span
-              w={10}
-              h={10}
-              fontWeight={400}
-              bg={isActive ? 'gray.300' : 'transparent'}
-              borderRadius='lg'
-              display='flex'
-              justifyContent='center'
-              alignItems='center'
-              _hover={{
-                bg: isActive ? 'gray.300' : 'gray.200',
-              }}
-            >
-              <chakra.span h={5}>
-                <FontAwesomeIcon
-                  fixedWidth
-                  icon={item.icon}
-                  fontSize={20}
-                  height={20}
-                />
-              </chakra.span>
-            </chakra.span>
-          )}
-        </NavLink>
+        {item.element === 'a' ? (
+          <a href={item.href}>{renderContent()}</a>
+        ) : (
+          <NavLink href={item.href}>
+            {({ isActive }) => renderContent(isActive)}
+          </NavLink>
+        )}
       </Box>
     </Tooltip>
   );
