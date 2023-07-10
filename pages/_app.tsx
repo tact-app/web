@@ -5,6 +5,7 @@ import { RootStoreProvider } from '../stores/RootStore';
 import Layout from '../components/Layout';
 import { InputWrapperStyles } from '../components/shared/InputWrapper';
 import { useRouter } from 'next/router';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -683,11 +684,13 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider theme={theme}>
-      <RootStoreProvider router={router}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </RootStoreProvider>
+      <UserProvider>
+        <RootStoreProvider router={router}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </RootStoreProvider>
+      </UserProvider>
     </ChakraProvider>
   );
 }

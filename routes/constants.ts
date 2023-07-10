@@ -3,4 +3,5 @@ export enum routes {
   TODAY = '/today',
   GOALS = '/goals',
   INBOX = '/inbox',
+  LOGOUT = '/api/auth/logout'
 }

@@ -1,5 +1,4 @@
 import { ApiService } from './ApiService';
-import getUserApi from './entities/user';
 import getTasksApi from './entities/tasks';
 import getTagsApi from './entities/tags';
 import getGoalsApi from './entities/goals';
@@ -8,7 +7,6 @@ import getFocusConfigurationsApi from './entities/focusConfigurations';
 import getSpacesApi from './entities/spaces';
 
 export const getAPI = (apiService: ApiService) => ({
-  user: getUserApi(apiService),
   tasks: getTasksApi(apiService),
   goals: getGoalsApi(apiService),
   tags: getTagsApi(apiService),

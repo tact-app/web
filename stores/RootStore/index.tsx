@@ -1,7 +1,6 @@
 import { makeObservable, observable, runInAction } from 'mobx';
 import { enableStaticRendering } from 'mobx-react-lite';
 import { createContext, PropsWithChildren, useContext } from 'react';
-import UserStore from './UserStore';
 import { isClient } from '../../utils';
 import { getAPI } from '../../services/api';
 import { IDBService } from '../../services/api/Database/IDBService';
@@ -12,6 +11,8 @@ import { TagsStore } from './Resources/TagsStore';
 import { GoalsStore } from './Resources/GoalsStore';
 import { ModalsController } from "../../helpers/ModalsController";
 import { ConfirmDialog, ConfirmDialogProps } from "../../components/shared/ConfirmDialog";
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { UserStore } from '../UserStore';
 
 enableStaticRendering(typeof window === 'undefined');
 
@@ -67,7 +68,6 @@ export class RootStore {
     goals: new GoalsStore(this),
   };
   menu = new MenuStore(this);
-  user = new UserStore(this);
   api = getAPI(new IDBService()); // new ApiService()
 
   setRouter = (router: NextRouter) => {
@@ -98,7 +98,6 @@ export class RootStore {
   };
 
   init = async () => {
-    await this.user.init();
     await Promise.all([
       this.resources.spaces.init(),
       this.resources.tags.init(),
@@ -126,8 +125,10 @@ export function RootStoreProvider({
   router,
 }: PropsWithChildren<{ router: NextRouter }>) {
   const store = new RootStore();
+  const { user } = useUser();
 
-  if (isClient) {
+  if (isClient && user) {
+    UserStore.setUser(user);
     store.init();
   }
 

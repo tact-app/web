@@ -18,6 +18,7 @@ import { EntityMetadataPopover } from "../../../../../shared/EntityMetadataPopov
 import { DateHelper } from "../../../../../../helpers/DateHelper";
 import { CommentPopover } from "../../../../../shared/CommentPopover";
 import { CloseButton } from "../../../../../shared/CloseButton";
+import { UserStore } from '../../../../../../stores/UserStore';
 
 export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
   const store = useGoalCreationModalStore();
@@ -75,11 +76,11 @@ export const GoalCreationToolbar = observer(function GoalCreationToolbar() {
         triggerProps={{ ml: 0.5 }}
         created={{
           date: DateHelper.getFormattedDate(store.goal.createdDate),
-          user: store.root.user.data
+          user: UserStore.user
         }}
         updated={{
           date: DateHelper.getFormattedDate(store.goal.updatedDate),
-          user: store.root.user.data
+          user: UserStore.user
         }}
       />
       <GoalCreationToolbarButton

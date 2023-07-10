@@ -1,4 +1,3 @@
-import userStub from './entities/user';
 import tasksStub from './entities/tasks';
 import tagsStub from './entities/tags';
 import goalsStub from './entities/goals';
@@ -15,7 +14,6 @@ const stubs: {
   post?: Record<string, Function>;
   delete?: Record<string, Function>;
 }[] = [
-  userStub,
   tasksStub,
   tagsStub,
   goalsStub,

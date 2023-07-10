@@ -2,17 +2,26 @@ import { observer } from 'mobx-react-lite';
 import { Box, Divider, Flex, useColorModeValue } from '@chakra-ui/react';
 import UserMenu from '../UserMenu';
 import { MainMenu } from '../MainMenu';
-import { NavItem } from '../MainMenu/types';
+import { MainMenuItemParams } from '../MainMenuItem/types';
 import { routes } from '../../../../routes/constants';
 import { useRootStore } from '../../../../stores/RootStore';
 import {
   faBullseyePointer,
   faCalendarWeek,
   faInbox,
+  faArrowRightFromBracket,
 } from '@fortawesome/pro-light-svg-icons';
 import { isMac } from '../../../../helpers/os';
+import { MainMenuItem } from '../MainMenuItem';
 
-const NAV_ITEMS: Array<NavItem> = [
+const LOGOUT_MENU_ITEM: MainMenuItemParams = {
+  label: 'Logout',
+  icon: faArrowRightFromBracket,
+  href: routes.LOGOUT,
+  element: 'a',
+};
+
+const NAV_ITEMS: MainMenuItemParams[] = [
   {
     label: 'Today',
     icon: faCalendarWeek,
@@ -42,14 +51,19 @@ export const MenuBarView = observer(function MenuBarView() {
     >
       <Flex
         direction='column'
+        justifyContent='space-between'
         color={useColorModeValue('gray.600', 'white')}
         p={2}
         pt={6}
         w={14}
+        h='100%'
       >
-        <UserMenu />
-        <Divider borderColor='gray.300' mt={4} mb={4} />
-        <MainMenu items={NAV_ITEMS} />
+        <Flex direction='column'>
+          <UserMenu />
+          <Divider borderColor='gray.300' mt={4} mb={4} />
+          <MainMenu items={NAV_ITEMS} />
+        </Flex>
+        <MainMenuItem item={LOGOUT_MENU_ITEM} />
       </Flex>
     </Box>
   );
