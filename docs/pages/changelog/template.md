@@ -35,4 +35,6 @@ Special thanks to the following contributors for their contributions to this rel
 
 ## Full changelog
 
-Compare view [v0.0.0...v0.0.1](https://github.com/tact-app/web/compare/v0.0.0...v0.0.1).
+Compare view [v0.0.0...v0.0.1][].
+
+[v0.0.0...v0.0.1]: https://github.com/tact-app/web/compare/v0.0.0...v0.0.1

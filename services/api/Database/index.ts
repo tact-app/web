@@ -61,7 +61,7 @@ interface MyDB extends DBSchema {
 export type DB = IDBPDatabase<MyDB>;
 
 export async function initDb() {
-  return await openDB<MyDB>(`tact-db-${UserStore.user.sub}`, 5, {
+  return await openDB<MyDB>('tact-db', 5, {
     upgrade(db) {
       try {
         db.createObjectStore('tasks', {
