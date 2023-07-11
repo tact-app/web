@@ -686,7 +686,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <ChakraProvider theme={theme}>
       <UserProvider>
         <RootStoreProvider router={router}>
-          <Layout>
+          <Layout is404={pageProps.statusCode === 404}>
             <Component {...pageProps} />
           </Layout>
         </RootStoreProvider>
@@ -694,3 +694,4 @@ export default function App({ Component, pageProps }: AppProps) {
     </ChakraProvider>
   );
 }
+

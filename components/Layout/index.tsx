@@ -7,10 +7,14 @@ import { useRootStore } from '../../stores/RootStore';
 import { observer } from 'mobx-react-lite';
 import { ModalsSwitcher } from "../../helpers/ModalsController";
 
-const Layout = observer(function Layout({ children }: { children: ReactNode }) {
+const Layout = observer(function Layout({ children, is404 }: { children: ReactNode, is404?: boolean }) {
   const store = useRootStore();
 
   useHotkeysHandler(store.keymap, store.hotkeysHandlers);
+
+  if (is404) {
+    return children;
+  }
 
   return (
     <Flex direction='row' h='100vh'>
