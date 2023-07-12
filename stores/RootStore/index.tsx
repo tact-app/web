@@ -1,6 +1,6 @@
 import { makeObservable, observable, runInAction } from 'mobx';
 import { enableStaticRendering } from 'mobx-react-lite';
-import { createContext, PropsWithChildren, useContext } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect } from 'react';
 import { isClient } from '../../utils';
 import { getAPI } from '../../services/api';
 import { IDBService } from '../../services/api/Database/IDBService';
@@ -125,12 +125,17 @@ export function RootStoreProvider({
   router,
 }: PropsWithChildren<{ router: NextRouter }>) {
   const store = new RootStore();
-  const { user } = useUser();
 
-  if (isClient && user) {
-    UserStore.setUser(user);
+  if (isClient) {
     store.init();
   }
+
+  const { user } = useUser();
+  useEffect(() => {
+    if (user) {
+      UserStore.setUser(user);
+    }
+  }, [user])
 
   store.setRouter(router);
 
