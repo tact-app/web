@@ -8,12 +8,12 @@ set -euo pipefail
 }
 
 include=(
+  bin/lib/utils/*.bash
+  bin/lib/git/*.bash
+  bin/lib/tools/*.bash
+  bin/lib/docs/*.bash
   bin/lib/core/*.bash
   bin/lib/app/*.bash
-  bin/lib/docs/*.bash
-  bin/lib/tools/tools.bash # TODO:improve load it first cause PATH, codegen support
-  bin/lib/tools/*.bash
-  bin/lib/utils/*.bash
   bin/lib/main.bash
 )
 

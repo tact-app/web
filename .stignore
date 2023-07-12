@@ -5,14 +5,14 @@
 /.vercel/
 
 /bin/
+/docs/
 /node_modules/
 /tools/
 
 .depcheckrc
 .dockerignore
-.env
+.env*
 .gitignore
-.gitmodules
 .sentryclirc
 .stignore
 .vercelignore
@@ -20,6 +20,5 @@
 next-env.d.ts
 tsconfig.tsbuildinfo
 
+Dockerfile
 Taskfile
-
-README.md

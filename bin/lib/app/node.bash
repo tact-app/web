@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck source=../core/git.bash # @root
+# shellcheck source=../git/core.bash # @root
 
 @node() {
   local real root

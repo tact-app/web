@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck source=../app/config.bash # $config
-# TODO:debt low-level component depends on top-level component
+# shellcheck source=../core/runtime.bash # $config (bottom-up)
 
 @() {
   ${config['dryrun']} && echo "${@}"

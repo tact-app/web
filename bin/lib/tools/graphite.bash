@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# shellcheck source=../core/env.bash # @token
-# shellcheck source=tools.bash       # $path
+# shellcheck source=../utils/env.bash   # @token
+# shellcheck source=../utils/print.bash # @fatal
 
 set_graphite_token() { @token store Graphite 60; }
 
 _gt=$(which gt || true)
 
 gt() {
-  [ -z "${_gt}" ] && @fatal Please setup environment first
+  [ -z "${_gt}" ] && @fatal please setup environment first
 
   local token
   token=$(@token get graphite)
@@ -28,5 +28,5 @@ gt() {
 
   local args=("${@}")
 
-  "${_gt}" "${args[@]}" #@decorator:_
+  "${_gt}" "${args[@]}"
 }
