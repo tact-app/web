@@ -2,6 +2,103 @@
 title: Changelog
 ---
 
+# Release notes, v0.4.0
+
+## Features
+
+- [TACT-393](https://linear.app/tact/issue/TACT-393/auth0-integration): Auth0 integration (#927)
+
+## Improvements
+
+- [TACT-335](https://linear.app/tact/issue/TACT-335/goal-setting-rework-update-the-emoji-picker-type): Goal setting rework: Update the emoji picker type (#838)
+- [TACT-336](https://linear.app/tact/issue/TACT-336/goal-setting-rework-shange-task-editor-behaviour): Goal setting rework: Сhange Task Editor behaviour (#837)
+- [TACT-389](https://linear.app/tact/issue/TACT-389/adopt-changes-from-react-datepicker-and-typesreact-datepicker-try-to): Adopt changes from react-datepicker and @types/react-datepicker, try to fix vercel build on next.js 13.4.4 (#850)
+- [TACT-346](https://linear.app/tact/issue/TACT-346/goal-setting-rework-additional-improvements): Goal setting rework: Additional improvements (#879)
+
+## Fixes
+
+- [TACT-390](https://linear.app/tact/issue/TACT-390/fix-broken-builds-with-new-typescript-513-and-typesreact-1828): Fix broken builds with new typescript (5.1.3) and @types/react (18.2.8) (#864)
+- [TACT-393](https://linear.app/tact/issue/TACT-393/auth0-integration): 404 error for pages (#934)
+
+## Dependencies
+
+### Production
+
+- feat(deps): bump @chakra-ui/modal from 2.2.11 to 2.2.12 (#855)
+- feat(deps): bump @chakra-ui/react from 2.6.1 to 2.7.1 (#854, #893)
+- feat(deps): bump @chakra-ui/theme-tools from 2.0.17 to 2.0.18 (#853)
+- feat(deps): bump @emotion/react from 11.11.0 to 11.11.1 (#869)
+- feat(deps): bump @faker-js/faker from 7.6.0 to 8.0.2 (#804, #811, #846)
+- feat(deps): bump @sentry/nextjs from 7.51.2 to 7.57.0 (#810, #834, #858, #882, #885, #892, #908)
+- feat(deps): bump framer-motion from 10.12.8 to 10.12.18 (#805, #814, #835, #902, #914)
+- feat(deps): bump next from 13.4.1 to 13.4.9 (#803, #824, #840, #876, #888, #897, #926)
+- feat(deps): bump prosemirror-state from 1.4.2 to 1.4.3 (#816)
+- feat(deps): bump react-datepicker from 4.12.0 to 4.16.0 (#878, #890, #895, #915, #936)
+- feat(deps): bump react-hotkeys-hook from 4.4.0 to 4.4.1 (#919)
+
+### Development
+
+- chore(deps-dev): bump @babel/core from 7.21.8 to 7.22.8 (#845, #871, #924)
+- chore(deps-dev): bump @types/node from 20.1.1 to 20.4.1 (#802, #817, #818, #826, #842, #844, #872, #875, #880, #922, #928)
+- chore(deps-dev): bump @types/react from 18.2.6 to 18.2.14 (#832, #857, #870, #874, #881, #894, #903)
+- chore(deps-dev): bump eslint from 8.40.0 to 8.44.0 (#825, #862, #891, #913)
+- chore(deps-dev): bump eslint-config-next from 13.4.1 to 13.4.9 (#806, #821, #841, #852, #877, #887, #898, #925)
+- chore(deps-dev): bump eslint-plugin-unused-imports from 2.0.0 to 3.0.0 (#935)
+- chore(deps-dev): bump prettier from 2.8.8 to 3.0.0 (#921)
+- chore(deps-dev): bump typescript from 5.1.3 to 5.1.6 (#906, #909)
+- chore(deps-dev): bump vercel from 30.2.0 to 30.2.1
+- ci/cd(deps): bump actions/upload-pages-artifact from 1 to 2 (#931)
+- docs(deps): bump next from 13.4.1 to 13.4.9 in /docs (#798, #820, #843, #873, #889, #899, #923)
+- docs(deps): bump nextra-theme-docs from 2.5.1 to 2.9.0 in /docs (#799, #836, #847, #865, #901, #929)
+- tools(deps): bump @sentry/cli from 2.17.5 to 2.19.4 in /tools (#823, #827, #886, #904, #907)
+- tools(deps): bump @withgraphite/graphite-cli from 0.20.18 to 0.20.22 in /tools (#796, #900, #930)
+- tools(deps): bump vercel from 29.2.1 to 31.0.2 in /tools (#797, #815, #819, #822, #833, #859, #863, #883, #896, #910, #932)
+- tools(deps): bump vm2 from 3.9.17 to 3.9.18 in /tools (#807)
+
+## Miscellaneous
+
+- dev: temporary disabling engine-strict
+- fix #800: docs: bad title for release notes
+- fix #848: dev: md5sum: command not found
+- TS update (#861)
+- chore: change file permissions for the scripts
+- ci/cd: temporary hacks to fix builds
+- dev: add debug method instead whoami
+- dev: complete @deps refactoring
+- dev: declare includes explicitly and support publish subcommand for docs
+- dev: define @root command
+- dev: final cut for Taskfile
+- dev: improve Taskfile for docker run
+- dev: move setup to the app
+- dev: refactor @deps install
+- dev: refactor core
+- dev: refactor core/legacy
+- dev: refactor docs
+- dev: refactor setup tokens
+- dev: simplify @npm and move config to app
+- dev: split Taskfile, first iteration
+- dev: split Taskfile, refactoring
+- dev: split Taskfile, second iteration - tools
+- dev: split Taskfile, third iteration - app and core
+- dev: split refresh command and define @pull
+- fix #210: dev: sentry doesnt work on staging/production
+- fix #849: dev: Sentry CLI binary not found
+- chore: routine with auth0 and vercel
+
+## Active contributors
+
+Special thanks to the following contributors for their contributions to this release:
+- @kamilsk, Lead
+- @al-petrushin, Dev
+
+## Full changelog
+
+Compare view [v0.3.0...v0.4.0][].
+
+[v0.3.0...v0.4.0]: https://github.com/tact-app/web/compare/v0.3.0...v0.4.0
+
+---
+
 # Release notes, v0.3.0
 
 ## Improvements

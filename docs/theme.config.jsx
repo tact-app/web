@@ -50,13 +50,15 @@ export default {
     </>
   ),
   banner: {
-    text: <a href="https://github.com/tact-app/web/releases/tag/v0.3.0" target="_blank">
-      🎉 Release v0.3.0 is out. Read more →
+    text: <a href="https://github.com/tact-app/web/releases/tag/v0.4.0" target="_blank">
+      🎉 Release v0.4.0 is out. Read more →
     </a>,
   },
   footer: {
     text: <span>
-      MIT {new Date().getFullYear()} © <a href="https://github.com/octolab" target="_blank">OctoLab</a>.
+      MIT {new Date().getFullYear()} © <a href="https://github.com/octolab" target="_blank">
+        OctoLab
+      </a>.
     </span>,
   },
 }
