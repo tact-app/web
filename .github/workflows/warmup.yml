@@ -1,0 +1,82 @@
+name: Cache warmup
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: The reason for dispatching it manually.
+        type: string
+        default: manual healthcheck
+        required: true
+
+  schedule:
+    - cron: 30 6 * * 0 # at 06:30 on Sunday, UTC
+
+jobs:
+  deps:
+    name: Caching deps
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v3
+        with: { node-version: 18, cache: npm, cache-dependency-path: package-lock.json }
+      - name: Set up environment
+        run: npm ci
+
+  docs:
+    name: Caching docs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v3
+        with: { node-version: 18, cache: npm, cache-dependency-path: docs/package-lock.json }
+      - name: Set up environment
+        run: ./Taskfile docs npm ci
+
+  tools:
+    name: Caching tools
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v3
+        with: { node-version: 18, cache: npm, cache-dependency-path: tools/package-lock.json }
+      - name: Set up environment
+        run: ./Taskfile tools npm ci
+
+  notify:
+    name: Notifying
+    needs: [ deps, docs, tools ]
+    runs-on: ubuntu-latest
+    if: failure() || success()
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - name: Define notification message
+        id: message
+        uses: ./.github/actions/notify
+
+      - name: Send Slack notification
+        uses: rtCamp/action-slack-notify@v2
+        continue-on-error: true
+        env:
+          SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+          SLACK_FOOTER: made with ❤️ for everyone by OctoLab
+          SLACK_ICON: https://github.com/github.png?size=64
+          SLACK_MESSAGE: ${{ steps.message.outputs.txt }}
+          SLACK_TITLE: '♻️ ${{ github.repository }}: ${{ github.workflow }}'
+          SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       reason:
+        description: The reason for dispatching it manually.
         type: string
         default: manual healthcheck
         required: true
 
   schedule:
-    - name: At 06:00 on Sunday, UTC
-      cron: 0 6 * * 0
+    - cron: 0 6 * * 0 # at 06:00 on Sunday, UTC
 
 jobs:
   delete:
@@ -28,11 +28,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Cleanup caches
         run: |
-          keys=$(gh actions-cache list -L 100 -R '${{ github.repository }}' | cut -f1)
-          if [ -z "${keys}" ]; then echo 'Nothing to do' && exit 0; fi
-
           echo Deleting caches...
-          for key in ${keys}; do
+          for key in $(gh actions-cache list -L 100 -R '${{ github.repository }}' | cut -f 1); do
             gh actions-cache delete "${key}" -R '${{ github.repository }}' --confirm || true
           done
           echo Done
