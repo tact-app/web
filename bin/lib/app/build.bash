@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# shellcheck source=install.bash     # install
-# shellcheck source=node.bash        # @node
-# shellcheck source=../core/env.bash # @token
+# shellcheck source=install.bash      # install
+# shellcheck source=node.bash         # @node
+# shellcheck source=../utils/env.bash # @token
 
 # Example: run build [--from-scratch]
 # Example: run build docker [--from-scratch]

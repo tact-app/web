@@ -8,11 +8,13 @@ Requirements:
 
 - [Docker Desktop][Docker].
 - Access tokens for
+  - [Auth0][]
   - [Font Awesome][]
   - [Graphite][] (optional)
   - [Sentry][] (optional)
   - [Vercel][] (optional)
 
+[Auth0]:          https://auth0.com/
 [Docker]:         https://www.docker.com/products/docker-desktop/
 [Font Awesome]:   https://fontawesome.com/
 [Graphite]:       https://graphite.dev/
@@ -22,12 +24,8 @@ Requirements:
 ```bash
 $ alias run='./Taskfile'
 $ run setup
-
-$ $(sleep 3; open http://localhost:3000) &; run start
-```
-
-```bash
-$ run debug
+$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000 &
+$ run start # or `run dev`
 ```
 
 ## Manage secrets
@@ -35,6 +33,7 @@ $ run debug
 You can update tokens by the following commands
 
 ```bash
+$ run set_auth0
 $ run set_fontawesome_token
 $ run set_graphite_token
 $ run set_sentry_token
@@ -53,7 +52,8 @@ $ npm run dev
 $ npm run build
 $ npm run start
 
-$ $(sleep 3; open http://localhost:3000) &; npm run start
+$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000 &
+$ npm run start
 ```
 
 ### Local development with the Docker
@@ -66,7 +66,8 @@ $ run dev
 $ run build [--from-scratch]
 $ run start [--from-scratch]
 
-$ $(sleep 5; open http://localhost:3000) &; run start
+$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000 &
+$ run start
 
 $ run npm ci --ignore-scripts --include=dev
 $ run npm ...
@@ -80,7 +81,8 @@ You could use [Docker CLI][] to build an isolated environment
 $ run build docker [--from-scratch]
 $ run start docker [--from-scratch]
 
-$ $(sleep 3; open http://localhost:3000) &; run start docker
+$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000 &
+$ run start docker
 
 $ run isolated
 ```
@@ -103,8 +105,6 @@ $ run tools npm ci
 **Useful:** [docs][Graphite CLI], [src](https://github.com/withgraphite/graphite-cli)
 
 ```bash
-$ activate
-
 $ run gt --help
 ```
 
@@ -112,8 +112,6 @@ $ run gt --help
 **Useful:** [docs][Sentry CLI], [src](https://github.com/getsentry/sentry-cli)
 
 ```bash
-$ activate
-
 $ run sentry --help
 ```
 
@@ -121,7 +119,6 @@ $ run sentry --help
 **Useful:** [docs][Vercel CLI], [src](https://github.com/vercel/vercel)
 
 ```bash
-$ activate
 $ run vercel link
 $ run vercel deploy
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# shellcheck source=../core/env.bash # @token
-# shellcheck source=tools.bash       # $path
+# shellcheck source=../utils/env.bash   # @token
+# shellcheck source=../utils/print.bash # @fatal
 
 set_vercel_token() { @token store Vercel 24; }
 
 _vercel=$(which vercel || true)
 
 vercel() {
-  [ -z "${_vercel}" ] && @fatal Please setup environment first
+  [ -z "${_vercel}" ] && @fatal please setup environment first
 
   if [ ! -f .vercel/project.json ]; then
     $_vercel -t "$(@token get vercel)" link
@@ -31,5 +31,5 @@ vercel() {
     fi
   fi
 
-  "${_vercel}" -t "$(@token get vercel)" "${args[@]}" #@decorator:_
+  "${_vercel}" -t "$(@token get vercel)" "${args[@]}"
 }

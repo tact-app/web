@@ -6,7 +6,7 @@ ENV FONTAWESOME_TOKEN=${token}
 WORKDIR /app
 
 COPY . .
-RUN npm ci --ignore-scripts --include=dev && npm run build
+RUN npm ci --ignore-scripts --include=dev && TARGET=standalone npm run build
 
 
 FROM node:18-alpine AS prod

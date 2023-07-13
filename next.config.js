@@ -1,24 +1,24 @@
 const nextConfig = {
-  output: 'standalone',
+  output: process.env.TARGET,
   transpilePackages: ['react-hotkeys-hook'],
 };
 
 if (['staging', 'production'].includes(process.env.APP_ENV)) {
-    const { withSentryConfig } = require('@sentry/nextjs');
+  const {withSentryConfig} = require('@sentry/nextjs');
 
-    const next = {
-        sentry: {
-            hideSourceMaps: true,
-        },
-        ...nextConfig,
-    }
+  const next = {
+    sentry: {
+      hideSourceMaps: true,
+    },
+    ...nextConfig,
+  }
 
-    const webpack = {
-        silent: true,
-    };
+  const webpack = {
+    silent: true,
+  };
 
-    module.exports = withSentryConfig(next, webpack);
-    return;
+  module.exports = withSentryConfig(next, webpack);
+  return;
 }
 
 module.exports = nextConfig;

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# shellcheck source=../core/git.bash # @pull
-# shellcheck source=deps.bash        # @deps
 # shellcheck source=build.bash       # build
+# shellcheck source=deps.bash        # @deps
+# shellcheck source=../git/core.bash # @pull
 
 refresh() {
   @pull

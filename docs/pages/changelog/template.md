@@ -15,17 +15,32 @@ display: hidden
 
 ## Features
 
+- TACT-123
+
 ## Improvements
 
+- TACT-456
+
 ## Fixes
+
+- TACT-789
 
 ## Dependencies
 
 ### Production
 
+- feat(deps): bump
+
 ### Development
 
+- chore(deps-dev): bump
+- ci/cd(deps): bump
+- docs(deps): bump
+- tools(deps): bump
+
 ## Miscellaneous
+
+- chore: routine
 
 ## Active contributors
 
