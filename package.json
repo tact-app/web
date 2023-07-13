@@ -75,7 +75,7 @@
   "devDependencies": {
     "@babel/core": "^7.22.8",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@types/node": "^20.4.1",
+    "@types/node": "^20.4.2",
     "@types/react": "^18.2.14",
     "@types/react-datepicker": "^4.11.2",
     "babel-plugin-inline-react-svg": "^2.0.2",
