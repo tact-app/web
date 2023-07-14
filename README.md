@@ -10,6 +10,7 @@ Requirements:
 - Access tokens for
   - [Auth0][]
   - [Font Awesome][]
+  - [GitHub][] (optional)
   - [Graphite][] (optional)
   - [Sentry][] (optional)
   - [Vercel][] (optional)
@@ -17,6 +18,7 @@ Requirements:
 [Auth0]:          https://auth0.com/
 [Docker]:         https://www.docker.com/products/docker-desktop/
 [Font Awesome]:   https://fontawesome.com/
+[GitHub]:         https://cli.github.com/
 [Graphite]:       https://graphite.dev/
 [Sentry]:         https://sentry.io/welcome/
 [Vercel]:         https://vercel.com/
