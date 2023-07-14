@@ -8,5 +8,5 @@ install() {
   fi
 
   [ "${1:-}" == '--from-scratch' ] && rm -rf node_modules
-  @node npm "${cmd}" --ignore-scripts --include=dev
+  @node npm "${cmd}" --include=dev
 }

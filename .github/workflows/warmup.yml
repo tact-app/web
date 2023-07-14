@@ -26,6 +26,7 @@ jobs:
         with: { node-version: 18, cache: npm, cache-dependency-path: package-lock.json }
       - name: Set up environment
         run: npm ci
+        env: { FONTAWESOME_TOKEN: '${{ secrets.FONTAWESOME_TOKEN }}' }
 
   docs:
     name: Caching docs

@@ -9,12 +9,14 @@ on:
         options:
           - All
           - Cache invalidation
+          - Cache warmup
           - Continuous delivery (Vercel)
           - Continuous delivery (Docker)
           - Continuous integration
           - Dependabot at weekends
           - Documentation delivery
           - Issue invalidation
+          - Tools validation
           - Workflow invalidation
         default: Workflow invalidation
         required: true
@@ -23,13 +25,13 @@ on:
         type: boolean
         required: false
       reason:
+        description: The reason for dispatching it manually.
         type: string
         default: manual healthcheck
         required: true
 
   schedule:
-    - name: At 07:00 on Sunday, UTC
-      cron: 0 7 * * 0
+    - cron: 0 7 * * 0 # at 07:00 on Sunday, UTC
 
 jobs:
   delete:
