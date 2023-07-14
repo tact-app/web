@@ -49,7 +49,7 @@ runs:
     - name: Send Slack notification
       uses: rtCamp/action-slack-notify@v2
       env:
-        SLACK_COLOR: ${{ inputs.success && 'success' || 'failure' }}
+        SLACK_COLOR: ${{ inputs.success == 'true' && 'success' || 'failure' }}
         SLACK_FOOTER: made with ❤️ for everyone by OctoLab
         SLACK_ICON: https://raw.githubusercontent.com/octolab/.github/main/assets/geek/octolab.png
         SLACK_MESSAGE: ${{ steps.message.outputs.txt }}
