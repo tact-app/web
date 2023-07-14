@@ -4,9 +4,21 @@ branding:
   icon: 'message-square'
   color: 'green'
 outputs:
+  actor:
+    description: The message sender.
+    value: GitHub Actions
+  color:
+    description: The message color.
+    value: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+  icon:
+    description: The message icon.
+    value: https://github.com/github.png?size=64
   txt:
     description: The message.
     value: ${{ steps.message.outputs.txt }}
+  footer:
+    description: The message footer.
+    value: made with ❤️ for everyone by OctoLab
 runs:
   using: composite
   steps:
