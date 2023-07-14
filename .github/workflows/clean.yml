@@ -1,0 +1,62 @@
+name: Clean environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: The reason for dispatching it manually.
+        type: string
+        default: manual healthcheck
+        required: true
+
+  schedule:
+    - cron: 30 6 * * 0 # at 06:30 on Sunday, UTC
+
+jobs:
+  vercel:
+    name: Clean up Vercel
+    runs-on: ubuntu-latest
+
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+          check-latest: true
+
+      - name: Install tools
+        run: ./Taskfile tools npm ci
+      - name: Remove deployments without an active alias
+        run: |
+          shopt -s expand_aliases
+          alias run=./Taskfile
+          run @token set vercel ${{ secrets.VERCEL_TOKEN }}
+          run vercel clean
+
+  notify:
+    name: Notifying
+    needs: [ vercel ]
+    runs-on: ubuntu-latest
+    if: failure() || success()
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+
+      - name: Send notification
+        uses: ./.github/actions/notify
+        continue-on-error: true
+        with:
+          emoji: 🧹
+          channel: ${{ secrets.SLACK_WEBHOOK }}
+          success: ${{ ! contains(needs.*.result, 'failure') }}

@@ -10,7 +10,9 @@ vercel() {
   [ -z "${_vercel}" ] && @fatal please setup environment first
 
   if [ ! -f .vercel/project.json ]; then
-    $_vercel -t "$(@token get vercel)" link
+    if [ -z "${VERCEL_ORG_ID+x}" ] || [ -z "${VERCEL_PROJECT_ID+x}" ]; then
+      $_vercel -t "$(@token get vercel)" link
+    fi
   fi
 
   local args=("${@}")
