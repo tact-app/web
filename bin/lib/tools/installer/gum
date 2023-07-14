@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+@install-gum() {
+  local force=false version=0.10.0
+
+  local arg skip=false
+  for arg in "${@}"; do
+    if $skip; then
+      skip=false
+      continue
+    fi
+    case "${arg}" in
+    -f | --force)
+      force=true
+      shift
+      ;;
+    --version)
+      version="${2}"
+      shift 2
+      skip=true
+      ;;
+    esac
+  done
+
+  if command -v gum >/dev/null && [[ ! $force ]]; then
+    [[ $(gum --version | awk '{print $3}') == "v${version}" ]] && return
+  fi
+
+  local file src=https://github.com/charmbracelet/gum/releases/download
+  case $(@os) in
+  linux) file="gum_${version}_Linux_$(@arch).tar.gz" ;;
+  darwin) file="gum_${version}_Darwin_$(@arch).tar.gz" ;;
+  *) @fatal there is no supported binary ;;
+  esac
+
+  local path=${1}
+  curl -sSfL "${src}/v${version}/${file}" -o "${path}/${file}"
+  tar -xzf "${path}/${file}" -C "${path}" gum
+  rm -f "${path}/${file}"
+}

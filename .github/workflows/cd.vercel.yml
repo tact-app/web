@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       reason:
+        description: The reason for dispatching it manually.
         type: string
         default: manual healthcheck
         required: true
@@ -20,12 +21,17 @@ on:
       - 'package*.json'
       - '**.jsx?'
       - '**.tsx?'
+      - '!docs/**/*'
+      - '!tools/**/*'
     tags: [ '!*' ]
 
 jobs:
   deploy:
     name: Deploying
     runs-on: ubuntu-latest
+    environment:
+      name: vercel
+      url: ${{ steps.deployment.outputs.page_url }}
     if: github.actor != 'kamilsk'
 
     env:
@@ -38,16 +44,23 @@ jobs:
         with: { fetch-depth: 0 }
       - name: Set up Node.js environment
         uses: actions/setup-node@v3
-        with: { node-version: 18, cache: npm }
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+          check-latest: true
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-      - name: Pull for a specific environment
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Build the project
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Deploy the project
-        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Install tools
+        run: ./Taskfile tools npm ci
+      - name: Build and deploy the project
+        id: deployment
+        run: |
+          shopt -s expand_aliases
+          alias run=./Taskfile
+          run @token set vercel ${{ secrets.VERCEL_TOKEN }}
+          run vercel pull --yes --environment=preview
+          run vercel build
+          echo page_url=$(run vercel deploy --prebuilt) >> $GITHUB_OUTPUT
 
   notify:
     name: Notifying
@@ -59,18 +72,11 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v3
         with: { fetch-depth: 0 }
-      - name: Define notification message
-        id: message
-        uses: ./.github/actions/notify
 
-      - name: Send Slack notification
-        uses: rtCamp/action-slack-notify@v2
+      - name: Send notification
+        uses: ./.github/actions/notify
         continue-on-error: true
-        env:
-          SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
-          SLACK_FOOTER: made with ❤️ for everyone by OctoLab
-          SLACK_ICON: https://github.com/github.png?size=64
-          SLACK_MESSAGE: ${{ steps.message.outputs.txt }}
-          SLACK_TITLE: '🚀 ${{ github.repository }}: ${{ github.workflow }}'
-          SLACK_USERNAME: GitHub Actions
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        with:
+          emoji: 🚀
+          channel: ${{ secrets.SLACK_WEBHOOK }}
+          success: ${{ ! contains(needs.*.result, 'failure') }}

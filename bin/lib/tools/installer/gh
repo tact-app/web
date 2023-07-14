@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+@install-gh() {
+  local force=false version=2.32.0
+
+  local arg skip=false
+  for arg in "${@}"; do
+    if $skip; then
+      skip=false
+      continue
+    fi
+    case "${arg}" in
+    -f | --force)
+      force=true
+      shift
+      ;;
+    --version)
+      version="${2}"
+      shift 2
+      skip=true
+      ;;
+    esac
+  done
+
+  if command -v gh >/dev/null && [[ ! $force ]]; then
+    [[ $(gh version | head -1 | awk '{print $3}') == "${version}" ]] && return
+  fi
+
+  local file src=https://github.com/cli/cli/releases/download
+  case $(@os) in
+  linux) file="gh_${version}_linux_$(@arch).tar.gz" ;;
+  darwin) file="gh_${version}_macOS_$(@arch).zip" ;;
+  *) @fatal there is no supported binary ;;
+  esac
+
+  local path=${1}
+  curl -sSfL "${src}/v${version}/${file}" -o "${path}/${file}"
+  case "${file##*.}" in
+  gz) tar -xzf "${path}/${file}" --strip-components=2 -C "${path}" "${file%.tar.gz}/bin/gh" ;;
+  zip) unzip -jo -d "${path}" "${path}/${file}" "${file%.zip}/bin/gh" >/dev/null ;;
+  esac
+  rm -f "${path}/${file}"
+}

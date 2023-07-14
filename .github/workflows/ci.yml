@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       reason:
+        description: The reason for dispatching it manually.
         type: string
         default: manual healthcheck
         required: true
@@ -15,6 +16,8 @@ on:
       - 'package*.json'
       - '**.jsx?'
       - '**.tsx?'
+      - '!docs/**/*'
+      - '!tools/**/*'
 
   push:
     branches: [ main ]
@@ -23,11 +26,12 @@ on:
       - 'package*.json'
       - '**.jsx?'
       - '**.tsx?'
+      - '!docs/**/*'
+      - '!tools/**/*'
     tags: [ '!*' ]
 
   schedule:
-    - name: At 07:00 on day-of-month 1, UTC
-      cron: 0 7 1 * *
+    - cron: 0 7 1 * * # at 07:00 on day-of-month 1, UTC
 
 jobs:
   build:
@@ -40,37 +44,42 @@ jobs:
         with: { fetch-depth: 0 }
       - name: Set up Node.js environment
         uses: actions/setup-node@v3
-        with: { node-version: 18 }
-
-      - name: Cache application dependencies
-        id: app
-        uses: actions/cache@v3
         with:
-          path: ./node_modules
-          key: app-${{ hashFiles('package-lock.json') }}
-      - name: Install application dependencies if needed
-        run: npm ci --ignore-scripts --include=dev
-        if: steps.app.outputs.cache-hit != 'true'
+          node-version: 18
+          cache: npm
+          cache-dependency-path: package-lock.json
+          check-latest: true
+
+      - name: Install dependencies
+        run: npm ci
         env: { FONTAWESOME_TOKEN: '${{ secrets.FONTAWESOME_TOKEN }}' }
-
-      - name: Cache tooling dependencies
-        id: tools
-        uses: actions/cache@v3
-        with:
-          path: ./tools/node_modules
-          key: tools-${{ hashFiles('tools/package-lock.json') }}
-      - name: Install tooling dependencies if needed
-        run: ./Taskfile tools npm ci
-        if: steps.tools.outputs.cache-hit != 'true'
-
-      - name: Check application dependencies
-        run: ./Taskfile @deps check
       - name: Build the application
         run: npm run build
 
+  check:
+    name: Checking
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with: { fetch-depth: 0 }
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+          check-latest: true
+
+      - name: Install dependencies
+        run: ./Taskfile tools npm ci
+      - name: Check application dependencies
+        run: ./Taskfile @deps check
+
   notify:
     name: Notifying
-    needs: [ build ]
+    needs: [ build, check ]
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' && (failure() || success())
 
@@ -78,18 +87,11 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v3
         with: { fetch-depth: 0 }
-      - name: Define notification message
-        id: message
-        uses: ./.github/actions/notify
 
-      - name: Send Slack notification
-        uses: rtCamp/action-slack-notify@v2
+      - name: Send notification
+        uses: ./.github/actions/notify
         continue-on-error: true
-        env:
-          SLACK_COLOR: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
-          SLACK_FOOTER: made with ❤️ for everyone by OctoLab
-          SLACK_ICON: https://github.com/github.png?size=64
-          SLACK_MESSAGE: ${{ steps.message.outputs.txt }}
-          SLACK_TITLE: '⚙️ ${{ github.repository }}: ${{ github.workflow }}'
-          SLACK_USERNAME: GitHub Actions
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        with:
+          emoji: ⚙️
+          channel: ${{ secrets.SLACK_WEBHOOK }}
+          success: ${{ ! contains(needs.*.result, 'failure') }}
