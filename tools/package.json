@@ -4,6 +4,6 @@
     "@sentry/cli": "^2.19.4",
     "@withgraphite/graphite-cli": "^0.20.35",
     "depcheck": "^1.4.3",
-    "vercel": "^31.0.3"
+    "vercel": "^31.0.4"
   }
 }
