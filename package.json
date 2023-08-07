@@ -60,7 +60,7 @@
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",
     "moment": "^2.29.4",
-    "next": "^13.4.12",
+    "next": "^13.4.13",
     "path-to-regexp": "^6.2.1",
     "prosemirror-state": "^1.4.3",
     "react": "^18.2.0",
