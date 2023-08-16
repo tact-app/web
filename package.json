@@ -47,7 +47,7 @@
     "@tiptap/extension-underline": "^2.0.4",
     "@tiptap/react": "^2.0.4",
     "@tiptap/starter-kit": "^2.0.4",
-    "@tiptap/suggestion": "^2.0.4",
+    "@tiptap/suggestion": "^2.1.0",
     "allotment": "^1.19.2",
     "canvas-confetti": "^1.6.0",
     "classnames": "^2.3.2",
