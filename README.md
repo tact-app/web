@@ -1,3 +1,5 @@
+![Tact.web][social.preview]
+
 # 🖥️ Tact.web
 
 Web version for desktops.
@@ -24,9 +26,9 @@ Requirements:
 [Vercel]:         https://vercel.com/
 
 ```bash
-$ alias run='./Taskfile'
+$ alias run=./Taskfile
 $ run setup
-$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000 &
+$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000/ &
 $ run start # or `run dev`
 ```
 
@@ -37,6 +39,7 @@ You can update tokens by the following commands
 ```bash
 $ run set_auth0
 $ run set_fontawesome_token
+$ run set_github_token
 $ run set_graphite_token
 $ run set_sentry_token
 $ run set_vercel_token
@@ -100,37 +103,44 @@ $ run refresh
 ### Installation
 
 ```bash
-$ run tools npm ci
+$ run tools install
+```
+
+### GitHub CLI
+**Useful:** [docs][GitHub CLI], [src](https://github.com/cli/cli).
+
+```bash
+$ run gh help
+$ run @workflows
 ```
 
 ### Graphite CLI
-**Useful:** [docs][Graphite CLI], [src](https://github.com/withgraphite/graphite-cli)
+**Useful:** [docs][Graphite CLI], [src](https://github.com/withgraphite/graphite-cli).
 
 ```bash
 $ run gt --help
 ```
 
 ### Sentry CLI
-**Useful:** [docs][Sentry CLI], [src](https://github.com/getsentry/sentry-cli)
+**Useful:** [docs][Sentry CLI], [src](https://github.com/getsentry/sentry-cli).
 
 ```bash
 $ run sentry --help
 ```
 
 ### Vercel CLI
-**Useful:** [docs][Vercel CLI], [src](https://github.com/vercel/vercel)
+**Useful:** [docs][Vercel CLI], [src](https://github.com/vercel/vercel).
 
 ```bash
-$ run vercel link
-$ run vercel deploy
-
 $ run vercel help
+$ run @deployments clean
 ```
 
 You can avoid using the token parameter when working with these commands,
 it's substituted automatically under the hood.
 
 [Docker CLI]:       https://docs.docker.com/engine/reference/commandline/cli/
+[GitHub CLI]:       https://cli.github.com/
 [Graphite CLI]:     https://graphite.dev/docs/graphite-cli
 [Sentry CLI]:       https://docs.sentry.io/product/cli/
 [Vercel CLI]:       https://vercel.com/docs/cli
@@ -176,4 +186,6 @@ See [CLA][] to see the full text.
 [CLA assistant]:      https://cla-assistant.io/tact-app/web
 [CLA assistant.src]:  https://github.com/cla-assistant/cla-assistant
 
-<p align="right">made with ❤️ for everyone by OctoLab</p>
+<p align="right">made with ❤️ for everyone by <a href="https://www.octolab.org/">OctoLab</a></p>
+
+[social.preview]: https://cdn.octolab.org/tact/interface.png
