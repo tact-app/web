@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# shellcheck source=node.bash             # @node
-# shellcheck source=../core/runtime.bash  # $config
-# shellcheck source=../git/core.bash      # @root
+# shellcheck source=../../config/global.bash  # $config
+# shellcheck source=node.bash                 # @node
+# shellcheck source=../../git/core.bash       # @root
 
 dev() {
   local port="${config['port']}"
@@ -10,7 +10,7 @@ dev() {
   @node -p "127.0.0.1:${port}":3000 -- npm run dev;
 }
 
-isolated() {
+@isolated() {
   local real root
   real=$(pwd)
   root=$(@root)

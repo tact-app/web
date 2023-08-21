@@ -1,6 +1,9 @@
-name: Clean environment
+name: Preview environment cleanup
 
 on:
+  schedule:
+    - cron: 0 6 1 * * # at 06:00 on day-of-month 1, UTC
+
   workflow_dispatch:
     inputs:
       reason:
@@ -9,17 +12,10 @@ on:
         default: manual healthcheck
         required: true
 
-  schedule:
-    - cron: 30 6 * * 0 # at 06:30 on Sunday, UTC
-
 jobs:
-  vercel:
-    name: Clean up Vercel
+  delete:
+    name: Deleting
     runs-on: ubuntu-latest
-
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Checkout the repository
@@ -32,19 +28,19 @@ jobs:
           cache: npm
           cache-dependency-path: tools/package-lock.json
           check-latest: true
-
       - name: Install tools
         run: ./Taskfile tools npm ci
+
       - name: Remove deployments without an active alias
-        run: |
-          shopt -s expand_aliases
-          alias run=./Taskfile
-          run @token set vercel ${{ secrets.VERCEL_TOKEN }}
-          run vercel clean
+        run: ./Taskfile @deployments clean
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
   notify:
     name: Notifying
-    needs: [ vercel ]
+    needs: [ delete ]
     runs-on: ubuntu-latest
     if: failure() || success()
 

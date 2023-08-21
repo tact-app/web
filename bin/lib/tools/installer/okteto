@@ -2,8 +2,8 @@
 # shellcheck source=../../utils/os.bash     # @arch @os
 # shellcheck source=../../utils/print.bash  # @fatal
 
-@install-wait-for-it() {
-  local force=false version=0.2.13
+@install-okteto() {
+  local force=false version=2.19.0
 
   local arg skip=false
   for arg in "${@}"; do
@@ -24,18 +24,18 @@
     esac
   done
 
-  if command -v wait-for-it >/dev/null && ! $force; then
-    return
+  if command -v okteto >/dev/null && ! $force; then
+    [[ $(okteto version | awk '{print $3}') == "${version}" ]] && return
   fi
 
   local file
   case $(@os) in
-  darwin) file=wait-for-it_mac ;;
-  linux) file=wait-for-it ;;
+  darwin) file="okteto-Darwin-$(@arch)" ;;
+  linux) file="okteto-Linux-$(@arch)" ;;
   *) @fatal there is no supported binary ;;
   esac
 
-  local path=${1} src=https://github.com/roerohan/wait-for-it
-  curl -sSfL "${src}/releases/download/v${version}/${file}" -o "${path}/wait-for-it"
-  chmod +x "${path}/wait-for-it"
+  local path=${1} src=https://github.com/okteto/okteto
+  curl -sSfL "${src}/releases/download/${version}/${file}" -o "${path}/okteto"
+  chmod +x "${path}/okteto"
 }

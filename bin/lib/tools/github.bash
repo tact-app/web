@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck source=../utils/env.bash   # @token
+# shellcheck source=../utils/env.bash   # @env @key @token
 # shellcheck source=../utils/print.bash # @fatal
 
 set_github_token() { @token store GitHub 40; }
@@ -11,16 +11,17 @@ _gh=$(which gh || true)
 gh() {
   [ -z "${_gh}" ] && @fatal please setup environment first
 
-  local token=${GITHUB_TOKEN:-}
-  [ -z "${token}" ] && token=$(@token get github)
+  local key token
+  key=$(@key github)
+  token=${!key:-$(@env get "${key}")}
 
   local args=("${@}")
-
-  GITHUB_TOKEN=${token} "${_gh}" "${args[@]}"
+  GITHUB_TOKEN="${token}" "${_gh}" "${args[@]}"
 }
 
 @workflows() {
-  case $(gum choose disable enable) in
+  local action=${1:-$(gum choose disable enable)}
+  case "${action}" in
   disable)
     local workflow workflows
     workflows=$(
@@ -45,5 +46,7 @@ gh() {
       gh workflow enable "${workflow}"
     done
     ;;
+
+  *) @fatal unknown action "${action}" ;;
   esac
 }

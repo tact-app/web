@@ -1,6 +1,9 @@
-name: Cache invalidation
+name: Workflow caches cleanup
 
 on:
+  schedule:
+    - cron: 0 6 1 * * # at 06:00 on day-of-month 1, UTC
+
   workflow_dispatch:
     inputs:
       reason:
@@ -9,23 +12,18 @@ on:
         default: manual healthcheck
         required: true
 
-  schedule:
-    - cron: 0 6 * * 0 # at 06:00 on Sunday, UTC
-
 jobs:
   delete:
     name: Deleting
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v3
-        with: { fetch-depth: 0 }
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Install a GitHub CLI cache extension
+    steps:
+      - name: Install the GitHub CLI cache extension
         run: gh extension install actions/gh-actions-cache
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+
       - name: Cleanup caches
         run: |
           echo Deleting caches...
@@ -33,8 +31,6 @@ jobs:
             gh actions-cache delete "${key}" -R '${{ github.repository }}' --confirm || true
           done
           echo Done
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
 
   notify:
     name: Notifying

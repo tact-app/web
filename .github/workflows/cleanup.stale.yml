@@ -1,6 +1,9 @@
-name: Issue invalidation
+name: Stale issues cleanup
 
 on:
+  schedule:
+    - cron: 0 6 * * * # at 06:00 every day, UTC
+
   workflow_dispatch:
     inputs:
       reason:
@@ -8,9 +11,6 @@ on:
         type: string
         default: manual healthcheck
         required: true
-
-  schedule:
-    - cron: 0 6 * * * # at 06:00 every day, UTC
 
 jobs:
   check:

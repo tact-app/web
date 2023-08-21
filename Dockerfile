@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:latest
+
 FROM node:18-alpine AS build
 
 ARG token
@@ -10,7 +12,10 @@ RUN npm ci --ignore-scripts --include=dev && TARGET=standalone npm run build
 
 
 FROM node:18-alpine AS prod
-LABEL author="Tact team <tact@octolab.net>"
+LABEL author="Tact team <team@tact.run>"
+LABEL org.opencontainers.image.source="https://github.com/tact-app/web"
+LABEL org.opencontainers.image.description="Web version for desktops."
+LABEL org.opencontainers.image.licenses="AGPL-3.0-later"
 
 WORKDIR /app
 

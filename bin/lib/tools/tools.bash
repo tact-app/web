@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# shellcheck source=../core/runtime.bash  # $path
-# shellcheck source=../git/core.bash      # @root
-# shellcheck source=../utils/npm.bash     # @consistent @lock
+# shellcheck source=../git/core.bash  # @root
+# shellcheck source=_.bash            # $_BINPATH
+# shellcheck source=../utils/npm.bash # @consistent @lock
 
 # Example: run tools npm ci
 # Example: run tools npm i vercel@latest
@@ -44,13 +44,11 @@ tools() {
 }
 
 @install() {
-  mkdir -p "${path}"
-
   local tool script
   for tool in "${@}"; do
     script="$(@root)/bin/lib/tools/installer/${tool}"
     [ ! -f "${script}" ] && @fatal unknown tool "${tool}"
     # shellcheck source=installer/gum
-    source "${script}" && "@install-${tool}" "${path}"
+    source "${script}" && "@install-${tool}" "${_BINPATH}"
   done
 }

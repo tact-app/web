@@ -1,6 +1,12 @@
-name: Continuous delivery (Docker)
+name: Publish Docker image
 
 on:
+  push:
+    tags: [ 'v*' ]
+
+  schedule:
+    - cron: 0 7 1 * * # at 07:00 on day-of-month 1, UTC
+
   workflow_dispatch:
     inputs:
       reason:
@@ -9,8 +15,9 @@ on:
         default: manual healthcheck
         required: true
 
-  push:
-    tags: [ 'v*' ]
+concurrency:
+  group: packages
+  cancel-in-progress: true
 
 jobs:
   publish:

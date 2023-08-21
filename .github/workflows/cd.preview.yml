@@ -1,6 +1,24 @@
-name: Continuous delivery (Vercel)
+name: Delivery to preview
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/cd.preview.yml'
+      - '.vercelignore'
+      - '.babelrc'
+      - '.npmrc'
+      - '**.css'
+      - '**.jsx?'
+      - '**.tsx?'
+      - '*.json'
+      - '!docs/**/*'
+      - '!tools/**/*'
+    tags: [ '!*' ]
+
+  schedule:
+    - cron: 0 7 1 * * # at 07:00 on day-of-month 1, UTC
+
   workflow_dispatch:
     inputs:
       reason:
@@ -9,22 +27,6 @@ on:
         default: manual healthcheck
         required: true
 
-  push:
-    branches: [ main ]
-    paths:
-      - '.github/workflows/cd.vercel.yml'
-      - '.vercelignore'
-      - '.babelrc'
-      - '.eslintrc.json'
-      - '.npmrc'
-      - '.prettierrc'
-      - 'package*.json'
-      - '**.jsx?'
-      - '**.tsx?'
-      - '!docs/**/*'
-      - '!tools/**/*'
-    tags: [ '!*' ]
-
 jobs:
   deploy:
     name: Deploying
@@ -32,11 +34,6 @@ jobs:
     environment:
       name: vercel
       url: ${{ steps.deployment.outputs.page_url }}
-    if: github.actor != 'kamilsk'
-
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Checkout the repository
@@ -49,18 +46,19 @@ jobs:
           cache: npm
           cache-dependency-path: tools/package-lock.json
           check-latest: true
-
       - name: Install tools
         run: ./Taskfile tools npm ci
-      - name: Build and deploy the project
+
+      - name: Build and deploy to Vercel
         id: deployment
         run: |
           shopt -s expand_aliases
           alias run=./Taskfile
           run @token set vercel ${{ secrets.VERCEL_TOKEN }}
-          run vercel pull --yes --environment=preview
-          run vercel build
-          echo page_url=$(run vercel deploy --prebuilt) >> $GITHUB_OUTPUT
+          echo page_url=$(run @deploy) >> $GITHUB_OUTPUT
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
   notify:
     name: Notifying
@@ -77,6 +75,6 @@ jobs:
         uses: ./.github/actions/notify
         continue-on-error: true
         with:
-          emoji: 🚀
+          emoji: 👀
           channel: ${{ secrets.SLACK_WEBHOOK }}
           success: ${{ ! contains(needs.*.result, 'failure') }}

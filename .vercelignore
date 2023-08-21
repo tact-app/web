@@ -15,7 +15,6 @@
 !.env.production
 .gitignore
 .sentryclirc
-.stignore
 .vercelignore
 
 next-env.d.ts

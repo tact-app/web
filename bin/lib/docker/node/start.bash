@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# shellcheck source=build.bash            # build
-# shellcheck source=node.bash             # @node
-# shellcheck source=../core/runtime.bash  # $config
-# shellcheck source=../git/core.bash      # @root
+# shellcheck source=../../config/global.bash  # $config
+# shellcheck source=build.bash                # build
+# shellcheck source=node.bash                 # @node
+# shellcheck source=../../git/core.bash       # @root
 
 # Example: run start [--from-scratch]
 # Example: run start docker [--from-scratch]
@@ -17,7 +17,7 @@ start() {
       --rm -it \
       --env-file "$(@root)/.env" \
       -p "127.0.0.1:${port}":3000 \
-      tact-app/web:local
+      "${config['image']}"
     return
   fi
 

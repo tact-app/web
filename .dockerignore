@@ -14,7 +14,6 @@
 .env*
 .gitignore
 .sentryclirc
-.stignore
 .vercelignore
 
 next-env.d.ts

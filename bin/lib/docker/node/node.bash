@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# shellcheck source=../git/core.bash # @root
+# shellcheck source=../../config/global.bash  # $config
+# shellcheck source=../../git/core.bash       # @root
 
 @node() {
   local real root

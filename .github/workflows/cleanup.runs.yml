@@ -1,6 +1,9 @@
-name: Workflow invalidation
+name: Workflow runs cleanup
 
 on:
+  schedule:
+    - cron: 0 6 1 * * # at 06:00 on day-of-month 1, UTC
+
   workflow_dispatch:
     inputs:
       pattern:
@@ -8,17 +11,16 @@ on:
         type: choice
         options:
           - All
-          - Cache invalidation
-          - Cache warmup
-          - Clean environment
-          - Continuous delivery (Vercel)
-          - Continuous delivery (Docker)
           - Continuous integration
-          - Dependabot at weekends
+          - Delivery to preview
           - Documentation delivery
-          - Issue invalidation
-          - Workflow invalidation
-        default: Workflow invalidation
+          - Preview environment cleanup
+          - Publish Docker image
+          - Stale issues cleanup
+          - Workflow caches cleanup
+          - Workflow caches warmup
+          - Workflow runs cleanup
+        default: Workflow runs cleanup
         required: true
       dry_run:
         description: Only log actions, do not perform any delete operations.
@@ -29,9 +31,6 @@ on:
         type: string
         default: manual healthcheck
         required: true
-
-  schedule:
-    - cron: 0 7 * * 0 # at 07:00 on Sunday, UTC
 
 jobs:
   delete:

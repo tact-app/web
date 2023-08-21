@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck source=env.bash # @darwin
+# shellcheck source=os.bash # @darwin
 
 @busy() {
   local port=${1}

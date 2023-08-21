@@ -57,7 +57,7 @@ $ npm run dev
 $ npm run build
 $ npm run start
 
-$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000 &
+$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000/ &
 $ npm run start
 ```
 
@@ -71,7 +71,7 @@ $ run dev
 $ run build [--from-scratch]
 $ run start [--from-scratch]
 
-$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000 &
+$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000/ &
 $ run start
 
 $ run npm ci --ignore-scripts --include=dev
@@ -86,10 +86,8 @@ You could use [Docker CLI][] to build an isolated environment
 $ run build docker [--from-scratch]
 $ run start docker [--from-scratch]
 
-$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000 &
+$ run wait-for-it -q -w localhost:3000 -- open http://localhost:3000/ &
 $ run start docker
-
-$ run isolated
 ```
 
 ## Tools

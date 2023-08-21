@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck source=../../utils/os.bash     # @arch @os
+# shellcheck source=../../utils/print.bash  # @fatal
 
 @install-jq() {
   local force=false version=1.6
@@ -22,18 +24,18 @@
     esac
   done
 
-  if command -v jq >/dev/null && [[ ! $force ]]; then
+  if command -v jq >/dev/null && ! $force; then
     [[ $(jq --version | cut -d '-' -f 2) == "${version}" ]] && return
   fi
 
-  local file src=https://github.com/jqlang/jq/releases/download
+  local file
   case $(@os) in
-  linux) file=jq-linux64 ;;
   darwin) file=jq-osx-amd64 ;;
+  linux) file=jq-linux64 ;;
   *) @fatal there is no supported binary ;;
   esac
 
-  local path=${1}
-  curl -sSfL "${src}/jq-${version}/${file}" -o "${path}/jq"
+  local path=${1} src=https://github.com/jqlang/jq
+  curl -sSfL "${src}/releases/download/jq-${version}/${file}" -o "${path}/jq"
   chmod +x "${path}/jq"
 }

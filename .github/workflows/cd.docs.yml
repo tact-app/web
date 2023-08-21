@@ -1,6 +1,15 @@
 name: Documentation delivery
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/cd.docs.yml'
+      - 'docs/**/*'
+
+  schedule:
+    - cron: 0 7 1 * * # at 07:00 on day-of-month 1, UTC
+
   workflow_dispatch:
     inputs:
       reason:
@@ -8,15 +17,6 @@ on:
         type: string
         default: manual healthcheck
         required: true
-
-  push:
-    branches: [ main ]
-    paths:
-      - '.github/workflows/docs.yml'
-      - 'docs/**/*'
-
-  schedule:
-    - cron: 0 7 1 * * # at 07:00 on day-of-month 1, UTC
 
 concurrency:
   group: pages
@@ -38,11 +38,13 @@ jobs:
           cache: npm
           cache-dependency-path: docs/package-lock.json
           check-latest: true
-
+      - name: Install dependencies
+        run: ./Taskfile docs npm ci
       - name: Set up GitHub Pages
         uses: actions/configure-pages@v3
+
       - name: Build static HTML with Next.js
-        run: ./Taskfile docs install -- publish
+        run: ./Taskfile docs publish
       - name: Upload the documentation
         uses: actions/upload-pages-artifact@v2
         with: { path: docs/dist }

@@ -11,7 +11,7 @@ if (['staging', 'production'].includes(process.env.APP_ENV)) {
       hideSourceMaps: true,
     },
     ...nextConfig,
-  }
+  };
 
   const webpack = {
     silent: true,
