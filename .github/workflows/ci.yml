@@ -74,7 +74,7 @@ jobs:
         run: ./Taskfile tools npm ci
 
       - name: Check application dependencies
-        run: ./Taskfile @deps check
+        run: ./Taskfile deps check
 
   notify:
     name: Notifying

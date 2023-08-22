@@ -56,7 +56,7 @@ vercel() {
     while IFS='' read -r deployment; do
       deployments+=("${deployment}")
       found=true
-    done < <(vercel ls 2>&1 | grep https | awk '{print $2}')
+    done < <(vercel ls "${config['name']}" 2>&1 | grep https | awk '{print $2}')
     if ! $found; then
       echo No deployments found
       return
