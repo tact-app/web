@@ -7,16 +7,17 @@ set -euo pipefail
   exit 1
 }
 
+root=$(git rev-parse --show-toplevel)
 include=(
-  bin/lib/utils/*.bash
-  bin/lib/git/*.bash
-  bin/lib/docker/*.bash
-  bin/lib/docker/node/*.bash
-  bin/lib/tools/*.bash
-  bin/lib/docs/*.bash
-  bin/lib/config/*.bash
-  bin/lib/app/*.bash
-  bin/lib/main.bash
+  "${root}"/bin/lib/utils/*.bash
+  "${root}"/bin/lib/git/*.bash
+  "${root}"/bin/lib/docker/*.bash
+  "${root}"/bin/lib/docker/node/*.bash
+  "${root}"/bin/lib/tools/*.bash
+  "${root}"/bin/lib/docs/*.bash
+  "${root}"/bin/lib/config/*.bash
+  "${root}"/bin/lib/app/*.bash
+  "${root}"/bin/lib/main.bash
 )
 
 for script in "${include[@]}"; do

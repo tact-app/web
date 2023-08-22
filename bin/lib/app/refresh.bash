@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # shellcheck source=deps.bash                 # @deps
 # shellcheck source=../docker/node/build.bash # build
 # shellcheck source=../git/core.bash          # @pull

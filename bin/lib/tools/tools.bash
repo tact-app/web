@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # shellcheck source=../git/core.bash  # @root
 # shellcheck source=_.bash            # $_BINPATH
 # shellcheck source=../utils/npm.bash # @consistent @lock

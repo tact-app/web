@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # shellcheck source=../docker/node/install.bash # install
 # shellcheck source=../tools/tools.bash         # tools
 # shellcheck source=../utils/npm.bash           # @consistent @lock

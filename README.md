@@ -4,7 +4,7 @@
 
 Web version for desktops.
 
-## Quick Start
+## Quick start
 
 Requirements:
 

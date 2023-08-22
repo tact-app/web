@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # shellcheck source=refresh.bash           # refresh
 # shellcheck source=../tools/github.bash   # set_github_token
 # shellcheck source=../tools/graphite.bash # set_graphite_token

@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # shellcheck source=../config/global.bash # $config
 # shellcheck source=../tools/tools.bash   # @install
 # shellcheck source=../utils/env.bash     # @env @key @token

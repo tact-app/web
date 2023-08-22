@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # shellcheck source=../utils/network.bash # @busy
 # shellcheck source=../utils/print.bash   # @fatal
 
