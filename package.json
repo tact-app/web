@@ -30,7 +30,7 @@
     "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@faker-js/faker": "^8.0.2",
+    "@faker-js/faker": "^8.3.1",
     "@fortawesome/fontawesome-pro": "^6.4.2",
     "@fortawesome/pro-light-svg-icons": "^6.4.2",
     "@fortawesome/pro-regular-svg-icons": "^6.4.2",
